@@ -152,7 +152,7 @@ int api_stopAndFreeze(const CanDevice_t *device)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_setCurrent(const CanDevice_t *device, const float32_t currentA)
+int api_setCurrent(const CanDevice_t *device, const float currentA)
 {
 	return RET_OK;
 }
@@ -165,7 +165,7 @@ int api_setCurrent(const CanDevice_t *device, const float32_t currentA)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_setVelocity(const CanDevice_t *device, const float32_t velocityDegPerSec)
+int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
 {
 	return RET_OK;
 }
@@ -178,7 +178,7 @@ int api_setVelocity(const CanDevice_t *device, const float32_t velocityDegPerSec
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_setPosition(const CanDevice_t *device, const float32_t positionDeg)
+int api_setPosition(const CanDevice_t *device, const float positionDeg)
 {
 	return RET_OK;
 }
@@ -192,7 +192,7 @@ int api_setPosition(const CanDevice_t *device, const float32_t positionDeg)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_setVelocityWithLimits(const CanDevice_t *device, const float32_t velocityDegPerSec, const float32_t currentA)
+int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDegPerSec, const float currentA)
 {
 	return RET_OK;
 }
@@ -209,7 +209,7 @@ int api_setVelocityWithLimits(const CanDevice_t *device, const float32_t velocit
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_setPositionWithLimits(const CanDevice_t *device, const float32_t positionDeg, const float32_t velocityDegPerSec, const float32_t currentA)
+int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg, const float velocityDegPerSec, const float currentA)
 {
 	return RET_OK;
 }
@@ -223,7 +223,7 @@ int api_setPositionWithLimits(const CanDevice_t *device, const float32_t positio
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_setDuty(CanDevice_t *device, float32_t dutyPercent)
+int api_setDuty(CanDevice_t *device, float dutyPercent)
 {
 	return RET_OK;
 }
@@ -238,7 +238,7 @@ int api_setDuty(CanDevice_t *device, float32_t dutyPercent)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_addMotionPoint(const CanDevice_t *device, const float32_t positionDeg, const float32_t velocityDeg, const uint32_t timeMs)
+int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs)
 {
 	return RET_OK;
 }
@@ -306,7 +306,7 @@ int api_readArrayRequestMask(const CanDevice_t *device, uint8_t *requests)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-int api_readParameter(const CanDevice_t *device, const uint8_t param, const float32_t *value)
+int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value)
 {
 	return RET_OK;
 }
@@ -344,7 +344,7 @@ int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-int api_readArrayRequest(const CanDevice_t *device, float32_t *array)
+int api_readArrayRequest(const CanDevice_t *device, float *array)
 {
 	return RET_OK;
 }
@@ -391,8 +391,8 @@ int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num)
  * @ingroup Servo_info
  */
 int api_invokeTimeCalculation(const CanDevice_t *device,
-                              const float32_t startPositionDeg, const float32_t startVelocityDeg, const float32_t startAccelerationDegPerSec2, const uint32_t startTimeMs,
-                              const float32_t endPositionDeg, const float32_t endVelocityDeg, const float32_t endAccelerationDegPerSec2, const uint32_t endTimeMs)
+                              const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs,
+                              const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs)
 {
 	return RET_OK;
 }
@@ -418,7 +418,7 @@ int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_config
  */
-int api_getZeroPosition(const CanDevice_t *device, float32_t *positionDeg) //???
+int api_getZeroPosition(const CanDevice_t *device, float *positionDeg) //???
 {
 	return RET_OK;
 }
@@ -443,7 +443,7 @@ int api_setZeroPositionAndSave(const CanDevice_t *device)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-int api_getMaxVelocity(const CanDevice_t *device, float32_t *velocityDegPerSec)
+int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
 {
 	return RET_OK;
 }

@@ -16,8 +16,6 @@
 //#include "common/servo_api.h"
 //#include "math.h"
 
-typedef float float32_t;
-
 #define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
 
 
@@ -68,14 +66,14 @@ int api_setStateStopped(const CanDevice_t *device);
 int api_stopAndRelease(const CanDevice_t *device);
 int api_stopAndFreeze(const CanDevice_t *device);
 
-int api_setCurrent(const CanDevice_t *device, const float32_t currentA);
-int api_setVelocity(const CanDevice_t *device, const float32_t velocityDegPerSec);
-int api_setPosition(const CanDevice_t *device, const float32_t positionDeg);
-int api_setVelocityWithLimits(const CanDevice_t *device, const float32_t velocityDegPerSec, const float32_t currentA);
-int api_setPositionWithLimits(const CanDevice_t *device, const float32_t positionDeg, const float32_t velocityDegPerSec, const float32_t currentA);
-int api_setDuty(CanDevice_t *device, float32_t dutyPercent);
+int api_setCurrent(const CanDevice_t *device, const float currentA);
+int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec);
+int api_setPosition(const CanDevice_t *device, const float positionDeg);
+int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDegPerSec, const float currentA);
+int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg, const float velocityDegPerSec, const float currentA);
+int api_setDuty(CanDevice_t *device, float dutyPercent);
 
-int api_addMotionPoint(const CanDevice_t *device, const float32_t positionDeg, const float32_t velocityDeg, const uint32_t timeMs);
+int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs);
 int api_startMotion(uint32_t timestampMs);
 
 int api_readErrorStatus(const CanDevice_t *device);
@@ -83,23 +81,23 @@ int api_readErrorStatus(const CanDevice_t *device);
 int api_writeArrayRequestMask(const CanDevice_t *device, const uint8_t *requests);
 int api_readArrayRequestMask(const CanDevice_t *device, uint8_t *requests);
 
-int api_readParameter(const CanDevice_t *device, const uint8_t param, const float32_t *value);
+int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value);
 int api_clearPointsAll(const CanDevice_t *device);
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear);
-int api_readArrayRequest(const CanDevice_t *device, float32_t *array);
+int api_readArrayRequest(const CanDevice_t *device, float *array);
 
 int api_getPointsSize(CanDevice_t *device, uint32_t *num);
 int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num);
 
 int api_invokeTimeCalculation(const CanDevice_t *device,
-                              const float32_t startPositionDeg, const float32_t startVelocityDeg, const float32_t startAccelerationDegPerSec2, const uint32_t startTimeMs,
-                              const float32_t endPositionDeg, const float32_t endVelocityDeg, const float32_t endAccelerationDegPerSec2, const uint32_t endTimeMs);
+                              const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs,
+                              const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs);
 int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs);
 
-int api_getZeroPosition(const CanDevice_t *device, float32_t *positionDeg); //???
+int api_getZeroPosition(const CanDevice_t *device, float *positionDeg); //???
 int api_setZeroPositionAndSave(const CanDevice_t *device);
 
-int api_getMaxVelocity(const CanDevice_t *device, float32_t *velocityDegPerSec);
+int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec);
 int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerSec);
 
 #endif /* _ROZUM_API_H */
