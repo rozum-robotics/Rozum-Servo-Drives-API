@@ -18,7 +18,6 @@
 
 #define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
 
-
 /* Exported types ------------------------------------------------------------*/
 /**
  * @brief Device instance structure
@@ -26,9 +25,9 @@
  */
 typedef struct
 {
-    uint8_t id;                   ///< Device CAN ID
-    uint8_t nmtState;             ///< Device NMT state
-//    time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
+    uint8_t id;       ///< Device CAN ID
+    uint8_t nmtState; ///< Device NMT state
+    //    time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
 } CanDevice_t;
 
 /* Exported constants --------------------------------------------------------*/
@@ -46,6 +45,105 @@ enum RetStatus_t
     RET_STOPPED,    ///< Device is in STOPPED state
     RET_TIMEOUT     ///< Communication timeout
 };
+
+typedef enum
+{
+    APP_PARAM_NULL = 0,
+    APP_PARAM_POSITION,
+    APP_PARAM_VELOCITY,
+    APP_PARAM_POSITION_ROTOR,
+    APP_PARAM_VELOCITY_ROTOR,
+    APP_PARAM_POSITION_GEAR_360, //0x05
+    APP_PARAM_POSITION_GEAR_EMULATED,
+
+    APP_PARAM_CURRENT_INPUT,
+    APP_PARAM_CURRENT_OUTPUT,
+    APP_PARAM_VOLTAGE_INPUT,
+    APP_PARAM_VOLTAGE_OUTPUT,
+    APP_PARAM_CURRENT_PHASE,
+
+    APP_PARAM_TEMPERATURE_ACTUATOR,
+    APP_PARAM_TEMPERATURE_ELECTRONICS,
+    APP_PARAM_TORQUE,
+
+    APP_PARAM_ACCELERATION, //0x0f
+    APP_PARAM_ACCELERATION_ROTOR,
+
+    APP_PARAM_CURRENT_PHASE_1,
+    APP_PARAM_CURRENT_PHASE_2,
+    APP_PARAM_CURRENT_PHASE_3,
+    APP_PARAM_CURRENT_RAW,
+    APP_PARAM_CURRENT_RAW_2,
+    APP_PARAM_CURRENT_RAW_3,
+    APP_PARAM_ENCODER_MASTER_TRACK,
+    APP_PARAM_ENCODER_NONIUS_TRACK,
+    APP_PARAM_ENCODER_MOTOR_MASTER_TRACK,
+    APP_PARAM_ENCODER_MOTOR_NONIUS_TRACK,
+    APP_PARAM_TORQUE_ELECTRIC_CALC,
+    APP_PARAM_CONTROLLER_VELOCITY_ERROR,
+    APP_PARAM_CONTROLLER_VELOCITY_SETPOINT,
+    APP_PARAM_CONTROLLER_VELOCITY_FEEDBACK,
+    APP_PARAM_CONTROLLER_VELOCITY_OUTPUT, //0X1F
+    APP_PARAM_CONTROLLER_POSITION_ERROR,
+    APP_PARAM_CONTROLLER_POSITION_SETPOINT,
+    APP_PARAM_CONTROLLER_POSITION_FEEDBACK,
+    APP_PARAM_CONTROLLER_POSITION_OUTPUT,
+
+    APP_PARAM_CONTROL_MODE,
+
+    APP_PARAM_FOC_ANGLE,
+    APP_PARAM_FOC_IA,
+    APP_PARAM_FOC_IB,
+    APP_PARAM_FOC_IQ_SET,
+    APP_PARAM_FOC_ID_SET,
+    APP_PARAM_FOC_IQ,
+    APP_PARAM_FOC_ID,
+    APP_PARAM_FOC_IQ_ERROR,
+    APP_PARAM_FOC_ID_ERROR,
+    APP_PARAM_FOC_UQ,
+    APP_PARAM_FOC_UD, //0X2F
+    APP_PARAM_FOC_UA,
+    APP_PARAM_FOC_UB,
+    APP_PARAM_FOC_U1,
+    APP_PARAM_FOC_U2,
+    APP_PARAM_FOC_U3,
+    APP_PARAM_FOC_PWM1,
+    APP_PARAM_FOC_PWM2,
+    APP_PARAM_FOC_PWM3,
+    APP_PARAM_FOC_TIMER_TOP, //0X38 56
+    APP_PARAM_DUTY,
+
+    APP_PARAM_CURRENT_PHASE_ABS, //58
+    APP_PARAM_CURRENT_RMS_ABS,
+    APP_PARAM_QUALITY,
+
+    APP_PARAM_TEMP_CHARGER,
+    APP_PARAM_TEMP_DISCHARGER,
+    APP_PARAM_VOLTAGE_CAN_H,
+    APP_PARAM_VOLTAGE_CAN_L,
+
+    APP_PARAM_CURRENT_PHASE_AVG,
+    APP_PARAM_CURRENT_RMS_AVG,
+
+    APP_PARAM_CONTROLLER_VELOCITY_ERROR_AVG,
+    APP_PARAM_CONTROLLER_POSITION_ERROR_AVG,
+
+    APP_PARAM_STEP,
+
+    APP_PARAM_CURRENT_PHASE_PEAK,
+    APP_PARAM_CURRENT_RMS_PEAK,
+
+    APP_PARAM_CONTROLLER_VELOCITY_ERROR_PEAK,
+    APP_PARAM_CONTROLLER_POSITION_ERROR_PEAK,
+
+    APP_PARAM_TEST_TIME,
+    APP_PARAM_EFFICIENCY,
+
+    APP_PARAM_POWER_IN,
+    APP_PARAM_POWER_OUT,
+
+    APP_PARAM_SIZE //...
+} AppParam_t;
 
 /* Exported macro ------------------------------------------------------------*/
 /* Exported define -----------------------------------------------------------*/

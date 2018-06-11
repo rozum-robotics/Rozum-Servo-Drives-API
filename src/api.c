@@ -200,10 +200,9 @@ int api_setStateStopped(const CanDevice_t *device)
 int api_stopAndRelease(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+    uint8_t data = 0;
+    uint8_t sts = write_raw_sdo(device.id, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+    return retSDO(sts);
 }
 
 /**
@@ -216,7 +215,8 @@ int api_stopAndRelease(const CanDevice_t *device)
 int api_stopAndFreeze(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
+    uint8_t data = 0;
+    uint8_t sts = write_raw_sdo(device.id, 0x2010, 0x02, &data, sizeof(data), 1, 100);
     {
         return retSDO(sts);
     }
@@ -233,10 +233,12 @@ int api_stopAndFreeze(const CanDevice_t *device)
 int api_setCurrent(const CanDevice_t *device, const float currentA)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[4];
+    usb_can_put_float(data, 0, &currentA, 1);
+    uint8_t sts = write_raw_sdo(device.id, 0x2012, 0x01, data, sizeof(data), 1, 100);
+
+    return retSDO(sts);
 }
 
 /**
@@ -250,10 +252,12 @@ int api_setCurrent(const CanDevice_t *device, const float currentA)
 int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[4];
+    usb_can_put_float(data, 0, &velocityDegPerSec, 1);
+    uint8_t sts = write_raw_sdo(device.id, 0x2012, 0x03, data, sizeof(data), 1, 100);
+
+    return retSDO(sts)
 }
 
 /**
@@ -267,10 +271,12 @@ int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
 int api_setPosition(const CanDevice_t *device, const float positionDeg)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[4];
+    usb_can_put_float(data, 0, &positionDeg, 1);
+    uint8_t sts = write_raw_sdo(device.id, 0x2012, 0x04, data, sizeof(data), 1, 100);
+
+    return retSDO(sts);
 }
 
 /**
@@ -285,10 +291,13 @@ int api_setPosition(const CanDevice_t *device, const float positionDeg)
 int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDegPerSec, const float currentA)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[8];
+    usb_can_put_float(data, 0, &velocityDegPerSec, 1);
+    usb_can_put_float(data, 0, &currentA, 1);
+    uint8_t sts = write_raw_sdo(device.id, 0x2012, 0x05, data, sizeof(data), 1, 100);
+
+    return retSDO(sts);
 }
 
 /**
@@ -306,10 +315,14 @@ int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDeg
 int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg, const float velocityDegPerSec, const float currentA)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[12];
+    usb_can_put_float(data, 0, &positionDeg, 1);
+    usb_can_put_float(data, 0, &velocityDegPerSec, 1);
+    usb_can_put_float(data, 0, &currentA, 1);
+    uint8_t sts = write_raw_sdo(device.id, 0x2012, 0x06, data, sizeof(data), 1, 100);
+
+    return retSDO(sts);
 }
 
 /**
@@ -324,10 +337,12 @@ int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg
 int api_setDuty(CanDevice_t *device, float dutyPercent)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[4];
+    usb_can_put_float(data, 0, &dutyPercent, 1);
+    uint8_t sts = write_raw_sdo(device.id, 0x2012, 0x07, data, sizeof(data), 1, 100);
+
+    return retSDO(sts);
 }
 
 /**
@@ -343,7 +358,18 @@ int api_setDuty(CanDevice_t *device, float dutyPercent)
 int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
+
+    uint8_t data[12];
+    usb_can_put_float(data, 0, &positionDeg, 1);
+    usb_can_put_float(data + 4, 0, &velocityDeg, 1);
+    usb_can_put_uint32_t(data + 8, 0, &timeMs, 1);
+
+    uint32_t sts = write_raw_sdo(device->id, 0x2200, 2, data, sizeof(data), 1, 200);
+    if(sts == CO_SDO_AB_PRAM_INCOMPAT)
+    {
+        return RET_WRONG_TRAJ;
+    }
+    else
     {
         return retSDO(sts);
     }
@@ -550,7 +576,7 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
     usb_can_put_float(data + 24, 0, &endAccelerationDegPerSec2, 1);
     usb_can_put_uint32_t(data + 28, 0, &endTimeMs, 1);
 
-    uint8_t sts = write_raw_sdo(device.id, 0x2203, 0x01, data, 32, 1, 200);
+    uint8_t sts = write_raw_sdo(device.id, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
     if(sts == CO_SDO_AB_GENERAL)
     {
@@ -623,10 +649,17 @@ int api_setZeroPositionAndSave(const CanDevice_t *device)
 int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
+
+    uint8_t data[4];
+    unt len = sizeof(data);
+
+    uint8_t sts = read_raw_sdo(device->id, 0x2207, 0x02, data, len, 1, 100);
+    if(sts == CO_SDO_AB_NONE)
     {
-        return retSDO(sts);
+        usb_can_put_float(data, 0, &velocityDegPerSec, 1);
     }
+
+    return retSDO(sts);
 }
 
 /**
@@ -641,8 +674,10 @@ int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
 int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerSec)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = ;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[4];
+    usb_can_put_float(data, 0, &maxVelocityDegPerSec, 1);
+    uint8_t sts = write_raw_sdo(device->id, 0x2300, 0x03, data, sizeof(data), 1, 100);
+
+    return retSDO(sts);
 }
