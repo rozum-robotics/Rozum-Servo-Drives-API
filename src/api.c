@@ -27,10 +27,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define CHECK_NMT_STATE(x)                                          \
-    if(x->nmtState == CO_NMT_STOPPED || x->nmtState == CO_NMT_BOOT) \
-    {                                                               \
-        return RET_STOPPED;                                         \
+#define CHECK_NMT_STATE(x)                                            \
+    if(x->nmtState == _CO_NMT_STOPPED || x->nmtState == _CO_NMT_BOOT) \
+    {                                                                 \
+        return RET_STOPPED;                                           \
     }
 
 /* Private macro -------------------------------------------------------------*/
@@ -118,6 +118,10 @@ int api_initServo(const CanDevice_t *device, const uint8_t id)
  */
 int api_reboot(const CanDevice_t *device)
 {
+    write_nmt((device == 0)
+                  ? 0
+                  : device->id,
+              _CO_NMT_CMD_RESET_NODE);
     return RET_OK;
 }
 
@@ -130,6 +134,10 @@ int api_reboot(const CanDevice_t *device)
  */
 int api_resetCommunication(const CanDevice_t *device)
 {
+    write_nmt((device == 0)
+                  ? 0
+                  : device->id,
+              _CO_NMT_CMD_RESET_COMM);
     return RET_OK;
 }
 
@@ -143,6 +151,10 @@ int api_resetCommunication(const CanDevice_t *device)
  */
 int api_setStateOperational(const CanDevice_t *device)
 {
+    write_nmt((device == 0)
+                  ? 0
+                  : device->id,
+              _CO_NMT_CMD_GOTO_OP);
     return RET_OK;
 }
 
@@ -155,6 +167,10 @@ int api_setStateOperational(const CanDevice_t *device)
  */
 int api_setStatePreOperational(const CanDevice_t *device)
 {
+    write_nmt((device == 0)
+                  ? 0
+                  : device->id,
+              _CO_NMT_CMD_GOTO_PREOP);
     return RET_OK;
 }
 
@@ -167,6 +183,10 @@ int api_setStatePreOperational(const CanDevice_t *device)
  */
 int api_setStateStopped(const CanDevice_t *device)
 {
+    write_nmt((device == 0)
+                  ? 0
+                  : device->id,
+              _CO_NMT_CMD_GOTO_STOPPED);
     return RET_OK;
 }
 
