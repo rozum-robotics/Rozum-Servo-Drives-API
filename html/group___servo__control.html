@@ -99,8 +99,10 @@ Functions</h2></td></tr>
 <tr class="memdesc:ga9138f566e5e79feada4abdb86abafbbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the device movement by the spline points. This is a broadcast command. Note: if any device is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all devices on the bus.  <a href="#ga9138f566e5e79feada4abdb86abafbbe">More...</a><br /></td></tr>
 <tr class="separator:ga9138f566e5e79feada4abdb86abafbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaef7daf95824293b5466a43981866053c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaef7daf95824293b5466a43981866053c">api_clearPointsAll</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
+<tr class="memdesc:gaef7daf95824293b5466a43981866053c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the whole device motion queue.  <a href="#gaef7daf95824293b5466a43981866053c">More...</a><br /></td></tr>
 <tr class="separator:gaef7daf95824293b5466a43981866053c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9b963c8de46cdea63c3e45fde6da5eed">api_clearPoints</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint32_t numToClear)</td></tr>
+<tr class="memdesc:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases number of cells from the tail of the device motion queue.  <a href="#ga9b963c8de46cdea63c3e45fde6da5eed">More...</a><br /></td></tr>
 <tr class="separator:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -153,7 +155,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -182,6 +184,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Erases number of cells from the tail of the device motion queue. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
@@ -189,7 +193,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -208,13 +212,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Erases the whole device motion queue. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -252,7 +258,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -290,7 +296,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -328,7 +334,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -380,7 +386,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -418,7 +424,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -463,7 +469,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -490,7 +496,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -517,7 +523,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -544,7 +550,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>

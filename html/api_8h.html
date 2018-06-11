@@ -66,8 +66,8 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#define-members">Macros</a> &#124;
-<a href="#enum-members">Enumerations</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">api.h File Reference</div>  </div>
 </div><!--header-->
@@ -77,13 +77,20 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
+<code>#include &quot;usbcan_proto.h&quot;</code><br />
 </div>
 <p><a href="api_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_can_device__t.html">CanDevice_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device instance structure.  <a href="struct_can_device__t.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device information source instance.  <a href="struct_can_device__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_can_interface__t.html">CanInterface_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface instance structure.  <a href="struct_can_interface__t.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_can_device__t.html">CanDevice_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device information source instance.  <a href="struct_can_device__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
@@ -91,29 +98,16 @@ Macros</h2></td></tr>
 <tr class="memitem:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memItemLeft" align="right" valign="top"><a id="a63d4e72da5d14c7ac1f1381676735ed1"></a>
 #define&#160;</td><td class="memItemRight" valign="bottom"><b>API_DEBUG</b>(x, ...)&#160;&#160;&#160;fprintf(stderr, x, __VA_ARGS__)</td></tr>
 <tr class="separator:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
-Enumerations</h2></td></tr>
-<tr class="memitem:a12167db374f14c140a63962efb4f2688"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688">RetStatus_t</a> { <br />
-&#160;&#160;<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688a4894234446e2d92068943b3d6d3a0bdc">RET_OK</a> = 0, 
-<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688ae8ed27c1aabd77d519426a8ad340d76c">RET_ERROR</a>, 
-<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688acdd796ae2972988d689257753a05b9dd">RET_BUSY</a>, 
-<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688adf1d978b055d00c4036019387acfc60c">RET_WRONG_TRAJ</a>, 
-<br />
-&#160;&#160;<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688a2840a6ac495b0fe4b9e8565d9f76e29a">RET_LOCKED</a>, 
-<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688ad456500c4074aeffb3e5e132bf7d996c">RET_STOPPED</a>, 
-<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688adf2eed18ed159c7517505568b0f261dd">RET_TIMEOUT</a>
-<br />
- }<tr class="memdesc:a12167db374f14c140a63962efb4f2688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return codes of the API functions.  <a href="api_8h.html#a12167db374f14c140a63962efb4f2688">More...</a><br /></td></tr>
-</td></tr>
-<tr class="separator:a12167db374f14c140a63962efb4f2688"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memItemLeft" align="right" valign="top"><a id="a63d4e72da5d14c7ac1f1381676735ed1"></a>
+#define&#160;</td><td class="memItemRight" valign="bottom"><b>API_DEBUG</b>(x, ...)&#160;&#160;&#160;fprintf(stderr, x, __VA_ARGS__)</td></tr>
+<tr class="separator:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga489fd02cddd800285d9a65f2f2609c96"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga489fd02cddd800285d9a65f2f2609c96">api_initInterface</a> (const char *interfaceName)</td></tr>
-<tr class="separator:ga489fd02cddd800285d9a65f2f2609c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga16716ef79005066dd14c8f9aa14d1e5f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga16716ef79005066dd14c8f9aa14d1e5f">api_initServo</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t id)</td></tr>
-<tr class="separator:ga16716ef79005066dd14c8f9aa14d1e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9dda131254d970d91b162cce0830f112"><td class="memItemLeft" align="right" valign="top">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD #define API_DEBUG(x,...)=======&gt;&gt;&gt;&gt;&gt;&gt; int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga9dda131254d970d91b162cce0830f112">api_initInterface</a> (<a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *const interface, const char *interfaceName)</td></tr>
+<tr class="separator:ga9dda131254d970d91b162cce0830f112"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8f5fdb9e6220866d65496255b08477ee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga8f5fdb9e6220866d65496255b08477ee">api_initServo</a> (const <a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *interface, <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *const device, const uint8_t id)</td></tr>
+<tr class="separator:ga8f5fdb9e6220866d65496255b08477ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#gae4b5a42f09f00adb38fd1ff896cc7f47">api_reboot</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
 <tr class="memdesc:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboots device.  <a href="group___system__control.html#gae4b5a42f09f00adb38fd1ff896cc7f47">More...</a><br /></td></tr>
 <tr class="separator:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,72 +153,80 @@ Functions</h2></td></tr>
 <tr class="memitem:ga9138f566e5e79feada4abdb86abafbbe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9138f566e5e79feada4abdb86abafbbe">api_startMotion</a> (uint32_t timestampMs)</td></tr>
 <tr class="memdesc:ga9138f566e5e79feada4abdb86abafbbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the device movement by the spline points. This is a broadcast command. Note: if any device is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all devices on the bus.  <a href="group___servo__control.html#ga9138f566e5e79feada4abdb86abafbbe">More...</a><br /></td></tr>
 <tr class="separator:ga9138f566e5e79feada4abdb86abafbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3c053a7c2ddfbb7d85077fada388424d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga3c053a7c2ddfbb7d85077fada388424d">api_readErrorStatus</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="separator:ga3c053a7c2ddfbb7d85077fada388424d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga37e9d4bcd2d029129bf545fb83b7dc1c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga37e9d4bcd2d029129bf545fb83b7dc1c">api_writeArrayRequestMask</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t *requests)</td></tr>
-<tr class="separator:ga37e9d4bcd2d029129bf545fb83b7dc1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac263c10ec30e016e68c0b0d700720f04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gac263c10ec30e016e68c0b0d700720f04">api_readArrayRequestMask</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *requests)</td></tr>
-<tr class="separator:gac263c10ec30e016e68c0b0d700720f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6c8312a43c49cec635035ba306d0497e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga6c8312a43c49cec635035ba306d0497e">api_readErrorStatus</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *array, uint32_t *size)</td></tr>
+<tr class="memdesc:ga6c8312a43c49cec635035ba306d0497e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads error flag array.  <a href="group___servo__info.html#ga6c8312a43c49cec635035ba306d0497e">More...</a><br /></td></tr>
+<tr class="separator:ga6c8312a43c49cec635035ba306d0497e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9">api_writeSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t *requests, const uint32_t size)</td></tr>
+<tr class="memdesc:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes device source array format (activated source indexes)  <a href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9">More...</a><br /></td></tr>
+<tr class="separator:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gada1e4cb49ca5d980fddfa65c66a7e80a">api_readSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *requests, uint32_t *size)</td></tr>
+<tr class="memdesc:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device source array format (activated source indexes)  <a href="group___servo__info.html#gada1e4cb49ca5d980fddfa65c66a7e80a">More...</a><br /></td></tr>
+<tr class="separator:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a2885733d9e3f2f7753b823bc14c399"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga6a2885733d9e3f2f7753b823bc14c399">api_readSources</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
+<tr class="memdesc:ga6a2885733d9e3f2f7753b823bc14c399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device sources. Note: source indexes should be programmed with <a class="el" href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9" title="Writes device source array format (activated source indexes) ">api_writeSourcesFormat</a> function.  <a href="group___servo__info.html#ga6a2885733d9e3f2f7753b823bc14c399">More...</a><br /></td></tr>
+<tr class="separator:ga6a2885733d9e3f2f7753b823bc14c399"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadc2219a8852f829ea3b4b93bca096d64"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gadc2219a8852f829ea3b4b93bca096d64">api_readParameter</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t param, const float *value)</td></tr>
+<tr class="memdesc:gadc2219a8852f829ea3b4b93bca096d64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device source (information parameter)  <a href="group___servo__info.html#gadc2219a8852f829ea3b4b93bca096d64">More...</a><br /></td></tr>
 <tr class="separator:gadc2219a8852f829ea3b4b93bca096d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaef7daf95824293b5466a43981866053c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaef7daf95824293b5466a43981866053c">api_clearPointsAll</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
+<tr class="memdesc:gaef7daf95824293b5466a43981866053c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the whole device motion queue.  <a href="group___servo__control.html#gaef7daf95824293b5466a43981866053c">More...</a><br /></td></tr>
 <tr class="separator:gaef7daf95824293b5466a43981866053c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9b963c8de46cdea63c3e45fde6da5eed">api_clearPoints</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint32_t numToClear)</td></tr>
+<tr class="memdesc:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases number of cells from the tail of the device motion queue.  <a href="group___servo__control.html#ga9b963c8de46cdea63c3e45fde6da5eed">More...</a><br /></td></tr>
 <tr class="separator:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga489725a1a7e0a47e06436fde62cd590e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga489725a1a7e0a47e06436fde62cd590e">api_readArrayRequest</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float *array)</td></tr>
-<tr class="separator:ga489725a1a7e0a47e06436fde62cd590e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga23e17a660476850b3e5825d7964b9e2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga23e17a660476850b3e5825d7964b9e2d">api_getPointsSize</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *num)</td></tr>
+<tr class="memdesc:ga23e17a660476850b3e5825d7964b9e2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets device motion queue occupied cells (queue size)  <a href="group___servo__info.html#ga23e17a660476850b3e5825d7964b9e2d">More...</a><br /></td></tr>
 <tr class="separator:ga23e17a660476850b3e5825d7964b9e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga18d1d1ab4216ce7fb23ee0d63ba4e3f5">api_getPointsFreeSpace</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *num)</td></tr>
+<tr class="memdesc:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets device remaining motion queue free cell count.  <a href="group___servo__info.html#ga18d1d1ab4216ce7fb23ee0d63ba4e3f5">More...</a><br /></td></tr>
 <tr class="separator:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7">api_invokeTimeCalculation</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs, const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs)</td></tr>
+<tr class="memdesc:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates motion point parameters.  <a href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7">More...</a><br /></td></tr>
 <tr class="separator:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gabb3e39d8cdb8126bd68f537e91b6d5e4">api_getTimeCalculationResult</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *timeMs)</td></tr>
+<tr class="memdesc:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets <a class="el" href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7" title="Calculates motion point parameters. ">api_invokeTimeCalculation</a> calculated time in milliseconds.  <a href="group___servo__info.html#gabb3e39d8cdb8126bd68f537e91b6d5e4">More...</a><br /></td></tr>
 <tr class="separator:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa24d834493e688ebc01c43e65db63dd1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#gaa24d834493e688ebc01c43e65db63dd1">api_getZeroPosition</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float *positionDeg)</td></tr>
-<tr class="separator:gaa24d834493e688ebc01c43e65db63dd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaa67a7baefb3866a4b104cfb00ff7b301"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#gaa67a7baefb3866a4b104cfb00ff7b301">api_setZeroPositionAndSave</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="separator:gaa67a7baefb3866a4b104cfb00ff7b301"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga56971490f28c6ba39a28be8b1ae18e3f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#ga56971490f28c6ba39a28be8b1ae18e3f">api_setZeroPosition</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float32_t positionDeg)</td></tr>
+<tr class="memdesc:ga56971490f28c6ba39a28be8b1ae18e3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device zero position.  <a href="group___servo__config.html#ga56971490f28c6ba39a28be8b1ae18e3f">More...</a><br /></td></tr>
+<tr class="separator:ga56971490f28c6ba39a28be8b1ae18e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf26ba9ecaa08ce17b70c6b3727ff6ea9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#gaf26ba9ecaa08ce17b70c6b3727ff6ea9">api_setZeroPositionAndSave</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float32_t positionDeg)</td></tr>
+<tr class="memdesc:gaf26ba9ecaa08ce17b70c6b3727ff6ea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device zero position and saves it to the device FLASH memory.  <a href="group___servo__config.html#gaf26ba9ecaa08ce17b70c6b3727ff6ea9">More...</a><br /></td></tr>
+<tr class="separator:gaf26ba9ecaa08ce17b70c6b3727ff6ea9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga86415520674a977f2261abd80fde08a9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga86415520674a977f2261abd80fde08a9">api_getMaxVelocity</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float *velocityDegPerSec)</td></tr>
+<tr class="memdesc:ga86415520674a977f2261abd80fde08a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the maximum device velocity.  <a href="group___servo__info.html#ga86415520674a977f2261abd80fde08a9">More...</a><br /></td></tr>
 <tr class="separator:ga86415520674a977f2261abd80fde08a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2e11b51b47a4cbe83c9ded4ea3122bde"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#ga2e11b51b47a4cbe83c9ded4ea3122bde">api_setMaxVelocity</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float maxVelocityDegPerSec)</td></tr>
 <tr class="memdesc:ga2e11b51b47a4cbe83c9ded4ea3122bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the global limit for the device velocity. Note: this is power volatile command.  <a href="group___servo__config.html#ga2e11b51b47a4cbe83c9ded4ea3122bde">More...</a><br /></td></tr>
 <tr class="separator:ga2e11b51b47a4cbe83c9ded4ea3122bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aa259de6e47594c3305080e8088fdb53c"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#aa259de6e47594c3305080e8088fdb53c">activated</a></td></tr>
+<tr class="memdesc:aa259de6e47594c3305080e8088fdb53c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source value.  <a href="#aa259de6e47594c3305080e8088fdb53c">More...</a><br /></td></tr>
+<tr class="separator:aa259de6e47594c3305080e8088fdb53c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4975906ca01ba26a3463157a90aaf177"><td class="memItemLeft" align="right" valign="top"><a id="a4975906ca01ba26a3463157a90aaf177"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Source_t</b></td></tr>
+<tr class="separator:a4975906ca01ba26a3463157a90aaf177"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Rozum Robotics API Header File. </p>
 <dl class="section author"><dt>Author</dt><dd>Rozum </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2018-06-01 </dd></dl>
-</div><h2 class="groupheader">Enumeration Type Documentation</h2>
-<a id="a12167db374f14c140a63962efb4f2688"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12167db374f14c140a63962efb4f2688">&#9670;&nbsp;</a></span>RetStatus_t</h2>
+</div><h2 class="groupheader">Variable Documentation</h2>
+<a id="aa259de6e47594c3305080e8088fdb53c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa259de6e47594c3305080e8088fdb53c">&#9670;&nbsp;</a></span>activated</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">enum <a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688">RetStatus_t</a></td>
+          <td class="memname">uint8_t activated</td>
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Return codes of the API functions. </p>
-<table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a12167db374f14c140a63962efb4f2688a4894234446e2d92068943b3d6d3a0bdc"></a>RET_OK&#160;</td><td class="fielddoc"><p>Status OK. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a12167db374f14c140a63962efb4f2688ae8ed27c1aabd77d519426a8ad340d76c"></a>RET_ERROR&#160;</td><td class="fielddoc"><p>Generic error. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a12167db374f14c140a63962efb4f2688acdd796ae2972988d689257753a05b9dd"></a>RET_BUSY&#160;</td><td class="fielddoc"><p>Device is busy. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a12167db374f14c140a63962efb4f2688adf1d978b055d00c4036019387acfc60c"></a>RET_WRONG_TRAJ&#160;</td><td class="fielddoc"><p>Wrong trajectory. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a12167db374f14c140a63962efb4f2688a2840a6ac495b0fe4b9e8565d9f76e29a"></a>RET_LOCKED&#160;</td><td class="fielddoc"><p>Device is locked. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a12167db374f14c140a63962efb4f2688ad456500c4074aeffb3e5e132bf7d996c"></a>RET_STOPPED&#160;</td><td class="fielddoc"><p>Device is in STOPPED state. </p>
-</td></tr>
-<tr><td class="fieldname"><a id="a12167db374f14c140a63962efb4f2688adf2eed18ed159c7517505568b0f261dd"></a>RET_TIMEOUT&#160;</td><td class="fielddoc"><p>Communication timeout. </p>
-</td></tr>
-</table>
+<b>Initial value:</b><div class="fragment"><div class="line">=======</div><div class="line">    <span class="keywordtype">float</span> value</div></div><!-- fragment -->
+<p>Source value. </p>
+<p>Source activation flag </p>
 
 </div>
 </div>

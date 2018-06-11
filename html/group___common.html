@@ -68,15 +68,15 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga489fd02cddd800285d9a65f2f2609c96"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga489fd02cddd800285d9a65f2f2609c96">api_initInterface</a> (const char *interfaceName)</td></tr>
-<tr class="separator:ga489fd02cddd800285d9a65f2f2609c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga16716ef79005066dd14c8f9aa14d1e5f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga16716ef79005066dd14c8f9aa14d1e5f">api_initServo</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t id)</td></tr>
-<tr class="separator:ga16716ef79005066dd14c8f9aa14d1e5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga9dda131254d970d91b162cce0830f112"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga9dda131254d970d91b162cce0830f112">api_initInterface</a> (<a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *const interface, const char *interfaceName)</td></tr>
+<tr class="separator:ga9dda131254d970d91b162cce0830f112"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga8f5fdb9e6220866d65496255b08477ee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga8f5fdb9e6220866d65496255b08477ee">api_initServo</a> (const <a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *interface, <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *const device, const uint8_t id)</td></tr>
+<tr class="separator:ga8f5fdb9e6220866d65496255b08477ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga489fd02cddd800285d9a65f2f2609c96"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga489fd02cddd800285d9a65f2f2609c96">&#9670;&nbsp;</a></span>api_initInterface()</h2>
+<a id="ga9dda131254d970d91b162cce0830f112"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga9dda131254d970d91b162cce0830f112">&#9670;&nbsp;</a></span>api_initInterface()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -84,24 +84,35 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">int api_initInterface </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>interfaceName</em></td><td>)</td>
+          <td class="paramtype"><a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *const&#160;</td>
+          <td class="paramname"><em>interface</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>interfaceName</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">interface</td><td></td></tr>
     <tr><td class="paramname">interfaceName</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
-<a id="ga16716ef79005066dd14c8f9aa14d1e5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga16716ef79005066dd14c8f9aa14d1e5f">&#9670;&nbsp;</a></span>api_initServo()</h2>
+<a id="ga8f5fdb9e6220866d65496255b08477ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8f5fdb9e6220866d65496255b08477ee">&#9670;&nbsp;</a></span>api_initServo()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -109,7 +120,13 @@ Functions</h2></td></tr>
         <tr>
           <td class="memname">int api_initServo </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
+          <td class="paramtype">const <a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="struct_can_device__t.html">CanDevice_t</a> *const&#160;</td>
           <td class="paramname"><em>device</em>, </td>
         </tr>
         <tr>
@@ -127,12 +144,13 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">interface</td><td></td></tr>
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
     <tr><td class="paramname">id</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>

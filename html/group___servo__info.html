@@ -68,25 +68,35 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga3c053a7c2ddfbb7d85077fada388424d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga3c053a7c2ddfbb7d85077fada388424d">api_readErrorStatus</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="separator:ga3c053a7c2ddfbb7d85077fada388424d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga37e9d4bcd2d029129bf545fb83b7dc1c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga37e9d4bcd2d029129bf545fb83b7dc1c">api_writeArrayRequestMask</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t *requests)</td></tr>
-<tr class="separator:ga37e9d4bcd2d029129bf545fb83b7dc1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac263c10ec30e016e68c0b0d700720f04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gac263c10ec30e016e68c0b0d700720f04">api_readArrayRequestMask</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *requests)</td></tr>
-<tr class="separator:gac263c10ec30e016e68c0b0d700720f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6c8312a43c49cec635035ba306d0497e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga6c8312a43c49cec635035ba306d0497e">api_readErrorStatus</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *array, uint32_t *size)</td></tr>
+<tr class="memdesc:ga6c8312a43c49cec635035ba306d0497e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads error flag array.  <a href="#ga6c8312a43c49cec635035ba306d0497e">More...</a><br /></td></tr>
+<tr class="separator:ga6c8312a43c49cec635035ba306d0497e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9">api_writeSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t *requests, const uint32_t size)</td></tr>
+<tr class="memdesc:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes device source array format (activated source indexes)  <a href="#ga3dfc0dd6bf219f00b1ce146ffb399dd9">More...</a><br /></td></tr>
+<tr class="separator:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gada1e4cb49ca5d980fddfa65c66a7e80a">api_readSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *requests, uint32_t *size)</td></tr>
+<tr class="memdesc:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device source array format (activated source indexes)  <a href="#gada1e4cb49ca5d980fddfa65c66a7e80a">More...</a><br /></td></tr>
+<tr class="separator:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a2885733d9e3f2f7753b823bc14c399"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga6a2885733d9e3f2f7753b823bc14c399">api_readSources</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
+<tr class="memdesc:ga6a2885733d9e3f2f7753b823bc14c399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device sources. Note: source indexes should be programmed with <a class="el" href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9" title="Writes device source array format (activated source indexes) ">api_writeSourcesFormat</a> function.  <a href="#ga6a2885733d9e3f2f7753b823bc14c399">More...</a><br /></td></tr>
+<tr class="separator:ga6a2885733d9e3f2f7753b823bc14c399"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gadc2219a8852f829ea3b4b93bca096d64"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gadc2219a8852f829ea3b4b93bca096d64">api_readParameter</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t param, const float *value)</td></tr>
+<tr class="memdesc:gadc2219a8852f829ea3b4b93bca096d64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device source (information parameter)  <a href="#gadc2219a8852f829ea3b4b93bca096d64">More...</a><br /></td></tr>
 <tr class="separator:gadc2219a8852f829ea3b4b93bca096d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga489725a1a7e0a47e06436fde62cd590e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga489725a1a7e0a47e06436fde62cd590e">api_readArrayRequest</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float *array)</td></tr>
-<tr class="separator:ga489725a1a7e0a47e06436fde62cd590e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga23e17a660476850b3e5825d7964b9e2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga23e17a660476850b3e5825d7964b9e2d">api_getPointsSize</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *num)</td></tr>
+<tr class="memdesc:ga23e17a660476850b3e5825d7964b9e2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets device motion queue occupied cells (queue size)  <a href="#ga23e17a660476850b3e5825d7964b9e2d">More...</a><br /></td></tr>
 <tr class="separator:ga23e17a660476850b3e5825d7964b9e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga18d1d1ab4216ce7fb23ee0d63ba4e3f5">api_getPointsFreeSpace</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *num)</td></tr>
+<tr class="memdesc:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets device remaining motion queue free cell count.  <a href="#ga18d1d1ab4216ce7fb23ee0d63ba4e3f5">More...</a><br /></td></tr>
 <tr class="separator:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7">api_invokeTimeCalculation</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs, const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs)</td></tr>
+<tr class="memdesc:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates motion point parameters.  <a href="#gad430bdf00927f813ae49e4f1a74eb4f7">More...</a><br /></td></tr>
 <tr class="separator:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gabb3e39d8cdb8126bd68f537e91b6d5e4">api_getTimeCalculationResult</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *timeMs)</td></tr>
+<tr class="memdesc:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets <a class="el" href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7" title="Calculates motion point parameters. ">api_invokeTimeCalculation</a> calculated time in milliseconds.  <a href="#gabb3e39d8cdb8126bd68f537e91b6d5e4">More...</a><br /></td></tr>
 <tr class="separator:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga86415520674a977f2261abd80fde08a9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga86415520674a977f2261abd80fde08a9">api_getMaxVelocity</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float *velocityDegPerSec)</td></tr>
+<tr class="memdesc:ga86415520674a977f2261abd80fde08a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the maximum device velocity.  <a href="#ga86415520674a977f2261abd80fde08a9">More...</a><br /></td></tr>
 <tr class="separator:ga86415520674a977f2261abd80fde08a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -116,14 +126,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets the maximum device velocity. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">velocityDegPerSec</td><td></td></tr>
+    <tr><td class="paramname">velocityDegPerSec</td><td>Velocity in degrees/sec </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -152,6 +164,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets device remaining motion queue free cell count. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
@@ -159,7 +173,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -188,6 +202,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets device motion queue occupied cells (queue size) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
@@ -195,7 +211,7 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -224,14 +240,16 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Gets <a class="el" href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7" title="Calculates motion point parameters. ">api_invokeTimeCalculation</a> calculated time in milliseconds. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">timeMs</td><td></td></tr>
+    <tr><td class="paramname">timeMs</td><td>Pointer to the calculated time in milliseconds </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -302,6 +320,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Calculates motion point parameters. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
@@ -316,84 +336,12 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
-<a id="ga489725a1a7e0a47e06436fde62cd590e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga489725a1a7e0a47e06436fde62cd590e">&#9670;&nbsp;</a></span>api_readArrayRequest()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int api_readArrayRequest </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">float *&#160;</td>
-          <td class="paramname"><em>array</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">array</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
-
-</div>
-</div>
-<a id="gac263c10ec30e016e68c0b0d700720f04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac263c10ec30e016e68c0b0d700720f04">&#9670;&nbsp;</a></span>api_readArrayRequestMask()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int api_readArrayRequestMask </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint8_t *&#160;</td>
-          <td class="paramname"><em>requests</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">requests</td><td></td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
-
-</div>
-</div>
-<a id="ga3c053a7c2ddfbb7d85077fada388424d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga3c053a7c2ddfbb7d85077fada388424d">&#9670;&nbsp;</a></span>api_readErrorStatus()</h2>
+<a id="ga6c8312a43c49cec635035ba306d0497e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6c8312a43c49cec635035ba306d0497e">&#9670;&nbsp;</a></span>api_readErrorStatus()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -402,18 +350,38 @@ Functions</h2></td></tr>
           <td class="memname">int api_readErrorStatus </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramname"><em>device</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Reads error flag array. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">array</td><td>Pointer to the error array </td></tr>
+    <tr><td class="paramname">size</td><td>Size of the received array </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
@@ -448,6 +416,8 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Reads device source (information parameter) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
@@ -456,18 +426,45 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
-<a id="ga37e9d4bcd2d029129bf545fb83b7dc1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga37e9d4bcd2d029129bf545fb83b7dc1c">&#9670;&nbsp;</a></span>api_writeArrayRequestMask()</h2>
+<a id="ga6a2885733d9e3f2f7753b823bc14c399"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6a2885733d9e3f2f7753b823bc14c399">&#9670;&nbsp;</a></span>api_readSources()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_writeArrayRequestMask </td>
+          <td class="memname">int api_readSources </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
+          <td class="paramname"><em>device</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reads device sources. Note: source indexes should be programmed with <a class="el" href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9" title="Writes device source array format (activated source indexes) ">api_writeSourcesFormat</a> function. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+
+</div>
+</div>
+<a id="gada1e4cb49ca5d980fddfa65c66a7e80a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gada1e4cb49ca5d980fddfa65c66a7e80a">&#9670;&nbsp;</a></span>api_readSourcesFormat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int api_readSourcesFormat </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
           <td class="paramname"><em>device</em>, </td>
@@ -475,8 +472,14 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const uint8_t *&#160;</td>
-          <td class="paramname"><em>requests</em>&#160;</td>
+          <td class="paramtype">uint8_t *&#160;</td>
+          <td class="paramname"><em>requests</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">uint32_t *&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -485,14 +488,62 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Reads device source array format (activated source indexes) </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">requests</td><td></td></tr>
+    <tr><td class="paramname">requests</td><td>Pointer to the source index array </td></tr>
+    <tr><td class="paramname">size</td><td>Size of the array. Contains received size of activated sources in the device </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a12167db374f14c140a63962efb4f2688" title="Return codes of the API functions. ">RetStatus_t</a>) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+
+</div>
+</div>
+<a id="ga3dfc0dd6bf219f00b1ce146ffb399dd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3dfc0dd6bf219f00b1ce146ffb399dd9">&#9670;&nbsp;</a></span>api_writeSourcesFormat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int api_writeSourcesFormat </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
+          <td class="paramname"><em>device</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint8_t *&#160;</td>
+          <td class="paramname"><em>requests</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const uint32_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Writes device source array format (activated source indexes) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">requests</td><td>Pointer to the source index array </td></tr>
+    <tr><td class="paramname">size</td><td>Size of the source index array </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
 
 </div>
 </div>
