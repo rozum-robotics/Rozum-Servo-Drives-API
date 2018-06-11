@@ -1,3 +1,11 @@
+/**
+ * @brief Rozum Robotics API Header File
+ * 
+ * @file api.h
+ * @author Rozum
+ * @date 2018-06-01
+ */
+
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef _ROZUM_API_H
 #define _ROZUM_API_H
@@ -7,17 +15,31 @@
 #include "math.h"
 
 /* Exported types ------------------------------------------------------------*/
+/**
+ * @brief Device instance structure
+ * 
+ */
 typedef struct
 {
-    uint8_t id;
-    uint8_t nmtState;
-    time_t lastHartbeatTimestamp;
+    uint8_t id;                   ///< Device CAN ID
+    uint8_t nmtState;             ///< Device NMT state
+    time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
 } CanDevice_t;
 
 /* Exported constants --------------------------------------------------------*/
-enum
+/**
+ * @brief Return codes of the API functions
+ * 
+ */
+enum RetStatus_t
 {
-
+    RET_OK = 0,     ///< Status OK
+    RET_ERROR,      ///< Generic error
+    RET_BUSY,       ///< Device is busy
+    RET_WRONG_TRAJ, ///< Wrong trajectory
+    RET_LOCKED,     ///< Device is locked
+    RET_STOPPED,    ///< Device is in STOPPED state
+    RET_TIMEOUT     ///< Communication timeout
 };
 
 /* Exported macro ------------------------------------------------------------*/
@@ -31,7 +53,7 @@ int api_initInterface(const char *interfaceName);
 int api_initServo(const CanDevice_t *device, const uint8_t id);
 
 int api_reboot(const CanDevice_t *device);
-int api_resetCommunication(const CanDevice_t *device) {}
+int api_resetCommunication(const CanDevice_t *device);
 int api_setStateOperational(const CanDevice_t *device);
 int api_setStatePreOperational(const CanDevice_t *device);
 int api_setStateStopped(const CanDevice_t *device);
@@ -43,7 +65,7 @@ int api_setCurrent(const CanDevice_t *device, const float32_t currentA);
 int api_setVelocity(const CanDevice_t *device, const float32_t velocityDegPerSec);
 int api_setPosition(const CanDevice_t *device, const float32_t positionDeg);
 int api_setVelocityWithLimits(const CanDevice_t *device, const float32_t velocityDegPerSec, const float32_t currentA);
-int api_setPositionWithLimits(const CanDevice_t *device, const float32_t positionDeg, const float32_t velocity, const float32_t currentA);
+int api_setPositionWithLimits(const CanDevice_t *device, const float32_t positionDeg, const float32_t velocityDegPerSec, const float32_t currentA);
 int api_setDuty(CanDevice_t *device, float32_t dutyPercent);
 
 int api_addMotionPoint(const CanDevice_t *device, const float32_t positionDeg, const float32_t velocityDeg, const uint32_t timeMs);
@@ -63,13 +85,12 @@ int api_getPointsSize(CanDevice_t *device, uint32_t *num);
 int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num);
 
 int api_invokeTimeCalculation(const CanDevice_t *device,
-                          const float32_t startPositionDeg, const float32_t startVelocityDeg, const float32_t startAccelerationDegPerSec2, const uint32_t startTimeMs,
-                          const float32_t endPositionDeg, const float32_t endVelocityDeg, const float32_t endAccelerationDegPerSec2, const uint32_t endTimeMs);
+                              const float32_t startPositionDeg, const float32_t startVelocityDeg, const float32_t startAccelerationDegPerSec2, const uint32_t startTimeMs,
+                              const float32_t endPositionDeg, const float32_t endVelocityDeg, const float32_t endAccelerationDegPerSec2, const uint32_t endTimeMs);
 int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs);
 
 int api_getZeroPosition(const CanDevice_t *device, float32_t *positionDeg); //???
 int api_setZeroPositionAndSave(const CanDevice_t *device);
-int api_setZeroPositionValue(const CanDevice_t *device, const float32_t positionDeg);
 
 int api_getMaxVelocity(const CanDevice_t *device, float32_t *velocityDegPerSec);
 int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerSec);
