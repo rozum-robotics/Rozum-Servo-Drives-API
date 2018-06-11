@@ -13,7 +13,7 @@
 typedef float float24;
 
 #define USB_CAN_PUT_UX_DECL(b, bp, d, n_memb, type)\
-int usb_can_put_ ## type(uint8_t *b, int bp, type *d, int n_memb)
+int usb_can_put_ ## type(uint8_t *b, int bp, const type *d, int n_memb)
 
 #define USB_CAN_PUT_UX(b, bp, d, n_memb, type)\
 USB_CAN_PUT_UX_DECL(b, bp, d, n_memb, type)\
@@ -56,7 +56,7 @@ USB_CAN_PUT_UX_DECL(b, bp, d, n_memb, uint32_t);
 USB_CAN_PUT_UX_DECL(b, bp, d, n_memb, uint64_t);
 
 int usb_can_get_float24(uint8_t *b, int bp, float24 *d, int n_memb);
-int usb_can_put_float24(uint8_t *b, int bp, float24 *d, int n_memb);
+int usb_can_put_float24(uint8_t *b, int bp, const float24 *d, int n_memb);
 
 
 

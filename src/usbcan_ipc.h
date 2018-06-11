@@ -48,11 +48,11 @@ typedef struct
     int data_len;
 } ipc_sdo_resp_t;
 
-uint32_t write_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len);
-uint32_t read_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len);
-void write_com_frame(usbcan_instance_t *inst, can_msg_t *msg);
-void write_timestamp(usbcan_instance_t *inst, uint32_t ts);
-void write_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
+uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout);
+uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout);
+void write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg);
+void write_timestamp(const usbcan_instance_t *inst, uint32_t ts);
+void write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
 void ipc_process(usbcan_instance_t *inst);
 void ipc_create_link(usbcan_instance_t *inst);
 

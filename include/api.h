@@ -147,11 +147,13 @@ typedef enum
  * @brief Device information source instance
  * 
  */
+/*
 typedef struct
+{
     float value;       ///< Source value
     uint8_t activated; ///< Source activation flag
 } Source_t;
-
+*/
 /**
  * @brief Device instance structure
  * 
@@ -159,8 +161,8 @@ typedef struct
 typedef struct
 {
     usbcan_device_t dev;
-    Source_t source[256]; ///< Device sources cells
-    uint32_t sourceSize;  ///< Number of the device activated sources
+    //Source_t source[256]; ///< Device sources cells
+    //uint32_t sourceSize;  ///< Number of the device activated sources
 } CanDevice_t;
 
 /**
@@ -169,7 +171,7 @@ typedef struct
  */
 typedef struct
 {
-	usbcan_instance_t usbcan; ///< UsbCan internals (do not use directly)
+	usbcan_instance_t inst; ///< UsbCan internals (do not use directly)
 } CanInterface_t;
 
 /* Exported constants --------------------------------------------------------*/
@@ -184,11 +186,17 @@ typedef struct
 int api_initInterface(CanInterface_t *const interface, const char *interfaceName);
 int api_initServo(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id);
 
-int api_reboot(const CanDevice_t *device);
-int api_resetCommunication(const CanDevice_t *device);
-int api_setStateOperational(const CanDevice_t *device);
-int api_setStatePreOperational(const CanDevice_t *device);
-int api_setStateStopped(const CanDevice_t *device);
+int api_deviceReboot(const CanDevice_t *device);
+int api_deviceResetCommunication(const CanDevice_t *device);
+int api_deviceSetStateOperational(const CanDevice_t *device);
+int api_deviceSetStatePreOperational(const CanDevice_t *device);
+int api_deviceSetStateStopped(const CanDevice_t *device);
+
+int api_netReboot(const CanInterface_t *interface);
+int api_netResetCommunication(const CanInterface_t *interface);
+int api_netSetStateOperational(const CanInterface_t *interface);
+int api_netSetStatePreOperational(const CanInterface_t *interface);
+int api_netSetStateStopped(const CanInterface_t *interface);
 
 int api_stopAndRelease(const CanDevice_t *device);
 int api_stopAndFreeze(const CanDevice_t *device);
@@ -201,15 +209,15 @@ int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg
 int api_setDuty(CanDevice_t *device, float dutyPercent);
 
 int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs);
-int api_startMotion(uint32_t timestampMs);
+int api_startMotion(CanInterface_t *interface, uint32_t timestampMs);
 
 int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *size);
 
-int api_writeSourcesFormat(const CanDevice_t *device, const uint8_t *requests, const uint32_t size);
-int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size);
-int api_readSources(const CanDevice_t *device);
+//int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, const uint32_t size);
+//int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size);
+//int api_readSources(CanDevice_t *const device, uint8_t *requests);
 
-int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value);
+int api_readParameter(const CanDevice_t *device, const AppParam_t param, const float *value);
 int api_clearPointsAll(const CanDevice_t *device);
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear);
 
@@ -221,8 +229,8 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
                               const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs);
 int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs);
 
-int api_setZeroPosition(const CanDevice_t *device, const float32_t positionDeg);
-int api_setZeroPositionAndSave(const CanDevice_t *device, const float32_t positionDeg);
+int api_setZeroPosition(const CanDevice_t *device, const float positionDeg);
+int api_setZeroPositionAndSave(const CanDevice_t *device, const float positionDeg);
 
 int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec);
 int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerSec);

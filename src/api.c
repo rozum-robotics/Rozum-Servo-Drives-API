@@ -24,6 +24,9 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "api.h"
+#include "usbcan_proto.h"
+#include "usbcan_ipc.h"
+#include "usbcan_types.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -31,11 +34,13 @@
 //! @cond Doxygen_Suppress
 #define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
 
-#define CHECK_NMT_STATE(x)                                            \
+#define CHECK_NMT_STATE(x)  
+/*                                          \
     if(x->nmtState == _CO_NMT_STOPPED || x->nmtState == _CO_NMT_BOOT) \
     {                                                                 \
         return RET_STOPPED;                                           \
     }
+    */
 //! @endcond
 
 /* Private variables ---------------------------------------------------------*/
@@ -53,36 +58,7 @@ static int retSDO(int code)
     case CO_SDO_AB_TIMEOUT:
         return RET_TIMEOUT;
 
-    case CO_SDO_AB_TOGGLE_BIT:
-    case CO_SDO_AB_CMD:
-    case CO_SDO_AB_BLOCK_SIZE:
-    case CO_SDO_AB_SEQ_NUM:
-    case CO_SDO_AB_CRC:
-    case CO_SDO_AB_OUT_OF_MEM:
-    case CO_SDO_AB_UNSUPPORTED_ACCESS:
-    case CO_SDO_AB_WRITEONLY:
-    case CO_SDO_AB_READONLY:
-    case CO_SDO_AB_NOT_EXIST:
-    case CO_SDO_AB_NO_MAP:
-    case CO_SDO_AB_MAP_LEN:
-    case CO_SDO_AB_PRAM_INCOMPAT:
-    case CO_SDO_AB_DEVICE_INCOMPAT:
-    case CO_SDO_AB_HW:
-    case CO_SDO_AB_TYPE_MISMATCH:
-    case CO_SDO_AB_DATA_LONG:
-    case CO_SDO_AB_DATA_SHORT:
-    case CO_SDO_AB_SUB_UNKNOWN:
-    case CO_SDO_AB_INVALID_VALUE:
-    case CO_SDO_AB_VALUE_HIGH:
-    case CO_SDO_AB_VALUE_LOW:
-    case CO_SDO_AB_MAX_LESS_MIN:
-    case CO_SDO_AB_NO_RESOURCE:
-    case CO_SDO_AB_GENERAL:
-    case CO_SDO_AB_DATA_TRANSF:
-    case CO_SDO_AB_DATA_LOC_CTRL:
-    case CO_SDO_AB_DATA_DEV_STATE:
-    case CO_SDO_AB_DATA_OD:
-    case CO_SDO_AB_NO_DATA:
+	default:
         return RET_ERROR;
     }
 }
@@ -98,7 +74,7 @@ static int retSDO(int code)
 int api_initInterface(CanInterface_t *const interface, const char *interfaceName)
 {
 	API_DEBUG("Opening %s...\n", interfaceName);
-	return usbcan_instance_init(&interface->usbcan, interfaceName) ? RET_OK : RET_ERROR;
+	return usbcan_instance_init(&interface->inst, interfaceName) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -122,12 +98,9 @@ int api_initServo(const CanInterface_t *interface, CanDevice_t *const device, co
  * @return int Status code (::RetStatus_t)
  * @ingroup System_control
  */
-int api_reboot(const CanDevice_t *device)
+int api_deviceReboot(const CanDevice_t *device)
 {
-    write_nmt((device == 0)
-                  ? 0
-                  : device,
-              _CO_NMT_CMD_RESET_NODE);
+    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_RESET_NODE);
     return RET_OK;
 }
 
@@ -138,61 +111,115 @@ int api_reboot(const CanDevice_t *device)
  * @return int Status code (::RetStatus_t)
  * @ingroup System_control
  */
-int api_resetCommunication(const CanDevice_t *device)
+int api_deviceResetCommunication(const CanDevice_t *device)
 {
-    write_nmt((device == 0)
-                  ? 0
-                  : device,
-              _CO_NMT_CMD_RESET_COMM);
+    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_RESET_COMM);
     return RET_OK;
 }
 
 /**
- * @brief Sets device/s to the operational state  
+ * @brief Puts device to the operational state  
  * 
  * @param device Device instance 
  *  If device == 0 > all devices on the bus will be set to the operational state
  * @return int Status code (::RetStatus_t)
  * @ingroup System_control
  */
-int api_setStateOperational(const CanDevice_t *device)
+int api_deviceSetStateOperational(const CanDevice_t *device)
 {
-    write_nmt((device == 0)
-                  ? 0
-                  : device,
-              _CO_NMT_CMD_GOTO_OP);
+    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_GOTO_OP);
     return RET_OK;
 }
 
 /**
- * @brief Sets device/s to the pre-operational state  
+ * @brief Puts device to the pre-operational state  
  * 
  * @param device Device instance 
  * @return int Status code (::RetStatus_t)
  * @ingroup System_control
  */
-int api_setStatePreOperational(const CanDevice_t *device)
+int api_deviceSetStatePreOperational(const CanDevice_t *device)
 {
-    write_nmt((device == 0)
-                  ? 0
-                  : device,
-              _CO_NMT_CMD_GOTO_PREOP);
+    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_GOTO_PREOP);
     return RET_OK;
 }
 
 /**
- * @brief Sets device/s to the stopped state  
+ * @brief Puts device to the stopped state  
  * 
  * @param device Device instance 
  * @return int Status code (::RetStatus_t)
  * @ingroup System_control
  */
-int api_setStateStopped(const CanDevice_t *device)
+int api_deviceSetStateStopped(const CanDevice_t *device)
 {
-    write_nmt((device == 0)
-                  ? 0
-                  : device,
-              _CO_NMT_CMD_GOTO_STOPPED);
+    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_GOTO_STOPPED);
+    return RET_OK;
+}
+
+/**
+ * @brief Reboots entire network
+ * 
+ * @param interface Interface instance 
+ * @return int Status code (::RetStatus_t)
+ * @ingroup System_control
+ */
+int api_netReboot(const CanInterface_t *interface)
+{
+    write_nmt(&interface->inst, 0, _CO_NMT_CMD_RESET_NODE);
+    return RET_OK;
+}
+
+/**
+ * @brief Resets entire network communication
+ * 
+ * @param interface Interface instance 
+ * @return int Status code (::RetStatus_t)
+ * @ingroup System_control
+ */
+int api_netResetCommunication(const CanInterface_t *interface)
+{
+    write_nmt(&interface->inst, 0, _CO_NMT_CMD_RESET_COMM);
+    return RET_OK;
+}
+
+/**
+ * @brief Putss entire network to the operational state  
+ * 
+ * @param interface Interface instance 
+ * @return int Status code (::RetStatus_t)
+ * @ingroup System_control
+ */
+int api_netSetStateOperational(const CanInterface_t *interface)
+{
+    write_nmt(&interface->inst, 0, _CO_NMT_CMD_GOTO_OP);
+    return RET_OK;
+}
+
+/**
+ * @brief Putss entire network to the pre-operational state  
+ * 
+ * @param interface Interface instance 
+ * @return int Status code (::RetStatus_t)
+ * @ingroup System_control
+ */
+int api_netSetStatePreOperational(const CanInterface_t *interface)
+{
+    write_nmt(&interface->inst, 0, _CO_NMT_CMD_GOTO_PREOP);
+    return RET_OK;
+}
+
+
+/**
+ * @brief Puts entire network to the stopped state  
+ * 
+ * @param interface Interface instance 
+ * @return int Status code (::RetStatus_t)
+ * @ingroup System_control
+ */
+int api_netSetStateStopped(const CanInterface_t *interface)
+{
+    write_nmt(&interface->inst, 0, _CO_NMT_CMD_GOTO_STOPPED);
     return RET_OK;
 }
 
@@ -208,7 +235,7 @@ int api_stopAndRelease(const CanDevice_t *device)
     CHECK_NMT_STATE(device);
 
     uint8_t data = 0;
-    uint8_t sts = write_raw_sdo(device, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -225,7 +252,7 @@ int api_stopAndFreeze(const CanDevice_t *device)
     CHECK_NMT_STATE(device);
 
     uint8_t data = 0;
-    uint8_t sts = write_raw_sdo(device, 0x2010, 0x02, &data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -244,7 +271,7 @@ int api_setCurrent(const CanDevice_t *device, const float currentA)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2012, 0x01, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -263,9 +290,9 @@ int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2012, 0x03, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
 
-    return retSDO(sts)
+    return retSDO(sts);
 }
 
 /**
@@ -282,7 +309,7 @@ int api_setPosition(const CanDevice_t *device, const float positionDeg)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &positionDeg, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2012, 0x04, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -303,7 +330,7 @@ int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDeg
     uint8_t data[8];
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2012, 0x05, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -328,7 +355,7 @@ int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg
     usb_can_put_float(data, 0, &positionDeg, 1);
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2012, 0x06, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -348,7 +375,7 @@ int api_setDuty(CanDevice_t *device, float dutyPercent)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &dutyPercent, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2012, 0x07, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -372,7 +399,7 @@ int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const
     usb_can_put_float(data + 4, 0, &velocityDeg, 1);
     usb_can_put_uint32_t(data + 8, 0, &timeMs, 1);
 
-    uint32_t sts = write_raw_sdo(device, 0x2200, 2, data, sizeof(data), 1, 200);
+    uint32_t sts = write_raw_sdo(&device->dev, 0x2200, 2, data, sizeof(data), 1, 200);
     if(sts == CO_SDO_AB_PRAM_INCOMPAT)
     {
         return RET_WRONG_TRAJ;
@@ -389,14 +416,15 @@ int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const
  * Note: if any device is not completed the movement (by spline points) it will send 
  * broadcast "Goto Stopped State" command to the all devices on the bus
  * 
+ * @param interface interface to start motion on. 
  * @param timestampMs Startup delay in milliseconds. 
  * Default: 0
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_control
  */
-int api_startMotion(uint32_t timestampMs)
+int api_startMotion(CanInterface_t *interface, uint32_t timestampMs)
 {
-    write_timestamp(timestampMs);
+    write_timestamp(&interface->inst, timestampMs);
     return RET_OK;
 }
 
@@ -412,7 +440,9 @@ int api_startMotion(uint32_t timestampMs)
 int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *size)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = read_raw_sdo(device, 0x2000, 0, array, size, 1, 200);
+	int _size;
+    uint8_t sts = read_raw_sdo(&device->dev, 0x2000, 0, array, &_size, 1, 200);
+	*size = _size;
     return retSDO(sts);
 }
 
@@ -425,13 +455,14 @@ int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *siz
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-int api_writeSourcesFormat(const CanDevice_t *device, const uint8_t *requests, const uint32_t size)
+	/*
+int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, const uint32_t size)
 {
     CHECK_NMT_STATE(device);
 
     uint8_t array[10] = {0};
 
-    for(uint32_t i = 0; i < sizeof(device->source)/sizeof(device->source[0]; i++)
+    for(uint32_t i = 0; i < sizeof(device->source)/sizeof(device->source[0]); i++)
     {
         device->source[i].activated = 0;
     }
@@ -442,13 +473,15 @@ int api_writeSourcesFormat(const CanDevice_t *device, const uint8_t *requests, c
         device->source[requests[i]].value = 0.0;
         BIT_SET_UINT_ARRAY(array, requests[i]);
     }
-    sourceSize = size;
+    device->sourceSize = size;
 
-    uint8_t sts = write_raw_sdo(device, 0x2015, 1, array, sizeof(array), 1, 200);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2015, 1, array, sizeof(array), 1, 200);
 
     return retSDO(sts);
+	return RET_OK;
 }
 
+	*/
 /**
  * @brief Reads device source array format (activated source indexes)
  * 
@@ -458,14 +491,19 @@ int api_writeSourcesFormat(const CanDevice_t *device, const uint8_t *requests, c
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
+	/*
 int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size)
 {
     CHECK_NMT_STATE(device);
 
-    uint8_t sts = read_raw_sdo(device, 0x2015, 1, requests, size, 1, 200);
+	int _size;
+    uint8_t sts = read_raw_sdo(&device->dev, 0x2015, 1, requests, &_size, 1, 200);
+	*size = _size;
 
     return retSDO(sts);
+	return RET_OK;
 }
+	*/
 
 /**
  * @brief Reads device sources. 
@@ -475,19 +513,20 @@ int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-int api_readSources(const CanDevice_t *device)
+	/*
+int api_readSources(CanDevice_t *const device, uint8_t *requests)
 {
     CHECK_NMT_STATE(device);
 
     uint8_t data[256 * 4];
-    uint32_t len = sizeof(data);
+    int len = sizeof(data);
 
     if(device->sourceSize == 0)
     {
         return RET_ZERO_SIZE;
     }
 
-    uint8_t sts = read_raw_sdo(device, 0x2014, 0x01, data, len, 1, 100);
+    uint8_t sts = read_raw_sdo(&device->dev, 0x2014, 0x01, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE)
     {
@@ -509,7 +548,9 @@ int api_readSources(const CanDevice_t *device)
     }
 
     return retSDO(sts);
+	return RET_OK;
 }
+	*/
 
 /**
  * @brief Reads device source (information parameter)
@@ -520,14 +561,16 @@ int api_readSources(const CanDevice_t *device)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
+	/*
 int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value)
 {
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
     uint32_t size = sizeof(data);
+	int len;
 
-    int sts = read_raw_sdo(device, 0x2013, param, data, &len, 2, 100);
+    int sts = read_raw_sdo(&device->dev, 0x2013, param, data, &len, 2, 100);
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
         usb_can_get_float(data, 0, &device->source[requests[i]].value, 1);
@@ -535,7 +578,9 @@ int api_readParameter(const CanDevice_t *device, const uint8_t param, const floa
     }
 
     return retSDO(sts);
+	return RET_OK;
 }
+	*/
 
 /**
  * @brief Erases the whole device motion queue
@@ -548,7 +593,7 @@ int api_clearPointsAll(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
     uint32_t num = 0;
-    uint8_t sts = write_raw_sdo(device, 0x2202, 0x01, &num, sizeof(num), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2202, 0x01, (uint8_t *)&num, sizeof(num), 1, 100);
     return retSDO(sts);
 }
 
@@ -563,7 +608,7 @@ int api_clearPointsAll(const CanDevice_t *device)
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = write_raw_sdo(device, 0x2202, 0x01, &numToClear, sizeof(numToClear), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2202, 0x01, (uint8_t *)&numToClear, sizeof(numToClear), 1, 100);
     return retSDO(sts);
 }
 
@@ -580,12 +625,12 @@ int api_getPointsSize(CanDevice_t *device, uint32_t *num)
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
-    uint32_t len = sizeof(data);
-    uint8_t sts = read_raw_sdo(device, 0x2202, 0x02, data, len, 1, 100);
+    int len = sizeof(data);
+    uint8_t sts = read_raw_sdo(&device->dev, 0x2202, 0x02, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
-        usb_can_get_uint32(data, 0, num, 1);
+        usb_can_get_uint32_t(data, 0, num, 1);
         return RET_OK;
     }
 
@@ -605,12 +650,12 @@ int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num)
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
-    uint32_t len = sizeof(data);
-    uint8_t sts = read_raw_sdo(device, 0x2202, 0x03, data, len, 1, 100);
+    int len = sizeof(data);
+    uint8_t sts = read_raw_sdo(&device->dev, 0x2202, 0x03, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
-        usb_can_get_uint32(data, 0, num, 1);
+        usb_can_get_uint32_t(data, 0, num, 1);
         return RET_OK;
     }
 
@@ -650,7 +695,7 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
     usb_can_put_float(data + 24, 0, &endAccelerationDegPerSec2, 1);
     usb_can_put_uint32_t(data + 28, 0, &endTimeMs, 1);
 
-    uint8_t sts = write_raw_sdo(device, 0x2203, 0x01, data, sizeof(data), 1, 200);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
     if(sts == CO_SDO_AB_GENERAL)
     {
@@ -675,12 +720,14 @@ int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs)
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
-    uint32_t len = sizeof(data);
-    uint8_t sts = read_raw_sdo(device, 0x2203, 0x02, data, len, 1, 100);
+    int len = sizeof(data);
+    uint8_t sts = read_raw_sdo(&device->dev, 0x2203, 0x02, data, &len, 1, 100);
+	uint32_t num;
 
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
-        usb_can_get_uint32(data, 0, num, 1);
+        usb_can_get_uint32_t(data, 0, &num, 1);
+		*timeMs = num;
         return RET_OK;
     }
 
@@ -695,13 +742,13 @@ int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_config
  */
-int api_setZeroPosition(const CanDevice_t *device, const float32_t positionDeg)
+int api_setZeroPosition(const CanDevice_t *device, const float positionDeg)
 {
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &positionDeg, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2208, 0x01, data, sizeof(data), 0, 200);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
 
     return retSDO(sts);
 }
@@ -714,13 +761,13 @@ int api_setZeroPosition(const CanDevice_t *device, const float32_t positionDeg)
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_config
  */
-int api_setZeroPositionAndSave(const CanDevice_t *device, const float32_t positionDeg)
+int api_setZeroPositionAndSave(const CanDevice_t *device, const float positionDeg)
 {
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &positionDeg, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2208, 0x02, data, sizeof(data), 0, 200);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2208, 0x02, data, sizeof(data), 0, 200);
 
     return retSDO(sts);
 }
@@ -738,12 +785,12 @@ int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
-    unt len = sizeof(data);
+    int len = sizeof(data);
 
-    uint8_t sts = read_raw_sdo(device, 0x2207, 0x02, data, len, 1, 100);
+    uint8_t sts = read_raw_sdo(&device->dev, 0x2207, 0x02, data, &len, 1, 100);
     if(sts == CO_SDO_AB_NONE)
     {
-        usb_can_put_float(data, 0, &velocityDegPerSec, 1);
+        usb_can_put_float(data, 0, velocityDegPerSec, 1);
     }
 
     return retSDO(sts);
@@ -764,7 +811,7 @@ int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerS
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &maxVelocityDegPerSec, 1);
-    uint8_t sts = write_raw_sdo(device, 0x2300, 0x03, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(&device->dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }

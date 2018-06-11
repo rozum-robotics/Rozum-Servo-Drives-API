@@ -65,7 +65,7 @@ void sdo_resp_cb(usbcan_instance_t *inst, uint32_t abt, uint8_t *data, int len)
     }
 }
 
-void write_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
+void write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 {
 	ipc_opcode_t opcode = IPC_NMT;
 	ipc_nmt_t nmt = {.id = id, .cmd = cmd};
@@ -74,7 +74,7 @@ void write_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
     write_sig_safe(inst->to_child_pipe[1], &nmt, sizeof(nmt));
 }
 
-void write_timestamp(usbcan_instance_t *inst, uint32_t ts)
+void write_timestamp(const usbcan_instance_t *inst, uint32_t ts)
 {
 	ipc_opcode_t opcode = IPC_TIMESTAMP;
 
@@ -82,7 +82,7 @@ void write_timestamp(usbcan_instance_t *inst, uint32_t ts)
     write_sig_safe(inst->to_child_pipe[1], &ts, sizeof(ts));
 }
 
-void write_com_frame(usbcan_instance_t *inst, can_msg_t *msg)
+void write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg)
 {
 	ipc_opcode_t opcode = IPC_COM_FRAME;
 
@@ -90,7 +90,7 @@ void write_com_frame(usbcan_instance_t *inst, can_msg_t *msg)
     write_sig_safe(inst->to_child_pipe[1], msg, sizeof(can_msg_t));
 }
 
-uint32_t write_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len)
+uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout)
 {
     ipc_sdo_req_t req;
     ipc_sdo_resp_t resp;
@@ -100,9 +100,9 @@ uint32_t write_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t
     req.sdo.id = dev->id;
     req.sdo.idx = idx;
     req.sdo.sidx = sidx;
-    req.sdo.tout = dev->timeout;
-    req.sdo.re_txn = dev->retry;
-    req.sdo.ttl = dev->timeout * 2; //????????????????
+    req.sdo.tout = timeout ? timeout : dev->timeout;
+    req.sdo.re_txn = retry ? retry : dev->retry;
+    req.sdo.ttl = req.sdo.tout * 2; //????????????????
     req.data_len = len;
 
     write_sig_safe(dev->inst->to_child_pipe[1], &opcode, sizeof(opcode));
@@ -123,7 +123,7 @@ uint32_t write_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t
     return resp.abt;
 }
 
-uint32_t read_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len)
+uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout)
 {
     ipc_sdo_req_t req;
     ipc_sdo_resp_t resp;
@@ -133,9 +133,9 @@ uint32_t read_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t 
     req.sdo.id = dev->id;
     req.sdo.idx = idx;
     req.sdo.sidx = sidx;
-    req.sdo.tout = dev->timeout;
-    req.sdo.re_txn = dev->retry;
-    req.sdo.ttl = dev->timeout * 2; //????????????????
+    req.sdo.tout = timeout ? timeout : dev->timeout;
+    req.sdo.re_txn = retry ? retry : dev->retry;
+    req.sdo.ttl = req.sdo.tout * 2; //????????????????
     req.data_len = 0;
 
     write_sig_safe(dev->inst->to_child_pipe[1], &opcode, sizeof(opcode));

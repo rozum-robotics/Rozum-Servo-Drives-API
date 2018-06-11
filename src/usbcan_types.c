@@ -41,7 +41,7 @@ int usb_can_get_float24(uint8_t *b, int bp, float *d, int n_memb)
 	return bp;
 }
 
-int usb_can_put_float24(uint8_t *b, int bp, float *d, int n_memb)
+int usb_can_put_float24(uint8_t *b, int bp, const float *d, int n_memb)
 {
 	for(; n_memb--;)
 	{
