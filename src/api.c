@@ -27,13 +27,17 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+/* Private macro -------------------------------------------------------------*/
+//! @cond Doxygen_Suppress
+#define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
+
 #define CHECK_NMT_STATE(x)                                            \
     if(x->nmtState == _CO_NMT_STOPPED || x->nmtState == _CO_NMT_BOOT) \
     {                                                                 \
         return RET_STOPPED;                                           \
     }
+//! @endcond
 
-/* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Extern variables ----------------------------------------------------------*/
 /* Extern function prototypes ------------------------------------------------*/
@@ -120,7 +124,7 @@ int api_reboot(const CanDevice_t *device)
 {
     write_nmt((device == 0)
                   ? 0
-                  : device->id,
+                  : device,
               _CO_NMT_CMD_RESET_NODE);
     return RET_OK;
 }
@@ -136,7 +140,7 @@ int api_resetCommunication(const CanDevice_t *device)
 {
     write_nmt((device == 0)
                   ? 0
-                  : device->id,
+                  : device,
               _CO_NMT_CMD_RESET_COMM);
     return RET_OK;
 }
@@ -153,7 +157,7 @@ int api_setStateOperational(const CanDevice_t *device)
 {
     write_nmt((device == 0)
                   ? 0
-                  : device->id,
+                  : device,
               _CO_NMT_CMD_GOTO_OP);
     return RET_OK;
 }
@@ -169,7 +173,7 @@ int api_setStatePreOperational(const CanDevice_t *device)
 {
     write_nmt((device == 0)
                   ? 0
-                  : device->id,
+                  : device,
               _CO_NMT_CMD_GOTO_PREOP);
     return RET_OK;
 }
@@ -185,7 +189,7 @@ int api_setStateStopped(const CanDevice_t *device)
 {
     write_nmt((device == 0)
                   ? 0
-                  : device->id,
+                  : device,
               _CO_NMT_CMD_GOTO_STOPPED);
     return RET_OK;
 }
@@ -200,8 +204,10 @@ int api_setStateStopped(const CanDevice_t *device)
 int api_stopAndRelease(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
+
     uint8_t data = 0;
-    uint8_t sts = write_raw_sdo(device->id, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+
     return retSDO(sts);
 }
 
@@ -215,11 +221,11 @@ int api_stopAndRelease(const CanDevice_t *device)
 int api_stopAndFreeze(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
+
     uint8_t data = 0;
-    uint8_t sts = write_raw_sdo(device->id, 0x2010, 0x02, &data, sizeof(data), 1, 100);
-    {
-        return retSDO(sts);
-    }
+    uint8_t sts = write_raw_sdo(device, 0x2010, 0x02, &data, sizeof(data), 1, 100);
+
+    return retSDO(sts);
 }
 
 /**
@@ -236,7 +242,7 @@ int api_setCurrent(const CanDevice_t *device, const float currentA)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(device->id, 0x2012, 0x01, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2012, 0x01, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -255,7 +261,7 @@ int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
-    uint8_t sts = write_raw_sdo(device->id, 0x2012, 0x03, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2012, 0x03, data, sizeof(data), 1, 100);
 
     return retSDO(sts)
 }
@@ -274,7 +280,7 @@ int api_setPosition(const CanDevice_t *device, const float positionDeg)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &positionDeg, 1);
-    uint8_t sts = write_raw_sdo(device->id, 0x2012, 0x04, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2012, 0x04, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -295,7 +301,7 @@ int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDeg
     uint8_t data[8];
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(device->id, 0x2012, 0x05, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -320,7 +326,7 @@ int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg
     usb_can_put_float(data, 0, &positionDeg, 1);
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(device->id, 0x2012, 0x06, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2012, 0x06, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -340,7 +346,7 @@ int api_setDuty(CanDevice_t *device, float dutyPercent)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &dutyPercent, 1);
-    uint8_t sts = write_raw_sdo(device->id, 0x2012, 0x07, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2012, 0x07, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -364,7 +370,7 @@ int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const
     usb_can_put_float(data + 4, 0, &velocityDeg, 1);
     usb_can_put_uint32_t(data + 8, 0, &timeMs, 1);
 
-    uint32_t sts = write_raw_sdo(device->id, 0x2200, 2, data, sizeof(data), 1, 200);
+    uint32_t sts = write_raw_sdo(device, 0x2200, 2, data, sizeof(data), 1, 200);
     if(sts == CO_SDO_AB_PRAM_INCOMPAT)
     {
         return RET_WRONG_TRAJ;
@@ -388,61 +394,123 @@ int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const
  */
 int api_startMotion(uint32_t timestampMs)
 {
+    write_timestamp(timestampMs);
     return RET_OK;
 }
 
 /**
- * @brief 
+ * @brief Reads error flag array
+ * 
+ * @param device Device instance 
+ * @param array Pointer to the error array
+ * @param size Size of the received array
+ * @return int Status code (::RetStatus_t)
+ * @ingroup Servo_info
+ */
+int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *size)
+{
+    CHECK_NMT_STATE(device);
+    uint8_t sts = read_raw_sdo(device, 0x2000, 0, array, size, 1, 200);
+    return retSDO(sts);
+}
+
+/**
+ * @brief Writes device source array format (activated source indexes)
+ * 
+ * @param device Device instance 
+ * @param requests Pointer to the source index array
+ * @param size Size of the source index array
+ * @return int Status code (::RetStatus_t)
+ * @ingroup Servo_info
+ */
+int api_writeSourcesFormat(const CanDevice_t *device, const uint8_t *requests, const uint32_t size)
+{
+    CHECK_NMT_STATE(device);
+
+    uint8_t array[10] = {0};
+
+    for(uint32_t i = 0; i < sizeof(device->source)/sizeof(device->source[0]; i++)
+    {
+        device->source[i].activated = 0;
+    }
+
+    for(uint32_t i = 0; i < size; i++)
+    {
+        device->source[requests[i]].activated = !0;
+        device->source[requests[i]].value = 0.0;
+        BIT_SET_UINT_ARRAY(array, requests[i]);
+    }
+    sourceSize = size;
+
+    uint8_t sts = write_raw_sdo(device, 0x2015, 1, array, sizeof(array), 1, 200);
+
+    return retSDO(sts);
+}
+
+/**
+ * @brief Reads device source array format (activated source indexes)
+ * 
+ * @param device Device instance 
+ * @param requests Pointer to the source index array
+ * @param size Size of the array. Contains received size of activated sources in the device
+ * @return int Status code (::RetStatus_t)
+ * @ingroup Servo_info
+ */
+int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size)
+{
+    CHECK_NMT_STATE(device);
+
+    uint8_t sts = read_raw_sdo(device, 0x2015, 1, requests, size, 1, 200);
+
+    return retSDO(sts);
+}
+
+/**
+ * @brief Reads device sources. 
+ * Note: source indexes should be programmed with ::api_writeSourcesFormat function
  * 
  * @param device Device instance 
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-int api_readErrorStatus(const CanDevice_t *device)
+int api_readSources(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
+
+    uint8_t data[256 * 4];
+    uint32_t len = sizeof(data);
+
+    if(device->sourceSize == 0)
     {
-        return retSDO(sts);
+        return RET_ZERO_SIZE;
     }
+
+    uint8_t sts = read_raw_sdo(device, 0x2014, 0x01, data, len, 1, 100);
+
+    if(sts == CO_SDO_AB_NONE)
+    {
+        if(len != device->sourceSize * 4)
+        {
+            return RET_SIZE_MISMATCH;
+        }
+
+        uint32_t offset = 0;
+        for(uint32_t i = 0; i < device->sourceSize; i++)
+        {
+            if(device->source[requests[i]].activated != 0)
+            {
+                usb_can_get_float(data + offset, 0, &device->source[requests[i]].value, 1);
+                offset += 4;
+            }
+        }
+        return RET_OK;
+    }
+
+    return retSDO(sts);
 }
 
 /**
- * @brief 
- * 
- * @param device Device instance 
- * @param requests 
- * @return int Status code (::RetStatus_t)
- * @ingroup Servo_info
- */
-int api_writeArrayRequestMask(const CanDevice_t *device, const uint8_t *requests)
-{
-    CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
-    {
-        return retSDO(sts);
-    }
-}
-
-/**
- * @brief 
- * 
- * @param device Device instance 
- * @param requests 
- * @return int Status code (::RetStatus_t)
- * @ingroup Servo_info
- */
-int api_readArrayRequestMask(const CanDevice_t *device, uint8_t *requests)
-{
-    CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
-    {
-        return retSDO(sts);
-    }
-}
-
-/**
- * @brief 
+ * @brief Reads device source (information parameter)
  * 
  * @param device Device instance 
  * @param param 
@@ -453,14 +521,22 @@ int api_readArrayRequestMask(const CanDevice_t *device, uint8_t *requests)
 int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
+
+    uint8_t data[4];
+    uint32_t size = sizeof(data);
+
+    int sts = read_raw_sdo(device, 0x2013, param, data, &len, 2, 100);
+    if(sts == CO_SDO_AB_NONE && len == 4)
     {
-        return retSDO(sts);
+        usb_can_get_float(data, 0, &device->source[requests[i]].value, 1);
+        return RET_OK;
     }
+
+    return retSDO(sts);
 }
 
 /**
- * @brief 
+ * @brief Erases the whole device motion queue
  * 
  * @param device Device instance 
  * @return int Status code (::RetStatus_t)
@@ -469,14 +545,13 @@ int api_readParameter(const CanDevice_t *device, const uint8_t param, const floa
 int api_clearPointsAll(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
-    {
-        return retSDO(sts);
-    }
+    uint32_t num = 0;
+    uint8_t sts = write_raw_sdo(device, 0x2202, 0x01, &num, sizeof(num), 1, 100);
+    return retSDO(sts);
 }
 
 /**
- * @brief 
+ * @brief Erases number of cells from the tail of the device motion queue
  * 
  * @param device Device instance 
  * @param numToClear 
@@ -486,31 +561,12 @@ int api_clearPointsAll(const CanDevice_t *device)
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
-    {
-        return retSDO(sts);
-    }
+    uint8_t sts = write_raw_sdo(device, 0x2202, 0x01, &numToClear, sizeof(numToClear), 1, 100);
+    return retSDO(sts);
 }
 
 /**
- * @brief 
- * 
- * @param device Device instance 
- * @param array 
- * @return int Status code (::RetStatus_t)
- * @ingroup Servo_info
- */
-int api_readArrayRequest(const CanDevice_t *device, float *array)
-{
-    CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
-    {
-        return retSDO(sts);
-    }
-}
-
-/**
- * @brief 
+ * @brief Gets device motion queue occupied cells (queue size)
  * 
  * @param device Device instance 
  * @param num 
@@ -520,14 +576,22 @@ int api_readArrayRequest(const CanDevice_t *device, float *array)
 int api_getPointsSize(CanDevice_t *device, uint32_t *num)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
+
+    uint8_t data[4];
+    uint32_t len = sizeof(data);
+    uint8_t sts = read_raw_sdo(device, 0x2202, 0x02, data, len, 1, 100);
+
+    if(sts == CO_SDO_AB_NONE && len == 4)
     {
-        return retSDO(sts);
+        usb_can_get_uint32(data, 0, num, 1);
+        return RET_OK;
     }
+
+    return retSDO(sts);
 }
 
 /**
- * @brief 
+ * @brief Gets device remaining motion queue free cell count
  * 
  * @param device Device instance 
  * @param num 
@@ -537,14 +601,22 @@ int api_getPointsSize(CanDevice_t *device, uint32_t *num)
 int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
+
+    uint8_t data[4];
+    uint32_t len = sizeof(data);
+    uint8_t sts = read_raw_sdo(device, 0x2202, 0x03, data, len, 1, 100);
+
+    if(sts == CO_SDO_AB_NONE && len == 4)
     {
-        return retSDO(sts);
+        usb_can_get_uint32(data, 0, num, 1);
+        return RET_OK;
     }
+
+    return retSDO(sts);
 }
 
 /**
- * @brief 
+ * @brief Calculates motion point parameters
  * 
  * @param device Device instance 
  * @param startPositionDeg 
@@ -576,7 +648,7 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
     usb_can_put_float(data + 24, 0, &endAccelerationDegPerSec2, 1);
     usb_can_put_uint32_t(data + 28, 0, &endTimeMs, 1);
 
-    uint8_t sts = write_raw_sdo(device->id, 0x2203, 0x01, data, sizeof(data), 1, 200);
+    uint8_t sts = write_raw_sdo(device, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
     if(sts == CO_SDO_AB_GENERAL)
     {
@@ -589,60 +661,73 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
 }
 
 /**
- * @brief 
+ * @brief Gets ::api_invokeTimeCalculation calculated time in milliseconds
  * 
  * @param device Device instance 
- * @param timeMs 
+ * @param timeMs Pointer to the calculated time in milliseconds
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
 int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
+
+    uint8_t data[4];
+    uint32_t len = sizeof(data);
+    uint8_t sts = read_raw_sdo(device, 0x2203, 0x02, data, len, 1, 100);
+
+    if(sts == CO_SDO_AB_NONE && len == 4)
     {
-        return retSDO(sts);
+        usb_can_get_uint32(data, 0, num, 1);
+        return RET_OK;
     }
+
+    return retSDO(sts);
 }
 
 /**
- * @brief 
+ * @brief Sets device zero position
  * 
  * @param device Device instance 
- * @param positionDeg 
+ * @param positionDeg Target position in degrees
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_config
  */
-int api_getZeroPosition(const CanDevice_t *device, float *positionDeg) //???
+int api_setZeroPosition(const CanDevice_t *device, const float32_t positionDeg)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[4];
+    usb_can_put_float(data, 0, &positionDeg, 1);
+    uint8_t sts = write_raw_sdo(device, 0x2208, 0x01, data, sizeof(data), 0, 200);
+
+    return retSDO(sts);
 }
 
 /**
- * @brief 
+ * @brief Sets device zero position and saves it to the device FLASH memory
  * 
  * @param device Device instance 
+ * @param positionDeg Target position in degrees
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_config
  */
-int api_setZeroPositionAndSave(const CanDevice_t *device)
+int api_setZeroPositionAndSave(const CanDevice_t *device, const float32_t positionDeg)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = 0;
-    {
-        return retSDO(sts);
-    }
+
+    uint8_t data[4];
+    usb_can_put_float(data, 0, &positionDeg, 1);
+    uint8_t sts = write_raw_sdo(device, 0x2208, 0x02, data, sizeof(data), 0, 200);
+
+    return retSDO(sts);
 }
 
 /**
- * @brief 
+ * @brief Gets the maximum device velocity
  * 
  * @param device Device instance 
- * @param velocityDegPerSec 
+ * @param velocityDegPerSec Velocity in degrees/sec
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
@@ -653,7 +738,7 @@ int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
     uint8_t data[4];
     unt len = sizeof(data);
 
-    uint8_t sts = read_raw_sdo(device->id, 0x2207, 0x02, data, len, 1, 100);
+    uint8_t sts = read_raw_sdo(device, 0x2207, 0x02, data, len, 1, 100);
     if(sts == CO_SDO_AB_NONE)
     {
         usb_can_put_float(data, 0, &velocityDegPerSec, 1);
@@ -677,7 +762,7 @@ int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerS
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &maxVelocityDegPerSec, 1);
-    uint8_t sts = write_raw_sdo(device->id, 0x2300, 0x03, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo(device, 0x2300, 0x03, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }

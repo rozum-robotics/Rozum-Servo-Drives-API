@@ -120,9 +120,9 @@ Functions</h2></td></tr>
 <tr class="separator:ga9138f566e5e79feada4abdb86abafbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga3c053a7c2ddfbb7d85077fada388424d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga3c053a7c2ddfbb7d85077fada388424d">api_readErrorStatus</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
 <tr class="separator:ga3c053a7c2ddfbb7d85077fada388424d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga37e9d4bcd2d029129bf545fb83b7dc1c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga37e9d4bcd2d029129bf545fb83b7dc1c">api_writeArrayRequestMask</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t *requests)</td></tr>
+<tr class="memitem:ga37e9d4bcd2d029129bf545fb83b7dc1c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga37e9d4bcd2d029129bf545fb83b7dc1c">api_writeSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t *requests)</td></tr>
 <tr class="separator:ga37e9d4bcd2d029129bf545fb83b7dc1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gac263c10ec30e016e68c0b0d700720f04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#gac263c10ec30e016e68c0b0d700720f04">api_readArrayRequestMask</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *requests)</td></tr>
+<tr class="memitem:gac263c10ec30e016e68c0b0d700720f04"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#gac263c10ec30e016e68c0b0d700720f04">api_readSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *requests)</td></tr>
 <tr class="separator:gac263c10ec30e016e68c0b0d700720f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga679fdf3985228c438bb2d60e3028a836"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga679fdf3985228c438bb2d60e3028a836">api_readParameter</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t param, const float32_t *value)</td></tr>
 <tr class="separator:ga679fdf3985228c438bb2d60e3028a836"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,7 +130,7 @@ Functions</h2></td></tr>
 <tr class="separator:gaef7daf95824293b5466a43981866053c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga9b963c8de46cdea63c3e45fde6da5eed">api_clearPoints</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint32_t numToClear)</td></tr>
 <tr class="separator:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8f2e9e1bd398724805d5b24b62249c71"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga8f2e9e1bd398724805d5b24b62249c71">api_readArrayRequest</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float32_t *array)</td></tr>
+<tr class="memitem:ga8f2e9e1bd398724805d5b24b62249c71"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga8f2e9e1bd398724805d5b24b62249c71">api_readSources</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float32_t *array)</td></tr>
 <tr class="separator:ga8f2e9e1bd398724805d5b24b62249c71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga23e17a660476850b3e5825d7964b9e2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___control.html#ga23e17a660476850b3e5825d7964b9e2d">api_getPointsSize</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *num)</td></tr>
 <tr class="separator:ga23e17a660476850b3e5825d7964b9e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -567,13 +567,13 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="ga8f2e9e1bd398724805d5b24b62249c71"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga8f2e9e1bd398724805d5b24b62249c71">&#9670;&nbsp;</a></span>api_readArrayRequest()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga8f2e9e1bd398724805d5b24b62249c71">&#9670;&nbsp;</a></span>api_readSources()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_readArrayRequest </td>
+          <td class="memname">int api_readSources </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
           <td class="paramname"><em>device</em>, </td>
@@ -603,13 +603,13 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="gac263c10ec30e016e68c0b0d700720f04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gac263c10ec30e016e68c0b0d700720f04">&#9670;&nbsp;</a></span>api_readArrayRequestMask()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#gac263c10ec30e016e68c0b0d700720f04">&#9670;&nbsp;</a></span>api_readSourcesFormat()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_readArrayRequestMask </td>
+          <td class="memname">int api_readSourcesFormat </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
           <td class="paramname"><em>device</em>, </td>
@@ -1235,13 +1235,13 @@ Functions</h2></td></tr>
 </div>
 </div>
 <a id="ga37e9d4bcd2d029129bf545fb83b7dc1c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga37e9d4bcd2d029129bf545fb83b7dc1c">&#9670;&nbsp;</a></span>api_writeArrayRequestMask()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ga37e9d4bcd2d029129bf545fb83b7dc1c">&#9670;&nbsp;</a></span>api_writeSourcesFormat()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_writeArrayRequestMask </td>
+          <td class="memname">int api_writeSourcesFormat </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
           <td class="paramname"><em>device</em>, </td>

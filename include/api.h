@@ -16,36 +16,34 @@
 //#include "common/servo_api.h"
 //#include "math.h"
 
-#define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
-
-/* Exported types ------------------------------------------------------------*/
+/* Exported macro ------------------------------------------------------------*/
 /**
- * @brief Device instance structure
+ * @brief Standart debug 
  * 
  */
-typedef struct
-{
-    uint8_t id;       ///< Device CAN ID
-    uint8_t nmtState; ///< Device NMT state
-    //    time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
-} CanDevice_t;
+#define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
 
 /* Exported constants --------------------------------------------------------*/
 /**
  * @brief Return codes of the API functions
- * 
  */
 enum RetStatus_t
 {
-    RET_OK = 0,     ///< Status OK
-    RET_ERROR,      ///< Generic error
-    RET_BUSY,       ///< Device is busy
-    RET_WRONG_TRAJ, ///< Wrong trajectory
-    RET_LOCKED,     ///< Device is locked
-    RET_STOPPED,    ///< Device is in STOPPED state
-    RET_TIMEOUT     ///< Communication timeout
+    RET_OK = 0,       ///< Status OK
+    RET_ERROR,        ///< Generic error
+    RET_BUSY,         ///< Device is busy
+    RET_WRONG_TRAJ,   ///< Wrong trajectory
+    RET_LOCKED,       ///< Device is locked
+    RET_STOPPED,      ///< Device is in STOPPED state
+    RET_TIMEOUT,      ///< Communication timeout
+    RET_ZERO_SIZE,    ///< Zero size
+    RET_SIZE_MISMATCH ///< Received & target size mismatch
 };
 
+/**
+ * @brief Device parameter & source indexes
+ * 
+ */
 typedef enum
 {
     APP_PARAM_NULL = 0,
@@ -145,7 +143,31 @@ typedef enum
     APP_PARAM_SIZE //...
 } AppParam_t;
 
-/* Exported macro ------------------------------------------------------------*/
+/* Exported types ------------------------------------------------------------*/
+/**
+ * @brief Device information source instance
+ * 
+ */
+typedef struct
+{
+    float value;       ///< Source value
+    uint8_t activated; ///< Source activation flag
+} Source_t;
+
+/**
+ * @brief Device instance structure
+ * 
+ */
+typedef struct
+{
+    uint8_t id;           ///< Device CAN ID
+    uint8_t nmtState;     ///< Device NMT state
+    Source_t source[256]; ///< Device sources cells
+    uint32_t sourceSize;  ///< Number of the device activated sources
+    // time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
+
+} CanDevice_t;
+
 /* Exported define -----------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 /* Exported C++ declarations ------------------------------------------------ */
@@ -174,15 +196,15 @@ int api_setDuty(CanDevice_t *device, float dutyPercent);
 int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs);
 int api_startMotion(uint32_t timestampMs);
 
-int api_readErrorStatus(const CanDevice_t *device);
+int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *size);
 
-int api_writeArrayRequestMask(const CanDevice_t *device, const uint8_t *requests);
-int api_readArrayRequestMask(const CanDevice_t *device, uint8_t *requests);
+int api_writeSourcesFormat(const CanDevice_t *device, const uint8_t *requests, const uint32_t size);
+int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size);
+int api_readSources(const CanDevice_t *device);
 
 int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value);
 int api_clearPointsAll(const CanDevice_t *device);
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear);
-int api_readArrayRequest(const CanDevice_t *device, float *array);
 
 int api_getPointsSize(CanDevice_t *device, uint32_t *num);
 int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num);
@@ -192,8 +214,8 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
                               const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs);
 int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs);
 
-int api_getZeroPosition(const CanDevice_t *device, float *positionDeg); //???
-int api_setZeroPositionAndSave(const CanDevice_t *device);
+int api_setZeroPosition(const CanDevice_t *device, const float32_t positionDeg);
+int api_setZeroPositionAndSave(const CanDevice_t *device, const float32_t positionDeg);
 
 int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec);
 int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerSec);
