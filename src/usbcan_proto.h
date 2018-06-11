@@ -120,7 +120,7 @@ typedef struct
 
 typedef struct
 {
-	char *device;
+	const char *device;
 	int fd;
 
 	pthread_t usbcan_thread;
@@ -133,18 +133,17 @@ typedef struct
 	void *usbcan_nmt_state_cb;
 	void *usbcan_com_frame_cb;
 
-	int64_t master_hb_ival;// = USB_CAN_MASTER_HB_IVAL_MS;
+	int64_t master_hb_ival;;
 	int64_t master_hb_timer;
-	int64_t hb_alive_threshold;// = USB_CAN_HB_ALIVE_THRESHOLD_MS;
+	int64_t hb_alive_threshold;
 
 	int64_t dev_alive[USB_CAN_MAX_DEV];
 	int64_t dev_hb_ival[USB_CAN_MAX_DEV];
 	usbcan_nmt_state_t dev_state[USB_CAN_MAX_DEV];
 
-	usbcan_wait_for_t wait_for;// = {0};
-	bool inhibit_master_hb;// = false;
-
-	bool usbcan_udp;// = false;
+	usbcan_wait_for_t wait_for;
+	bool inhibit_master_hb;
+	bool usbcan_udp;
 } usbcan_instance_t;
 
 typedef struct
@@ -181,10 +180,12 @@ usbcan_nmt_state_t usbcan_get_device_state(usbcan_instance_t *inst, int id);
 int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id);
 int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state);
 int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
-void usbcan_init(usbcan_instance_t *inst);
 void usbcan_inhibit_master_hb(usbcan_instance_t *inst, bool inh);
 
-int usbcan_instance_init(usbcan_instance_t *inst, const char *dev_name);
+int usbcan_instance_init(usbcan_instance_t **inst, const char *dev_name);
+int usbcan_instance_deinit(usbcan_instance_t **inst);
+int usbcan_device_init(usbcan_instance_t *inst, usbcan_device_t **dev, int id);
+int usbcan_device_deinit(usbcan_device_t **dev);
 
 #endif
 

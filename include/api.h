@@ -13,7 +13,6 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
 #include <stdio.h>
-#include "usbcan_proto.h"
 
 /* Exported macro ------------------------------------------------------------*/
 /**
@@ -160,7 +159,7 @@ typedef struct
  */
 typedef struct
 {
-    usbcan_device_t dev;
+    void *dev;
     //Source_t source[256]; ///< Device sources cells
     //uint32_t sourceSize;  ///< Number of the device activated sources
 } CanDevice_t;
@@ -171,7 +170,7 @@ typedef struct
  */
 typedef struct
 {
-	usbcan_instance_t inst; ///< UsbCan internals (do not use directly)
+	void *inst; ///< UsbCan internals (do not use directly)
 } CanInterface_t;
 
 /* Exported constants --------------------------------------------------------*/
@@ -184,7 +183,9 @@ typedef struct
 /* Ref: http://dev.rozum.com/rozum-java/leonardo/blob/develop/devices/motor/cyber-api/src/main/java/com/rozum/cyber/api/protocol/prt3/CyberProtocol3.java */
 
 int api_initInterface(CanInterface_t *const interface, const char *interfaceName);
-int api_initServo(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id);
+int api_deinitInterface(CanInterface_t *const interface);
+int api_initDevice(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id);
+int api_deinitDevice(CanDevice_t *const device);
 
 int api_deviceReboot(const CanDevice_t *device);
 int api_deviceResetCommunication(const CanDevice_t *device);

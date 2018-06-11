@@ -74,7 +74,20 @@ static int retSDO(int code)
 int api_initInterface(CanInterface_t *const interface, const char *interfaceName)
 {
 	API_DEBUG("Opening %s...\n", interfaceName);
-	return usbcan_instance_init(&interface->inst, interfaceName) ? RET_OK : RET_ERROR;
+	return usbcan_instance_init((usbcan_instance_t **)&interface->inst, interfaceName) ? RET_OK : RET_ERROR;
+}
+
+/**
+ * @brief 
+ * 
+ * @param interface 
+ * @param interfaceName 
+ * @return int Status code (::RetStatus_t)
+ * @ingroup Common
+ */
+int api_deinitInterface(CanInterface_t *const interface)
+{
+	return usbcan_instance_deinit((usbcan_instance_t **)&interface->inst) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -86,9 +99,24 @@ int api_initInterface(CanInterface_t *const interface, const char *interfaceName
  * @return int Status code (::RetStatus_t)
  * @ingroup Common
  */
-int api_initServo(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id)
+int api_initDevice(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id)
 {
-    return RET_OK;
+	usbcan_device_init((usbcan_instance_t *)interface->inst, 
+			(usbcan_device_t **)&device->dev, id);
+	return RET_OK;
+}
+
+/**
+ * @brief 
+ * 
+ * @param device Device instance 
+ * @return int Status code (::RetStatus_t)
+ * @ingroup Common
+ */
+int api_deinitDevice(CanDevice_t *const device)
+{
+	usbcan_device_deinit((usbcan_device_t **)&device->dev);
+	return RET_OK;
 }
 
 /**
@@ -100,7 +128,7 @@ int api_initServo(const CanInterface_t *interface, CanDevice_t *const device, co
  */
 int api_deviceReboot(const CanDevice_t *device)
 {
-    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_RESET_NODE);
+    write_nmt(((usbcan_device_t *)device->dev)->inst, ((usbcan_device_t *)device->dev)->id, _CO_NMT_CMD_RESET_NODE);
     return RET_OK;
 }
 
@@ -113,7 +141,7 @@ int api_deviceReboot(const CanDevice_t *device)
  */
 int api_deviceResetCommunication(const CanDevice_t *device)
 {
-    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_RESET_COMM);
+    write_nmt(((usbcan_device_t *)device->dev)->inst, ((usbcan_device_t *)device->dev)->id, _CO_NMT_CMD_RESET_COMM);
     return RET_OK;
 }
 
@@ -127,7 +155,7 @@ int api_deviceResetCommunication(const CanDevice_t *device)
  */
 int api_deviceSetStateOperational(const CanDevice_t *device)
 {
-    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_GOTO_OP);
+    write_nmt(((usbcan_device_t *)device->dev)->inst, ((usbcan_device_t *)device->dev)->id, _CO_NMT_CMD_GOTO_OP);
     return RET_OK;
 }
 
@@ -140,7 +168,7 @@ int api_deviceSetStateOperational(const CanDevice_t *device)
  */
 int api_deviceSetStatePreOperational(const CanDevice_t *device)
 {
-    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_GOTO_PREOP);
+    write_nmt(((usbcan_device_t *)device->dev)->inst, ((usbcan_device_t *)device->dev)->id, _CO_NMT_CMD_GOTO_PREOP);
     return RET_OK;
 }
 
@@ -153,7 +181,7 @@ int api_deviceSetStatePreOperational(const CanDevice_t *device)
  */
 int api_deviceSetStateStopped(const CanDevice_t *device)
 {
-    write_nmt(device->dev.inst, device->dev.id, _CO_NMT_CMD_GOTO_STOPPED);
+    write_nmt(((usbcan_device_t *)device->dev)->inst, ((usbcan_device_t *)device->dev)->id, _CO_NMT_CMD_GOTO_STOPPED);
     return RET_OK;
 }
 
@@ -166,7 +194,7 @@ int api_deviceSetStateStopped(const CanDevice_t *device)
  */
 int api_netReboot(const CanInterface_t *interface)
 {
-    write_nmt(&interface->inst, 0, _CO_NMT_CMD_RESET_NODE);
+    write_nmt((usbcan_instance_t *)interface->inst, 0, _CO_NMT_CMD_RESET_NODE);
     return RET_OK;
 }
 
@@ -179,7 +207,7 @@ int api_netReboot(const CanInterface_t *interface)
  */
 int api_netResetCommunication(const CanInterface_t *interface)
 {
-    write_nmt(&interface->inst, 0, _CO_NMT_CMD_RESET_COMM);
+    write_nmt((usbcan_instance_t *)interface->inst, 0, _CO_NMT_CMD_RESET_COMM);
     return RET_OK;
 }
 
@@ -192,7 +220,7 @@ int api_netResetCommunication(const CanInterface_t *interface)
  */
 int api_netSetStateOperational(const CanInterface_t *interface)
 {
-    write_nmt(&interface->inst, 0, _CO_NMT_CMD_GOTO_OP);
+    write_nmt((usbcan_instance_t *)interface->inst, 0, _CO_NMT_CMD_GOTO_OP);
     return RET_OK;
 }
 
@@ -205,7 +233,7 @@ int api_netSetStateOperational(const CanInterface_t *interface)
  */
 int api_netSetStatePreOperational(const CanInterface_t *interface)
 {
-    write_nmt(&interface->inst, 0, _CO_NMT_CMD_GOTO_PREOP);
+    write_nmt((usbcan_instance_t *)interface->inst, 0, _CO_NMT_CMD_GOTO_PREOP);
     return RET_OK;
 }
 
@@ -219,7 +247,7 @@ int api_netSetStatePreOperational(const CanInterface_t *interface)
  */
 int api_netSetStateStopped(const CanInterface_t *interface)
 {
-    write_nmt(&interface->inst, 0, _CO_NMT_CMD_GOTO_STOPPED);
+    write_nmt((usbcan_instance_t *)interface->inst, 0, _CO_NMT_CMD_GOTO_STOPPED);
     return RET_OK;
 }
 
@@ -235,7 +263,7 @@ int api_stopAndRelease(const CanDevice_t *device)
     CHECK_NMT_STATE(device);
 
     uint8_t data = 0;
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -252,7 +280,7 @@ int api_stopAndFreeze(const CanDevice_t *device)
     CHECK_NMT_STATE(device);
 
     uint8_t data = 0;
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -271,7 +299,7 @@ int api_setCurrent(const CanDevice_t *device, const float currentA)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -290,7 +318,7 @@ int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -309,7 +337,7 @@ int api_setPosition(const CanDevice_t *device, const float positionDeg)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &positionDeg, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -330,7 +358,7 @@ int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDeg
     uint8_t data[8];
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -355,7 +383,7 @@ int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg
     usb_can_put_float(data, 0, &positionDeg, 1);
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
     usb_can_put_float(data, 0, &currentA, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -375,7 +403,7 @@ int api_setDuty(CanDevice_t *device, float dutyPercent)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &dutyPercent, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }
@@ -399,7 +427,7 @@ int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const
     usb_can_put_float(data + 4, 0, &velocityDeg, 1);
     usb_can_put_uint32_t(data + 8, 0, &timeMs, 1);
 
-    uint32_t sts = write_raw_sdo(&device->dev, 0x2200, 2, data, sizeof(data), 1, 200);
+    uint32_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2200, 2, data, sizeof(data), 1, 200);
     if(sts == CO_SDO_AB_PRAM_INCOMPAT)
     {
         return RET_WRONG_TRAJ;
@@ -424,7 +452,7 @@ int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const
  */
 int api_startMotion(CanInterface_t *interface, uint32_t timestampMs)
 {
-    write_timestamp(&interface->inst, timestampMs);
+    write_timestamp((usbcan_instance_t *)interface->inst, timestampMs);
     return RET_OK;
 }
 
@@ -441,7 +469,7 @@ int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *siz
 {
     CHECK_NMT_STATE(device);
 	int _size;
-    uint8_t sts = read_raw_sdo(&device->dev, 0x2000, 0, array, &_size, 1, 200);
+    uint8_t sts = read_raw_sdo((usbcan_device_t *)device->dev, 0x2000, 0, array, &_size, 1, 200);
 	*size = _size;
     return retSDO(sts);
 }
@@ -475,7 +503,7 @@ int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, c
     }
     device->sourceSize = size;
 
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2015, 1, array, sizeof(array), 1, 200);
+    uint8_t sts = write_raw_sdo(&((usbcan_device_t *)device->dev), 0x2015, 1, array, sizeof(array), 1, 200);
 
     return retSDO(sts);
 	return RET_OK;
@@ -497,7 +525,7 @@ int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t
     CHECK_NMT_STATE(device);
 
 	int _size;
-    uint8_t sts = read_raw_sdo(&device->dev, 0x2015, 1, requests, &_size, 1, 200);
+    uint8_t sts = read_raw_sdo(&((usbcan_device_t *)device->dev), 0x2015, 1, requests, &_size, 1, 200);
 	*size = _size;
 
     return retSDO(sts);
@@ -526,7 +554,7 @@ int api_readSources(CanDevice_t *const device, uint8_t *requests)
         return RET_ZERO_SIZE;
     }
 
-    uint8_t sts = read_raw_sdo(&device->dev, 0x2014, 0x01, data, &len, 1, 100);
+    uint8_t sts = read_raw_sdo(&((usbcan_device_t *)device->dev), 0x2014, 0x01, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE)
     {
@@ -570,7 +598,7 @@ int api_readParameter(const CanDevice_t *device, const uint8_t param, const floa
     uint32_t size = sizeof(data);
 	int len;
 
-    int sts = read_raw_sdo(&device->dev, 0x2013, param, data, &len, 2, 100);
+    int sts = read_raw_sdo(&((usbcan_device_t *)device->dev), 0x2013, param, data, &len, 2, 100);
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
         usb_can_get_float(data, 0, &device->source[requests[i]].value, 1);
@@ -593,7 +621,7 @@ int api_clearPointsAll(const CanDevice_t *device)
 {
     CHECK_NMT_STATE(device);
     uint32_t num = 0;
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2202, 0x01, (uint8_t *)&num, sizeof(num), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2202, 0x01, (uint8_t *)&num, sizeof(num), 1, 100);
     return retSDO(sts);
 }
 
@@ -608,7 +636,7 @@ int api_clearPointsAll(const CanDevice_t *device)
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear)
 {
     CHECK_NMT_STATE(device);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2202, 0x01, (uint8_t *)&numToClear, sizeof(numToClear), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2202, 0x01, (uint8_t *)&numToClear, sizeof(numToClear), 1, 100);
     return retSDO(sts);
 }
 
@@ -626,7 +654,7 @@ int api_getPointsSize(CanDevice_t *device, uint32_t *num)
 
     uint8_t data[4];
     int len = sizeof(data);
-    uint8_t sts = read_raw_sdo(&device->dev, 0x2202, 0x02, data, &len, 1, 100);
+    uint8_t sts = read_raw_sdo((usbcan_device_t *)device->dev, 0x2202, 0x02, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
@@ -651,7 +679,7 @@ int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num)
 
     uint8_t data[4];
     int len = sizeof(data);
-    uint8_t sts = read_raw_sdo(&device->dev, 0x2202, 0x03, data, &len, 1, 100);
+    uint8_t sts = read_raw_sdo((usbcan_device_t *)device->dev, 0x2202, 0x03, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
@@ -695,7 +723,7 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
     usb_can_put_float(data + 24, 0, &endAccelerationDegPerSec2, 1);
     usb_can_put_uint32_t(data + 28, 0, &endTimeMs, 1);
 
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
     if(sts == CO_SDO_AB_GENERAL)
     {
@@ -721,7 +749,7 @@ int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs)
 
     uint8_t data[4];
     int len = sizeof(data);
-    uint8_t sts = read_raw_sdo(&device->dev, 0x2203, 0x02, data, &len, 1, 100);
+    uint8_t sts = read_raw_sdo((usbcan_device_t *)device->dev, 0x2203, 0x02, data, &len, 1, 100);
 	uint32_t num;
 
     if(sts == CO_SDO_AB_NONE && len == 4)
@@ -748,7 +776,7 @@ int api_setZeroPosition(const CanDevice_t *device, const float positionDeg)
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &positionDeg, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
 
     return retSDO(sts);
 }
@@ -767,7 +795,7 @@ int api_setZeroPositionAndSave(const CanDevice_t *device, const float positionDe
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &positionDeg, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2208, 0x02, data, sizeof(data), 0, 200);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2208, 0x02, data, sizeof(data), 0, 200);
 
     return retSDO(sts);
 }
@@ -787,7 +815,7 @@ int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
     uint8_t data[4];
     int len = sizeof(data);
 
-    uint8_t sts = read_raw_sdo(&device->dev, 0x2207, 0x02, data, &len, 1, 100);
+    uint8_t sts = read_raw_sdo((usbcan_device_t *)device->dev, 0x2207, 0x02, data, &len, 1, 100);
     if(sts == CO_SDO_AB_NONE)
     {
         usb_can_put_float(data, 0, velocityDegPerSec, 1);
@@ -811,7 +839,7 @@ int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerS
 
     uint8_t data[4];
     usb_can_put_float(data, 0, &maxVelocityDegPerSec, 1);
-    uint8_t sts = write_raw_sdo(&device->dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
+    uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
 
     return retSDO(sts);
 }

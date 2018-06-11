@@ -25,6 +25,17 @@ const char *CAN_OPEN_CMD[] =
 	""
 };
 
+static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts);
+static int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state);
+static int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd);
+static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m);
+static int usbcan_build_sdo_req(uint8_t *dst,
+		usbcan_sdo_t *sdo,
+		void *data, 
+		uint16_t len,
+		sdo_resp_cb_t cb);
+static int usbcan_rx(usbcan_instance_t *inst);
+
 static void dump_can_msg(const char *label, can_msg_t *m)
 {
     char msg_name[4096];
@@ -34,16 +45,6 @@ static void dump_can_msg(const char *label, can_msg_t *m)
     dump(msg_name, m->data, m->dlc);
 }
 
-int usbcan_build_timestamp(uint8_t *dst, uint32_t ts);
-int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state);
-int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd);
-int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m);
-int usbcan_build_sdo_req(uint8_t *dst,
-		usbcan_sdo_t *sdo,
-		void *data, 
-		uint16_t len,
-		sdo_resp_cb_t cb);
-int usbcan_rx(usbcan_instance_t *inst);
 
 static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 {
@@ -70,18 +71,6 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 static void usbcan_enable_udp(usbcan_instance_t *inst, bool en)
 {
 	inst->usbcan_udp = en;
-}
-
-void usbcan_init(usbcan_instance_t *inst)
-{
-	int i;
-
-	for(i = 0; i < USB_CAN_MAX_DEV; i++)
-	{
-		inst->dev_alive[i] = -1;
-		inst->dev_hb_ival[i] = -1;
-		inst->dev_state[i] = _CO_NMT_HB_TIMEOUT;
-	}
 }
 
 void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to)
@@ -187,7 +176,7 @@ static void usbcan_wait_for(usbcan_instance_t *inst, usbcan_sdo_t *sdo, sdo_resp
 
 /*************************************************************************************************/
 
-int usbcan_wrap_inplace(uint8_t *dst, int payload_sz)
+static int usbcan_wrap_inplace(uint8_t *dst, int payload_sz)
 {
 	uint16_t crc = 0;
 	int p = 0;
@@ -201,7 +190,7 @@ int usbcan_wrap_inplace(uint8_t *dst, int payload_sz)
 	return p;
 }
 
-int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd)
+static int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd)
 {
 	int p = 0;
 	uint8_t *msg = dst + USB_CAN_HEAD_SZ;
@@ -213,7 +202,7 @@ int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd)
 	return usbcan_wrap_inplace(dst, p);
 }
 
-int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state)
+static int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state)
 {
 	int p = 0;
 	uint8_t *msg = dst + USB_CAN_HEAD_SZ;
@@ -225,7 +214,7 @@ int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state)
 	return usbcan_wrap_inplace(dst, p);
 }
 
-int usbcan_build_timestamp(uint8_t *dst, uint32_t ts)
+static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts)
 {
 	int p = 0;
 	uint8_t *msg = dst + USB_CAN_HEAD_SZ;
@@ -236,7 +225,7 @@ int usbcan_build_timestamp(uint8_t *dst, uint32_t ts)
 	return usbcan_wrap_inplace(dst, p);
 }
 
-int usbcan_build_sdo_req(uint8_t *dst,
+static int usbcan_build_sdo_req(uint8_t *dst,
 		usbcan_sdo_t *sdo,
 		void *data, 
 		uint16_t len,
@@ -259,7 +248,7 @@ int usbcan_build_sdo_req(uint8_t *dst,
 	return usbcan_wrap_inplace(dst, p);
 }
 
-int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m)
+static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m)
 {
 	int idlen = (m->id & 0x40000000u ? 4 : 2);
 	//uint16_t total_len = m->dlc + 1 + idlen;
@@ -284,7 +273,6 @@ int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 	return usbcan_write_fd(inst, dst, l);
 }
 
-
 int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
@@ -300,7 +288,6 @@ int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 	int l = usbcan_build_timestamp(dst, ts);
 	return usbcan_write_fd(inst, dst, l);
 }
-
 
 int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb)
 {
@@ -329,7 +316,7 @@ void send_master_hb(usbcan_instance_t *inst)
 
 /*************************************************************************************************/
 
-void usbcan_parse_com_frame(can_msg_t *m, uint8_t *msg, int sz)
+static void usbcan_parse_com_frame(can_msg_t *m, uint8_t *msg, int sz)
 {
 	int p = 0;
 
@@ -353,7 +340,7 @@ void usbcan_parse_com_frame(can_msg_t *m, uint8_t *msg, int sz)
 }
 
 
-void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int len)
+static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int len)
 {
 
 	switch(data[0])
@@ -493,7 +480,7 @@ void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int len)
 	}
 }
 
-int usbcan_rx(usbcan_instance_t *inst)
+static int usbcan_rx(usbcan_instance_t *inst)
 {
 	static uint8_t rb[USB_CAN_MAX_PAYLOAD];
 	static int h = 0, t = 0;
@@ -595,7 +582,7 @@ static void nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t sta
 	}
 }
 
-void *usbcan_process(void *udata)
+static void *usbcan_process(void *udata)
 {
 	struct timeval tprev, tnow;
 	int n = 0;
@@ -656,6 +643,7 @@ void *usbcan_process(void *udata)
 		return 0;
 	}
 
+
 	usbcan_setup_hb_tx_cb(inst, hb_tx_cb, 250);
 	usbcan_setup_hb_rx_cb(inst, hb_rx_cb);
 	usbcan_setup_emcy_cb(inst, emcy_cb);
@@ -669,7 +657,7 @@ void *usbcan_process(void *udata)
 
 	gettimeofday(&tnow, NULL);
 	tprev = tnow;
-
+	
 	for(int t = USB_CAN_FLUSH_TOUT_MS; t > 0;)
 	{
 		int n;
@@ -722,15 +710,30 @@ void *usbcan_process(void *udata)
 	return 0;
 }
 
-int usbcan_instance_init(usbcan_instance_t *inst, const char *dev_name)
+int usbcan_instance_init(usbcan_instance_t **inst, const char *dev_name)
 {
-	memset(inst, 0, sizeof(usbcan_instance_t));
-	inst->master_hb_ival = USB_CAN_MASTER_HB_IVAL_MS;
-	inst->hb_alive_threshold = USB_CAN_HB_ALIVE_THRESHOLD_MS;
-	usbcan_init(inst);
-	ipc_create_link(inst);
+	int i;
+	usbcan_instance_t *_inst = malloc(sizeof(usbcan_instance_t));
+	if(!_inst)
+	{
+		return 0;
+	}
+	*inst = _inst;
+	memset(_inst, 0, sizeof(usbcan_instance_t));
+	_inst->master_hb_ival = USB_CAN_MASTER_HB_IVAL_MS;
+	_inst->hb_alive_threshold = USB_CAN_HB_ALIVE_THRESHOLD_MS;
+	_inst->device = dev_name;
 
-	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
+	for(i = 0; i < USB_CAN_MAX_DEV; i++)
+	{
+		_inst->dev_alive[i] = -1;
+		_inst->dev_hb_ival[i] = -1;
+		_inst->dev_state[i] = _CO_NMT_HB_TIMEOUT;
+	}
+
+	ipc_create_link(_inst);
+
+	if(pthread_create(&_inst->usbcan_thread, NULL, usbcan_process, _inst))
 	{
 		LOG_ERROR("Can't run thread");
 		return 0;
@@ -738,3 +741,41 @@ int usbcan_instance_init(usbcan_instance_t *inst, const char *dev_name)
 
 	return 1;
 }
+
+int usbcan_instance_deinit(usbcan_instance_t **inst)
+{
+	/*TODO: 
+	 * 1. close pthread 
+	 * 2. dealloc devices
+	 * 3. dealloc memory*/
+	return 1;
+}
+
+int usbcan_device_init(usbcan_instance_t *inst, usbcan_device_t **dev, int id)
+{
+	usbcan_device_t *_dev = malloc(sizeof(usbcan_device_t));
+	if(!_dev)
+	{
+		return 0;
+	}
+	memset(_dev, 0, sizeof(usbcan_device_t));
+	*dev = _dev;
+	_dev->inst = inst;
+	_dev->id = id;
+	_dev->timeout = 1000;
+	_dev->retry = 1;
+	
+	return 1;
+}
+
+int usbcan_device_deinit(usbcan_device_t **dev)
+{
+	if(*dev)
+	{
+		free(*dev);
+		*dev = NULL;	
+	}
+	return 1;
+}
+
+
