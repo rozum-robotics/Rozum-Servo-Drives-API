@@ -27,12 +27,62 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define CHECK_NMT_STATE(x)                                          \
+    if(x->nmtState == CO_NMT_STOPPED || x->nmtState == CO_NMT_BOOT) \
+    {                                                               \
+        return RET_STOPPED;                                         \
+    }
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Extern variables ----------------------------------------------------------*/
 /* Extern function prototypes ------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
+static int retSDO(int code)
+{
+    switch(code)
+    {
+    case CO_SDO_AB_NONE:
+        return RET_OK;
+
+    case CO_SDO_AB_TIMEOUT:
+        return RET_TIMEOUT;
+
+    case CO_SDO_AB_TOGGLE_BIT:
+    case CO_SDO_AB_CMD:
+    case CO_SDO_AB_BLOCK_SIZE:
+    case CO_SDO_AB_SEQ_NUM:
+    case CO_SDO_AB_CRC:
+    case CO_SDO_AB_OUT_OF_MEM:
+    case CO_SDO_AB_UNSUPPORTED_ACCESS:
+    case CO_SDO_AB_WRITEONLY:
+    case CO_SDO_AB_READONLY:
+    case CO_SDO_AB_NOT_EXIST:
+    case CO_SDO_AB_NO_MAP:
+    case CO_SDO_AB_MAP_LEN:
+    case CO_SDO_AB_PRAM_INCOMPAT:
+    case CO_SDO_AB_DEVICE_INCOMPAT:
+    case CO_SDO_AB_HW:
+    case CO_SDO_AB_TYPE_MISMATCH:
+    case CO_SDO_AB_DATA_LONG:
+    case CO_SDO_AB_DATA_SHORT:
+    case CO_SDO_AB_SUB_UNKNOWN:
+    case CO_SDO_AB_INVALID_VALUE:
+    case CO_SDO_AB_VALUE_HIGH:
+    case CO_SDO_AB_VALUE_LOW:
+    case CO_SDO_AB_MAX_LESS_MIN:
+    case CO_SDO_AB_NO_RESOURCE:
+    case CO_SDO_AB_GENERAL:
+    case CO_SDO_AB_DATA_TRANSF:
+    case CO_SDO_AB_DATA_LOC_CTRL:
+    case CO_SDO_AB_DATA_DEV_STATE:
+    case CO_SDO_AB_DATA_OD:
+    case CO_SDO_AB_NO_DATA:
+        return RET_ERROR;
+    }
+}
+
 /**
  * @brief 
  * 
@@ -42,8 +92,8 @@
  */
 int api_initInterface(const char *interfaceName)
 {
-	API_DEBUG("Opening %s...\n", interfaceName);
-	return RET_OK;
+    API_DEBUG("Opening %s...\n", interfaceName);
+    return RET_OK;
 }
 
 /**
@@ -56,7 +106,7 @@ int api_initInterface(const char *interfaceName)
  */
 int api_initServo(const CanDevice_t *device, const uint8_t id)
 {
-	return RET_OK;
+    return RET_OK;
 }
 
 /**
@@ -68,7 +118,7 @@ int api_initServo(const CanDevice_t *device, const uint8_t id)
  */
 int api_reboot(const CanDevice_t *device)
 {
-	return RET_OK;
+    return RET_OK;
 }
 
 /**
@@ -80,7 +130,7 @@ int api_reboot(const CanDevice_t *device)
  */
 int api_resetCommunication(const CanDevice_t *device)
 {
-	return RET_OK;
+    return RET_OK;
 }
 
 /**
@@ -93,7 +143,7 @@ int api_resetCommunication(const CanDevice_t *device)
  */
 int api_setStateOperational(const CanDevice_t *device)
 {
-	return RET_OK;
+    return RET_OK;
 }
 
 /**
@@ -105,7 +155,7 @@ int api_setStateOperational(const CanDevice_t *device)
  */
 int api_setStatePreOperational(const CanDevice_t *device)
 {
-	return RET_OK;
+    return RET_OK;
 }
 
 /**
@@ -117,7 +167,7 @@ int api_setStatePreOperational(const CanDevice_t *device)
  */
 int api_setStateStopped(const CanDevice_t *device)
 {
-	return RET_OK;
+    return RET_OK;
 }
 
 /**
@@ -129,7 +179,11 @@ int api_setStateStopped(const CanDevice_t *device)
  */
 int api_stopAndRelease(const CanDevice_t *device)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -141,7 +195,11 @@ int api_stopAndRelease(const CanDevice_t *device)
  */
 int api_stopAndFreeze(const CanDevice_t *device)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -154,7 +212,11 @@ int api_stopAndFreeze(const CanDevice_t *device)
  */
 int api_setCurrent(const CanDevice_t *device, const float currentA)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -167,7 +229,11 @@ int api_setCurrent(const CanDevice_t *device, const float currentA)
  */
 int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -180,7 +246,11 @@ int api_setVelocity(const CanDevice_t *device, const float velocityDegPerSec)
  */
 int api_setPosition(const CanDevice_t *device, const float positionDeg)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -194,7 +264,11 @@ int api_setPosition(const CanDevice_t *device, const float positionDeg)
  */
 int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDegPerSec, const float currentA)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -211,7 +285,11 @@ int api_setVelocityWithLimits(const CanDevice_t *device, const float velocityDeg
  */
 int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg, const float velocityDegPerSec, const float currentA)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -225,7 +303,11 @@ int api_setPositionWithLimits(const CanDevice_t *device, const float positionDeg
  */
 int api_setDuty(CanDevice_t *device, float dutyPercent)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -240,7 +322,11 @@ int api_setDuty(CanDevice_t *device, float dutyPercent)
  */
 int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -256,7 +342,7 @@ int api_addMotionPoint(const CanDevice_t *device, const float positionDeg, const
  */
 int api_startMotion(uint32_t timestampMs)
 {
-	return RET_OK;
+    return RET_OK;
 }
 
 /**
@@ -268,7 +354,11 @@ int api_startMotion(uint32_t timestampMs)
  */
 int api_readErrorStatus(const CanDevice_t *device)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -281,7 +371,11 @@ int api_readErrorStatus(const CanDevice_t *device)
  */
 int api_writeArrayRequestMask(const CanDevice_t *device, const uint8_t *requests)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -294,7 +388,11 @@ int api_writeArrayRequestMask(const CanDevice_t *device, const uint8_t *requests
  */
 int api_readArrayRequestMask(const CanDevice_t *device, uint8_t *requests)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -308,7 +406,11 @@ int api_readArrayRequestMask(const CanDevice_t *device, uint8_t *requests)
  */
 int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -320,7 +422,11 @@ int api_readParameter(const CanDevice_t *device, const uint8_t param, const floa
  */
 int api_clearPointsAll(const CanDevice_t *device)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -333,7 +439,11 @@ int api_clearPointsAll(const CanDevice_t *device)
  */
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -346,7 +456,11 @@ int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear)
  */
 int api_readArrayRequest(const CanDevice_t *device, float *array)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -359,7 +473,11 @@ int api_readArrayRequest(const CanDevice_t *device, float *array)
  */
 int api_getPointsSize(CanDevice_t *device, uint32_t *num)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -372,7 +490,11 @@ int api_getPointsSize(CanDevice_t *device, uint32_t *num)
  */
 int api_getPointsFreeSpace(CanDevice_t *device, uint32_t *num)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -394,7 +516,30 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
                               const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs,
                               const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+
+    uint8_t data[8 * 4];
+
+    usb_can_put_float(data, 0, &startPositionDeg, 1);
+    usb_can_put_float(data + 4, 0, &startVelocityDeg, 1);
+    usb_can_put_float(data + 8, 0, &startAccelerationDegPerSec2, 1);
+    usb_can_put_uint32_t(data + 12, 0, &startTimeMs, 1);
+
+    usb_can_put_float(data + 16, 0, &endPositionDeg, 1);
+    usb_can_put_float(data + 20, 0, &endVelocityDeg, 1);
+    usb_can_put_float(data + 24, 0, &endAccelerationDegPerSec2, 1);
+    usb_can_put_uint32_t(data + 28, 0, &endTimeMs, 1);
+
+    uint8_t sts = write_raw_sdo(device.id, 0x2203, 0x01, data, 32, 1, 200);
+
+    if(sts == CO_SDO_AB_GENERAL)
+    {
+        return RET_WRONG_TRAJ;
+    }
+    else
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -407,7 +552,11 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
  */
 int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -420,7 +569,11 @@ int api_getTimeCalculationResult(const CanDevice_t *device, uint32_t *timeMs)
  */
 int api_getZeroPosition(const CanDevice_t *device, float *positionDeg) //???
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -432,7 +585,11 @@ int api_getZeroPosition(const CanDevice_t *device, float *positionDeg) //???
  */
 int api_setZeroPositionAndSave(const CanDevice_t *device)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -445,7 +602,11 @@ int api_setZeroPositionAndSave(const CanDevice_t *device)
  */
 int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
 
 /**
@@ -459,5 +620,9 @@ int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
  */
 int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerSec)
 {
-	return RET_OK;
+    CHECK_NMT_STATE(device);
+    uint8_t sts = ;
+    {
+        return retSDO(sts);
+    }
 }
