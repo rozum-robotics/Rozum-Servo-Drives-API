@@ -27,6 +27,7 @@
 #include "usbcan_proto.h"
 #include "usbcan_ipc.h"
 #include "usbcan_types.h"
+#include "usbcan_util.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -61,6 +62,18 @@ static int retSDO(int code)
 	default:
         return RET_ERROR;
     }
+}
+
+/**
+ * @brief 
+ * 
+ * @param ms - time to sleep in milleseconds
+ * @return void
+ * @ingroup Common
+ */
+void api_sleepMs(int ms)
+{
+	msleep(ms);
 }
 
 /**

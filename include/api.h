@@ -182,6 +182,8 @@ typedef struct
 
 /* Ref: http://dev.rozum.com/rozum-java/leonardo/blob/develop/devices/motor/cyber-api/src/main/java/com/rozum/cyber/api/protocol/prt3/CyberProtocol3.java */
 
+void api_sleepMs(int ms);
+
 int api_initInterface(CanInterface_t *const interface, const char *interfaceName);
 int api_deinitInterface(CanInterface_t *const interface);
 int api_initDevice(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id);

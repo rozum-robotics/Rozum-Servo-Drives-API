@@ -8,20 +8,12 @@ int main(int argc, char *argv[])
 	CanInterface_t iface;
 	CanDevice_t d;
 
-	printf("init interface\n");
 	api_initInterface(&iface, "192.168.0.123");
-	printf("init device\n");
 	api_initDevice(&iface, &d, SERVO_ID);
-
-	
-	sleep(1);
-
-	printf("set current\n");
-	api_setCurrent(&d, 3.0);
-
-	sleep(30);
-	api_setCurrent(&d, 0.0);
-	sleep(1);
+	api_sleepMs(1000);
+	api_setVelocity(&d, 10.0);
+	api_sleepMs(30000);
+	api_stopAndRelease(&d);
 
 	return 0;
 }
