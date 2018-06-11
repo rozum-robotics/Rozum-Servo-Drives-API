@@ -31,13 +31,10 @@ int api_initInterface(const char *interfaceName);
 int api_initServo(const CanDevice_t *device, const uint8_t id);
 
 int api_reboot(const CanDevice_t *device);
-int api_rebootAll(void);
+int api_resetCommunication(const CanDevice_t *device) {}
 int api_setStateOperational(const CanDevice_t *device);
-int api_setStateOperationalAll(void);
 int api_setStatePreOperational(const CanDevice_t *device);
-int api_setStatePreOperationalAll(void);
 int api_setStateStopped(const CanDevice_t *device);
-int api_setStateStoppedAll(void);
 
 int api_stopAndRelease(const CanDevice_t *device);
 int api_stopAndFreeze(const CanDevice_t *device);
