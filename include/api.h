@@ -13,11 +13,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
 #include <stdio.h>
-//#include "common/servo_api.h"
-//#include "math.h"
-
-#define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
-
+#include "usbcan_proto.h"
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -26,10 +22,17 @@
  */
 typedef struct
 {
-    uint8_t id;                   ///< Device CAN ID
-    uint8_t nmtState;             ///< Device NMT state
-//    time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
+    usbcan_device_t dev;
 } CanDevice_t;
+
+/**
+ * @brief Interface instance structure
+ * 
+ */
+typedef struct
+{
+	usbcan_instance_t usbcan; ///< UsbCan internals (do not use directly)
+} CanInterface_t;
 
 /* Exported constants --------------------------------------------------------*/
 /**
@@ -48,14 +51,15 @@ enum RetStatus_t
 };
 
 /* Exported macro ------------------------------------------------------------*/
+#define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
 /* Exported define -----------------------------------------------------------*/
 /* Exported functions ------------------------------------------------------- */
 /* Exported C++ declarations ------------------------------------------------ */
 
 /* Ref: http://dev.rozum.com/rozum-java/leonardo/blob/develop/devices/motor/cyber-api/src/main/java/com/rozum/cyber/api/protocol/prt3/CyberProtocol3.java */
 
-int api_initInterface(const char *interfaceName);
-int api_initServo(const CanDevice_t *device, const uint8_t id);
+int api_initInterface(CanInterface_t *const interface, const char *interfaceName);
+int api_initServo(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id);
 
 int api_reboot(const CanDevice_t *device);
 int api_resetCommunication(const CanDevice_t *device);

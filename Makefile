@@ -104,6 +104,7 @@ OPT_LVL = 2
 #
 INCDIR += .
 INCDIR += include
+INCDIR += src
 
 #
 #C sources

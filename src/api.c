@@ -36,25 +36,27 @@
 /**
  * @brief 
  * 
+ * @param interface 
  * @param interfaceName 
  * @return int Status code (::RetStatus_t)
  * @ingroup Common
  */
-int api_initInterface(const char *interfaceName)
+int api_initInterface(CanInterface_t *const interface, const char *interfaceName)
 {
 	API_DEBUG("Opening %s...\n", interfaceName);
-	return RET_OK;
+	return usbcan_instance_init(&interface->usbcan, interfaceName) ? RET_OK : RET_ERROR;
 }
 
 /**
  * @brief 
  * 
+ * @param interface 
  * @param device Device instance 
  * @param id 
  * @return int Status code (::RetStatus_t)
  * @ingroup Common
  */
-int api_initServo(const CanDevice_t *device, const uint8_t id)
+int api_initServo(const CanInterface_t *interface, CanDevice_t *const device, const uint8_t id)
 {
 	return RET_OK;
 }
