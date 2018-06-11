@@ -11,8 +11,15 @@
 #define _ROZUM_API_H
 
 /* Includes ------------------------------------------------------------------*/
-#include "common/servo_api.h"
-#include "math.h"
+#include <stdint.h>
+#include <stdio.h>
+//#include "common/servo_api.h"
+//#include "math.h"
+
+typedef float float32_t;
+
+#define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
+
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -23,7 +30,7 @@ typedef struct
 {
     uint8_t id;                   ///< Device CAN ID
     uint8_t nmtState;             ///< Device NMT state
-    time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
+//    time_t lastHartbeatTimestamp; ///< Last timestamp of the device heartbeat
 } CanDevice_t;
 
 /* Exported constants --------------------------------------------------------*/
