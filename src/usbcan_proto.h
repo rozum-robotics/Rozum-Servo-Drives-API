@@ -82,6 +82,7 @@ struct usbcan_instance_t
 	bool usbcan_udp;
 
 	FILE *comm_log;
+	bool running;
 };
 
 struct usbcan_device_t
@@ -100,6 +101,42 @@ typedef void (*usbcan_nmt_state_cb_t)(usbcan_instance_t *inst, int id, usbcan_nm
 typedef void (*usbcan_com_frame_cb_t)(usbcan_instance_t *inst, can_msg_t *m);
 typedef void (*usbcan_emcy_cb_t)(usbcan_instance_t *inst, int id, uint16_t err_code, uint8_t err_reg, uint8_t err_bits, uint32_t err_info);
 
+typedef enum
+{
+	IPC_COM_FRAME,
+	IPC_TIMESTAMP,
+	IPC_SDO,
+	IPC_EMCY,
+	IPC_NMT,
+} ipc_opcode_t;
+
+typedef struct
+{
+	int id;
+	uint16_t code;
+	uint8_t reg;
+	uint8_t bits;
+	uint32_t info;
+} ipc_emcy_t;
+
+typedef struct
+{
+	int id;
+	usbcan_nmt_cmd_t cmd;
+} ipc_nmt_t;
+
+typedef struct
+{
+    usbcan_sdo_t sdo;
+    int data_len;
+} ipc_sdo_req_t;
+
+typedef struct
+{
+    usbcan_sdo_t sdo;
+    uint32_t abt;
+    int data_len;
+} ipc_sdo_resp_t;
 
 
 extern const char *CAN_OPEN_CMD[];
@@ -111,15 +148,8 @@ void usbcan_setup_emcy_cb(usbcan_instance_t *inst, usbcan_emcy_cb_t cb);
 void usbcan_setup_nmt_state_cb(usbcan_instance_t *inst, usbcan_nmt_state_cb_t cb);
 void usbcan_setup_com_frame_cb(usbcan_instance_t *inst, usbcan_com_frame_cb_t cb);
 
-void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms);
-int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb);
-void send_master_hb(usbcan_instance_t *inst);
-int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m);
-int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
 usbcan_nmt_state_t usbcan_get_device_state(usbcan_instance_t *inst, int id);
 int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id);
-int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state);
-int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
 void usbcan_inhibit_master_hb(usbcan_instance_t *inst, bool inh);
 
 void usbcan_set_comm_log_stream(usbcan_instance_t *inst, FILE *f);
@@ -129,6 +159,13 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name);
 int usbcan_instance_deinit(usbcan_instance_t **inst);
 usbcan_device_t *usbcan_device_init(usbcan_instance_t *inst, int id);
 int usbcan_device_deinit(usbcan_device_t **dev);
+
+
+uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout);
+uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout);
+int write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg);
+int write_timestamp(const usbcan_instance_t *inst, uint32_t ts);
+int write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
 
 #endif
 

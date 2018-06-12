@@ -24,7 +24,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "api.h"
-#include "usbcan_ipc.h"
 #include "usbcan_proto.h"
 #include "usbcan_types.h"
 #include "usbcan_util.h"
@@ -164,8 +163,7 @@ int api_deinitDevice(CanDevice_t *device)
 int api_deviceReboot(const CanDevice_t device)
 {
 	usbcan_device_t *dev = (usbcan_device_t *)device;
-    write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE);
-    return RET_OK;
+    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -178,8 +176,7 @@ int api_deviceReboot(const CanDevice_t device)
 int api_deviceResetCommunication(const CanDevice_t device)
 {
 	usbcan_device_t *dev = (usbcan_device_t *)device;
-    write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM);
-    return RET_OK;
+    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -193,8 +190,7 @@ int api_deviceResetCommunication(const CanDevice_t device)
 int api_deviceSetStateOperational(const CanDevice_t device)
 {
 	usbcan_device_t *dev = (usbcan_device_t *)device;
-    write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_OP);
-    return RET_OK;
+    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -207,8 +203,7 @@ int api_deviceSetStateOperational(const CanDevice_t device)
 int api_deviceSetStatePreOperational(const CanDevice_t device)
 {
 	usbcan_device_t *dev = (usbcan_device_t *)device;
-    write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_PREOP);
-    return RET_OK;
+    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -221,8 +216,7 @@ int api_deviceSetStatePreOperational(const CanDevice_t device)
 int api_deviceSetStateStopped(const CanDevice_t device)
 {
 	usbcan_device_t *dev = (usbcan_device_t *)device;
-    write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_STOPPED);
-    return RET_OK;
+    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -235,8 +229,7 @@ int api_deviceSetStateStopped(const CanDevice_t device)
 int api_netReboot(const CanInterface_t interface)
 {
 	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
-    write_nmt(inst, 0, CO_NMT_CMD_RESET_NODE);
-    return RET_OK;
+    return write_nmt(inst, 0, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -249,8 +242,7 @@ int api_netReboot(const CanInterface_t interface)
 int api_netResetCommunication(const CanInterface_t interface)
 {
 	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
-    write_nmt(inst, 0, CO_NMT_CMD_RESET_COMM);
-    return RET_OK;
+    return write_nmt(inst, 0, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -263,8 +255,7 @@ int api_netResetCommunication(const CanInterface_t interface)
 int api_netSetStateOperational(const CanInterface_t interface)
 {
 	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
-    write_nmt(inst, 0, CO_NMT_CMD_GOTO_OP);
-    return RET_OK;
+    return write_nmt(inst, 0, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -277,8 +268,7 @@ int api_netSetStateOperational(const CanInterface_t interface)
 int api_netSetStatePreOperational(const CanInterface_t interface)
 {
 	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
-    write_nmt(inst, 0, CO_NMT_CMD_GOTO_PREOP);
-    return RET_OK;
+    return write_nmt(inst, 0, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;;
 }
 
 /**
@@ -291,8 +281,7 @@ int api_netSetStatePreOperational(const CanInterface_t interface)
 int api_netSetStateStopped(const CanInterface_t interface)
 {
 	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
-    write_nmt(inst, 0, CO_NMT_CMD_GOTO_STOPPED);
-    return RET_OK;
+    return write_nmt(inst, 0, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;
 }
 
 /**

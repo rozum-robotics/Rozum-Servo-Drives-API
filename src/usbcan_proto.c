@@ -1,7 +1,7 @@
 #include <string.h>
 #include <inttypes.h>
+#include <errno.h>
 #include "usbcan_proto.h"
-#include "usbcan_ipc.h"
 #include "usbcan_util.h"
 #include "rb_tools.h"
 #include "crc16-ccitt.h"
@@ -12,21 +12,9 @@
 
 FILE *debug_log = NULL;
 
-const char *CAN_OPEN_CMD[] = 
-{
-	"COM_FRAME",
-	"COM_NMT",
-	"COM_HB",
-	"COM_TIMESTAMP",
-	"COM_SDO_TX_REQ",
-	"COM_SDO_TX_RESP",
-	"COM_SDO_RX_REQ",
-	"COM_SDO_RX_RESP",
-	"COM_SYNC",
-	"COM_EMCY",
-	"COM_PDO",
-	""
-};
+/*
+ * PRIVATE functions
+ */
 
 static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts);
 static int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state);
@@ -38,6 +26,48 @@ static int usbcan_build_sdo_req(uint8_t *dst,
 		uint16_t len,
 		sdo_resp_cb_t cb);
 static int usbcan_rx(usbcan_instance_t *inst);
+
+static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb);
+static void usbcan_send_master_hb(usbcan_instance_t *inst);
+static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m);
+static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
+static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state) __attribute__((unused));
+static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
+
+static bool is_valid_instance(const usbcan_instance_t *inst)
+{
+	if(!inst)
+	{
+		LOG_ERROR(debug_log, "null interface");
+		return false;
+	}
+	if(!inst->running)
+	{
+		LOG_ERROR(debug_log, "interface thread not running");
+		return false;
+	}
+	return true;
+}
+
+static bool is_valid_device(const usbcan_device_t *dev)
+{
+	if(!dev)
+	{
+		LOG_ERROR(debug_log, "null device");
+		return false;
+	}
+	if(!dev->inst)
+	{
+		LOG_ERROR(debug_log, "device points to null interface");
+		return false;
+	}
+	if(!dev->inst->running)
+	{
+		LOG_ERROR(debug_log, "device's corresponding interface thread not running");
+		return false;
+	}
+	return true;
+}
 
 static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 {
@@ -54,10 +84,138 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 
 	if(ret < 0)
 	{
-		LOG_ERROR(debug_log, "usbcan write failed");
+		LOG_ERROR(debug_log, "%s: usbcan write failed", __func__);
 	}
 
 	return ret;
+}
+
+static void ipc_create_link(usbcan_instance_t *inst)
+{
+    if(pipe(inst->to_master_pipe))
+    {
+        LOG_ERROR(debug_log, "%s: can't create master pipe", __func__);
+        return;
+    }
+
+    if(pipe(inst->to_child_pipe))
+    {
+        LOG_ERROR(debug_log, "%s: can't create child pipe", __func__);
+        return;
+    }
+}
+
+static size_t read_sig_safe(int fd, void *data, size_t sz)
+{
+    size_t l, bytes = 0;
+
+    while(sz)
+    {
+        l = read(fd, ((uint8_t *)data) + bytes, sz);
+        if(l >= 0)
+        {
+            sz -= l;
+            bytes += l;
+        }
+        else
+        {
+            if(errno == EINTR)
+            {
+                continue;
+            }
+            return -1;
+        }
+    }
+    return bytes;
+}
+
+static size_t write_sig_safe(int fd, void *data, size_t sz)
+{
+    size_t l, bytes = 0;
+
+    while(sz)
+    {
+        l = write(fd, ((uint8_t *)data) + bytes, sz);
+        if(l >= 0)
+        {
+            sz -= l;
+            bytes += l;
+        }
+        else
+        {
+            if(errno == EINTR)
+            {
+                continue;
+            }
+            return -1;
+        }
+    }
+    return bytes;
+}
+
+static void sdo_resp_cb(usbcan_instance_t *inst, uint32_t abt, uint8_t *data, int len)
+{
+    ipc_sdo_resp_t r;
+
+    r.sdo = inst->wait_for.sdo;
+    r.abt = abt;
+    r.data_len = len;
+    write_sig_safe(inst->to_master_pipe[1], &r, sizeof(r));
+    if(data && len)
+    {
+        write_sig_safe(inst->to_master_pipe[1], data, len);
+    }
+}
+
+static void ipc_process(usbcan_instance_t *inst)
+{
+    ipc_opcode_t opcode;
+
+    read_sig_safe(inst->to_child_pipe[0], &opcode, sizeof(opcode));
+
+    switch(opcode)
+    {
+    case IPC_SDO:
+    {
+        ipc_sdo_req_t r;
+
+        read_sig_safe(inst->to_child_pipe[0], &r, sizeof(r));
+        uint8_t data[r.data_len];
+        read_sig_safe(inst->to_child_pipe[0], data, r.data_len);
+        usbcan_send_sdo_req(inst, &r.sdo, data, r.data_len, sdo_resp_cb);
+        break;
+    }
+    case IPC_COM_FRAME:
+    {
+        can_msg_t msg;
+
+        read_sig_safe(inst->to_child_pipe[0], &msg, sizeof(msg));
+
+        usbcan_send_com_frame(inst, &msg);
+        break;
+    }
+    case IPC_TIMESTAMP:
+    {
+        uint32_t ts;
+
+        read_sig_safe(inst->to_child_pipe[0], &ts, sizeof(ts));
+
+        usbcan_send_timestamp(inst, ts);
+        break;
+    }
+    case IPC_NMT:
+    {
+        ipc_nmt_t nmt;
+
+        read_sig_safe(inst->to_child_pipe[0], &nmt, sizeof(nmt));
+
+        usbcan_send_nmt(inst, nmt.id, nmt.cmd);
+        break;
+    }
+    break;
+    default:
+        break;
+    }
 }
 
 
@@ -66,56 +224,8 @@ static void usbcan_enable_udp(usbcan_instance_t *inst, bool en)
 	inst->usbcan_udp = en;
 }
 
-void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to)
-{
-	inst->master_hb_ival = to;
-	inst->usbcan_hb_tx_cb = cb;
-}
 
-void usbcan_setup_hb_rx_cb(usbcan_instance_t *inst, usbcan_hb_rx_cb_t cb)
-{
-	inst->usbcan_hb_rx_cb = cb;
-}
-
-void usbcan_setup_emcy_cb(usbcan_instance_t *inst, usbcan_emcy_cb_t cb)
-{
-	inst->usbcan_emcy_cb = cb;
-}
-
-void usbcan_setup_nmt_state_cb(usbcan_instance_t *inst, usbcan_nmt_state_cb_t cb)
-{
-	inst->usbcan_nmt_state_cb = cb;
-}
-
-void usbcan_setup_com_frame_cb(usbcan_instance_t *inst, usbcan_com_frame_cb_t cb)
-{
-	inst->usbcan_com_frame_cb = cb;
-}
-
-int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id)
-{
-	if(INRANGE(id, 0, USB_CAN_MAX_DEV))
-	{
-		return inst->dev_hb_ival[id];
-	}
-	return 0;
-}
-
-usbcan_nmt_state_t usbcan_get_device_state(usbcan_instance_t *inst, int id)
-{
-	if(INRANGE(id, 0, USB_CAN_MAX_DEV))
-	{
-		return inst->dev_state[id];
-	}
-	return CO_NMT_HB_TIMEOUT;
-}
-
-void usbcan_inhibit_master_hb(usbcan_instance_t *inst, bool inh)
-{
-	inst->inhibit_master_hb = inh;
-}
-
-void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
+static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 {
 	int i;
 
@@ -146,7 +256,7 @@ void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 			{
 				((usbcan_hb_tx_cb_t)inst->usbcan_hb_tx_cb)(inst);
 			}
-			send_master_hb(inst);
+			usbcan_send_master_hb(inst);
 		}
 		inst->master_hb_timer -= inst->master_hb_ival;
 	}
@@ -166,8 +276,6 @@ static void usbcan_wait_for(usbcan_instance_t *inst, usbcan_sdo_t *sdo, sdo_resp
 	inst->wait_for.sdo = *sdo;
 	inst->wait_for.cb = cb;
 }
-
-/*************************************************************************************************/
 
 static int usbcan_wrap_inplace(uint8_t *dst, int payload_sz)
 {
@@ -256,9 +364,7 @@ static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m)
 	return usbcan_wrap_inplace(dst, p);
 }
 
-/*************************************************************************************************/
-
-int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
+static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_nmt(dst, id, cmd);
@@ -266,7 +372,7 @@ int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 	return usbcan_write_fd(inst, dst, l);
 }
 
-int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
+static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_hb(dst, id, state);
@@ -275,14 +381,14 @@ int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 }
 
 
-int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
+static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_timestamp(dst, ts);
 	return usbcan_write_fd(inst, dst, l);
 }
 
-int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb)
+static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_sdo_req(dst, sdo, data, len, cb);
@@ -291,21 +397,19 @@ int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, 
 	return usbcan_write_fd(inst, dst, l);
 }
 
-int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
+static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_com_frame(dst, m);
 	return usbcan_write_fd(inst, dst, l);
 }
 
-void send_master_hb(usbcan_instance_t *inst)
+static void usbcan_send_master_hb(usbcan_instance_t *inst)
 {
 	can_msg_t msg = {USB_CAN_MASTER_HB_COM_FRAME_ID, 1, {CO_NMT_OPERATIONAL}};
 
 	usbcan_send_com_frame(inst, &msg);
 }
-
-/*************************************************************************************************/
 
 static void usbcan_parse_com_frame(can_msg_t *m, uint8_t *msg, int sz)
 {
@@ -478,10 +582,9 @@ static int usbcan_rx(usbcan_instance_t *inst)
 	int l = read(inst->fd, b, sizeof(b));
 	if(l < 0)
 	{
-		LOG_ERROR(debug_log, "usbcan read failed");
+		LOG_ERROR(debug_log, "%s: usbcan read failed", __func__);
 		return l;
 	}
-	//LOG_DUMP(inst->comm_log, "SERIAL RX", b, l);
 	
 	if(inst->usbcan_udp)
 	{
@@ -502,7 +605,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 				break;
 			}
 			t = (t + 1) % sizeof(rb);
-			LOG_WARN(debug_log, "malformed packed, skipping");
+			LOG_WARN(debug_log, "%s: malformed packed, skipping", __func__);
 		}
 
 		if(rb_dist(h, t, sizeof(rb)) >= 3)
@@ -514,7 +617,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 
 			if(elen >= sizeof(rb))
 			{
-				LOG_WARN(debug_log, "too long message %d", elen);
+				LOG_WARN(debug_log, "%s: too long message %d", __func__, elen);
 				t = (t + 1) % sizeof(rb);
 			}
 
@@ -533,7 +636,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 				}
 				else
 				{
-					LOG_WARN(debug_log, "crc error %x != %x\n", ecrc, crc);
+					LOG_WARN(debug_log, "%s: crc error %x != %x\n", __func__, ecrc, crc);
 					t = (t + 1) % sizeof(rb);
 				}
 				continue;
@@ -571,18 +674,63 @@ static void nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t sta
 	}
 }
 
-static void *usbcan_process(void *udata)
+static void usbcan_flush_device(usbcan_instance_t *inst)
 {
+	if(inst->fd < 0)
+	{
+		return;
+	}
+
 	struct timeval tprev, tnow;
-	int n = 0;
+	struct pollfd pfds[1];
+
+	pfds[0].fd = inst->fd;
+	pfds[0].events = POLLIN | POLLERR;
+
+	gettimeofday(&tnow, NULL);
+	tprev = tnow;
+	
+	for(int t = USB_CAN_FLUSH_TOUT_MS; t > 0;)
+	{
+		int n;
+
+		n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
+		gettimeofday(&tnow, NULL);
+		if(n > 0)
+		{
+			if(pfds[0].revents & POLLERR)
+			{
+				LOG_ERROR(debug_log, "%s: poll failed", __func__);
+				inst->fd = -1;
+				return;
+			}
+			if(pfds[0].revents & POLLIN)
+			{
+				uint8_t discard[USB_CAN_MAX_PAYLOAD];
+				if(read(inst->fd, discard, sizeof(discard)) < 0)
+				{
+					LOG_ERROR(debug_log, "%s: read failed", __func__);
+					inst->fd = -1;
+					return;
+				}
+			}
+		}
+		else
+		{
+			break;
+		}
+		t -= TIME_DELTA_MS(tnow, tprev);
+		tprev = tnow;
+	}
+}
+
+static void usbcan_open_device(usbcan_instance_t *inst)
+{
 	struct termios term;
 	int flags;
-	struct pollfd pfds[2];
 	struct sockaddr_in host_addr;
 	FILE *f = NULL;
 	struct in_addr addr;
-
-	usbcan_instance_t *inst = (usbcan_instance_t *)udata;
 
 	if(inet_aton(inst->device, &addr) != 0)
 	{
@@ -590,29 +738,33 @@ static void *usbcan_process(void *udata)
 		inst->fd = socket(AF_INET, SOCK_DGRAM, 0);
 		if(inst->fd < 0)
 		{
-			LOG_ERROR(debug_log, "can't create socket\n");
-			return 0;
+			LOG_ERROR(debug_log, "%s: can't create UDP socket", __func__);
+			return;
 		}
 		host_addr.sin_family = AF_INET;
-		host_addr.sin_port = htons(17701);
+		host_addr.sin_port = htons(USB_CAN_OUTGOING_UDP_PORT);
 		host_addr.sin_addr.s_addr = INADDR_ANY;
 		if(bind(inst->fd, (const struct sockaddr *)&host_addr, sizeof(struct sockaddr_in)) < 0)
 		{
-			LOG_ERROR(debug_log, "can't bind to port\n");
-			return 0;
+			LOG_ERROR(debug_log, "%s: can't bind to UDP port", __func__);
+			inst->fd = -1;
+			return;
 		}
 		host_addr.sin_family = AF_INET;
-		host_addr.sin_port = htons(17700);
+		host_addr.sin_port = htons(USB_CAN_INGOING_UDP_PORT);
 		host_addr.sin_addr.s_addr = addr.s_addr;
 		if(connect(inst->fd, (const struct sockaddr *)&host_addr, sizeof(struct sockaddr_in)) < 0)
 		{
-			LOG_ERROR(debug_log, "can't connect to port\n");
-			return 0;
+			LOG_ERROR(debug_log, "%s: can't connect to UDP port", __func__);
+			inst->fd = -1;
+			return;
 		}
 
 		if(write(inst->fd, "hello", 5) != 5)
 		{
-			return 0;
+			LOG_ERROR(debug_log, "%s: can't write to UDP port", __func__);
+			inst->fd = -1;
+			return;
 		}
 	}
 	else if((f = fopen(inst->device, "r+")) != NULL)
@@ -628,76 +780,138 @@ static void *usbcan_process(void *udata)
 	}
 	else
 	{
-		LOG_ERROR(debug_log, "can't open usbcan device %s", inst->device);
-		return 0;
+		LOG_ERROR(debug_log, "%s: can't open serial device %s", __func__, inst->device);
+		inst->fd = -1;
+		return;
 	}
 
+	usbcan_flush_device(inst);
+}
+
+static void *usbcan_process(void *udata)
+{
+	struct timeval tprev, tnow;
+	int n = 0;
+	struct pollfd pfds[2];
+
+	usbcan_instance_t *inst = (usbcan_instance_t *)udata;
 
 	usbcan_setup_hb_tx_cb(inst, hb_tx_cb, 250);
 	usbcan_setup_hb_rx_cb(inst, hb_rx_cb);
 	usbcan_setup_emcy_cb(inst, emcy_cb);
 	usbcan_setup_nmt_state_cb(inst, nmt_state_cb);
 
-	pfds[0].fd = inst->fd;
-	pfds[0].events = POLLIN;
-
-	pfds[1].fd = inst->to_child_pipe[0];
-	pfds[1].events = POLLIN;
-
-	gettimeofday(&tnow, NULL);
-	tprev = tnow;
-	
-	for(int t = USB_CAN_FLUSH_TOUT_MS; t > 0;)
+	do
 	{
-		int n;
-
-		n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
-		gettimeofday(&tnow, NULL);
-		if(n > 0)
+		usbcan_open_device(inst);
+		if(inst->fd < 0)
 		{
-			uint8_t discard[USB_CAN_MAX_PAYLOAD];
-			if(read(inst->fd, discard, sizeof(discard)) < 0)
-			{
-				LOG_ERROR(debug_log, "read failed");
-				return 0;
-			}
-		}
-		else
-		{
+			LOG_ERROR(debug_log, "%s: open device '%s' failed", __func__, inst->device);
 			break;
 		}
-		t -= TIME_DELTA_MS(tnow, tprev);
-		tprev = tnow;
-	}
 
-	gettimeofday(&tnow, NULL);
-	tprev = tnow;
+		pfds[0].fd = inst->to_child_pipe[0];
+		pfds[0].events = POLLIN;
 
-	while(1)
-	{
-		n = poll(pfds, 2, USB_CAN_POLL_GRANULARITY_MS);
+		pfds[1].fd = inst->fd;
+		pfds[1].events = POLLIN | POLLERR;
+
 		gettimeofday(&tnow, NULL);
-		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
-		if(n > 0)
+		tprev = tnow;
+
+		inst->running = true;
+
+		while(1)
 		{
-			if(pfds[1].revents & POLLIN)
+			n = poll(pfds, 2, USB_CAN_POLL_GRANULARITY_MS);
+			gettimeofday(&tnow, NULL);
+			usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
+			if(n > 0)
 			{
-				ipc_process(inst);
-			}
-			if(pfds[0].revents & POLLIN)
-			{
-				if(usbcan_rx(inst) < 0)
+				if(pfds[0].revents & POLLIN)
 				{
+					ipc_process(inst);
+				}
+
+				if(pfds[1].revents & POLLERR)
+				{
+					LOG_ERROR(debug_log, "%s: poll failed", __func__);
 					break;
 				}
+				if(pfds[1].revents & POLLIN)
+				{
+					if(usbcan_rx(inst) < 0)
+					{
+						LOG_ERROR(debug_log, "%s: read failed", __func__);
+						break;
+					}
+				}
 			}
+			tprev = tnow;
 		}
-		tprev = tnow;
+		close(inst->fd);
 	}
+	while(0);
 
-	close(inst->fd);
+	inst->running = false;
+	LOG_ERROR(debug_log, "%s: thread finished", __func__);
+
 	return 0;
 }
+
+/*
+ * PUBLIC functions
+ */
+
+void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to)
+{
+	inst->master_hb_ival = to;
+	inst->usbcan_hb_tx_cb = cb;
+}
+
+void usbcan_setup_hb_rx_cb(usbcan_instance_t *inst, usbcan_hb_rx_cb_t cb)
+{
+	inst->usbcan_hb_rx_cb = cb;
+}
+
+void usbcan_setup_emcy_cb(usbcan_instance_t *inst, usbcan_emcy_cb_t cb)
+{
+	inst->usbcan_emcy_cb = cb;
+}
+
+void usbcan_setup_nmt_state_cb(usbcan_instance_t *inst, usbcan_nmt_state_cb_t cb)
+{
+	inst->usbcan_nmt_state_cb = cb;
+}
+
+void usbcan_setup_com_frame_cb(usbcan_instance_t *inst, usbcan_com_frame_cb_t cb)
+{
+	inst->usbcan_com_frame_cb = cb;
+}
+
+int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id)
+{
+	if(INRANGE(id, 0, USB_CAN_MAX_DEV))
+	{
+		return inst->dev_hb_ival[id];
+	}
+	return 0;
+}
+
+usbcan_nmt_state_t usbcan_get_device_state(usbcan_instance_t *inst, int id)
+{
+	if(INRANGE(id, 0, USB_CAN_MAX_DEV))
+	{
+		return inst->dev_state[id];
+	}
+	return CO_NMT_HB_TIMEOUT;
+}
+
+void usbcan_inhibit_master_hb(usbcan_instance_t *inst, bool inh)
+{
+	inst->inhibit_master_hb = inh;
+}
+
 
 void usbcan_set_comm_log_stream(usbcan_instance_t *inst, FILE *f)
 {
@@ -709,23 +923,14 @@ void usbcan_set_debug_log_stream(FILE *f)
 	debug_log = f;	
 }
 
-static void list_devices(usbcan_instance_t *inst)
-{
-	LOG_INFO(stderr, "List of devices:");
-	for(usbcan_device_t *dev = inst->device_list; dev; dev = dev->next)
-	{
-		LOG_INFO(stderr, "    Device %p -> %p", dev, dev->next);
-	}
-}
-
 usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 {
-	LOG_INFO(stderr, "%s", __func__);
 	int i;
 
 	usbcan_instance_t *inst = malloc(sizeof(usbcan_instance_t));
 	if(!inst)
 	{
+		LOG_WARN(debug_log, "%s: can't allocate interface instance", __func__);
 		return NULL;
 	}
 	memset(inst, 0, sizeof(usbcan_instance_t));
@@ -744,6 +949,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 
 	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
 	{
+		LOG_WARN(debug_log, "%s: can't run thread", __func__);
 		free(inst);
 		return NULL;
 	}
@@ -751,18 +957,10 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	return inst;
 }
 
-
 int usbcan_instance_deinit(usbcan_instance_t **inst)
 {
-	LOG_INFO(stderr, "%s", __func__);
-	/*TODO: 
-	 * 1. close pthread 
-	 * 2. delete link tot instance from attached devices
-	 * 3. dealloc memory*/
-
 	if(*inst)
 	{
-
 		for(usbcan_device_t *dev = (*inst)->device_list; dev; dev = dev->next)
 		{
 			dev->inst = NULL;
@@ -773,19 +971,24 @@ int usbcan_instance_deinit(usbcan_instance_t **inst)
 		*inst = NULL;
 		return 1;
 	}
+	else
+	{
+		LOG_WARN(debug_log, "%s: 'null' interface instance", __func__);
+	}
 	return 0;
 }
 
 usbcan_device_t *usbcan_device_init(usbcan_instance_t *inst, int id)
 {
-	LOG_INFO(stderr, "%s", __func__);
 	if(!inst)
 	{
+		LOG_WARN(debug_log, "%s: can't init device with 'null' interface", __func__);
 		return 0;
 	}
 	usbcan_device_t *dev = malloc(sizeof(usbcan_device_t));
 	if(!dev)
 	{
+		LOG_WARN(debug_log, "%s: can't allocate device instance", __func__);
 		return 0;
 	}
 	memset(dev, 0, sizeof(usbcan_device_t));
@@ -798,20 +1001,18 @@ usbcan_device_t *usbcan_device_init(usbcan_instance_t *inst, int id)
 	inst->device_list = dev;
 	dev->next = next_dev;
 
-	list_devices(inst);
-	
 	return dev;
 }
 
 int usbcan_device_deinit(usbcan_device_t **dev)
 {
-	LOG_INFO(stderr, "%s", __func__);
 	if(*dev)
 	{
 		usbcan_instance_t *inst = (*dev)->inst;
 
 		if(!inst)
 		{
+			LOG_WARN(debug_log, "%s: 'null' interface instance", __func__);
 			return 0;
 		}
 		usbcan_device_t *prev_dev;
@@ -827,13 +1028,148 @@ int usbcan_device_deinit(usbcan_device_t **dev)
 		{
 			prev_dev->next = (*dev)->next;
 		}
+		else
+		{
+			LOG_WARN(debug_log, "%s: there is no such device in interface", __func__);
+		}
 		free(*dev);
 		*dev = NULL;	
 
-		list_devices(inst);
 		return 1;
 	}
 	return 0;
 }
+
+
+int write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
+{
+	if(!is_valid_instance(inst))
+	{
+		return 0;
+	}
+
+    ipc_opcode_t opcode = IPC_NMT;
+    ipc_nmt_t nmt = {.id = id, .cmd = cmd};
+
+    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
+    write_sig_safe(inst->to_child_pipe[1], &nmt, sizeof(nmt));
+
+	return 1;
+}
+
+int write_timestamp(const usbcan_instance_t *inst, uint32_t ts)
+{
+	if(!is_valid_instance(inst))
+	{
+		return 0;
+	}
+
+    ipc_opcode_t opcode = IPC_TIMESTAMP;
+
+    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
+    write_sig_safe(inst->to_child_pipe[1], &ts, sizeof(ts));
+
+	return 1;
+}
+
+int write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg)
+{
+	if(!is_valid_instance(inst))
+	{
+		return 0;
+	}
+
+    ipc_opcode_t opcode = IPC_COM_FRAME;
+
+    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
+    write_sig_safe(inst->to_child_pipe[1], msg, sizeof(can_msg_t));
+
+	return 1;
+}
+
+uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout)
+{
+	if(!is_valid_device(dev))
+	{
+		return -1;
+	}
+
+    ipc_sdo_req_t req;
+    ipc_sdo_resp_t resp;
+    ipc_opcode_t opcode = IPC_SDO;
+
+    req.sdo.write = true;
+    req.sdo.id = dev->id;
+    req.sdo.idx = idx;
+    req.sdo.sidx = sidx;
+    req.sdo.tout = timeout ? timeout : dev->timeout;
+    req.sdo.re_txn = retry ? retry : dev->retry;
+    req.sdo.ttl = req.sdo.tout * 2; //????????????????
+    req.data_len = len;
+
+    write_sig_safe(dev->inst->to_child_pipe[1], &opcode, sizeof(opcode));
+    write_sig_safe(dev->inst->to_child_pipe[1], &req, sizeof(req));
+    
+    if(data && len)
+    {
+        write_sig_safe(dev->inst->to_child_pipe[1], data, len);
+    }
+    
+    read_sig_safe(dev->inst->to_master_pipe[0], &resp, sizeof(resp));
+    if(resp.abt)
+    {
+        LOG_ERROR(debug_log, "%s: SDO failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", __func__,
+                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
+    }
+
+    return resp.abt;
+}
+
+uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout)
+{
+	if(!is_valid_device(dev))
+	{
+		return -1;
+	}
+
+    ipc_sdo_req_t req;
+    ipc_sdo_resp_t resp;
+    ipc_opcode_t opcode = IPC_SDO;
+
+    req.sdo.write = false;
+    req.sdo.id = dev->id;
+    req.sdo.idx = idx;
+    req.sdo.sidx = sidx;
+    req.sdo.tout = timeout ? timeout : dev->timeout;
+    req.sdo.re_txn = retry ? retry : dev->retry;
+    req.sdo.ttl = req.sdo.tout * 2; //????????????????
+    req.data_len = 0;
+
+    write_sig_safe(dev->inst->to_child_pipe[1], &opcode, sizeof(opcode));
+    write_sig_safe(dev->inst->to_child_pipe[1], &req, sizeof(req));
+
+    read_sig_safe(dev->inst->to_master_pipe[0], &resp, sizeof(resp));
+
+    if(!resp.abt)
+    {
+        if(resp.data_len > *len)
+        {
+            LOG_WARN(debug_log, "%s: supplied buffer of %d bytes to small, %d bytes required", __func__, *len, resp.data_len);
+        }
+        else
+        {
+            *len = resp.data_len;
+        }
+        read_sig_safe(dev->inst->to_master_pipe[0], data, *len);
+    }
+    else
+    {
+        LOG_ERROR(debug_log, "%s: SDO failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", __func__,
+                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
+    }
+
+    return resp.abt;
+}
+
 
 

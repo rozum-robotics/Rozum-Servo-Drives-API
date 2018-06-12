@@ -85,3 +85,20 @@ const char *sdo_describe_error(uint32_t err)
 }
 
 
+const char *CAN_OPEN_CMD[] = 
+{
+	"COM_FRAME",
+	"COM_NMT",
+	"COM_HB",
+	"COM_TIMESTAMP",
+	"COM_SDO_TX_REQ",
+	"COM_SDO_TX_RESP",
+	"COM_SDO_RX_REQ",
+	"COM_SDO_RX_RESP",
+	"COM_SYNC",
+	"COM_EMCY",
+	"COM_PDO",
+	""
+};
+
+

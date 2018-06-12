@@ -78,5 +78,7 @@ typedef enum
 
 const char *sdo_describe_error(uint32_t err);
 
+extern const char *CAN_OPEN_CMD[];
+
 
 #endif

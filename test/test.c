@@ -2,13 +2,15 @@
 
 #define SERVO_ID	123
 
+#define M() printf("%d\n", __LINE__)
+
 int main(int argc, char *argv[])
 {
 	FILE *log = fopen("comm.log", "w+");
 
 	api_setDebugLogStream(stderr);
 	CanInterface_t iface = api_initInterface("/dev/ttyS3");
-	api_setCommLogStream(iface, log);
+	api_setCommLogStream(iface, stderr);
 
 	CanDevice_t d[10];
    
@@ -22,14 +24,20 @@ int main(int argc, char *argv[])
 	api_deinitDevice(&d[1]);
 	api_deinitDevice(&d[8]);
 
+	M();
 	api_sleepMs(1000);
+	M();
 	api_setVelocity(d[0], 10.0);
-	api_sleepMs(30000);
-	api_stopAndRelease(d);
+	M();
+	api_sleepMs(3000);
+	M();
+	api_stopAndRelease(d[0]);
 
+	M();
 	
 	api_deinitInterface(&iface);
 
+	M();
 	fclose(log);
 
 	return 0;
