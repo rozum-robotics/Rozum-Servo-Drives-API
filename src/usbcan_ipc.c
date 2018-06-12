@@ -116,8 +116,8 @@ uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, u
 
     if(resp.abt)
     {
-        LOG_ERROR("SDO write failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X)",
-                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt);
+        LOG_ERROR("SDO write failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X) ->\n    %s",
+                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
     }
 
     return resp.abt;
@@ -157,8 +157,8 @@ uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, ui
     }
     else
     {
-        LOG_ERROR("SDO read failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X)",
-                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt);
+        LOG_ERROR("SDO read failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X) ->\n    %s",
+                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
     }
 
     return resp.abt;
