@@ -480,7 +480,7 @@ int api_startMotion(CanInterface_t *interface, uint32_t timestampMs)
 int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *size)
 {
     CHECK_NMT_STATE(device);
-    int _size;
+    int _size = *size;
     uint8_t sts = read_raw_sdo((usbcan_device_t *)device->dev, 0x2000, 0, array, &_size, 1, 200);
     *size = _size;
     return retSDO(sts);
@@ -603,7 +603,7 @@ int api_readParameter(CanDevice_t *const device, const AppParam_t param, float *
 
     int sts = read_raw_sdo(((usbcan_device_t *)device->dev), 0x2013, param, data, &size, 2, 100);
     if(sts == CO_SDO_AB_NONE && size == 4)
-    {        
+    {
         usb_can_get_float(data, 0, &device->source[param].value, 1);
         *value = device->source[param].value;
         return RET_OK;
@@ -715,16 +715,17 @@ int api_invokeTimeCalculation(const CanDevice_t *device,
     CHECK_NMT_STATE(device);
 
     uint8_t data[8 * 4];
+    int p = 0;
 
-    usb_can_put_float(data, 0, &startPositionDeg, 1);
-    usb_can_put_float(data + 4, 0, &startVelocityDeg, 1);
-    usb_can_put_float(data + 8, 0, &startAccelerationDegPerSec2, 1);
-    usb_can_put_uint32_t(data + 12, 0, &startTimeMs, 1);
+    p += usb_can_put_float(data, p, &startPositionDeg, 1);
+    p += usb_can_put_float(data, p, &startVelocityDeg, 1);
+    p += usb_can_put_float(data, p, &startAccelerationDegPerSec2, 1);
+    p += usb_can_put_uint32_t(data, p, &startTimeMs, 1);
 
-    usb_can_put_float(data + 16, 0, &endPositionDeg, 1);
-    usb_can_put_float(data + 20, 0, &endVelocityDeg, 1);
-    usb_can_put_float(data + 24, 0, &endAccelerationDegPerSec2, 1);
-    usb_can_put_uint32_t(data + 28, 0, &endTimeMs, 1);
+    p += usb_can_put_float(data, p, &endPositionDeg, 1);
+    p += usb_can_put_float(data, p, &endVelocityDeg, 1);
+    p += usb_can_put_float(data, p, &endAccelerationDegPerSec2, 1);
+    p += usb_can_put_uint32_t(data, p, &endTimeMs, 1);
 
     uint8_t sts = write_raw_sdo((usbcan_device_t *)device->dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
@@ -821,7 +822,7 @@ int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec)
     uint8_t sts = read_raw_sdo((usbcan_device_t *)device->dev, 0x2207, 0x02, data, &len, 1, 100);
     if(sts == CO_SDO_AB_NONE)
     {
-        usb_can_put_float(data, 0, velocityDegPerSec, 1);
+        usb_can_get_float(data, 0, velocityDegPerSec, 1);
     }
 
     return retSDO(sts);
