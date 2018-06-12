@@ -170,7 +170,7 @@ typedef struct
  */
 typedef struct
 {
-	void *inst; ///< UsbCan internals (do not use directly)
+    void *inst; ///< UsbCan internals (do not use directly)
 } CanInterface_t;
 
 /* Exported constants --------------------------------------------------------*/
@@ -237,5 +237,87 @@ int api_setZeroPositionAndSave(const CanDevice_t *device, const float positionDe
 
 int api_getMaxVelocity(const CanDevice_t *device, float *velocityDegPerSec);
 int api_setMaxVelocity(const CanDevice_t *device, const float maxVelocityDegPerSec);
+
+/*** VVV EXPERIMENTAL ***/
+typedef struct
+{
+    int (*deinitDevice)(CanDevice_t *const device);
+    int (*deviceReboot)(const CanDevice_t *device);
+    int (*deviceResetCommunication)(const CanDevice_t *device);
+    int (*deviceSetStateOperational)(const CanDevice_t *device);
+    int (*deviceSetStatePreOperational)(const CanDevice_t *device);
+    int (*deviceSetStateStopped)(const CanDevice_t *device);
+    int (*netReboot)(const CanInterface_t *interface);
+    int (*netResetCommunication)(const CanInterface_t *interface);
+    int (*netSetStateOperational)(const CanInterface_t *interface);
+    int (*netSetStatePreOperational)(const CanInterface_t *interface);
+    int (*netSetStateStopped)(const CanInterface_t *interface);
+    int (*stopAndRelease)(const CanDevice_t *device);
+    int (*stopAndFreeze)(const CanDevice_t *device);
+    int (*setCurrent)(const CanDevice_t *device, const float currentA);
+    int (*setVelocity)(const CanDevice_t *device, const float velocityDegPerSec);
+    int (*setPosition)(const CanDevice_t *device, const float positionDeg);
+    int (*setVelocityWithLimits)(const CanDevice_t *device, const float velocityDegPerSec, const float currentA);
+    int (*setPositionWithLimits)(const CanDevice_t *device, const float positionDeg, const float velocityDegPerSec, const float currentA);
+    int (*setDuty)(CanDevice_t *device, float dutyPercent);
+    int (*addMotionPoint)(const CanDevice_t *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs);
+    int (*startMotion)(CanInterface_t *interface, uint32_t timestampMs);
+    int (*readErrorStatus)(const CanDevice_t *device, uint8_t *array, uint32_t *size);
+    int (*writeSourcesFormat)(CanDevice_t *const device, const uint8_t *requests, const uint32_t size);
+    int (*readSourcesFormat)(const CanDevice_t *device, uint8_t *requests, uint32_t *size);
+    int (*readSources)(CanDevice_t *const device, uint8_t *requests);
+    int (*readParameter)(const CanDevice_t *device, const AppParam_t param, const float *value);
+    int (*clearPointsAll)(const CanDevice_t *device);
+    int (*clearPoints)(const CanDevice_t *device, const uint32_t numToClear);
+    int (*getPointsSize)(CanDevice_t *device, uint32_t *num);
+    int (*getPointsFreeSpace)(CanDevice_t *device, uint32_t *num);
+    int (*invokeTimeCalculation)(const CanDevice_t *device,const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs,const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs);
+    int (*getTimeCalculationResult)(const CanDevice_t *device, uint32_t *timeMs);
+    int (*setZeroPosition)(const CanDevice_t *device, const float positionDeg);
+    int (*setZeroPositionAndSave)(const CanDevice_t *device, const float positionDeg);
+    int (*getMaxVelocity)(const CanDevice_t *device, float *velocityDegPerSec);
+    int (*setMaxVelocity)(const CanDevice_t *device, const float maxVelocityDegPerSec);
+} ServoApiClass;
+
+inline void bind(ServoApiClass *obj)
+{
+    obj->deinitDevice = api_deinitDevice;
+    obj->deviceReboot = api_deviceReboot;
+    obj->deviceResetCommunication = api_deviceResetCommunication;
+    obj->deviceSetStateOperational = api_deviceSetStateOperational;
+    obj->deviceSetStatePreOperational = api_deviceSetStatePreOperational;
+    obj->deviceSetStateStopped = api_deviceSetStateStopped;
+    obj->netReboot = api_netReboot;
+    obj->netResetCommunication = api_netResetCommunication;
+    obj->netSetStateOperational = api_netSetStateOperational;
+    obj->netSetStatePreOperational = api_netSetStatePreOperational;
+    obj->netSetStateStopped = api_netSetStateStopped;
+    obj->stopAndRelease = api_stopAndRelease;
+    obj->stopAndFreeze = api_stopAndFreeze;
+    obj->setCurrent = api_setCurrent;
+    obj->setVelocity = api_setVelocity;
+    obj->setPosition = api_setPosition;
+    obj->setVelocityWithLimits = api_setVelocityWithLimits;
+    obj->setPositionWithLimits = api_setPositionWithLimits;
+    obj->setDuty = api_setDuty;
+    obj->addMotionPoint = api_addMotionPoint;
+    obj->startMotion = api_startMotion;
+    obj->readErrorStatus = api_readErrorStatus;
+    // obj->writeSourcesFormat = api_writeSourcesFormat;
+    // obj->readSourcesFormat = api_readSourcesFormat;
+    // obj->readSources = api_readSources;
+    obj->readParameter = api_readParameter;
+    obj->clearPointsAll = api_clearPointsAll;
+    obj->clearPoints = api_clearPoints;
+    obj->getPointsSize = api_getPointsSize;
+    obj->getPointsFreeSpace = api_getPointsFreeSpace;
+    obj->invokeTimeCalculation = api_invokeTimeCalculation;
+    obj->getTimeCalculationResult = api_getTimeCalculationResult;
+    obj->setZeroPosition = api_setZeroPosition;
+    obj->setZeroPositionAndSave = api_setZeroPositionAndSave;
+    obj->getMaxVelocity = api_getMaxVelocity;
+    obj->setMaxVelocity = api_setMaxVelocity;
+}
+/*** ^^^ EXPERIMENTAL ***/
 
 #endif /* _ROZUM_API_H */
