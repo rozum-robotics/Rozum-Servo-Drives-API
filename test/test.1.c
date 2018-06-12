@@ -9,8 +9,8 @@ int main(int argc, char *argv[])
     CanInterface_t iface;
     CanDevice_t d;
 
-    api_initInterface(&iface, "/dev/ttyS3");
-    api_initDevice(&iface, &d, SERVO_ID);
+    iface = api_initInterface("/dev/ttyS3");
+    d = api_initDevice(&iface, SERVO_ID);
 
     api_sleepMs(1000);
 

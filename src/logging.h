@@ -24,14 +24,14 @@
 #define LOG_FAIL (FMTBLD "FAIL" FMTRST)
 
 
-void dump(const char *label, uint8_t *b, int l);
+void LOG_DUMP(FILE *stream, const char *label, uint8_t *b, int l);
 
-void LOG_INFO(const char *fmt, ...);
-void LOG_WARN(const char *fmt, ...);
-void LOG_ERROR(const char *fmt, ...);
-void _LOG_ASSERT_(bool cond, bool persist, const char *x, const char *c, const char *y, float fx, float fy);
+void LOG_INFO(FILE *stream, const char *fmt, ...);
+void LOG_WARN(FILE *stream, const char *fmt, ...);
+void LOG_ERROR(FILE *stream, const char *fmt, ...);
+void _LOG_ASSERT_(FILE *STREAM, bool cond, bool persist, const char *x, const char *c, const char *y, float fx, float fy);
 
 #define STRFY(a) #a
-#define LOG_ASSERT(x, c, y, persist) _LOG_ASSERT_(x c y, persist, STRFY(x), STRFY(c), STRFY(y), x, y)
+#define LOG_ASSERT(s, x, c, y, persist) _LOG_ASSERT_(s, x c y, persist, STRFY(x), STRFY(c), STRFY(y), x, y)
 
 #endif
