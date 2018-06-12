@@ -1,4 +1,3 @@
-#include <unistd.h>
 #include "api.h"
 
 #define SERVO_ID	111
