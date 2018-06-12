@@ -362,7 +362,6 @@ int api_setCurrent(const CanDevice_t device, const float currentA)
 int api_setVelocity(const CanDevice_t device, const float velocityDegPerSec)
 {
     CHECK_NMT_STATE(device);
-
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)device;
     usb_can_put_float(data, 0, &velocityDegPerSec, 1);
@@ -775,15 +774,15 @@ int api_invokeTimeCalculation(const CanDevice_t device,
     int p = 0;
 	usbcan_device_t *dev = (usbcan_device_t *)device;
 
-    p += usb_can_put_float(data, p, &startPositionDeg, 1);
-    p += usb_can_put_float(data, p, &startVelocityDeg, 1);
-    p += usb_can_put_float(data, p, &startAccelerationDegPerSec2, 1);
-    p += usb_can_put_uint32_t(data, p, &startTimeMs, 1);
+    p = usb_can_put_float(data, p, &startPositionDeg, 1);
+    p = usb_can_put_float(data, p, &startVelocityDeg, 1);
+    p = usb_can_put_float(data, p, &startAccelerationDegPerSec2, 1);
+    p = usb_can_put_uint32_t(data, p, &startTimeMs, 1);
 
-    p += usb_can_put_float(data, p, &endPositionDeg, 1);
-    p += usb_can_put_float(data, p, &endVelocityDeg, 1);
-    p += usb_can_put_float(data, p, &endAccelerationDegPerSec2, 1);
-    p += usb_can_put_uint32_t(data, p, &endTimeMs, 1);
+    p = usb_can_put_float(data, p, &endPositionDeg, 1);
+    p = usb_can_put_float(data, p, &endVelocityDeg, 1);
+    p = usb_can_put_float(data, p, &endAccelerationDegPerSec2, 1);
+    p = usb_can_put_uint32_t(data, p, &endTimeMs, 1);
 
     uint8_t sts = write_raw_sdo(dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 

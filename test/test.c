@@ -1,13 +1,13 @@
 #include "api.h"
 
-#define SERVO_ID	111
+#define SERVO_ID	123
 
 int main(int argc, char *argv[])
 {
 	FILE *log = fopen("comm.log", "w+");
 
 	api_setDebugLogStream(stderr);
-	CanInterface_t iface = api_initInterface("192.168.0.124");
+	CanInterface_t iface = api_initInterface("/dev/ttyS3");
 	api_setCommLogStream(iface, log);
 
 	CanDevice_t d[10];
