@@ -21,7 +21,7 @@ static size_t read_sig_safe(int fd, void *data, size_t sz)
 			{
 				continue;
 			}
-			exit(1);
+			return -1;
 		}
 	}
 	return bytes;
@@ -45,7 +45,7 @@ static size_t write_sig_safe(int fd, void *data, size_t sz)
 			{
 				continue;
 			}
-			exit(1);
+			return -1;
 		}
 	}
 	return bytes;
@@ -116,7 +116,7 @@ uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, u
 
     if(resp.abt)
     {
-        LOG_ERROR("SDO write failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X) ->\n    %s",
+        LOG_ERROR(debug_log, "SDO write failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X) ->\n    %s",
                   (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
     }
 
@@ -147,7 +147,7 @@ uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, ui
     {
         if(resp.data_len > *len)
         {
-            LOG_WARN("SDO read: supplied buffer of %d bytes to small, %d bytes required", *len, resp.data_len);
+            LOG_WARN(debug_log, "SDO read: supplied buffer of %d bytes to small, %d bytes required", *len, resp.data_len);
         }
         else
         {
@@ -157,7 +157,7 @@ uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, ui
     }
     else
     {
-        LOG_ERROR("SDO read failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X) ->\n    %s",
+        LOG_ERROR(debug_log, "SDO read failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X) ->\n    %s",
                   (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
     }
 
@@ -168,14 +168,14 @@ void ipc_create_link(usbcan_instance_t *inst)
 {
     if(pipe(inst->to_master_pipe))
     {
-        LOG_ERROR("can't create master pipe");
-        exit(2);
+        LOG_ERROR(debug_log, "can't create master pipe");
+		return;
     }
 
     if(pipe(inst->to_child_pipe))
     {
-        LOG_ERROR("can't create child pipe");
-        exit(2);
+        LOG_ERROR(debug_log, "can't create child pipe");
+		return;
     }
 }
 

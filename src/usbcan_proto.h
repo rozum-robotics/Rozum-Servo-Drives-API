@@ -49,10 +49,15 @@ typedef struct
 	usbcan_sdo_t sdo;
 } usbcan_wait_for_t;
 
-typedef struct
+typedef struct usbcan_instance_t usbcan_instance_t;
+typedef struct usbcan_device_t usbcan_device_t;
+
+struct usbcan_instance_t
 {
 	const char *device;
 	int fd;
+
+	usbcan_device_t *device_list;
 
 	pthread_t usbcan_thread;
 	int to_master_pipe[2];
@@ -64,7 +69,7 @@ typedef struct
 	void *usbcan_nmt_state_cb;
 	void *usbcan_com_frame_cb;
 
-	int64_t master_hb_ival;;
+	int64_t master_hb_ival;
 	int64_t master_hb_timer;
 	int64_t hb_alive_threshold;
 
@@ -75,15 +80,18 @@ typedef struct
 	usbcan_wait_for_t wait_for;
 	bool inhibit_master_hb;
 	bool usbcan_udp;
-} usbcan_instance_t;
 
-typedef struct
+	FILE *comm_log;
+};
+
+struct usbcan_device_t
 {
 	usbcan_instance_t *inst;
 	int id;
 	uint32_t timeout;
 	uint32_t retry;
-} usbcan_device_t;
+	usbcan_device_t *next;
+};
 
 typedef void (*sdo_resp_cb_t)(usbcan_instance_t *inst, uint32_t abt, uint8_t *data, int len);
 typedef void (*usbcan_hb_tx_cb_t)(usbcan_instance_t *inst);
@@ -95,6 +103,7 @@ typedef void (*usbcan_emcy_cb_t)(usbcan_instance_t *inst, int id, uint16_t err_c
 
 
 extern const char *CAN_OPEN_CMD[];
+extern FILE *debug_log;
 
 void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to);
 void usbcan_setup_hb_rx_cb(usbcan_instance_t *inst, usbcan_hb_rx_cb_t cb);
@@ -113,9 +122,12 @@ int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state);
 int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
 void usbcan_inhibit_master_hb(usbcan_instance_t *inst, bool inh);
 
-int usbcan_instance_init(usbcan_instance_t **inst, const char *dev_name);
+void usbcan_set_comm_log_stream(usbcan_instance_t *inst, FILE *f);
+void usbcan_set_debug_log_stream(FILE *f);
+
+usbcan_instance_t *usbcan_instance_init(const char *dev_name);
 int usbcan_instance_deinit(usbcan_instance_t **inst);
-int usbcan_device_init(usbcan_instance_t *inst, usbcan_device_t **dev, int id);
+usbcan_device_t *usbcan_device_init(usbcan_instance_t *inst, int id);
 int usbcan_device_deinit(usbcan_device_t **dev);
 
 #endif
