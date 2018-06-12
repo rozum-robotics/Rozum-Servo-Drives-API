@@ -146,13 +146,13 @@ typedef enum
  * @brief Device information source instance
  * 
  */
-/*
+
 typedef struct
 {
     float value;       ///< Source value
     uint8_t activated; ///< Source activation flag
 } Source_t;
-*/
+
 /**
  * @brief Device instance structure
  * 
@@ -160,8 +160,8 @@ typedef struct
 typedef struct
 {
     void *dev;
-    //Source_t source[256]; ///< Device sources cells
-    //uint32_t sourceSize;  ///< Number of the device activated sources
+    Source_t source[256]; ///< Device sources cells
+    uint32_t sourceSize;  ///< Number of the device activated sources
 } CanDevice_t;
 
 /**
@@ -216,11 +216,11 @@ int api_startMotion(CanInterface_t *interface, uint32_t timestampMs);
 
 int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *size);
 
-//int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, const uint32_t size);
-//int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size);
-//int api_readSources(CanDevice_t *const device, uint8_t *requests);
+int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, const uint32_t size);
+int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size);
+int api_readSources(CanDevice_t *const device, uint8_t *requests);
+int api_readParameter(CanDevice_t *const device, const AppParam_t param, float *value);
 
-int api_readParameter(const CanDevice_t *device, const AppParam_t param, const float *value);
 int api_clearPointsAll(const CanDevice_t *device);
 int api_clearPoints(const CanDevice_t *device, const uint32_t numToClear);
 
@@ -266,7 +266,7 @@ typedef struct
     int (*writeSourcesFormat)(CanDevice_t *const device, const uint8_t *requests, const uint32_t size);
     int (*readSourcesFormat)(const CanDevice_t *device, uint8_t *requests, uint32_t *size);
     int (*readSources)(CanDevice_t *const device, uint8_t *requests);
-    int (*readParameter)(const CanDevice_t *device, const AppParam_t param, const float *value);
+    int (*readParameter)(CanDevice_t *const device, const AppParam_t param, float *value);
     int (*clearPointsAll)(const CanDevice_t *device);
     int (*clearPoints)(const CanDevice_t *device, const uint32_t numToClear);
     int (*getPointsSize)(CanDevice_t *device, uint32_t *num);
@@ -279,7 +279,7 @@ typedef struct
     int (*setMaxVelocity)(const CanDevice_t *device, const float maxVelocityDegPerSec);
 } ServoApiClass;
 
-inline void bind(ServoApiClass *obj)
+inline void api_bind(ServoApiClass *obj)
 {
     obj->deinitDevice = api_deinitDevice;
     obj->deviceReboot = api_deviceReboot;
@@ -303,9 +303,9 @@ inline void bind(ServoApiClass *obj)
     obj->addMotionPoint = api_addMotionPoint;
     obj->startMotion = api_startMotion;
     obj->readErrorStatus = api_readErrorStatus;
-    // obj->writeSourcesFormat = api_writeSourcesFormat;
-    // obj->readSourcesFormat = api_readSourcesFormat;
-    // obj->readSources = api_readSources;
+    obj->writeSourcesFormat = api_writeSourcesFormat;
+    obj->readSourcesFormat = api_readSourcesFormat;
+    obj->readSources = api_readSources;
     obj->readParameter = api_readParameter;
     obj->clearPointsAll = api_clearPointsAll;
     obj->clearPoints = api_clearPoints;

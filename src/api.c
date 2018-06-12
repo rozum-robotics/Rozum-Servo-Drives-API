@@ -490,19 +490,18 @@ int api_readErrorStatus(const CanDevice_t *device, uint8_t *array, uint32_t *siz
  * @brief Writes device source array format (activated source indexes)
  * 
  * @param device Device instance 
- * @param requests Pointer to the source index array
+ * @param requests Pointer to the source index array (from ::AppParam_t)
  * @param size Size of the source index array
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-/*
 int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, const uint32_t size)
 {
     CHECK_NMT_STATE(device);
 
     uint8_t array[10] = {0};
 
-    for(uint32_t i = 0; i < sizeof(device->source)/sizeof(device->source[0]); i++)
+    for(uint32_t i = 0; i < sizeof(device->source) / sizeof(device->source[0]); i++)
     {
         device->source[i].activated = 0;
     }
@@ -515,13 +514,12 @@ int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, c
     }
     device->sourceSize = size;
 
-    uint8_t sts = write_raw_sdo(&((usbcan_device_t *)device->dev), 0x2015, 1, array, sizeof(array), 1, 200);
+    uint8_t sts = write_raw_sdo(((usbcan_device_t *)device->dev), 0x2015, 1, array, sizeof(array), 1, 200);
 
     return retSDO(sts);
-	return RET_OK;
+    return RET_OK;
 }
 
-	*/
 /**
  * @brief Reads device source array format (activated source indexes)
  * 
@@ -531,19 +529,17 @@ int api_writeSourcesFormat(CanDevice_t *const device, const uint8_t *requests, c
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-/*
 int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t *size)
 {
     CHECK_NMT_STATE(device);
 
-	int _size;
-    uint8_t sts = read_raw_sdo(&((usbcan_device_t *)device->dev), 0x2015, 1, requests, &_size, 1, 200);
-	*size = _size;
+    int _size;
+    uint8_t sts = read_raw_sdo(((usbcan_device_t *)device->dev), 0x2015, 1, requests, &_size, 1, 200);
+    *size = _size;
 
     return retSDO(sts);
-	return RET_OK;
+    return RET_OK;
 }
-	*/
 
 /**
  * @brief Reads device sources. 
@@ -553,7 +549,6 @@ int api_readSourcesFormat(const CanDevice_t *device, uint8_t *requests, uint32_t
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-/*
 int api_readSources(CanDevice_t *const device, uint8_t *requests)
 {
     CHECK_NMT_STATE(device);
@@ -566,7 +561,7 @@ int api_readSources(CanDevice_t *const device, uint8_t *requests)
         return RET_ZERO_SIZE;
     }
 
-    uint8_t sts = read_raw_sdo(&((usbcan_device_t *)device->dev), 0x2014, 0x01, data, &len, 1, 100);
+    uint8_t sts = read_raw_sdo(((usbcan_device_t *)device->dev), 0x2014, 0x01, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE)
     {
@@ -588,39 +583,35 @@ int api_readSources(CanDevice_t *const device, uint8_t *requests)
     }
 
     return retSDO(sts);
-	return RET_OK;
 }
-	*/
 
 /**
  * @brief Reads device source (information parameter)
  * 
  * @param device Device instance 
- * @param param 
- * @param value 
+ * @param param Parameter index to read (::AppParam_t)
+ * @param value Pointer to the readed variable
  * @return int Status code (::RetStatus_t)
  * @ingroup Servo_info
  */
-/*
-int api_readParameter(const CanDevice_t *device, const uint8_t param, const float *value)
+int api_readParameter(CanDevice_t *const device, const AppParam_t param, float *value)
 {
     CHECK_NMT_STATE(device);
 
     uint8_t data[4];
-    uint32_t size = sizeof(data);
-	int len;
+    int size = sizeof(data);
 
-    int sts = read_raw_sdo(&((usbcan_device_t *)device->dev), 0x2013, param, data, &len, 2, 100);
-    if(sts == CO_SDO_AB_NONE && len == 4)
-    {
-        usb_can_get_float(data, 0, &device->source[requests[i]].value, 1);
+    int sts = read_raw_sdo(((usbcan_device_t *)device->dev), 0x2013, param, data, &size, 2, 100);
+    if(sts == CO_SDO_AB_NONE && size == 4)
+    {        
+        usb_can_get_float(data, 0, &device->source[param].value, 1);
+        *value = device->source[param].value;
         return RET_OK;
     }
 
     return retSDO(sts);
-	return RET_OK;
+    return RET_OK;
 }
-	*/
 
 /**
  * @brief Erases the whole device motion queue
