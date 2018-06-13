@@ -2,7 +2,7 @@ image: rozum/embed-gcc:latest
 
 stages:
 #  - build
-  - documentation
+  - test
   
 before_script:
   - git submodule sync --recursive
@@ -19,8 +19,8 @@ build:
     expire_in: 1 month
 
 
-documentation:
- stage: documentation
+test:
+ stage: test
  script: 
     - doxygen doxyfilee
  artifacts:
