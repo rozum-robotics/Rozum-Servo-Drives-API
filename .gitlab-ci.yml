@@ -23,7 +23,6 @@ documentation:
  stage: documentation
  script: 
     - doxygen doxyfilee
-
  artifacts:
     paths:
      - html
