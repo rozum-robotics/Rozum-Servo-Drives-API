@@ -218,10 +218,10 @@ int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
 
 int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size);
 
-int rr_param_cache_update(const rr_servo_t *servo);
-int rr_param_cache_setup_entry(const rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
+int rr_param_cache_update(rr_servo_t *servo);
+int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
 
-int rr_read_parameter(const rr_servo_t *servo, const rr_servo_param_t param, float *value);
+int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
 
 int rr_clear_points_all(const rr_servo_t *servo);
 int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);
