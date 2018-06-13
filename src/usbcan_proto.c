@@ -157,7 +157,7 @@ static void sdo_resp_cb(usbcan_instance_t *inst, uint32_t abt, uint8_t *data, in
 {
     ipc_sdo_resp_t r;
 
-    r.sdo = inst->wait_for.sdo;
+    r.sdo = inst->wait_sdo.sdo;
     r.abt = abt;
     r.data_len = len;
     write_sig_safe(inst->to_master_pipe[1], &r, sizeof(r));
@@ -212,7 +212,16 @@ static void ipc_process(usbcan_instance_t *inst)
         usbcan_send_nmt(inst, nmt.id, nmt.cmd);
         break;
     }
-    break;
+	case IPC_WAIT_DEVICE:
+	{
+		ipc_wait_device_t wd;
+
+		read_sig_safe(inst->to_child_pipe[0], &wd, sizeof(wd));
+		inst->wait_device.id = wd.id;
+		inst->wait_device.timer = wd.timeout_ms;
+
+		break;
+	}
     default:
         break;
     }
@@ -231,6 +240,7 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 
 	inst->master_hb_timer += delta_ms;
 
+	/*Check if devices on bus*/
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
 	{
 		if(inst->dev_alive[i] > 0)
@@ -248,6 +258,7 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 		}
 	}
 
+	/*Send master heart beat*/
 	if(inst->master_hb_timer >= inst->master_hb_ival)
 	{
 		if(!inst->inhibit_master_hb)
@@ -260,21 +271,42 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 		}
 		inst->master_hb_timer -= inst->master_hb_ival;
 	}
-	if(inst->wait_for.cb)
+
+	/*Wait for SDO responce*/
+	if(inst->wait_sdo.cb)
 	{
-		inst->wait_for.sdo.ttl = CLIPL(inst->wait_for.sdo.ttl - delta_ms, 0);
-		if(!inst->wait_for.sdo.ttl)
+		inst->wait_sdo.sdo.ttl = CLIPL(inst->wait_sdo.sdo.ttl - delta_ms, 0);
+		if(!inst->wait_sdo.sdo.ttl)
 		{
-			((sdo_resp_cb_t)inst->wait_for.cb)(inst, -1, NULL, 0);
-			inst->wait_for.cb = NULL;
+			((sdo_resp_cb_t)inst->wait_sdo.cb)(inst, -1, NULL, 0);
+			inst->wait_sdo.cb = NULL;
 		}
+	}
+
+	/*Wait for device apeared on bus*/
+	if(inst->wait_device.id > 0)
+	{
+		if(inst->dev_alive[inst->wait_device.id] > 0)
+		{
+			int resp = 1;
+	    	write_sig_safe(inst->to_master_pipe[1], &resp, sizeof(resp));
+			inst->wait_device.id = 0;
+		}
+		else if(inst->wait_device.timer <= 0)
+		{
+			int resp = 0;
+	    	write_sig_safe(inst->to_master_pipe[1], &resp, sizeof(resp));
+			inst->wait_device.id = 0;
+		}
+
+		inst->wait_device.timer -= delta_ms;
 	}
 }
 
-static void usbcan_wait_for(usbcan_instance_t *inst, usbcan_sdo_t *sdo, sdo_resp_cb_t cb)
+static void usbcan_wait_sdo(usbcan_instance_t *inst, usbcan_sdo_t *sdo, sdo_resp_cb_t cb)
 {
-	inst->wait_for.sdo = *sdo;
-	inst->wait_for.cb = cb;
+	inst->wait_sdo.sdo = *sdo;
+	inst->wait_sdo.cb = cb;
 }
 
 static int usbcan_wrap_inplace(uint8_t *dst, int payload_sz)
@@ -393,7 +425,7 @@ static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void 
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_sdo_req(dst, sdo, data, len, cb);
 	LOG_DUMP(inst->comm_log, "SERIAL TX(SDO)", dst, l);
-	usbcan_wait_for(inst, sdo, cb);
+	usbcan_wait_sdo(inst, sdo, cb);
 	return usbcan_write_fd(inst, dst, l);
 }
 
@@ -472,15 +504,15 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 				uint8_t sidx = get_ux_(data, &p, 1);
 				uint32_t abt = get_ux_(data, &p, 4);
 
-				if(inst->wait_for.cb)
+				if(inst->wait_sdo.cb)
 				{
-					if((inst->wait_for.sdo.id == id) &&
-							(inst->wait_for.sdo.idx == idx) &&
-							(inst->wait_for.sdo.sidx == sidx) &&
-							(inst->wait_for.sdo.write == true))
+					if((inst->wait_sdo.sdo.id == id) &&
+							(inst->wait_sdo.sdo.idx == idx) &&
+							(inst->wait_sdo.sdo.sidx == sidx) &&
+							(inst->wait_sdo.sdo.write == true))
 					{
-						((sdo_resp_cb_t)inst->wait_for.cb)(inst, abt, NULL, 0);
-						inst->wait_for.cb = NULL;
+						((sdo_resp_cb_t)inst->wait_sdo.cb)(inst, abt, NULL, 0);
+						inst->wait_sdo.cb = NULL;
 					}
 				}
 			}
@@ -500,15 +532,15 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 
 				LOG_DUMP(inst->comm_log, "SDO read data", data + p, len - p);
 
-				if(inst->wait_for.cb)
+				if(inst->wait_sdo.cb)
 				{
-					if((inst->wait_for.sdo.id == id) &&
-							(inst->wait_for.sdo.idx == idx) &&
-							(inst->wait_for.sdo.sidx == sidx) &&
-							(inst->wait_for.sdo.write == false))
+					if((inst->wait_sdo.sdo.id == id) &&
+							(inst->wait_sdo.sdo.idx == idx) &&
+							(inst->wait_sdo.sdo.sidx == sidx) &&
+							(inst->wait_sdo.sdo.write == false))
 					{
-						((sdo_resp_cb_t)inst->wait_for.cb)(inst, abt, data + p, len - p);
-						inst->wait_for.cb = NULL;
+						((sdo_resp_cb_t)inst->wait_sdo.cb)(inst, abt, data + p, len - p);
+						inst->wait_sdo.cb = NULL;
 					}
 				}
 			}
@@ -1040,6 +1072,43 @@ int usbcan_device_deinit(usbcan_device_t **dev)
 	return 0;
 }
 
+/*
+ * User thread functions
+ */
+
+int wait_device(const usbcan_instance_t *inst, int id, int timeout_ms)
+{
+	if(!inst)
+	{
+		return 0;
+	}
+
+	if(id <= 0)
+	{
+		return 0;
+	}
+
+	if(timeout_ms <= 0)
+	{
+		return 1;
+	}
+
+    ipc_opcode_t opcode = IPC_WAIT_DEVICE;
+    ipc_wait_device_t wd = {.id = id, .timeout_ms = timeout_ms};
+	int resp;
+
+    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
+    write_sig_safe(inst->to_child_pipe[1], &wd, sizeof(wd));
+
+    read_sig_safe(inst->to_master_pipe[0], &resp, sizeof(resp));
+
+	if(!resp)
+	{
+		LOG_WARN(debug_log, "%s: device sent no heart beats during tmeout (%d) period", __func__, timeout_ms);
+	}
+
+	return resp ;
+}
 
 int write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 {
@@ -1087,7 +1156,7 @@ int write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg)
 	return 1;
 }
 
-uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout)
+uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout_ms)
 {
 	if(!is_valid_device(dev))
 	{
@@ -1102,7 +1171,7 @@ uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, u
     req.sdo.id = dev->id;
     req.sdo.idx = idx;
     req.sdo.sidx = sidx;
-    req.sdo.tout = timeout ? timeout : dev->timeout;
+    req.sdo.tout = timeout_ms ? timeout_ms : dev->timeout;
     req.sdo.re_txn = retry ? retry : dev->retry;
     req.sdo.ttl = req.sdo.tout * 2; //????????????????
     req.data_len = len;
@@ -1125,7 +1194,7 @@ uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, u
     return resp.abt;
 }
 
-uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout)
+uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout_ms)
 {
 	if(!is_valid_device(dev))
 	{
@@ -1140,7 +1209,7 @@ uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, ui
     req.sdo.id = dev->id;
     req.sdo.idx = idx;
     req.sdo.sidx = sidx;
-    req.sdo.tout = timeout ? timeout : dev->timeout;
+    req.sdo.tout = timeout_ms ? timeout_ms : dev->timeout;
     req.sdo.re_txn = retry ? retry : dev->retry;
     req.sdo.ttl = req.sdo.tout * 2; //????????????????
     req.data_len = 0;
