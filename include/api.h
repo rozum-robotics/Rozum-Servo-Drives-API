@@ -12,6 +12,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include <stdint.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 /* Exported macro ------------------------------------------------------------*/
@@ -25,10 +26,11 @@
 /**
  * @brief Return codes of the API functions
  */
-enum RetStatus_t
+enum rr_ret_status_t
 {
     RET_OK = 0,       ///< Status OK
     RET_ERROR,        ///< Generic error
+    RET_BAD_INSTANCE, ///< Bad interface or servo instance (null)
     RET_BUSY,         ///< Device is busy
     RET_WRONG_TRAJ,   ///< Wrong trajectory
     RET_LOCKED,       ///< Device is locked
@@ -139,7 +141,7 @@ typedef enum
     APP_PARAM_POWER_OUT,
 
     APP_PARAM_SIZE //...
-} AppParam_t;
+} rr_servo_param_t;
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -150,31 +152,26 @@ typedef struct
 {
     float value;       ///< Source value
     uint8_t activated; ///< Source activation flag
-} Source_t;
+} para_cache_entry_t;
 
 /**
  * @brief Device instance structure
  * 
  */
-/*
 typedef struct
 {
-    void *dev;
-    Source_t source[256]; ///< Device sources cells
-    uint32_t sourceSize;  ///< Number of the device activated sources
-} CanDevice_t;
-*/
+    void *dev; ///< Device internals
+    para_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
+} rr_servo_t;
+
 /**
  * @brief Interface instance structure
  * 
  */
-typedef void * CanInterface_t;
-
-/**
- * @brief Device instance structure
- * 
- */
-typedef void * CanDevice_t;
+typedef struct
+{
+    void *iface; ///< Interface internals
+} rr_can_interface_t;
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -184,65 +181,63 @@ typedef void * CanDevice_t;
 
 /* Ref: http://dev.rozum.com/rozum-java/leonardo/blob/develop/devices/motor/cyber-api/src/main/java/com/rozum/cyber/api/protocol/prt3/CyberProtocol3.java */
 
-void api_sleepMs(int ms);
+void rr_sleep_ms(int ms);
 
-void api_setDebugLogStream(FILE *f);
-void api_setCommLogStream(const CanInterface_t interface, FILE *f);
+void rr_set_debug_log_stream(FILE *f);
+void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f);
 
-CanInterface_t api_initInterface(const char *interfaceName);
-int api_deinitInterface(CanInterface_t *interface);
-CanDevice_t api_initDevice(CanInterface_t interface, const uint8_t id);
-int api_deinitDevice(CanDevice_t *device);
+rr_can_interface_t *rr_init_interface(const char *interface_name);
+int rr_deinit_interface(rr_can_interface_t **interface);
+rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id);
+int rr_deinit_servo(rr_servo_t **servo);
 
-int api_deviceReboot(const CanDevice_t device);
-int api_deviceResetCommunication(const CanDevice_t device);
-int api_deviceSetStateOperational(const CanDevice_t device);
-int api_deviceSetStatePreOperational(const CanDevice_t device);
-int api_deviceSetStateStopped(const CanDevice_t device);
+int rr_servo_reboot(const rr_servo_t *servo);
+int rr_servo_reset_communication(const rr_servo_t *servo);
+int rr_servo_set_state_operational(const rr_servo_t *servo);
+int rr_servo_set_state_pre_operational(const rr_servo_t *servo);
+int rr_servo_set_state_stopped(const rr_servo_t *servo);
 
-int api_netReboot(const CanInterface_t interface);
-int api_netResetCommunication(const CanInterface_t interface);
-int api_netSetStateOperational(const CanInterface_t interface);
-int api_netSetStatePreOperational(const CanInterface_t interface);
-int api_netSetStateStopped(const CanInterface_t interface);
+int rr_net_reboot(const rr_can_interface_t *interface);
+int rr_net_reset_communication(const rr_can_interface_t *interface);
+int rr_net_set_state_operational(const rr_can_interface_t *interface);
+int rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
+int rr_net_set_state_stopped(const rr_can_interface_t *interface);
 
-int api_stopAndRelease(const CanDevice_t device);
-int api_stopAndFreeze(const CanDevice_t device);
+int rr_stop_and_release(const rr_servo_t *servo);
+int rr_stop_and_freeze(const rr_servo_t *servo);
 
-int api_setCurrent(const CanDevice_t device, const float currentA);
-int api_setVelocity(const CanDevice_t device, const float velocityDegPerSec);
-int api_setPosition(const CanDevice_t device, const float positionDeg);
-int api_setVelocityWithLimits(const CanDevice_t device, const float velocityDegPerSec, const float currentA);
-int api_setPositionWithLimits(const CanDevice_t device, const float positionDeg, const float velocityDegPerSec, const float currentA);
-int api_setDuty(const CanDevice_t device, float dutyPercent);
+int rr_set_current(const rr_servo_t *servo, const float current_a);
+int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec);
+int rr_set_position(const rr_servo_t *servo, const float position_deg);
+int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a);
+int rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a);
+int rr_set_duty(const rr_servo_t *servo, float duty_percent);
 
-int api_addMotionPoint(const CanDevice_t device, const float positionDeg, const float velocityDeg, const uint32_t timeMs);
-int api_startMotion(CanInterface_t interface, uint32_t timestampMs);
+int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms);
+int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
 
-int api_readErrorStatus(const CanDevice_t device, uint8_t *array, uint32_t *size);
+int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size);
 
-/*
-int api_writeSourcesFormat(const CanDevice_t device, const uint8_t *requests, const uint32_t size);
-int api_readSourcesFormat(const CanDevice_t device, uint8_t *requests, uint32_t *size);
-int api_readSources(const CanDevice_t device, uint8_t *requests);
-*/
-int api_readParameter(const CanDevice_t device, const AppParam_t param, float *value);
+int rr_param_cache_update(const rr_servo_t *servo);
+int rr_param_cache_setup_entry(const rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
 
-int api_clearPointsAll(const CanDevice_t device);
-int api_clearPoints(const CanDevice_t device, const uint32_t numToClear);
+int rr_read_parameter(const rr_servo_t *servo, const rr_servo_param_t param, float *value);
 
-int api_getPointsSize(const CanDevice_t device, uint32_t *num);
-int api_getPointsFreeSpace(const CanDevice_t device, uint32_t *num);
+int rr_clear_points_all(const rr_servo_t *servo);
+int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);
 
-int api_invokeTimeCalculation(const CanDevice_t device,
-                              const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs,
-                              const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs);
-int api_getTimeCalculationResult(const CanDevice_t device, uint32_t *timeMs);
+int rr_get_points_size(const rr_servo_t *servo, uint32_t *num);
+int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num);
 
-int api_setZeroPosition(const CanDevice_t device, const float positionDeg);
-int api_setZeroPositionAndSave(const CanDevice_t device, const float positionDeg);
+int rr_invoke_time_calculation(const rr_servo_t *servo,
+                              const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
+                              const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms);
+int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms);
 
-int api_getMaxVelocity(const CanDevice_t device, float *velocityDegPerSec);
-int api_setMaxVelocity(const CanDevice_t device, const float maxVelocityDegPerSec);
+int rr_set_zero_position(const rr_servo_t *servo, const float position_deg);
+int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg);
+
+int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec);
+int rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec);
 
 #endif /* _ROZUM_API_H */

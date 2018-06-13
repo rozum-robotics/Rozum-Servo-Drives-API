@@ -8,34 +8,37 @@ int main(int argc, char *argv[])
 {
 	FILE *log = fopen("comm.log", "w+");
 
-	api_setDebugLogStream(stderr);
-	CanInterface_t iface = api_initInterface("/dev/ttyS3");
-	api_setCommLogStream(iface, stderr);
+	rr_set_debug_log_stream(stderr);
+	rr_can_interface_t *iface = rr_init_interface("192.168.0.124");
+	rr_set_comm_log_stream(iface, stderr);
 
-	CanDevice_t d[10];
+	rr_servo_t *d[10];
    
 	for(int i = 0; i < 10; i++)
 	{
-		d[i] = api_initDevice(iface, i + 1);
+		d[i] = rr_init_servo(iface, i + SERVO_ID);
 	}
 
 
-	api_deinitDevice(&d[4]);
-	api_deinitDevice(&d[1]);
-	api_deinitDevice(&d[8]);
+	M();
+	rr_deinit_servo(&d[4]);
+	M();
+	rr_deinit_servo(&d[1]);
+	M();
+	rr_deinit_servo(&d[8]);
 
 	M();
-	api_sleepMs(1000);
+	rr_sleep_ms(1000);
 	M();
-	api_setVelocity(d[0], 10.0);
+	rr_set_velocity(d[0], 10.0);
 	M();
-	api_sleepMs(3000);
+	rr_sleep_ms(3000);
 	M();
-	api_stopAndRelease(d[0]);
+	rr_stop_and_release(d[0]);
 
 	M();
 	
-	api_deinitInterface(&iface);
+	rr_deinit_interface(&iface);
 
 	M();
 	fclose(log);

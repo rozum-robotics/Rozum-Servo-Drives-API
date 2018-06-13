@@ -34,9 +34,12 @@
 //! @cond Doxygen_Suppress
 #define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
 
+#define  IS_VALID_INTERFACE(v) if(!v) return RET_BAD_INSTANCE
+#define  IS_VALID_SERVO(v) if(!v) return RET_BAD_INSTANCE
+
 #define CHECK_NMT_STATE(x)
 /*                                          \
-    if(x->nmtState == CO_NMT_STOPPED || x->nmtState == CO_NMT_BOOT) \
+    if(x->nmt_state == CO_NMT_STOPPED || x->nmt_state == CO_NMT_BOOT) \
     {                                                                 \
         return RET_STOPPED;                                           \
     }
@@ -48,7 +51,7 @@
 /* Extern function prototypes ------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static int retSDO(int code)
+static int ret_sdo(int code)
 {
     switch(code)
     {
@@ -63,6 +66,7 @@ static int retSDO(int code)
     }
 }
 
+
 /**
  * @brief 
  * 
@@ -70,7 +74,7 @@ static int retSDO(int code)
  * @return void
  * @ingroup Utils
  */
-void api_sleepMs(int ms)
+void rr_sleep_ms(int ms)
 {
     msleep(ms);
 }
@@ -83,9 +87,10 @@ void api_sleepMs(int ms)
  * @return void
  * @ingroup Utils
  */
-void api_setCommLogStream(const CanInterface_t interface, FILE *f)
+void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f)
 {
-    usbcan_set_comm_log_stream((usbcan_instance_t *)interface, f);
+	usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    usbcan_set_comm_log_stream(inst, f);
 }
 
 /**
@@ -96,7 +101,7 @@ void api_setCommLogStream(const CanInterface_t interface, FILE *f)
  * @return void
  * @ingroup Utils
  */
-void api_setDebugLogStream(FILE *f)
+void rr_set_debug_log_stream(FILE *f)
 {
     usbcan_set_debug_log_stream(f);
 }
@@ -104,118 +109,169 @@ void api_setDebugLogStream(FILE *f)
 /**
  * @brief 
  * 
- * @param interfaceName 
- * @return int Status code (::RetStatus_t)
+ * @param interface_name 
+ * @return int Status code (::ret_status_t)
  * @ingroup Common
  */
-CanInterface_t api_initInterface(const char *interfaceName)
+rr_can_interface_t *rr_init_interface(const char *interface_name)
 {
-    return (CanInterface_t)usbcan_instance_init(interfaceName);
+	rr_can_interface_t *i = calloc(1, sizeof(rr_can_interface_t));
+
+	if(!i)
+	{
+		return NULL;
+	}
+
+	i->iface = usbcan_instance_init(interface_name);
+
+	if(!i->iface)
+	{
+		free(i);
+		return NULL;
+	}
+
+	return i;
 }
 
 /**
  * @brief 
  * 
  * @param interface 
- * @param interfaceName 
- * @return int Status code (::RetStatus_t)
+ * @param interface_name 
+ * @return int Status code (::ret_status_t)
  * @ingroup Common
  */
-int api_deinitInterface(CanInterface_t *interface)
+int rr_deinit_interface(rr_can_interface_t **interface)
 {
-    return usbcan_instance_deinit((usbcan_instance_t **)interface) ? RET_OK : RET_ERROR;
+	IS_VALID_INTERFACE(*interface);
+
+	if(usbcan_instance_deinit((usbcan_instance_t **)&((*interface)->iface)))
+	{
+		free(*interface);
+		*interface = NULL;
+		return RET_OK;
+	}
+	return RET_ERROR;
 }
 
 /**
  * @brief 
  * 
  * @param interface 
- * @param device Device instance 
+ * @param servo Device instance 
  * @param id 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup Common
  */
-CanDevice_t api_initDevice(CanInterface_t interface, const uint8_t id)
+rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
 {
-    return (CanDevice_t)usbcan_device_init((usbcan_instance_t *)interface, id);
+	rr_servo_t *s = calloc(1, sizeof(rr_servo_t));
+
+	if(!s)
+	{
+		return NULL;
+	}
+
+	s->dev = usbcan_device_init((usbcan_instance_t *)interface->iface, id);
+
+	if(!s->dev)
+	{
+		free(s);
+		return NULL;
+	}
+
+	return s;
 }
 
 /**
  * @brief 
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup Common
  */
-int api_deinitDevice(CanDevice_t *device)
+int rr_deinit_servo(rr_servo_t **servo)
 {
-    usbcan_device_deinit((usbcan_device_t **)device);
-    return RET_OK;
+	IS_VALID_SERVO(*servo);
+
+	if(usbcan_device_deinit((usbcan_device_t **)&((*servo)->dev)))
+	{
+		free(*servo);
+		*servo = NULL;
+		return RET_OK;
+	}
+	return RET_ERROR;
+    //return usbcan_servo_deinit((rr_servo_t **)servo) ? RET_OK : RET_ERROR;
 }
 
 /**
- * @brief Reboots device
+ * @brief Reboots servo
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_deviceReboot(const CanDevice_t device)
+int rr_servo_reboot(const rr_servo_t *servo)
 {
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     return write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;;
 }
 
 /**
- * @brief Resets device communication
+ * @brief Resets servo communication
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_deviceResetCommunication(const CanDevice_t device)
+int rr_servo_reset_communication(const rr_servo_t *servo)
 {
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     return write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;;
 }
 
 /**
- * @brief Puts device to the operational state  
+ * @brief Puts servo to the operational state  
  * 
- * @param device Device instance 
- *  If device == 0 > all devices on the bus will be set to the operational state
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ *  If servo == 0 > all servos on the bus will be set to the operational state
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_deviceSetStateOperational(const CanDevice_t device)
+int rr_servo_set_state_operational(const rr_servo_t *servo)
 {
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;;
 }
 
 /**
- * @brief Puts device to the pre-operational state  
+ * @brief Puts servo to the pre-operational state  
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_deviceSetStatePreOperational(const CanDevice_t device)
+int rr_servo_set_state_pre_operational(const rr_servo_t *servo)
 {
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;;
 }
 
 /**
- * @brief Puts device to the stopped state  
+ * @brief Puts servo to the stopped state  
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_deviceSetStateStopped(const CanDevice_t device)
+int rr_servo_set_state_stopped(const rr_servo_t *servo)
 {
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;;
 }
 
@@ -223,12 +279,13 @@ int api_deviceSetStateStopped(const CanDevice_t device)
  * @brief Reboots entire network
  * 
  * @param interface Interface instance 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_netReboot(const CanInterface_t interface)
+int rr_net_reboot(const rr_can_interface_t *interface)
 {
-	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
+	IS_VALID_INTERFACE(interface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;;
 }
 
@@ -236,12 +293,13 @@ int api_netReboot(const CanInterface_t interface)
  * @brief Resets entire network communication
  * 
  * @param interface Interface instance 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_netResetCommunication(const CanInterface_t interface)
+int rr_net_reset_communication(const rr_can_interface_t *interface)
 {
-	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
+	IS_VALID_INTERFACE(interface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;;
 }
 
@@ -249,12 +307,13 @@ int api_netResetCommunication(const CanInterface_t interface)
  * @brief Putss entire network to the operational state  
  * 
  * @param interface Interface instance 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_netSetStateOperational(const CanInterface_t interface)
+int rr_net_set_state_operational(const rr_can_interface_t *interface)
 {
-	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
+	IS_VALID_INTERFACE(interface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;;
 }
 
@@ -262,12 +321,13 @@ int api_netSetStateOperational(const CanInterface_t interface)
  * @brief Putss entire network to the pre-operational state  
  * 
  * @param interface Interface instance 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_netSetStatePreOperational(const CanInterface_t interface)
+int rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
 {
-	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
+	IS_VALID_INTERFACE(interface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;;
 }
 
@@ -275,198 +335,209 @@ int api_netSetStatePreOperational(const CanInterface_t interface)
  * @brief Puts entire network to the stopped state  
  * 
  * @param interface Interface instance 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup System_control
  */
-int api_netSetStateStopped(const CanInterface_t interface)
+int rr_net_set_state_stopped(const rr_can_interface_t *interface)
 {
-	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
+	IS_VALID_INTERFACE(interface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;
 }
 
 /**
- * @brief Stops the device and releases it
+ * @brief Stops the servo and releases it
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_stopAndRelease(const CanDevice_t device)
+int rr_stop_and_release(const rr_servo_t *servo)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data = 0;
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     uint8_t sts = write_raw_sdo(dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Stops the device and make it hold current position
+ * @brief Stops the servo and make it hold current position
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_stopAndFreeze(const CanDevice_t device)
+int rr_stop_and_freeze(const rr_servo_t *servo)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data = 0;
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     uint8_t sts = write_raw_sdo(dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device contol current
+ * @brief Sets servo contol current
  * 
- * @param device Device instance 
- * @param currentA Phase current in Amperes
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param current_a Phase current in Amperes
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_setCurrent(const CanDevice_t device, const float currentA)
+int rr_set_current(const rr_servo_t *servo, const float current_a)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &currentA, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &current_a, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device contol velocity
+ * @brief Sets servo contol velocity
  * 
- * @param device Device instance 
- * @param velocityDegPerSec Flange velocity in degrees/sec
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param velocity_deg_per_sec Flange velocity in degrees/sec
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_setVelocity(const CanDevice_t device, const float velocityDegPerSec)
+int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &velocityDegPerSec, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device contol position with maximum current
+ * @brief Sets servo contol position with maximum current
  * 
- * @param device Device instance 
- * @param positionDeg Flange position in degrees
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param position_deg Flange position in degrees
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_setPosition(const CanDevice_t device, const float positionDeg)
+int rr_set_position(const rr_servo_t *servo, const float position_deg)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &positionDeg, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device contol velocity with limited control phase current
+ * @brief Sets servo contol velocity with limited control phase current
  * 
- * @param device Device instance 
- * @param velocityDegPerSec Flange velocity in degrees/sec
- * @param currentA Phase current limit in Amperes
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param velocity_deg_per_sec Flange velocity in degrees/sec
+ * @param current_a Phase current limit in Amperes
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_setVelocityWithLimits(const CanDevice_t device, const float velocityDegPerSec, const float currentA)
+int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[8];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &velocityDegPerSec, 1);
-    usb_can_put_float(data, 0, &currentA, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
+    usb_can_put_float(data, 0, &current_a, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device contol position with 
+ * @brief Sets servo contol position with 
  * limited control flange velocity and
  * limited control phase current
  * 
- * @param device Device instance 
- * @param positionDeg Flange position in degrees
- * @param velocityDegPerSec Flange velocity in degrees/sec
- * @param currentA Phase current limit in Amperes
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param position_deg Flange position in degrees
+ * @param velocity_deg_per_sec Flange velocity in degrees/sec
+ * @param current_a Phase current limit in Amperes
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_setPositionWithLimits(const CanDevice_t device, const float positionDeg, const float velocityDegPerSec, const float currentA)
+int rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[12];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &positionDeg, 1);
-    usb_can_put_float(data, 0, &velocityDegPerSec, 1);
-    usb_can_put_float(data, 0, &currentA, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
+    usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
+    usb_can_put_float(data, 0, &current_a, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device control duty.
+ * @brief Sets servo control duty.
  * Duty is the part of the input voltage that is passed to the motor to spin it
  * 
- * @param device Device instance 
- * @param dutyPercent 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param duty_percent 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_setDuty(CanDevice_t device, float dutyPercent)
+int rr_set_duty(const rr_servo_t *servo, float duty_percent)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &dutyPercent, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &duty_percent, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Adds motion PVT point to the device queue
+ * @brief Adds motion PVT point to the servo queue
  * 
- * @param device Device instance 
- * @param positionDeg Flange position in degrees
- * @param velocityDeg Flange velocity in degrees/sec
- * @param timeMs Relative point time in milliseconds
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param position_deg Flange position in degrees
+ * @param velocity_deg Flange velocity in degrees/sec
+ * @param time_ms Relative point time in milliseconds
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_addMotionPoint(const CanDevice_t device, const float positionDeg, const float velocityDeg, const uint32_t timeMs)
+int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[12];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &positionDeg, 1);
-    usb_can_put_float(data + 4, 0, &velocityDeg, 1);
-    usb_can_put_uint32_t(data + 8, 0, &timeMs, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
+    usb_can_put_float(data + 4, 0, &velocity_deg, 1);
+    usb_can_put_uint32_t(data + 8, 0, &time_ms, 1);
 
     uint32_t sts = write_raw_sdo(dev, 0x2200, 2, data, sizeof(data), 1, 200);
     if(sts == CO_SDO_AB_PRAM_INCOMPAT)
@@ -475,127 +546,130 @@ int api_addMotionPoint(const CanDevice_t device, const float positionDeg, const 
     }
     else
     {
-        return retSDO(sts);
+        return ret_sdo(sts);
     }
 }
 
 /**
- * @brief Starts the device movement by the spline points.
+ * @brief Starts the servo movement by the spline points.
  * This is a broadcast command.
- * Note: if any device is not completed the movement (by spline points) it will send 
- * broadcast "Goto Stopped State" command to the all devices on the bus
+ * Note: if any servo is not completed the movement (by spline points) it will send 
+ * broadcast "Goto Stopped State" command to the all servos on the bus
  * 
  * @param interface interface to start motion on. 
- * @param timestampMs Startup delay in milliseconds. 
+ * @param timestamp_ms Startup delay in milliseconds. 
  * Default: 0
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_startMotion(CanInterface_t interface, uint32_t timestampMs)
+int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
 {
-	usbcan_instance_t *inst = (usbcan_instance_t *)interface;
-    write_timestamp(inst, timestampMs);
+	IS_VALID_INTERFACE(interface);
+
+	usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    write_timestamp(inst, timestamp_ms);
     return RET_OK;
 }
 
 /**
  * @brief Reads error flag array
  * 
- * @param device Device instance 
+ * @param servo Device instance 
  * @param array Pointer to the error array
  * @param size Size of the received array
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int api_readErrorStatus(const CanDevice_t device, uint8_t *array, uint32_t *size)
+int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     int _size = *size;
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     uint8_t sts = read_raw_sdo(dev, 0x2000, 0, array, &_size, 1, 200);
 
     *size = _size;
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Writes device source array format (activated source indexes)
+ * @brief Writes servo source array format (activated source indexes)
  * 
- * @param device Device instance 
- * @param requests Pointer to the source index array (from ::AppParam_t)
+ * @param servo Device instance 
+ * @param requests Pointer to the source index array (from ::app_param_t)
  * @param size Size of the source index array
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
 /*
-int api_writeSourcesFormat(const CanDevice_t device, const uint8_t *requests, const uint32_t size)
+int rr_write_sources_format(const rr_servo_t *servo, const uint8_t *requests, const uint32_t size)
 {
-    CHECK_NMT_STATE(device);
+    CHECK_NMT_STATE(servo);
 
     uint8_t array[10] = {0};
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
-    for(uint32_t i = 0; i < sizeof(device->source) / sizeof(device->source[0]); i++)
+    for(uint32_t i = 0; i < sizeof(servo->source) / sizeof(servo->source[0]); i++)
     {
-        device->source[i].activated = 0;
+        servo->source[i].activated = 0;
     }
 
     for(uint32_t i = 0; i < size; i++)
     {
-        device->source[requests[i]].activated = !0;
-        device->source[requests[i]].value = 0.0;
+        servo->source[requests[i]].activated = !0;
+        servo->source[requests[i]].value = 0.0;
         BIT_SET_UINT_ARRAY(array, requests[i]);
     }
-    device->sourceSize = size;
+    servo->source_size = size;
 
     uint8_t sts = write_raw_sdo(dev, 0x2015, 1, array, sizeof(array), 1, 200);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
     return RET_OK;
 }
 */
 /**
- * @brief Reads device source array format (activated source indexes)
+ * @brief Reads servo source array format (activated source indexes)
  * 
- * @param device Device instance 
+ * @param servo Device instance 
  * @param requests Pointer to the source index array
- * @param size Size of the array. Contains received size of activated sources in the device
- * @return int Status code (::RetStatus_t)
+ * @param size Size of the array. Contains received size of activated sources in the servo
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
 /*
-int api_readSourcesFormat(const CanDevice_t device, uint8_t *requests, uint32_t *size)
+int rr_read_sources_format(const rr_servo_t *servo, uint8_t *requests, uint32_t *size)
 {
-    CHECK_NMT_STATE(device);
+    CHECK_NMT_STATE(servo);
 
     int _size;
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     uint8_t sts = read_raw_sdo(dev, 0x2015, 1, requests, &_size, 1, 200);
     *size = _size;
 
-    return retSDO(sts);
+    return ret_sdo(sts);
     return RET_OK;
 }
 */
 /**
- * @brief Reads device sources. 
- * Note: source indexes should be programmed with ::api_writeSourcesFormat function
+ * @brief Reads servo sources. 
+ * Note: source indexes should be programmed with ::rr_write_sources_format function
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
 /*
-int api_readSources(const CanDevice_t device, uint8_t *requests)
+int rr_read_sources(const rr_servo_t *servo, uint8_t *requests)
 {
-    CHECK_NMT_STATE(device);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[256 * 4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     int len = sizeof(data);
 
-    if(device->sourceSize == 0)
+    if(servo->source_size == 0)
     {
         return RET_ZERO_SIZE;
     }
@@ -604,102 +678,138 @@ int api_readSources(const CanDevice_t device, uint8_t *requests)
 
     if(sts == CO_SDO_AB_NONE)
     {
-        if(len != device->sourceSize * 4)
+        if(len != servo->source_size * 4)
         {
             return RET_SIZE_MISMATCH;
         }
 
         uint32_t offset = 0;
-        for(uint32_t i = 0; i < device->sourceSize; i++)
+        for(uint32_t i = 0; i < servo->source_size; i++)
         {
-            if(device->source[requests[i]].activated != 0)
+            if(servo->source[requests[i]].activated != 0)
             {
-                usb_can_get_float(data + offset, 0, &device->source[requests[i]].value, 1);
+                usb_can_get_float(data + offset, 0, &servo->source[requests[i]].value, 1);
                 offset += 4;
             }
         }
         return RET_OK;
     }
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 */
+
 /**
- * @brief Reads device source (information parameter)
+ * @brief Updates enabled cache entries
  * 
- * @param device Device instance 
- * @param param Parameter index to read (::AppParam_t)
- * @param value Pointer to the readed variable
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-
-int api_readParameter(const CanDevice_t device, const AppParam_t param, float *value)
+int rr_param_cache_update(const rr_servo_t *servo)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(serv);
+	return RET_OK;
+}
+
+/**
+ * @brief Enables or disables reading specified parameter during cache update
+ * 
+ * @param servo Device instance 
+ * @param param Parameter ID
+ * @param enabled Enable/disable reading of this parameter
+ * @return int Status code (::ret_status_t)
+ * @ingroup Servo_info
+ */
+int rr_param_cache_setup_entry(const rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
+{
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(serv);
+
+	return RET_OK;
+}
+
+/**
+ * @brief Reads single information parameter. Cache also update during this operation irrespective of enabled status.
+ * 
+ * @param servo Device instance 
+ * @param param Parameter index to read (::app_param_t)
+ * @param value Pointer to the readed variable
+ * @return int Status code (::ret_status_t)
+ * @ingroup Servo_info
+ */
+int rr_read_parameter(const rr_servo_t *servo, const rr_servo_param_t param, float *value)
+{
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     int size = sizeof(data);
 
     int sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
     if(sts == CO_SDO_AB_NONE && size == 4)
     {        
-        //usb_can_get_float(data, 0, &device->source[param].value, 1);
-        usb_can_get_float(data, 0, value, 1);
-        //*value = device->source[param].value;
+        usb_can_get_float(data, 0, (float *)&servo->pcache[param].value, 1);
+        *value = servo->pcache[param].value;
         return RET_OK;
     }
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Erases the whole device motion queue
+ * @brief Erases the whole servo motion queue
  * 
- * @param device Device instance 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_clearPointsAll(const CanDevice_t device)
+int rr_clear_points_all(const rr_servo_t *servo)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
     uint32_t num = 0;
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     uint8_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&num, sizeof(num), 1, 100);
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Erases number of cells from the tail of the device motion queue
+ * @brief Erases number of cells from the tail of the servo motion queue
  * 
- * @param device Device instance 
- * @param numToClear 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param num_to_clear 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_control
  */
-int api_clearPoints(const CanDevice_t device, const uint32_t numToClear)
+int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
 {
-    CHECK_NMT_STATE(device);
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    uint8_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&numToClear, sizeof(numToClear), 1, 100); 
-    return retSDO(sts);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint8_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&num_to_clear, sizeof(num_to_clear), 1, 100); 
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Gets device motion queue occupied cells (queue size)
+ * @brief Gets servo motion queue occupied cells (queue size)
  * 
- * @param device Device instance 
+ * @param servo Device instance 
  * @param num 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int api_getPointsSize(CanDevice_t device, uint32_t *num)
+int rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     int len = sizeof(data);
     uint8_t sts = read_raw_sdo(dev, 0x2202, 0x02, data, &len, 1, 100);
 
@@ -709,24 +819,25 @@ int api_getPointsSize(CanDevice_t device, uint32_t *num)
         return RET_OK;
     }
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Gets device remaining motion queue free cell count
+ * @brief Gets servo remaining motion queue free cell count
  * 
- * @param device Device instance 
+ * @param servo Device instance 
  * @param num 
- * @return int Status code (::RetStatus_t)
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int api_getPointsFreeSpace(CanDevice_t device, uint32_t *num)
+int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
     int len = sizeof(data);
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     uint8_t sts = read_raw_sdo(dev, 0x2202, 0x03, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE && len == 4)
@@ -735,43 +846,44 @@ int api_getPointsFreeSpace(CanDevice_t device, uint32_t *num)
         return RET_OK;
     }
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
  * @brief Calculates motion point parameters
  * 
- * @param device Device instance 
- * @param startPositionDeg 
- * @param startVelocityDeg 
- * @param startAccelerationDegPerSec2 
- * @param startTimeMs 
- * @param endPositionDeg 
- * @param endVelocityDeg 
- * @param endAccelerationDegPerSec2 
- * @param endTimeMs 
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param start_position_deg 
+ * @param start_velocity_deg 
+ * @param start_acceleration_deg_per_sec2 
+ * @param start_time_ms 
+ * @param end_position_deg 
+ * @param end_velocity_deg 
+ * @param end_acceleration_deg_per_sec2 
+ * @param end_time_ms 
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int api_invokeTimeCalculation(const CanDevice_t device,
-                              const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs,
-                              const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs)
+int rr_invoke_time_calculation(const rr_servo_t *servo,
+                              const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
+                              const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[8 * 4];
     int p = 0;
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
-    p = usb_can_put_float(data, p, &startPositionDeg, 1);
-    p = usb_can_put_float(data, p, &startVelocityDeg, 1);
-    p = usb_can_put_float(data, p, &startAccelerationDegPerSec2, 1);
-    p = usb_can_put_uint32_t(data, p, &startTimeMs, 1);
+    p = usb_can_put_float(data, p, &start_position_deg, 1);
+    p = usb_can_put_float(data, p, &start_velocity_deg, 1);
+    p = usb_can_put_float(data, p, &start_acceleration_deg_per_sec2, 1);
+    p = usb_can_put_uint32_t(data, p, &start_time_ms, 1);
 
-    p = usb_can_put_float(data, p, &endPositionDeg, 1);
-    p = usb_can_put_float(data, p, &endVelocityDeg, 1);
-    p = usb_can_put_float(data, p, &endAccelerationDegPerSec2, 1);
-    p = usb_can_put_uint32_t(data, p, &endTimeMs, 1);
+    p = usb_can_put_float(data, p, &end_position_deg, 1);
+    p = usb_can_put_float(data, p, &end_velocity_deg, 1);
+    p = usb_can_put_float(data, p, &end_acceleration_deg_per_sec2, 1);
+    p = usb_can_put_uint32_t(data, p, &end_time_ms, 1);
 
     uint8_t sts = write_raw_sdo(dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
@@ -781,24 +893,25 @@ int api_invokeTimeCalculation(const CanDevice_t device,
     }
     else
     {
-        return retSDO(sts);
+        return ret_sdo(sts);
     }
 }
 
 /**
- * @brief Gets ::api_invokeTimeCalculation calculated time in milliseconds
+ * @brief Gets ::rr_invoke_time_calculation calculated time in milliseconds
  * 
- * @param device Device instance 
- * @param timeMs Pointer to the calculated time in milliseconds
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param time_ms Pointer to the calculated time in milliseconds
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int api_getTimeCalculationResult(const CanDevice_t device, uint32_t *timeMs)
+int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     int len = sizeof(data);
     uint8_t sts = read_raw_sdo(dev, 0x2203, 0x02, data, &len, 1, 100);
     uint32_t num;
@@ -806,95 +919,99 @@ int api_getTimeCalculationResult(const CanDevice_t device, uint32_t *timeMs)
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
         usb_can_get_uint32_t(data, 0, &num, 1);
-        *timeMs = num;
+        *time_ms = num;
         return RET_OK;
     }
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device zero position
+ * @brief Sets servo zero position
  * 
- * @param device Device instance 
- * @param positionDeg Target position in degrees
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param position_deg Target position in degrees
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_config
  */
-int api_setZeroPosition(const CanDevice_t device, const float positionDeg)
+int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &positionDeg, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets device zero position and saves it to the device FLASH memory
+ * @brief Sets servo zero position and saves it to the servo FLASH memory
  * 
- * @param device Device instance 
- * @param positionDeg Target position in degrees
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param position_deg Target position in degrees
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_config
  */
-int api_setZeroPositionAndSave(const CanDevice_t device, const float positionDeg)
+int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &positionDeg, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2208, 0x02, data, sizeof(data), 0, 200);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Gets the maximum device velocity
+ * @brief Gets the maximum servo velocity
  * 
- * @param device Device instance 
- * @param velocityDegPerSec Velocity in degrees/sec
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param velocity_deg_per_sec Velocity in degrees/sec
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int api_getMaxVelocity(const CanDevice_t device, float *velocityDegPerSec)
+int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
     int len = sizeof(data);
 
-	usbcan_device_t *dev = (usbcan_device_t *)device;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     uint8_t sts = read_raw_sdo(dev, 0x2207, 0x02, data, &len, 1, 100);
     if(sts == CO_SDO_AB_NONE)
     {
-        usb_can_get_float(data, 0, velocityDegPerSec, 1);
+        usb_can_get_float(data, 0, velocity_deg_per_sec, 1);
     }
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
 
 /**
- * @brief Sets the global limit for the device velocity.
+ * @brief Sets the global limit for the servo velocity.
  * Note: this is power volatile command
  * 
- * @param device Device instance 
- * @param maxVelocityDegPerSec Flange velocity in degrees/sec
- * @return int Status code (::RetStatus_t)
+ * @param servo Device instance 
+ * @param max_velocity_deg_per_sec Flange velocity in degrees/sec
+ * @return int Status code (::ret_status_t)
  * @ingroup Servo_config
  */
-int api_setMaxVelocity(const CanDevice_t device, const float maxVelocityDegPerSec)
+int rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec)
 {
-    CHECK_NMT_STATE(device);
+	IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
 
     uint8_t data[4];
-	usbcan_device_t *dev = (usbcan_device_t *)device;
-    usb_can_put_float(data, 0, &maxVelocityDegPerSec, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &max_velocity_deg_per_sec, 1);
     uint8_t sts = write_raw_sdo(dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
 
-    return retSDO(sts);
+    return ret_sdo(sts);
 }
