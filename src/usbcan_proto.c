@@ -34,6 +34,9 @@ static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd
 static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state) __attribute__((unused));
 static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
 
+/*
+ * Check interface instance for consistency.
+ */
 static bool is_valid_instance(const usbcan_instance_t *inst)
 {
 	if(!inst)
@@ -49,6 +52,9 @@ static bool is_valid_instance(const usbcan_instance_t *inst)
 	return true;
 }
 
+/*
+ * Check device instance for consistency.
+ */
 static bool is_valid_device(const usbcan_device_t *dev)
 {
 	if(!dev)
@@ -69,6 +75,10 @@ static bool is_valid_device(const usbcan_device_t *dev)
 	return true;
 }
 
+/*
+ * Writes to interface file descriptor. i
+ * Notice: data will be unwrapped if connection type is UDP socket.
+ */
 static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 {
 	int ret;
@@ -90,6 +100,9 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 	return ret;
 }
 
+/*
+ * Creates a couple of pipes for inter thread communication.
+ */
 static void ipc_create_link(usbcan_instance_t *inst)
 {
     if(pipe(inst->to_master_pipe))
@@ -105,6 +118,9 @@ static void ipc_create_link(usbcan_instance_t *inst)
     }
 }
 
+/*
+ * Read protaected against interrupts caused by signal reception.
+ */
 static size_t read_sig_safe(int fd, void *data, size_t sz)
 {
     size_t l, bytes = 0;
@@ -129,6 +145,9 @@ static size_t read_sig_safe(int fd, void *data, size_t sz)
     return bytes;
 }
 
+/*
+ * Write protaected against interrupts caused by signal reception.
+ */
 static size_t write_sig_safe(int fd, void *data, size_t sz)
 {
     size_t l, bytes = 0;
@@ -153,6 +172,9 @@ static size_t write_sig_safe(int fd, void *data, size_t sz)
     return bytes;
 }
 
+/*
+ * Callback for handling SDO response.
+ */
 static void sdo_resp_cb(usbcan_instance_t *inst, uint32_t abt, uint8_t *data, int len)
 {
     ipc_sdo_resp_t r;
@@ -167,6 +189,9 @@ static void sdo_resp_cb(usbcan_instance_t *inst, uint32_t abt, uint8_t *data, in
     }
 }
 
+/*
+ * Receives requests from user thread.
+ */
 static void ipc_process(usbcan_instance_t *inst)
 {
     ipc_opcode_t opcode;
@@ -227,13 +252,17 @@ static void ipc_process(usbcan_instance_t *inst)
     }
 }
 
-
+/*
+ * Enables or disables USB<->CAN frames wrapping/unwrapping
+ */
 static void usbcan_enable_udp(usbcan_instance_t *inst, bool en)
 {
 	inst->usbcan_udp = en;
 }
 
-
+/*
+ * Handles devices statuses, SDO reception & master heart beat transmission.
+ */
 static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 {
 	int i;
@@ -272,7 +301,7 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 		inst->master_hb_timer -= inst->master_hb_ival;
 	}
 
-	/*Wait for SDO responce*/
+	/*Wait for SDO response*/
 	if(inst->wait_sdo.cb)
 	{
 		inst->wait_sdo.sdo.ttl = CLIPL(inst->wait_sdo.sdo.ttl - delta_ms, 0);
@@ -303,12 +332,21 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 	}
 }
 
+/*
+ * Configures receive stack for waiting specifig SDO response.
+ * Callback cb will be called if SDO response received or timeout occured.
+ * Notice: timeout is part of usbcan_sdo_t structure.
+ */
 static void usbcan_wait_sdo(usbcan_instance_t *inst, usbcan_sdo_t *sdo, sdo_resp_cb_t cb)
 {
 	inst->wait_sdo.sdo = *sdo;
 	inst->wait_sdo.cb = cb;
 }
 
+/*
+ * Wraps USB<->CAN frame with start byte (0x02), 2-byte length code & 2-byte CRC.
+ * Notice: data to wrap sould be placed starting at dst[3] & dst size > (payload_sz + 5).
+ */
 static int usbcan_wrap_inplace(uint8_t *dst, int payload_sz)
 {
 	uint16_t crc = 0;
@@ -323,6 +361,9 @@ static int usbcan_wrap_inplace(uint8_t *dst, int payload_sz)
 	return p;
 }
 
+/*
+ * Builds request for sending NMT frame in USB<->CAN format.
+ */
 static int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd)
 {
 	int p = 0;
@@ -335,6 +376,9 @@ static int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd)
 	return usbcan_wrap_inplace(dst, p);
 }
 
+/*
+ * Builds request for sending heart beat frame in USB<->CAN format.
+ */
 static int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state)
 {
 	int p = 0;
@@ -347,6 +391,9 @@ static int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state)
 	return usbcan_wrap_inplace(dst, p);
 }
 
+/*
+ * Builds request for sending timestamp (SYNC) frame in USB<->CAN format.
+ */
 static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts)
 {
 	int p = 0;
@@ -358,6 +405,9 @@ static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts)
 	return usbcan_wrap_inplace(dst, p);
 }
 
+/*
+ * Builds request for sending SDO request frame in USB<->CAN format.
+ */
 static int usbcan_build_sdo_req(uint8_t *dst,
 		usbcan_sdo_t *sdo,
 		void *data, 
@@ -381,6 +431,9 @@ static int usbcan_build_sdo_req(uint8_t *dst,
 	return usbcan_wrap_inplace(dst, p);
 }
 
+/*
+ * Builds request for sending generic CAN frame in USB<->CAN format.
+ */
 static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m)
 {
 	int idlen = (m->id & 0x40000000u ? 4 : 2);
@@ -396,6 +449,9 @@ static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m)
 	return usbcan_wrap_inplace(dst, p);
 }
 
+/*
+ * Sends NMT frame.
+ */
 static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
@@ -404,6 +460,9 @@ static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd
 	return usbcan_write_fd(inst, dst, l);
 }
 
+/*
+ * Sends heart beat.
+ */
 static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
@@ -412,7 +471,9 @@ static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t st
 	return usbcan_write_fd(inst, dst, l);
 }
 
-
+/*
+ * Sends timestamp (SYNC) frame.
+ */
 static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
@@ -420,6 +481,9 @@ static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 	return usbcan_write_fd(inst, dst, l);
 }
 
+/*
+ * Sends SDO request.
+ */
 static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
@@ -429,6 +493,9 @@ static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void 
 	return usbcan_write_fd(inst, dst, l);
 }
 
+/*
+ * Sends non-CanOpen genaric CAN frame.
+ */
 static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
@@ -436,6 +503,10 @@ static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 	return usbcan_write_fd(inst, dst, l);
 }
 
+/*
+ * Sends master heart beat. 
+ * Notice: emulataed using generic CAN frame.
+ */
 static void usbcan_send_master_hb(usbcan_instance_t *inst)
 {
 	can_msg_t msg = {USB_CAN_MASTER_HB_COM_FRAME_ID, 1, {CO_NMT_OPERATIONAL}};
@@ -443,6 +514,9 @@ static void usbcan_send_master_hb(usbcan_instance_t *inst)
 	usbcan_send_com_frame(inst, &msg);
 }
 
+/*
+ * Parses non-CanOpen genaric CAN frame.
+ */
 static void usbcan_parse_com_frame(can_msg_t *m, uint8_t *msg, int sz)
 {
 	int p = 0;
@@ -451,7 +525,6 @@ static void usbcan_parse_com_frame(can_msg_t *m, uint8_t *msg, int sz)
 	{
 		return;
 	}
-
 
 	if(msg[p] & U32_H8(USB_CAN_EID_FLAG))
 	{	
@@ -466,7 +539,9 @@ static void usbcan_parse_com_frame(can_msg_t *m, uint8_t *msg, int sz)
 	memcpy(m->data, msg + p, m->dlc);
 }
 
-
+/*
+ * Handles USB<->CAN packets.
+ */
 static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int len)
 {
 	switch(data[0])
@@ -605,6 +680,11 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 	}
 }
 
+/*
+ * Deserializes incoming serial port data into packets.
+ * Incomplete incoming data are stored in ring buffer.
+ * Do noting for UDP socket connections.
+ */
 static int usbcan_rx(usbcan_instance_t *inst)
 {
 	static uint8_t rb[USB_CAN_MAX_PAYLOAD];
@@ -623,10 +703,8 @@ static int usbcan_rx(usbcan_instance_t *inst)
 		usbcan_frame_receive_cb(inst, b, l);
 		return l;
 	}
-	
 
 	h = rb_to_rb(rb, h, sizeof(rb), b, 0, l, l);
-
 
 	while(1)
 	{
@@ -679,21 +757,32 @@ static int usbcan_rx(usbcan_instance_t *inst)
 	return l;
 }
 
-
+/*
+ * Default callback for handling emergency packets
+ */
 static void emcy_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info)
 {
 	LOG_WARN(debug_log, "Emergency frame received: id(%"PRId8") code(0x%"PRIX16") reg(0x%"PRIX8") bits(0x%"PRIX8") info(0x%"PRIX32")",
 			id, code, reg, bits, info);
 }
 
+/*
+ * Default callback running before master heart beat transmition
+ */
 static void hb_tx_cb(usbcan_instance_t *inst)
 {
 }
 
+/*
+ * Default callback for handling heart beat reception
+ */
 static void hb_rx_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
 }
 
+/*
+ * Default callback for handling NMT state changes
+ */
 static void nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
 	if(state == CO_NMT_HB_TIMEOUT)
@@ -706,6 +795,9 @@ static void nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t sta
 	}
 }
 
+/*
+ * Flushes unread data from interface
+ */
 static void usbcan_flush_device(usbcan_instance_t *inst)
 {
 	if(inst->fd < 0)
@@ -756,6 +848,9 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 	}
 }
 
+/*
+ * Detects type of interface (serial or socket) and opens it
+ */
 static void usbcan_open_device(usbcan_instance_t *inst)
 {
 	struct termios term;
@@ -820,6 +915,10 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	usbcan_flush_device(inst);
 }
 
+/*
+ * Thread task.
+ * Handles recieced data from USB<->CAN ot Ethernet<->CAN.
+ */
 static void *usbcan_process(void *udata)
 {
 	struct timeval tprev, tnow;

@@ -709,11 +709,36 @@ int rr_read_sources(const rr_servo_t *servo, uint8_t *requests)
  * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int rr_param_cache_update(const rr_servo_t *servo)
+int rr_param_cache_update(rr_servo_t *servo)
 {
 	IS_VALID_SERVO(servo);
-	CHECK_NMT_STATE(serv);
-	return RET_OK;
+	CHECK_NMT_STATE(servo);
+
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint8_t data[APP_PARAM_SIZE * sizeof(float)];
+	int len = sizeof(data);
+
+    int sts = read_raw_sdo(dev, 0x2014, 0x01, data, &len, 1, 100);
+	int i, src;
+
+    if(sts == CO_SDO_AB_NONE)
+    {
+        for(i = 0, src = 0; i < APP_PARAM_SIZE; i++)
+        {
+            if(servo->pcache[i].activated)
+            {
+                usb_can_get_float(data + src, 0, (float *)&servo->pcache[i].value, 1);
+				src += sizeof(float);
+            }
+        }
+		if(src != len)
+		{
+			return RET_SIZE_MISMATCH;
+		}
+        return RET_OK;
+    }
+
+    return ret_sdo(sts);
 }
 
 /**
@@ -725,12 +750,27 @@ int rr_param_cache_update(const rr_servo_t *servo)
  * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int rr_param_cache_setup_entry(const rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
+int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
 {
 	IS_VALID_SERVO(servo);
-	CHECK_NMT_STATE(serv);
+	CHECK_NMT_STATE(servo);
 
-	return RET_OK;
+    uint8_t array[10] = {0};
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+
+	servo->pcache[param].activated = enabled;
+
+    for(int i = 0; i < APP_PARAM_SIZE; i++)
+    {
+		if(servo->pcache[i].activated)
+		{
+        	BIT_SET_UINT_ARRAY(array, i);
+		}
+    }
+
+    int sts = write_raw_sdo(dev, 0x2015, 1, array, sizeof(array), 1, 200);
+
+	return ret_sdo(sts);
 }
 
 /**
@@ -742,7 +782,7 @@ int rr_param_cache_setup_entry(const rr_servo_t *servo, const rr_servo_param_t p
  * @return int Status code (::ret_status_t)
  * @ingroup Servo_info
  */
-int rr_read_parameter(const rr_servo_t *servo, const rr_servo_param_t param, float *value)
+int rr_read_parameter( rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
 	IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
