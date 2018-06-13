@@ -68,156 +68,306 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#gae4b5a42f09f00adb38fd1ff896cc7f47">api_reboot</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboots device.  <a href="#gae4b5a42f09f00adb38fd1ff896cc7f47">More...</a><br /></td></tr>
-<tr class="separator:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2b5a712092962c4f946d1760642a1fa1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga2b5a712092962c4f946d1760642a1fa1">api_resetCommunication</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga2b5a712092962c4f946d1760642a1fa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets device communication.  <a href="#ga2b5a712092962c4f946d1760642a1fa1">More...</a><br /></td></tr>
-<tr class="separator:ga2b5a712092962c4f946d1760642a1fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga38a2dfbbfbab07ab6b5011ba96e2879b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga38a2dfbbfbab07ab6b5011ba96e2879b">api_setStateOperational</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga38a2dfbbfbab07ab6b5011ba96e2879b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device/s to the operational state.  <a href="#ga38a2dfbbfbab07ab6b5011ba96e2879b">More...</a><br /></td></tr>
-<tr class="separator:ga38a2dfbbfbab07ab6b5011ba96e2879b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga790139a29b2c0d59a784468ebc3d44d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga790139a29b2c0d59a784468ebc3d44d0">api_setStatePreOperational</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga790139a29b2c0d59a784468ebc3d44d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device/s to the pre-operational state.  <a href="#ga790139a29b2c0d59a784468ebc3d44d0">More...</a><br /></td></tr>
-<tr class="separator:ga790139a29b2c0d59a784468ebc3d44d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6a726102b81ce19d7de7ffc1198b3594"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga6a726102b81ce19d7de7ffc1198b3594">api_setStateStopped</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga6a726102b81ce19d7de7ffc1198b3594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device/s to the stopped state.  <a href="#ga6a726102b81ce19d7de7ffc1198b3594">More...</a><br /></td></tr>
-<tr class="separator:ga6a726102b81ce19d7de7ffc1198b3594"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1239a8f4a80ea1c33f599a0cdc58048c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga1239a8f4a80ea1c33f599a0cdc58048c">rr_servo_reboot</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga1239a8f4a80ea1c33f599a0cdc58048c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboots servo.  <a href="#ga1239a8f4a80ea1c33f599a0cdc58048c">More...</a><br /></td></tr>
+<tr class="separator:ga1239a8f4a80ea1c33f599a0cdc58048c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga59060b95f6ee0614cbec3500ba08b7a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga59060b95f6ee0614cbec3500ba08b7a0">rr_servo_reset_communication</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga59060b95f6ee0614cbec3500ba08b7a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets servo communication.  <a href="#ga59060b95f6ee0614cbec3500ba08b7a0">More...</a><br /></td></tr>
+<tr class="separator:ga59060b95f6ee0614cbec3500ba08b7a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga799d61d6eb811cba7f9097a5d9bfd0a8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga799d61d6eb811cba7f9097a5d9bfd0a8">rr_servo_set_state_operational</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga799d61d6eb811cba7f9097a5d9bfd0a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts servo to the operational state.  <a href="#ga799d61d6eb811cba7f9097a5d9bfd0a8">More...</a><br /></td></tr>
+<tr class="separator:ga799d61d6eb811cba7f9097a5d9bfd0a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39559219bfb36d4d9359365ac3656a74"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga39559219bfb36d4d9359365ac3656a74">rr_servo_set_state_pre_operational</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga39559219bfb36d4d9359365ac3656a74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts servo to the pre-operational state.  <a href="#ga39559219bfb36d4d9359365ac3656a74">More...</a><br /></td></tr>
+<tr class="separator:ga39559219bfb36d4d9359365ac3656a74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga02ca530236f87db0fcac9e136eafda4d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga02ca530236f87db0fcac9e136eafda4d">rr_servo_set_state_stopped</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga02ca530236f87db0fcac9e136eafda4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts servo to the stopped state.  <a href="#ga02ca530236f87db0fcac9e136eafda4d">More...</a><br /></td></tr>
+<tr class="separator:ga02ca530236f87db0fcac9e136eafda4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3141174e38250e0107cc6de9681bcc47"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga3141174e38250e0107cc6de9681bcc47">rr_net_reboot</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga3141174e38250e0107cc6de9681bcc47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboots entire network.  <a href="#ga3141174e38250e0107cc6de9681bcc47">More...</a><br /></td></tr>
+<tr class="separator:ga3141174e38250e0107cc6de9681bcc47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7591c01ec4b20388fad7effe3266e3b1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga7591c01ec4b20388fad7effe3266e3b1">rr_net_reset_communication</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga7591c01ec4b20388fad7effe3266e3b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets entire network communication.  <a href="#ga7591c01ec4b20388fad7effe3266e3b1">More...</a><br /></td></tr>
+<tr class="separator:ga7591c01ec4b20388fad7effe3266e3b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga427f81205fc35a78a351d1288ea67165"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga427f81205fc35a78a351d1288ea67165">rr_net_set_state_operational</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga427f81205fc35a78a351d1288ea67165"><td class="mdescLeft">&#160;</td><td class="mdescRight">Putss entire network to the operational state.  <a href="#ga427f81205fc35a78a351d1288ea67165">More...</a><br /></td></tr>
+<tr class="separator:ga427f81205fc35a78a351d1288ea67165"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a6c46f69a8586cf7bd129a55a775eb7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga6a6c46f69a8586cf7bd129a55a775eb7">rr_net_set_state_pre_operational</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga6a6c46f69a8586cf7bd129a55a775eb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Putss entire network to the pre-operational state.  <a href="#ga6a6c46f69a8586cf7bd129a55a775eb7">More...</a><br /></td></tr>
+<tr class="separator:ga6a6c46f69a8586cf7bd129a55a775eb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7dd178eafeae0d80edd60e3aee6e13b9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga7dd178eafeae0d80edd60e3aee6e13b9">rr_net_set_state_stopped</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga7dd178eafeae0d80edd60e3aee6e13b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts entire network to the stopped state.  <a href="#ga7dd178eafeae0d80edd60e3aee6e13b9">More...</a><br /></td></tr>
+<tr class="separator:ga7dd178eafeae0d80edd60e3aee6e13b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="gae4b5a42f09f00adb38fd1ff896cc7f47"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae4b5a42f09f00adb38fd1ff896cc7f47">&#9670;&nbsp;</a></span>api_reboot()</h2>
+<a id="ga3141174e38250e0107cc6de9681bcc47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3141174e38250e0107cc6de9681bcc47">&#9670;&nbsp;</a></span>rr_net_reboot()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_reboot </td>
+          <td class="memname">int rr_net_reboot </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Reboots device. </p>
+<p>Reboots entire network. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">interface</td><td>Interface instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga2b5a712092962c4f946d1760642a1fa1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga2b5a712092962c4f946d1760642a1fa1">&#9670;&nbsp;</a></span>api_resetCommunication()</h2>
+<a id="ga7591c01ec4b20388fad7effe3266e3b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7591c01ec4b20388fad7effe3266e3b1">&#9670;&nbsp;</a></span>rr_net_reset_communication()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_resetCommunication </td>
+          <td class="memname">int rr_net_reset_communication </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Resets device communication. </p>
+<p>Resets entire network communication. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">interface</td><td>Interface instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga38a2dfbbfbab07ab6b5011ba96e2879b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga38a2dfbbfbab07ab6b5011ba96e2879b">&#9670;&nbsp;</a></span>api_setStateOperational()</h2>
+<a id="ga427f81205fc35a78a351d1288ea67165"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga427f81205fc35a78a351d1288ea67165">&#9670;&nbsp;</a></span>rr_net_set_state_operational()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setStateOperational </td>
+          <td class="memname">int rr_net_set_state_operational </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device/s to the operational state. </p>
+<p>Putss entire network to the operational state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance If device == 0 &gt; all devices on the bus will be set to the operational state </td></tr>
+    <tr><td class="paramname">interface</td><td>Interface instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga790139a29b2c0d59a784468ebc3d44d0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga790139a29b2c0d59a784468ebc3d44d0">&#9670;&nbsp;</a></span>api_setStatePreOperational()</h2>
+<a id="ga6a6c46f69a8586cf7bd129a55a775eb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6a6c46f69a8586cf7bd129a55a775eb7">&#9670;&nbsp;</a></span>rr_net_set_state_pre_operational()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setStatePreOperational </td>
+          <td class="memname">int rr_net_set_state_pre_operational </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device/s to the pre-operational state. </p>
+<p>Putss entire network to the pre-operational state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">interface</td><td>Interface instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga6a726102b81ce19d7de7ffc1198b3594"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga6a726102b81ce19d7de7ffc1198b3594">&#9670;&nbsp;</a></span>api_setStateStopped()</h2>
+<a id="ga7dd178eafeae0d80edd60e3aee6e13b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7dd178eafeae0d80edd60e3aee6e13b9">&#9670;&nbsp;</a></span>rr_net_set_state_stopped()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setStateStopped </td>
+          <td class="memname">int rr_net_set_state_stopped </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device/s to the stopped state. </p>
+<p>Puts entire network to the stopped state. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">interface</td><td>Interface instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
+
+</div>
+</div>
+<a id="ga1239a8f4a80ea1c33f599a0cdc58048c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1239a8f4a80ea1c33f599a0cdc58048c">&#9670;&nbsp;</a></span>rr_servo_reboot()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rr_servo_reboot </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Reboots servo. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
+
+</div>
+</div>
+<a id="ga59060b95f6ee0614cbec3500ba08b7a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga59060b95f6ee0614cbec3500ba08b7a0">&#9670;&nbsp;</a></span>rr_servo_reset_communication()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rr_servo_reset_communication </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Resets servo communication. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
+
+</div>
+</div>
+<a id="ga799d61d6eb811cba7f9097a5d9bfd0a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga799d61d6eb811cba7f9097a5d9bfd0a8">&#9670;&nbsp;</a></span>rr_servo_set_state_operational()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rr_servo_set_state_operational </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Puts servo to the operational state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">servo</td><td>Device instance If servo == 0 &gt; all servos on the bus will be set to the operational state </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
+
+</div>
+</div>
+<a id="ga39559219bfb36d4d9359365ac3656a74"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga39559219bfb36d4d9359365ac3656a74">&#9670;&nbsp;</a></span>rr_servo_set_state_pre_operational()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rr_servo_set_state_pre_operational </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Puts servo to the pre-operational state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
+
+</div>
+</div>
+<a id="ga02ca530236f87db0fcac9e136eafda4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga02ca530236f87db0fcac9e136eafda4d">&#9670;&nbsp;</a></span>rr_servo_set_state_stopped()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int rr_servo_set_state_stopped </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Puts servo to the stopped state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>

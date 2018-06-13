@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['id',['id',['../struct_can_device__t.html#ae540407a6b7b9c8f01be74ae173276e3',1,'CanDevice_t']]]
+  ['dev',['dev',['../structrr__servo__t.html#a67e68e5e0ea7410959b47a8ddd4765a3',1,'rr_servo_t']]]
 ];

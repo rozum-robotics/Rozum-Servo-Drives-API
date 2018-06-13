@@ -30,6 +30,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+//! @cond Doxygen_Suppress
 #define RR_API_WAIT_DEVICE_TIMEOUT_MS 2000
 /* Private macro -------------------------------------------------------------*/
 //! @cond Doxygen_Suppress
@@ -97,7 +98,6 @@ void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f)
 /**
  * @brief 
  * 
- * @param interface 
  * @param f - stdio stream to write debug log to, no logging if 'NULL'
  * @return void
  * @ingroup Utils
@@ -111,7 +111,7 @@ void rr_set_debug_log_stream(FILE *f)
  * @brief 
  * 
  * @param interface_name 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_can_interface_t)
  * @ingroup Common
  */
 rr_can_interface_t *rr_init_interface(const char *interface_name)
@@ -138,8 +138,7 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
  * @brief 
  * 
  * @param interface 
- * @param interface_name 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Common
  */
 int rr_deinit_interface(rr_can_interface_t **interface)
@@ -159,9 +158,8 @@ int rr_deinit_interface(rr_can_interface_t **interface)
  * @brief 
  * 
  * @param interface 
- * @param servo Device instance 
  * @param id 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_servo_t)
  * @ingroup Common
  */
 rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
@@ -190,7 +188,7 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
  * @brief 
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Common
  */
 int rr_deinit_servo(rr_servo_t **servo)
@@ -211,7 +209,7 @@ int rr_deinit_servo(rr_servo_t **servo)
  * @brief Reboots servo
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_servo_reboot(const rr_servo_t *servo)
@@ -225,7 +223,7 @@ int rr_servo_reboot(const rr_servo_t *servo)
  * @brief Resets servo communication
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_servo_reset_communication(const rr_servo_t *servo)
@@ -240,7 +238,7 @@ int rr_servo_reset_communication(const rr_servo_t *servo)
  * 
  * @param servo Device instance 
  *  If servo == 0 > all servos on the bus will be set to the operational state
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_servo_set_state_operational(const rr_servo_t *servo)
@@ -254,7 +252,7 @@ int rr_servo_set_state_operational(const rr_servo_t *servo)
  * @brief Puts servo to the pre-operational state  
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_servo_set_state_pre_operational(const rr_servo_t *servo)
@@ -268,7 +266,7 @@ int rr_servo_set_state_pre_operational(const rr_servo_t *servo)
  * @brief Puts servo to the stopped state  
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_servo_set_state_stopped(const rr_servo_t *servo)
@@ -282,7 +280,7 @@ int rr_servo_set_state_stopped(const rr_servo_t *servo)
  * @brief Reboots entire network
  * 
  * @param interface Interface instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_net_reboot(const rr_can_interface_t *interface)
@@ -296,7 +294,7 @@ int rr_net_reboot(const rr_can_interface_t *interface)
  * @brief Resets entire network communication
  * 
  * @param interface Interface instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_net_reset_communication(const rr_can_interface_t *interface)
@@ -310,7 +308,7 @@ int rr_net_reset_communication(const rr_can_interface_t *interface)
  * @brief Putss entire network to the operational state  
  * 
  * @param interface Interface instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_net_set_state_operational(const rr_can_interface_t *interface)
@@ -324,7 +322,7 @@ int rr_net_set_state_operational(const rr_can_interface_t *interface)
  * @brief Putss entire network to the pre-operational state  
  * 
  * @param interface Interface instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
@@ -338,7 +336,7 @@ int rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
  * @brief Puts entire network to the stopped state  
  * 
  * @param interface Interface instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
 int rr_net_set_state_stopped(const rr_can_interface_t *interface)
@@ -352,7 +350,7 @@ int rr_net_set_state_stopped(const rr_can_interface_t *interface)
  * @brief Stops the servo and releases it
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_stop_and_release(const rr_servo_t *servo)
@@ -371,7 +369,7 @@ int rr_stop_and_release(const rr_servo_t *servo)
  * @brief Stops the servo and make it hold current position
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_stop_and_freeze(const rr_servo_t *servo)
@@ -391,7 +389,7 @@ int rr_stop_and_freeze(const rr_servo_t *servo)
  * 
  * @param servo Device instance 
  * @param current_a Phase current in Amperes
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_set_current(const rr_servo_t *servo, const float current_a)
@@ -412,7 +410,7 @@ int rr_set_current(const rr_servo_t *servo, const float current_a)
  * 
  * @param servo Device instance 
  * @param velocity_deg_per_sec Flange velocity in degrees/sec
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
@@ -433,7 +431,7 @@ int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
  * 
  * @param servo Device instance 
  * @param position_deg Flange position in degrees
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_set_position(const rr_servo_t *servo, const float position_deg)
@@ -455,7 +453,7 @@ int rr_set_position(const rr_servo_t *servo, const float position_deg)
  * @param servo Device instance 
  * @param velocity_deg_per_sec Flange velocity in degrees/sec
  * @param current_a Phase current limit in Amperes
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a)
@@ -481,7 +479,7 @@ int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_de
  * @param position_deg Flange position in degrees
  * @param velocity_deg_per_sec Flange velocity in degrees/sec
  * @param current_a Phase current limit in Amperes
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
@@ -505,7 +503,7 @@ int rr_set_position_with_limits(const rr_servo_t *servo, const float position_de
  * 
  * @param servo Device instance 
  * @param duty_percent 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_set_duty(const rr_servo_t *servo, float duty_percent)
@@ -528,7 +526,7 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * @param position_deg Flange position in degrees
  * @param velocity_deg Flange velocity in degrees/sec
  * @param time_ms Relative point time in milliseconds
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms)
@@ -562,7 +560,7 @@ int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const
  * @param interface interface to start motion on. 
  * @param timestamp_ms Startup delay in milliseconds. 
  * Default: 0
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
@@ -580,7 +578,7 @@ int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
  * @param servo Device instance 
  * @param array Pointer to the error array
  * @param size Size of the received array
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size)
@@ -597,116 +595,10 @@ int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size
 }
 
 /**
- * @brief Writes servo source array format (activated source indexes)
- * 
- * @param servo Device instance 
- * @param requests Pointer to the source index array (from ::app_param_t)
- * @param size Size of the source index array
- * @return int Status code (::ret_status_t)
- * @ingroup Servo_info
- */
-/*
-int rr_write_sources_format(const rr_servo_t *servo, const uint8_t *requests, const uint32_t size)
-{
-    CHECK_NMT_STATE(servo);
-
-    uint8_t array[10] = {0};
-	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-
-    for(uint32_t i = 0; i < sizeof(servo->source) / sizeof(servo->source[0]); i++)
-    {
-        servo->source[i].activated = 0;
-    }
-
-    for(uint32_t i = 0; i < size; i++)
-    {
-        servo->source[requests[i]].activated = !0;
-        servo->source[requests[i]].value = 0.0;
-        BIT_SET_UINT_ARRAY(array, requests[i]);
-    }
-    servo->source_size = size;
-
-    uint8_t sts = write_raw_sdo(dev, 0x2015, 1, array, sizeof(array), 1, 200);
-
-    return ret_sdo(sts);
-    return RET_OK;
-}
-*/
-/**
- * @brief Reads servo source array format (activated source indexes)
- * 
- * @param servo Device instance 
- * @param requests Pointer to the source index array
- * @param size Size of the array. Contains received size of activated sources in the servo
- * @return int Status code (::ret_status_t)
- * @ingroup Servo_info
- */
-/*
-int rr_read_sources_format(const rr_servo_t *servo, uint8_t *requests, uint32_t *size)
-{
-    CHECK_NMT_STATE(servo);
-
-    int _size;
-	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = read_raw_sdo(dev, 0x2015, 1, requests, &_size, 1, 200);
-    *size = _size;
-
-    return ret_sdo(sts);
-    return RET_OK;
-}
-*/
-/**
- * @brief Reads servo sources. 
- * Note: source indexes should be programmed with ::rr_write_sources_format function
- * 
- * @param servo Device instance 
- * @return int Status code (::ret_status_t)
- * @ingroup Servo_info
- */
-/*
-int rr_read_sources(const rr_servo_t *servo, uint8_t *requests)
-{
-    CHECK_NMT_STATE(servo);
-
-    uint8_t data[256 * 4];
-	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    int len = sizeof(data);
-
-    if(servo->source_size == 0)
-    {
-        return RET_ZERO_SIZE;
-    }
-
-    uint8_t sts = read_raw_sdo(dev, 0x2014, 0x01, data, &len, 1, 100);
-
-    if(sts == CO_SDO_AB_NONE)
-    {
-        if(len != servo->source_size * 4)
-        {
-            return RET_SIZE_MISMATCH;
-        }
-
-        uint32_t offset = 0;
-        for(uint32_t i = 0; i < servo->source_size; i++)
-        {
-            if(servo->source[requests[i]].activated != 0)
-            {
-                usb_can_get_float(data + offset, 0, &servo->source[requests[i]].value, 1);
-                offset += 4;
-            }
-        }
-        return RET_OK;
-    }
-
-    return ret_sdo(sts);
-}
-*/
-
-/**
  * @brief Updates enabled cache entries
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_param_cache_update(rr_servo_t *servo)
@@ -747,7 +639,7 @@ int rr_param_cache_update(rr_servo_t *servo)
  * @param servo Device instance 
  * @param param Parameter ID
  * @param enabled Enable/disable reading of this parameter
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
@@ -777,9 +669,9 @@ int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, 
  * @brief Reads single information parameter. Cache also update during this operation irrespective of enabled status.
  * 
  * @param servo Device instance 
- * @param param Parameter index to read (::app_param_t)
+ * @param param Parameter index to read (::rr_servo_param_t)
  * @param value Pointer to the readed variable
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_read_parameter( rr_servo_t *servo, const rr_servo_param_t param, float *value)
@@ -806,7 +698,7 @@ int rr_read_parameter( rr_servo_t *servo, const rr_servo_param_t param, float *v
  * @brief Erases the whole servo motion queue
  * 
  * @param servo Device instance 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_clear_points_all(const rr_servo_t *servo)
@@ -825,7 +717,7 @@ int rr_clear_points_all(const rr_servo_t *servo)
  * 
  * @param servo Device instance 
  * @param num_to_clear 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
 int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
@@ -843,7 +735,7 @@ int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
  * 
  * @param servo Device instance 
  * @param num 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
@@ -870,7 +762,7 @@ int rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
  * 
  * @param servo Device instance 
  * @param num 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
@@ -904,7 +796,7 @@ int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
  * @param end_velocity_deg 
  * @param end_acceleration_deg_per_sec2 
  * @param end_time_ms 
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_invoke_time_calculation(const rr_servo_t *servo,
@@ -945,7 +837,7 @@ int rr_invoke_time_calculation(const rr_servo_t *servo,
  * 
  * @param servo Device instance 
  * @param time_ms Pointer to the calculated time in milliseconds
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
@@ -974,7 +866,7 @@ int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
  * 
  * @param servo Device instance 
  * @param position_deg Target position in degrees
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_config
  */
 int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
@@ -995,7 +887,7 @@ int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
  * 
  * @param servo Device instance 
  * @param position_deg Target position in degrees
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_config
  */
 int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg)
@@ -1016,7 +908,7 @@ int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_
  * 
  * @param servo Device instance 
  * @param velocity_deg_per_sec Velocity in degrees/sec
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
@@ -1043,7 +935,7 @@ int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
  * 
  * @param servo Device instance 
  * @param max_velocity_deg_per_sec Flange velocity in degrees/sec
- * @return int Status code (::ret_status_t)
+ * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_config
  */
 int rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec)

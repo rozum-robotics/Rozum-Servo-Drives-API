@@ -68,74 +68,74 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:gae6faafe7fc1e6b68c86716a23ec0416b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gae6faafe7fc1e6b68c86716a23ec0416b">api_stopAndRelease</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:gae6faafe7fc1e6b68c86716a23ec0416b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the device and releases it.  <a href="#gae6faafe7fc1e6b68c86716a23ec0416b">More...</a><br /></td></tr>
-<tr class="separator:gae6faafe7fc1e6b68c86716a23ec0416b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5fc1c26511e4098dc943eb61a8763abb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga5fc1c26511e4098dc943eb61a8763abb">api_stopAndFreeze</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga5fc1c26511e4098dc943eb61a8763abb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the device and make it hold current position.  <a href="#ga5fc1c26511e4098dc943eb61a8763abb">More...</a><br /></td></tr>
-<tr class="separator:ga5fc1c26511e4098dc943eb61a8763abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaf54f1aa0168100e04c252feb047a8dd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaaf54f1aa0168100e04c252feb047a8dd">api_setCurrent</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float currentA)</td></tr>
-<tr class="memdesc:gaaf54f1aa0168100e04c252feb047a8dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol current.  <a href="#gaaf54f1aa0168100e04c252feb047a8dd">More...</a><br /></td></tr>
-<tr class="separator:gaaf54f1aa0168100e04c252feb047a8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf233152d7a8e218bdb7550c535645277"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaf233152d7a8e218bdb7550c535645277">api_setVelocity</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float velocityDegPerSec)</td></tr>
-<tr class="memdesc:gaf233152d7a8e218bdb7550c535645277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol velocity.  <a href="#gaf233152d7a8e218bdb7550c535645277">More...</a><br /></td></tr>
-<tr class="separator:gaf233152d7a8e218bdb7550c535645277"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga70b5030bc56349eae02c29d405d7c0d1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga70b5030bc56349eae02c29d405d7c0d1">api_setPosition</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float positionDeg)</td></tr>
-<tr class="memdesc:ga70b5030bc56349eae02c29d405d7c0d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol position with maximum current.  <a href="#ga70b5030bc56349eae02c29d405d7c0d1">More...</a><br /></td></tr>
-<tr class="separator:ga70b5030bc56349eae02c29d405d7c0d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab44169c11100abea469cd86f6991beab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gab44169c11100abea469cd86f6991beab">api_setVelocityWithLimits</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float velocityDegPerSec, const float currentA)</td></tr>
-<tr class="memdesc:gab44169c11100abea469cd86f6991beab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol velocity with limited control phase current.  <a href="#gab44169c11100abea469cd86f6991beab">More...</a><br /></td></tr>
-<tr class="separator:gab44169c11100abea469cd86f6991beab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga165fc296243c839baffe9cef06c1cabf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga165fc296243c839baffe9cef06c1cabf">api_setPositionWithLimits</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float positionDeg, const float velocityDegPerSec, const float currentA)</td></tr>
-<tr class="memdesc:ga165fc296243c839baffe9cef06c1cabf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol position with limited control flange velocity and limited control phase current.  <a href="#ga165fc296243c839baffe9cef06c1cabf">More...</a><br /></td></tr>
-<tr class="separator:ga165fc296243c839baffe9cef06c1cabf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga96c4cd94f8e5c0b870ba35c81c5aee4b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga96c4cd94f8e5c0b870ba35c81c5aee4b">api_setDuty</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float dutyPercent)</td></tr>
-<tr class="memdesc:ga96c4cd94f8e5c0b870ba35c81c5aee4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device control duty. Duty is the part of the input voltage that is passed to the motor to spin it.  <a href="#ga96c4cd94f8e5c0b870ba35c81c5aee4b">More...</a><br /></td></tr>
-<tr class="separator:ga96c4cd94f8e5c0b870ba35c81c5aee4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9d54ade4c90c9afdf61d32e4643eebeb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9d54ade4c90c9afdf61d32e4643eebeb">api_addMotionPoint</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs)</td></tr>
-<tr class="memdesc:ga9d54ade4c90c9afdf61d32e4643eebeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds motion PVT point to the device queue.  <a href="#ga9d54ade4c90c9afdf61d32e4643eebeb">More...</a><br /></td></tr>
-<tr class="separator:ga9d54ade4c90c9afdf61d32e4643eebeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9138f566e5e79feada4abdb86abafbbe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9138f566e5e79feada4abdb86abafbbe">api_startMotion</a> (uint32_t timestampMs)</td></tr>
-<tr class="memdesc:ga9138f566e5e79feada4abdb86abafbbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the device movement by the spline points. This is a broadcast command. Note: if any device is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all devices on the bus.  <a href="#ga9138f566e5e79feada4abdb86abafbbe">More...</a><br /></td></tr>
-<tr class="separator:ga9138f566e5e79feada4abdb86abafbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaef7daf95824293b5466a43981866053c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaef7daf95824293b5466a43981866053c">api_clearPointsAll</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:gaef7daf95824293b5466a43981866053c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the whole device motion queue.  <a href="#gaef7daf95824293b5466a43981866053c">More...</a><br /></td></tr>
-<tr class="separator:gaef7daf95824293b5466a43981866053c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9b963c8de46cdea63c3e45fde6da5eed">api_clearPoints</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint32_t numToClear)</td></tr>
-<tr class="memdesc:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases number of cells from the tail of the device motion queue.  <a href="#ga9b963c8de46cdea63c3e45fde6da5eed">More...</a><br /></td></tr>
-<tr class="separator:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4bc3f475fd951403fbd99e51dc3aba4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga4bc3f475fd951403fbd99e51dc3aba4a">rr_stop_and_release</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga4bc3f475fd951403fbd99e51dc3aba4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the servo and releases it.  <a href="#ga4bc3f475fd951403fbd99e51dc3aba4a">More...</a><br /></td></tr>
+<tr class="separator:ga4bc3f475fd951403fbd99e51dc3aba4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabc7b250aba6f86e29692957eac9ecb31"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gabc7b250aba6f86e29692957eac9ecb31">rr_stop_and_freeze</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:gabc7b250aba6f86e29692957eac9ecb31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the servo and make it hold current position.  <a href="#gabc7b250aba6f86e29692957eac9ecb31">More...</a><br /></td></tr>
+<tr class="separator:gabc7b250aba6f86e29692957eac9ecb31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac25d20b331b1b985c1f6f50106d5c971"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gac25d20b331b1b985c1f6f50106d5c971">rr_set_current</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float current_a)</td></tr>
+<tr class="memdesc:gac25d20b331b1b985c1f6f50106d5c971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol current.  <a href="#gac25d20b331b1b985c1f6f50106d5c971">More...</a><br /></td></tr>
+<tr class="separator:gac25d20b331b1b985c1f6f50106d5c971"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf790a253c11e2bc0bfb208dd26e7491c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaf790a253c11e2bc0bfb208dd26e7491c">rr_set_velocity</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float velocity_deg_per_sec)</td></tr>
+<tr class="memdesc:gaf790a253c11e2bc0bfb208dd26e7491c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol velocity.  <a href="#gaf790a253c11e2bc0bfb208dd26e7491c">More...</a><br /></td></tr>
+<tr class="separator:gaf790a253c11e2bc0bfb208dd26e7491c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaddb31db79640ec345eb237ddc4d1078f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaddb31db79640ec345eb237ddc4d1078f">rr_set_position</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg)</td></tr>
+<tr class="memdesc:gaddb31db79640ec345eb237ddc4d1078f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol position with maximum current.  <a href="#gaddb31db79640ec345eb237ddc4d1078f">More...</a><br /></td></tr>
+<tr class="separator:gaddb31db79640ec345eb237ddc4d1078f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga252ba86c50217d9ccf08deaf4c75f2e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga252ba86c50217d9ccf08deaf4c75f2e7">rr_set_velocity_with_limits</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float velocity_deg_per_sec, const float current_a)</td></tr>
+<tr class="memdesc:ga252ba86c50217d9ccf08deaf4c75f2e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol velocity with limited control phase current.  <a href="#ga252ba86c50217d9ccf08deaf4c75f2e7">More...</a><br /></td></tr>
+<tr class="separator:ga252ba86c50217d9ccf08deaf4c75f2e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6927d2a1d6ef5a0564b676817c88b82a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga6927d2a1d6ef5a0564b676817c88b82a">rr_set_position_with_limits</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)</td></tr>
+<tr class="memdesc:ga6927d2a1d6ef5a0564b676817c88b82a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol position with limited control flange velocity and limited control phase current.  <a href="#ga6927d2a1d6ef5a0564b676817c88b82a">More...</a><br /></td></tr>
+<tr class="separator:ga6927d2a1d6ef5a0564b676817c88b82a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga67890b1af333ce15f291a24ddc5760d1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga67890b1af333ce15f291a24ddc5760d1">rr_set_duty</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, float duty_percent)</td></tr>
+<tr class="memdesc:ga67890b1af333ce15f291a24ddc5760d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo control duty. Duty is the part of the input voltage that is passed to the motor to spin it.  <a href="#ga67890b1af333ce15f291a24ddc5760d1">More...</a><br /></td></tr>
+<tr class="separator:ga67890b1af333ce15f291a24ddc5760d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4af8fcaf7ed9cf19673f4bd0fb144927"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga4af8fcaf7ed9cf19673f4bd0fb144927">rr_add_motion_point</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms)</td></tr>
+<tr class="memdesc:ga4af8fcaf7ed9cf19673f4bd0fb144927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds motion PVT point to the servo queue.  <a href="#ga4af8fcaf7ed9cf19673f4bd0fb144927">More...</a><br /></td></tr>
+<tr class="separator:ga4af8fcaf7ed9cf19673f4bd0fb144927"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaeb3f167be0e7caf96d4cb4b648d3a548"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaeb3f167be0e7caf96d4cb4b648d3a548">rr_start_motion</a> (<a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface, uint32_t timestamp_ms)</td></tr>
+<tr class="memdesc:gaeb3f167be0e7caf96d4cb4b648d3a548"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the servo movement by the spline points. This is a broadcast command. Note: if any servo is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all servos on the bus.  <a href="#gaeb3f167be0e7caf96d4cb4b648d3a548">More...</a><br /></td></tr>
+<tr class="separator:gaeb3f167be0e7caf96d4cb4b648d3a548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga19472cd90ae91f9b9f49edf4f52f35a2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga19472cd90ae91f9b9f49edf4f52f35a2">rr_clear_points_all</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga19472cd90ae91f9b9f49edf4f52f35a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the whole servo motion queue.  <a href="#ga19472cd90ae91f9b9f49edf4f52f35a2">More...</a><br /></td></tr>
+<tr class="separator:ga19472cd90ae91f9b9f49edf4f52f35a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5a39de7fa2777073bbc4d9fc60fa5c38"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga5a39de7fa2777073bbc4d9fc60fa5c38">rr_clear_points</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const uint32_t num_to_clear)</td></tr>
+<tr class="memdesc:ga5a39de7fa2777073bbc4d9fc60fa5c38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases number of cells from the tail of the servo motion queue.  <a href="#ga5a39de7fa2777073bbc4d9fc60fa5c38">More...</a><br /></td></tr>
+<tr class="separator:ga5a39de7fa2777073bbc4d9fc60fa5c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ga9d54ade4c90c9afdf61d32e4643eebeb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9d54ade4c90c9afdf61d32e4643eebeb">&#9670;&nbsp;</a></span>api_addMotionPoint()</h2>
+<a id="ga4af8fcaf7ed9cf19673f4bd0fb144927"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4af8fcaf7ed9cf19673f4bd0fb144927">&#9670;&nbsp;</a></span>rr_add_motion_point()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_addMotionPoint </td>
+          <td class="memname">int rr_add_motion_point </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>positionDeg</em>, </td>
+          <td class="paramname"><em>position_deg</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>velocityDeg</em>, </td>
+          <td class="paramname"><em>velocity_deg</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const uint32_t&#160;</td>
-          <td class="paramname"><em>timeMs</em>&#160;</td>
+          <td class="paramname"><em>time_ms</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -145,37 +145,37 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Adds motion PVT point to the device queue. </p>
+<p>Adds motion PVT point to the servo queue. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">positionDeg</td><td>Flange position in degrees </td></tr>
-    <tr><td class="paramname">velocityDeg</td><td>Flange velocity in degrees/sec </td></tr>
-    <tr><td class="paramname">timeMs</td><td>Relative point time in milliseconds </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">position_deg</td><td>Flange position in degrees </td></tr>
+    <tr><td class="paramname">velocity_deg</td><td>Flange velocity in degrees/sec </td></tr>
+    <tr><td class="paramname">time_ms</td><td>Relative point time in milliseconds </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga9b963c8de46cdea63c3e45fde6da5eed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9b963c8de46cdea63c3e45fde6da5eed">&#9670;&nbsp;</a></span>api_clearPoints()</h2>
+<a id="ga5a39de7fa2777073bbc4d9fc60fa5c38"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5a39de7fa2777073bbc4d9fc60fa5c38">&#9670;&nbsp;</a></span>rr_clear_points()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_clearPoints </td>
+          <td class="memname">int rr_clear_points </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const uint32_t&#160;</td>
-          <td class="paramname"><em>numToClear</em>&#160;</td>
+          <td class="paramname"><em>num_to_clear</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -185,62 +185,62 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Erases number of cells from the tail of the device motion queue. </p>
+<p>Erases number of cells from the tail of the servo motion queue. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">numToClear</td><td></td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">num_to_clear</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="gaef7daf95824293b5466a43981866053c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaef7daf95824293b5466a43981866053c">&#9670;&nbsp;</a></span>api_clearPointsAll()</h2>
+<a id="ga19472cd90ae91f9b9f49edf4f52f35a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga19472cd90ae91f9b9f49edf4f52f35a2">&#9670;&nbsp;</a></span>rr_clear_points_all()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_clearPointsAll </td>
+          <td class="memname">int rr_clear_points_all </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Erases the whole device motion queue. </p>
+<p>Erases the whole servo motion queue. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="gaaf54f1aa0168100e04c252feb047a8dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaaf54f1aa0168100e04c252feb047a8dd">&#9670;&nbsp;</a></span>api_setCurrent()</h2>
+<a id="gac25d20b331b1b985c1f6f50106d5c971"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac25d20b331b1b985c1f6f50106d5c971">&#9670;&nbsp;</a></span>rr_set_current()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setCurrent </td>
+          <td class="memname">int rr_set_current </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>currentA</em>&#160;</td>
+          <td class="paramname"><em>current_a</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -250,35 +250,35 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device contol current. </p>
+<p>Sets servo contol current. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">currentA</td><td>Phase current in Amperes </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">current_a</td><td>Phase current in Amperes </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga96c4cd94f8e5c0b870ba35c81c5aee4b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga96c4cd94f8e5c0b870ba35c81c5aee4b">&#9670;&nbsp;</a></span>api_setDuty()</h2>
+<a id="ga67890b1af333ce15f291a24ddc5760d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga67890b1af333ce15f291a24ddc5760d1">&#9670;&nbsp;</a></span>rr_set_duty()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setDuty </td>
+          <td class="memname">int rr_set_duty </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>dutyPercent</em>&#160;</td>
+          <td class="paramname"><em>duty_percent</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -288,35 +288,35 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device control duty. Duty is the part of the input voltage that is passed to the motor to spin it. </p>
+<p>Sets servo control duty. Duty is the part of the input voltage that is passed to the motor to spin it. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">dutyPercent</td><td></td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">duty_percent</td><td></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga70b5030bc56349eae02c29d405d7c0d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga70b5030bc56349eae02c29d405d7c0d1">&#9670;&nbsp;</a></span>api_setPosition()</h2>
+<a id="gaddb31db79640ec345eb237ddc4d1078f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaddb31db79640ec345eb237ddc4d1078f">&#9670;&nbsp;</a></span>rr_set_position()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setPosition </td>
+          <td class="memname">int rr_set_position </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>positionDeg</em>&#160;</td>
+          <td class="paramname"><em>position_deg</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -326,47 +326,47 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device contol position with maximum current. </p>
+<p>Sets servo contol position with maximum current. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">positionDeg</td><td>Flange position in degrees </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">position_deg</td><td>Flange position in degrees </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga165fc296243c839baffe9cef06c1cabf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga165fc296243c839baffe9cef06c1cabf">&#9670;&nbsp;</a></span>api_setPositionWithLimits()</h2>
+<a id="ga6927d2a1d6ef5a0564b676817c88b82a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga6927d2a1d6ef5a0564b676817c88b82a">&#9670;&nbsp;</a></span>rr_set_position_with_limits()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setPositionWithLimits </td>
+          <td class="memname">int rr_set_position_with_limits </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>positionDeg</em>, </td>
+          <td class="paramname"><em>position_deg</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>velocityDegPerSec</em>, </td>
+          <td class="paramname"><em>velocity_deg_per_sec</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>currentA</em>&#160;</td>
+          <td class="paramname"><em>current_a</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -376,37 +376,37 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device contol position with limited control flange velocity and limited control phase current. </p>
+<p>Sets servo contol position with limited control flange velocity and limited control phase current. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">positionDeg</td><td>Flange position in degrees </td></tr>
-    <tr><td class="paramname">velocityDegPerSec</td><td>Flange velocity in degrees/sec </td></tr>
-    <tr><td class="paramname">currentA</td><td>Phase current limit in Amperes </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">position_deg</td><td>Flange position in degrees </td></tr>
+    <tr><td class="paramname">velocity_deg_per_sec</td><td>Flange velocity in degrees/sec </td></tr>
+    <tr><td class="paramname">current_a</td><td>Phase current limit in Amperes </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="gaf233152d7a8e218bdb7550c535645277"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf233152d7a8e218bdb7550c535645277">&#9670;&nbsp;</a></span>api_setVelocity()</h2>
+<a id="gaf790a253c11e2bc0bfb208dd26e7491c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf790a253c11e2bc0bfb208dd26e7491c">&#9670;&nbsp;</a></span>rr_set_velocity()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setVelocity </td>
+          <td class="memname">int rr_set_velocity </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>velocityDegPerSec</em>&#160;</td>
+          <td class="paramname"><em>velocity_deg_per_sec</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -416,41 +416,41 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device contol velocity. </p>
+<p>Sets servo contol velocity. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">velocityDegPerSec</td><td>Flange velocity in degrees/sec </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">velocity_deg_per_sec</td><td>Flange velocity in degrees/sec </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="gab44169c11100abea469cd86f6991beab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gab44169c11100abea469cd86f6991beab">&#9670;&nbsp;</a></span>api_setVelocityWithLimits()</h2>
+<a id="ga252ba86c50217d9ccf08deaf4c75f2e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga252ba86c50217d9ccf08deaf4c75f2e7">&#9670;&nbsp;</a></span>rr_set_velocity_with_limits()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_setVelocityWithLimits </td>
+          <td class="memname">int rr_set_velocity_with_limits </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em>, </td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>velocityDegPerSec</em>, </td>
+          <td class="paramname"><em>velocity_deg_per_sec</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const float&#160;</td>
-          <td class="paramname"><em>currentA</em>&#160;</td>
+          <td class="paramname"><em>current_a</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -460,97 +460,108 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sets device contol velocity with limited control phase current. </p>
+<p>Sets servo contol velocity with limited control phase current. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
-    <tr><td class="paramname">velocityDegPerSec</td><td>Flange velocity in degrees/sec </td></tr>
-    <tr><td class="paramname">currentA</td><td>Phase current limit in Amperes </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
+    <tr><td class="paramname">velocity_deg_per_sec</td><td>Flange velocity in degrees/sec </td></tr>
+    <tr><td class="paramname">current_a</td><td>Phase current limit in Amperes </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga9138f566e5e79feada4abdb86abafbbe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga9138f566e5e79feada4abdb86abafbbe">&#9670;&nbsp;</a></span>api_startMotion()</h2>
+<a id="gaeb3f167be0e7caf96d4cb4b648d3a548"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaeb3f167be0e7caf96d4cb4b648d3a548">&#9670;&nbsp;</a></span>rr_start_motion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_startMotion </td>
+          <td class="memname">int rr_start_motion </td>
           <td>(</td>
+          <td class="paramtype"><a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">uint32_t&#160;</td>
-          <td class="paramname"><em>timestampMs</em></td><td>)</td>
+          <td class="paramname"><em>timestamp_ms</em>&#160;</td>
+        </tr>
+        <tr>
           <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Starts the device movement by the spline points. This is a broadcast command. Note: if any device is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all devices on the bus. </p>
+<p>Starts the servo movement by the spline points. This is a broadcast command. Note: if any servo is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all servos on the bus. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">timestampMs</td><td>Startup delay in milliseconds. Default: 0 </td></tr>
+    <tr><td class="paramname">interface</td><td>interface to start motion on. </td></tr>
+    <tr><td class="paramname">timestamp_ms</td><td>Startup delay in milliseconds. Default: 0 </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="ga5fc1c26511e4098dc943eb61a8763abb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga5fc1c26511e4098dc943eb61a8763abb">&#9670;&nbsp;</a></span>api_stopAndFreeze()</h2>
+<a id="gabc7b250aba6f86e29692957eac9ecb31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gabc7b250aba6f86e29692957eac9ecb31">&#9670;&nbsp;</a></span>rr_stop_and_freeze()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_stopAndFreeze </td>
+          <td class="memname">int rr_stop_and_freeze </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Stops the device and make it hold current position. </p>
+<p>Stops the servo and make it hold current position. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>
-<a id="gae6faafe7fc1e6b68c86716a23ec0416b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gae6faafe7fc1e6b68c86716a23ec0416b">&#9670;&nbsp;</a></span>api_stopAndRelease()</h2>
+<a id="ga4bc3f475fd951403fbd99e51dc3aba4a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4bc3f475fd951403fbd99e51dc3aba4a">&#9670;&nbsp;</a></span>rr_stop_and_release()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int api_stopAndRelease </td>
+          <td class="memname">int rr_stop_and_release </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *&#160;</td>
-          <td class="paramname"><em>device</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td>
+          <td class="paramname"><em>servo</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Stops the device and releases it. </p>
+<p>Stops the servo and releases it. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">device</td><td>Device instance </td></tr>
+    <tr><td class="paramname">servo</td><td>Device instance </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>int Status code (::RetStatus_t) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>int Status code (<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc" title="Return codes of the API functions. ">rr_ret_status_t</a>) </dd></dl>
 
 </div>
 </div>

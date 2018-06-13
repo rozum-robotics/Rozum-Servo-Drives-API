@@ -66,8 +66,8 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#define-members">Macros</a> &#124;
-<a href="#func-members">Functions</a> &#124;
-<a href="#var-members">Variables</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">api.h File Reference</div>  </div>
 </div><!--header-->
@@ -76,157 +76,399 @@ $(function() {
 <p>Rozum Robotics API Header File.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;stdint.h&gt;</code><br />
+<code>#include &lt;stdbool.h&gt;</code><br />
 <code>#include &lt;stdio.h&gt;</code><br />
-<code>#include &quot;usbcan_proto.h&quot;</code><br />
 </div>
 <p><a href="api_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_can_device__t.html">CanDevice_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device information source instance.  <a href="struct_can_device__t.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpara__cache__entry__t.html">para_cache_entry_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device information source instance.  <a href="structpara__cache__entry__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_can_interface__t.html">CanInterface_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface instance structure.  <a href="struct_can_interface__t.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structrr__servo__t.html">rr_servo_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device instance structure.  <a href="structrr__servo__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_can_device__t.html">CanDevice_t</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device information source instance.  <a href="struct_can_device__t.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interface instance structure.  <a href="structrr__can__interface__t.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memItemLeft" align="right" valign="top"><a id="a63d4e72da5d14c7ac1f1381676735ed1"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>API_DEBUG</b>(x, ...)&#160;&#160;&#160;fprintf(stderr, x, __VA_ARGS__)</td></tr>
+#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#a63d4e72da5d14c7ac1f1381676735ed1">API_DEBUG</a>(x, ...)&#160;&#160;&#160;fprintf(stderr, x, __VA_ARGS__)</td></tr>
+<tr class="memdesc:a63d4e72da5d14c7ac1f1381676735ed1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Standart debug. <br /></td></tr>
 <tr class="separator:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memItemLeft" align="right" valign="top"><a id="a63d4e72da5d14c7ac1f1381676735ed1"></a>
-#define&#160;</td><td class="memItemRight" valign="bottom"><b>API_DEBUG</b>(x, ...)&#160;&#160;&#160;fprintf(stderr, x, __VA_ARGS__)</td></tr>
-<tr class="separator:a63d4e72da5d14c7ac1f1381676735ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
+Enumerations</h2></td></tr>
+<tr class="memitem:a92d5be5038abcf89837faf85a08debdc"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc">rr_ret_status_t</a> { <br />
+&#160;&#160;<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdca4894234446e2d92068943b3d6d3a0bdc">RET_OK</a> = 0, 
+<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdcae8ed27c1aabd77d519426a8ad340d76c">RET_ERROR</a>, 
+<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdcada2fa397afd6b90ecb1c5b9ca3a2d0ee">RET_BAD_INSTANCE</a>, 
+<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdcacdd796ae2972988d689257753a05b9dd">RET_BUSY</a>, 
+<br />
+&#160;&#160;<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdcadf1d978b055d00c4036019387acfc60c">RET_WRONG_TRAJ</a>, 
+<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdca2840a6ac495b0fe4b9e8565d9f76e29a">RET_LOCKED</a>, 
+<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdcad456500c4074aeffb3e5e132bf7d996c">RET_STOPPED</a>, 
+<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdcadf2eed18ed159c7517505568b0f261dd">RET_TIMEOUT</a>, 
+<br />
+&#160;&#160;<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdcac2c7bf0285c804ae03c6628659ce366e">RET_ZERO_SIZE</a>, 
+<a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdca639f91af3521a375df0778f9cd60d60b">RET_SIZE_MISMATCH</a>
+<br />
+ }<tr class="memdesc:a92d5be5038abcf89837faf85a08debdc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return codes of the API functions.  <a href="api_8h.html#a92d5be5038abcf89837faf85a08debdc">More...</a><br /></td></tr>
+</td></tr>
+<tr class="separator:a92d5be5038abcf89837faf85a08debdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1f58887fab4642cf49f6f453c1d276d"><td class="memItemLeft" align="right" valign="top"><a id="aa1f58887fab4642cf49f6f453c1d276d"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#aa1f58887fab4642cf49f6f453c1d276d">rr_servo_param_t</a> { <br />
+&#160;&#160;<b>APP_PARAM_NULL</b> = 0, 
+<b>APP_PARAM_POSITION</b>, 
+<b>APP_PARAM_VELOCITY</b>, 
+<b>APP_PARAM_POSITION_ROTOR</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_VELOCITY_ROTOR</b>, 
+<b>APP_PARAM_POSITION_GEAR_360</b>, 
+<b>APP_PARAM_POSITION_GEAR_EMULATED</b>, 
+<b>APP_PARAM_CURRENT_INPUT</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_CURRENT_OUTPUT</b>, 
+<b>APP_PARAM_VOLTAGE_INPUT</b>, 
+<b>APP_PARAM_VOLTAGE_OUTPUT</b>, 
+<b>APP_PARAM_CURRENT_PHASE</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_TEMPERATURE_ACTUATOR</b>, 
+<b>APP_PARAM_TEMPERATURE_ELECTRONICS</b>, 
+<b>APP_PARAM_TORQUE</b>, 
+<b>APP_PARAM_ACCELERATION</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_ACCELERATION_ROTOR</b>, 
+<b>APP_PARAM_CURRENT_PHASE_1</b>, 
+<b>APP_PARAM_CURRENT_PHASE_2</b>, 
+<b>APP_PARAM_CURRENT_PHASE_3</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_CURRENT_RAW</b>, 
+<b>APP_PARAM_CURRENT_RAW_2</b>, 
+<b>APP_PARAM_CURRENT_RAW_3</b>, 
+<b>APP_PARAM_ENCODER_MASTER_TRACK</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_ENCODER_NONIUS_TRACK</b>, 
+<b>APP_PARAM_ENCODER_MOTOR_MASTER_TRACK</b>, 
+<b>APP_PARAM_ENCODER_MOTOR_NONIUS_TRACK</b>, 
+<b>APP_PARAM_TORQUE_ELECTRIC_CALC</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_CONTROLLER_VELOCITY_ERROR</b>, 
+<b>APP_PARAM_CONTROLLER_VELOCITY_SETPOINT</b>, 
+<b>APP_PARAM_CONTROLLER_VELOCITY_FEEDBACK</b>, 
+<b>APP_PARAM_CONTROLLER_VELOCITY_OUTPUT</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_CONTROLLER_POSITION_ERROR</b>, 
+<b>APP_PARAM_CONTROLLER_POSITION_SETPOINT</b>, 
+<b>APP_PARAM_CONTROLLER_POSITION_FEEDBACK</b>, 
+<b>APP_PARAM_CONTROLLER_POSITION_OUTPUT</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_CONTROL_MODE</b>, 
+<b>APP_PARAM_FOC_ANGLE</b>, 
+<b>APP_PARAM_FOC_IA</b>, 
+<b>APP_PARAM_FOC_IB</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_FOC_IQ_SET</b>, 
+<b>APP_PARAM_FOC_ID_SET</b>, 
+<b>APP_PARAM_FOC_IQ</b>, 
+<b>APP_PARAM_FOC_ID</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_FOC_IQ_ERROR</b>, 
+<b>APP_PARAM_FOC_ID_ERROR</b>, 
+<b>APP_PARAM_FOC_UQ</b>, 
+<b>APP_PARAM_FOC_UD</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_FOC_UA</b>, 
+<b>APP_PARAM_FOC_UB</b>, 
+<b>APP_PARAM_FOC_U1</b>, 
+<b>APP_PARAM_FOC_U2</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_FOC_U3</b>, 
+<b>APP_PARAM_FOC_PWM1</b>, 
+<b>APP_PARAM_FOC_PWM2</b>, 
+<b>APP_PARAM_FOC_PWM3</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_FOC_TIMER_TOP</b>, 
+<b>APP_PARAM_DUTY</b>, 
+<b>APP_PARAM_CURRENT_PHASE_ABS</b>, 
+<b>APP_PARAM_CURRENT_RMS_ABS</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_QUALITY</b>, 
+<b>APP_PARAM_TEMP_CHARGER</b>, 
+<b>APP_PARAM_TEMP_DISCHARGER</b>, 
+<b>APP_PARAM_VOLTAGE_CAN_H</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_VOLTAGE_CAN_L</b>, 
+<b>APP_PARAM_CURRENT_PHASE_AVG</b>, 
+<b>APP_PARAM_CURRENT_RMS_AVG</b>, 
+<b>APP_PARAM_CONTROLLER_VELOCITY_ERROR_AVG</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_CONTROLLER_POSITION_ERROR_AVG</b>, 
+<b>APP_PARAM_STEP</b>, 
+<b>APP_PARAM_CURRENT_PHASE_PEAK</b>, 
+<b>APP_PARAM_CURRENT_RMS_PEAK</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_CONTROLLER_VELOCITY_ERROR_PEAK</b>, 
+<b>APP_PARAM_CONTROLLER_POSITION_ERROR_PEAK</b>, 
+<b>APP_PARAM_TEST_TIME</b>, 
+<b>APP_PARAM_EFFICIENCY</b>, 
+<br />
+&#160;&#160;<b>APP_PARAM_POWER_IN</b>, 
+<b>APP_PARAM_POWER_OUT</b>, 
+<b>APP_PARAM_SIZE</b>
+<br />
+ }<tr class="memdesc:aa1f58887fab4642cf49f6f453c1d276d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device parameter &amp; source indexes. <br /></td></tr>
+</td></tr>
+<tr class="separator:aa1f58887fab4642cf49f6f453c1d276d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ga9dda131254d970d91b162cce0830f112"><td class="memItemLeft" align="right" valign="top">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD #define API_DEBUG(x,...)=======&gt;&gt;&gt;&gt;&gt;&gt; int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga9dda131254d970d91b162cce0830f112">api_initInterface</a> (<a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *const interface, const char *interfaceName)</td></tr>
-<tr class="separator:ga9dda131254d970d91b162cce0830f112"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga8f5fdb9e6220866d65496255b08477ee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga8f5fdb9e6220866d65496255b08477ee">api_initServo</a> (const <a class="el" href="struct_can_interface__t.html">CanInterface_t</a> *interface, <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *const device, const uint8_t id)</td></tr>
-<tr class="separator:ga8f5fdb9e6220866d65496255b08477ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#gae4b5a42f09f00adb38fd1ff896cc7f47">api_reboot</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboots device.  <a href="group___system__control.html#gae4b5a42f09f00adb38fd1ff896cc7f47">More...</a><br /></td></tr>
-<tr class="separator:gae4b5a42f09f00adb38fd1ff896cc7f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2b5a712092962c4f946d1760642a1fa1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga2b5a712092962c4f946d1760642a1fa1">api_resetCommunication</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga2b5a712092962c4f946d1760642a1fa1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets device communication.  <a href="group___system__control.html#ga2b5a712092962c4f946d1760642a1fa1">More...</a><br /></td></tr>
-<tr class="separator:ga2b5a712092962c4f946d1760642a1fa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga38a2dfbbfbab07ab6b5011ba96e2879b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga38a2dfbbfbab07ab6b5011ba96e2879b">api_setStateOperational</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga38a2dfbbfbab07ab6b5011ba96e2879b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device/s to the operational state.  <a href="group___system__control.html#ga38a2dfbbfbab07ab6b5011ba96e2879b">More...</a><br /></td></tr>
-<tr class="separator:ga38a2dfbbfbab07ab6b5011ba96e2879b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga790139a29b2c0d59a784468ebc3d44d0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga790139a29b2c0d59a784468ebc3d44d0">api_setStatePreOperational</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga790139a29b2c0d59a784468ebc3d44d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device/s to the pre-operational state.  <a href="group___system__control.html#ga790139a29b2c0d59a784468ebc3d44d0">More...</a><br /></td></tr>
-<tr class="separator:ga790139a29b2c0d59a784468ebc3d44d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6a726102b81ce19d7de7ffc1198b3594"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga6a726102b81ce19d7de7ffc1198b3594">api_setStateStopped</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga6a726102b81ce19d7de7ffc1198b3594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device/s to the stopped state.  <a href="group___system__control.html#ga6a726102b81ce19d7de7ffc1198b3594">More...</a><br /></td></tr>
-<tr class="separator:ga6a726102b81ce19d7de7ffc1198b3594"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae6faafe7fc1e6b68c86716a23ec0416b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gae6faafe7fc1e6b68c86716a23ec0416b">api_stopAndRelease</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:gae6faafe7fc1e6b68c86716a23ec0416b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the device and releases it.  <a href="group___servo__control.html#gae6faafe7fc1e6b68c86716a23ec0416b">More...</a><br /></td></tr>
-<tr class="separator:gae6faafe7fc1e6b68c86716a23ec0416b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5fc1c26511e4098dc943eb61a8763abb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga5fc1c26511e4098dc943eb61a8763abb">api_stopAndFreeze</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga5fc1c26511e4098dc943eb61a8763abb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the device and make it hold current position.  <a href="group___servo__control.html#ga5fc1c26511e4098dc943eb61a8763abb">More...</a><br /></td></tr>
-<tr class="separator:ga5fc1c26511e4098dc943eb61a8763abb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaaf54f1aa0168100e04c252feb047a8dd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaaf54f1aa0168100e04c252feb047a8dd">api_setCurrent</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float currentA)</td></tr>
-<tr class="memdesc:gaaf54f1aa0168100e04c252feb047a8dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol current.  <a href="group___servo__control.html#gaaf54f1aa0168100e04c252feb047a8dd">More...</a><br /></td></tr>
-<tr class="separator:gaaf54f1aa0168100e04c252feb047a8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf233152d7a8e218bdb7550c535645277"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaf233152d7a8e218bdb7550c535645277">api_setVelocity</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float velocityDegPerSec)</td></tr>
-<tr class="memdesc:gaf233152d7a8e218bdb7550c535645277"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol velocity.  <a href="group___servo__control.html#gaf233152d7a8e218bdb7550c535645277">More...</a><br /></td></tr>
-<tr class="separator:gaf233152d7a8e218bdb7550c535645277"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga70b5030bc56349eae02c29d405d7c0d1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga70b5030bc56349eae02c29d405d7c0d1">api_setPosition</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float positionDeg)</td></tr>
-<tr class="memdesc:ga70b5030bc56349eae02c29d405d7c0d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol position with maximum current.  <a href="group___servo__control.html#ga70b5030bc56349eae02c29d405d7c0d1">More...</a><br /></td></tr>
-<tr class="separator:ga70b5030bc56349eae02c29d405d7c0d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab44169c11100abea469cd86f6991beab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gab44169c11100abea469cd86f6991beab">api_setVelocityWithLimits</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float velocityDegPerSec, const float currentA)</td></tr>
-<tr class="memdesc:gab44169c11100abea469cd86f6991beab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol velocity with limited control phase current.  <a href="group___servo__control.html#gab44169c11100abea469cd86f6991beab">More...</a><br /></td></tr>
-<tr class="separator:gab44169c11100abea469cd86f6991beab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga165fc296243c839baffe9cef06c1cabf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga165fc296243c839baffe9cef06c1cabf">api_setPositionWithLimits</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float positionDeg, const float velocityDegPerSec, const float currentA)</td></tr>
-<tr class="memdesc:ga165fc296243c839baffe9cef06c1cabf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device contol position with limited control flange velocity and limited control phase current.  <a href="group___servo__control.html#ga165fc296243c839baffe9cef06c1cabf">More...</a><br /></td></tr>
-<tr class="separator:ga165fc296243c839baffe9cef06c1cabf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga96c4cd94f8e5c0b870ba35c81c5aee4b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga96c4cd94f8e5c0b870ba35c81c5aee4b">api_setDuty</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float dutyPercent)</td></tr>
-<tr class="memdesc:ga96c4cd94f8e5c0b870ba35c81c5aee4b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device control duty. Duty is the part of the input voltage that is passed to the motor to spin it.  <a href="group___servo__control.html#ga96c4cd94f8e5c0b870ba35c81c5aee4b">More...</a><br /></td></tr>
-<tr class="separator:ga96c4cd94f8e5c0b870ba35c81c5aee4b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9d54ade4c90c9afdf61d32e4643eebeb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9d54ade4c90c9afdf61d32e4643eebeb">api_addMotionPoint</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float positionDeg, const float velocityDeg, const uint32_t timeMs)</td></tr>
-<tr class="memdesc:ga9d54ade4c90c9afdf61d32e4643eebeb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds motion PVT point to the device queue.  <a href="group___servo__control.html#ga9d54ade4c90c9afdf61d32e4643eebeb">More...</a><br /></td></tr>
-<tr class="separator:ga9d54ade4c90c9afdf61d32e4643eebeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9138f566e5e79feada4abdb86abafbbe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9138f566e5e79feada4abdb86abafbbe">api_startMotion</a> (uint32_t timestampMs)</td></tr>
-<tr class="memdesc:ga9138f566e5e79feada4abdb86abafbbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the device movement by the spline points. This is a broadcast command. Note: if any device is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all devices on the bus.  <a href="group___servo__control.html#ga9138f566e5e79feada4abdb86abafbbe">More...</a><br /></td></tr>
-<tr class="separator:ga9138f566e5e79feada4abdb86abafbbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6c8312a43c49cec635035ba306d0497e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga6c8312a43c49cec635035ba306d0497e">api_readErrorStatus</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *array, uint32_t *size)</td></tr>
-<tr class="memdesc:ga6c8312a43c49cec635035ba306d0497e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads error flag array.  <a href="group___servo__info.html#ga6c8312a43c49cec635035ba306d0497e">More...</a><br /></td></tr>
-<tr class="separator:ga6c8312a43c49cec635035ba306d0497e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9">api_writeSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t *requests, const uint32_t size)</td></tr>
-<tr class="memdesc:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes device source array format (activated source indexes)  <a href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9">More...</a><br /></td></tr>
-<tr class="separator:ga3dfc0dd6bf219f00b1ce146ffb399dd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gada1e4cb49ca5d980fddfa65c66a7e80a">api_readSourcesFormat</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint8_t *requests, uint32_t *size)</td></tr>
-<tr class="memdesc:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device source array format (activated source indexes)  <a href="group___servo__info.html#gada1e4cb49ca5d980fddfa65c66a7e80a">More...</a><br /></td></tr>
-<tr class="separator:gada1e4cb49ca5d980fddfa65c66a7e80a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga6a2885733d9e3f2f7753b823bc14c399"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga6a2885733d9e3f2f7753b823bc14c399">api_readSources</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:ga6a2885733d9e3f2f7753b823bc14c399"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device sources. Note: source indexes should be programmed with <a class="el" href="group___servo__info.html#ga3dfc0dd6bf219f00b1ce146ffb399dd9" title="Writes device source array format (activated source indexes) ">api_writeSourcesFormat</a> function.  <a href="group___servo__info.html#ga6a2885733d9e3f2f7753b823bc14c399">More...</a><br /></td></tr>
-<tr class="separator:ga6a2885733d9e3f2f7753b823bc14c399"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gadc2219a8852f829ea3b4b93bca096d64"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gadc2219a8852f829ea3b4b93bca096d64">api_readParameter</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint8_t param, const float *value)</td></tr>
-<tr class="memdesc:gadc2219a8852f829ea3b4b93bca096d64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads device source (information parameter)  <a href="group___servo__info.html#gadc2219a8852f829ea3b4b93bca096d64">More...</a><br /></td></tr>
-<tr class="separator:gadc2219a8852f829ea3b4b93bca096d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaef7daf95824293b5466a43981866053c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaef7daf95824293b5466a43981866053c">api_clearPointsAll</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device)</td></tr>
-<tr class="memdesc:gaef7daf95824293b5466a43981866053c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the whole device motion queue.  <a href="group___servo__control.html#gaef7daf95824293b5466a43981866053c">More...</a><br /></td></tr>
-<tr class="separator:gaef7daf95824293b5466a43981866053c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga9b963c8de46cdea63c3e45fde6da5eed">api_clearPoints</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const uint32_t numToClear)</td></tr>
-<tr class="memdesc:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases number of cells from the tail of the device motion queue.  <a href="group___servo__control.html#ga9b963c8de46cdea63c3e45fde6da5eed">More...</a><br /></td></tr>
-<tr class="separator:ga9b963c8de46cdea63c3e45fde6da5eed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga23e17a660476850b3e5825d7964b9e2d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga23e17a660476850b3e5825d7964b9e2d">api_getPointsSize</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *num)</td></tr>
-<tr class="memdesc:ga23e17a660476850b3e5825d7964b9e2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets device motion queue occupied cells (queue size)  <a href="group___servo__info.html#ga23e17a660476850b3e5825d7964b9e2d">More...</a><br /></td></tr>
-<tr class="separator:ga23e17a660476850b3e5825d7964b9e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga18d1d1ab4216ce7fb23ee0d63ba4e3f5">api_getPointsFreeSpace</a> (<a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *num)</td></tr>
-<tr class="memdesc:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets device remaining motion queue free cell count.  <a href="group___servo__info.html#ga18d1d1ab4216ce7fb23ee0d63ba4e3f5">More...</a><br /></td></tr>
-<tr class="separator:ga18d1d1ab4216ce7fb23ee0d63ba4e3f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7">api_invokeTimeCalculation</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float startPositionDeg, const float startVelocityDeg, const float startAccelerationDegPerSec2, const uint32_t startTimeMs, const float endPositionDeg, const float endVelocityDeg, const float endAccelerationDegPerSec2, const uint32_t endTimeMs)</td></tr>
-<tr class="memdesc:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates motion point parameters.  <a href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7">More...</a><br /></td></tr>
-<tr class="separator:gad430bdf00927f813ae49e4f1a74eb4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gabb3e39d8cdb8126bd68f537e91b6d5e4">api_getTimeCalculationResult</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, uint32_t *timeMs)</td></tr>
-<tr class="memdesc:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets <a class="el" href="group___servo__info.html#gad430bdf00927f813ae49e4f1a74eb4f7" title="Calculates motion point parameters. ">api_invokeTimeCalculation</a> calculated time in milliseconds.  <a href="group___servo__info.html#gabb3e39d8cdb8126bd68f537e91b6d5e4">More...</a><br /></td></tr>
-<tr class="separator:gabb3e39d8cdb8126bd68f537e91b6d5e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga56971490f28c6ba39a28be8b1ae18e3f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#ga56971490f28c6ba39a28be8b1ae18e3f">api_setZeroPosition</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float32_t positionDeg)</td></tr>
-<tr class="memdesc:ga56971490f28c6ba39a28be8b1ae18e3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device zero position.  <a href="group___servo__config.html#ga56971490f28c6ba39a28be8b1ae18e3f">More...</a><br /></td></tr>
-<tr class="separator:ga56971490f28c6ba39a28be8b1ae18e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf26ba9ecaa08ce17b70c6b3727ff6ea9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#gaf26ba9ecaa08ce17b70c6b3727ff6ea9">api_setZeroPositionAndSave</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float32_t positionDeg)</td></tr>
-<tr class="memdesc:gaf26ba9ecaa08ce17b70c6b3727ff6ea9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets device zero position and saves it to the device FLASH memory.  <a href="group___servo__config.html#gaf26ba9ecaa08ce17b70c6b3727ff6ea9">More...</a><br /></td></tr>
-<tr class="separator:gaf26ba9ecaa08ce17b70c6b3727ff6ea9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga86415520674a977f2261abd80fde08a9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga86415520674a977f2261abd80fde08a9">api_getMaxVelocity</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, float *velocityDegPerSec)</td></tr>
-<tr class="memdesc:ga86415520674a977f2261abd80fde08a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the maximum device velocity.  <a href="group___servo__info.html#ga86415520674a977f2261abd80fde08a9">More...</a><br /></td></tr>
-<tr class="separator:ga86415520674a977f2261abd80fde08a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga2e11b51b47a4cbe83c9ded4ea3122bde"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#ga2e11b51b47a4cbe83c9ded4ea3122bde">api_setMaxVelocity</a> (const <a class="el" href="struct_can_device__t.html">CanDevice_t</a> *device, const float maxVelocityDegPerSec)</td></tr>
-<tr class="memdesc:ga2e11b51b47a4cbe83c9ded4ea3122bde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the global limit for the device velocity. Note: this is power volatile command.  <a href="group___servo__config.html#ga2e11b51b47a4cbe83c9ded4ea3122bde">More...</a><br /></td></tr>
-<tr class="separator:ga2e11b51b47a4cbe83c9ded4ea3122bde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
-Variables</h2></td></tr>
-<tr class="memitem:aa259de6e47594c3305080e8088fdb53c"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#aa259de6e47594c3305080e8088fdb53c">activated</a></td></tr>
-<tr class="memdesc:aa259de6e47594c3305080e8088fdb53c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source value.  <a href="#aa259de6e47594c3305080e8088fdb53c">More...</a><br /></td></tr>
-<tr class="separator:aa259de6e47594c3305080e8088fdb53c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4975906ca01ba26a3463157a90aaf177"><td class="memItemLeft" align="right" valign="top"><a id="a4975906ca01ba26a3463157a90aaf177"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Source_t</b></td></tr>
-<tr class="separator:a4975906ca01ba26a3463157a90aaf177"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb26028b83635e028ebc901e1cbf33a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#aeb26028b83635e028ebc901e1cbf33a1">rr_sleep_ms</a> (int ms)</td></tr>
+<tr class="separator:aeb26028b83635e028ebc901e1cbf33a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74cb6dc4d15701eaf5c6fd84b1325fc9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#a74cb6dc4d15701eaf5c6fd84b1325fc9">rr_set_debug_log_stream</a> (FILE *f)</td></tr>
+<tr class="separator:a74cb6dc4d15701eaf5c6fd84b1325fc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea43ac88d4b935bb3850a69a17462d31"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="api_8h.html#aea43ac88d4b935bb3850a69a17462d31">rr_set_comm_log_stream</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface, FILE *f)</td></tr>
+<tr class="separator:aea43ac88d4b935bb3850a69a17462d31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga472a4890dcc7d7a13123c56a06946d91"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga472a4890dcc7d7a13123c56a06946d91">rr_init_interface</a> (const char *interface_name)</td></tr>
+<tr class="separator:ga472a4890dcc7d7a13123c56a06946d91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga10cbfcf4b80ebfd0d4df74441bbbe91a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga10cbfcf4b80ebfd0d4df74441bbbe91a">rr_deinit_interface</a> (<a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> **interface)</td></tr>
+<tr class="separator:ga10cbfcf4b80ebfd0d4df74441bbbe91a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0adb313a3eeb8a4399431e940a1f3e9e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structrr__servo__t.html">rr_servo_t</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#ga0adb313a3eeb8a4399431e940a1f3e9e">rr_init_servo</a> (<a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface, const uint8_t id)</td></tr>
+<tr class="separator:ga0adb313a3eeb8a4399431e940a1f3e9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gafebc52982ef705b8d0f805d5ee5ca9f7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___common.html#gafebc52982ef705b8d0f805d5ee5ca9f7">rr_deinit_servo</a> (<a class="el" href="structrr__servo__t.html">rr_servo_t</a> **servo)</td></tr>
+<tr class="separator:gafebc52982ef705b8d0f805d5ee5ca9f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1239a8f4a80ea1c33f599a0cdc58048c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga1239a8f4a80ea1c33f599a0cdc58048c">rr_servo_reboot</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga1239a8f4a80ea1c33f599a0cdc58048c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboots servo.  <a href="group___system__control.html#ga1239a8f4a80ea1c33f599a0cdc58048c">More...</a><br /></td></tr>
+<tr class="separator:ga1239a8f4a80ea1c33f599a0cdc58048c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga59060b95f6ee0614cbec3500ba08b7a0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga59060b95f6ee0614cbec3500ba08b7a0">rr_servo_reset_communication</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga59060b95f6ee0614cbec3500ba08b7a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets servo communication.  <a href="group___system__control.html#ga59060b95f6ee0614cbec3500ba08b7a0">More...</a><br /></td></tr>
+<tr class="separator:ga59060b95f6ee0614cbec3500ba08b7a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga799d61d6eb811cba7f9097a5d9bfd0a8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga799d61d6eb811cba7f9097a5d9bfd0a8">rr_servo_set_state_operational</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga799d61d6eb811cba7f9097a5d9bfd0a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts servo to the operational state.  <a href="group___system__control.html#ga799d61d6eb811cba7f9097a5d9bfd0a8">More...</a><br /></td></tr>
+<tr class="separator:ga799d61d6eb811cba7f9097a5d9bfd0a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga39559219bfb36d4d9359365ac3656a74"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga39559219bfb36d4d9359365ac3656a74">rr_servo_set_state_pre_operational</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga39559219bfb36d4d9359365ac3656a74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts servo to the pre-operational state.  <a href="group___system__control.html#ga39559219bfb36d4d9359365ac3656a74">More...</a><br /></td></tr>
+<tr class="separator:ga39559219bfb36d4d9359365ac3656a74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga02ca530236f87db0fcac9e136eafda4d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga02ca530236f87db0fcac9e136eafda4d">rr_servo_set_state_stopped</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga02ca530236f87db0fcac9e136eafda4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts servo to the stopped state.  <a href="group___system__control.html#ga02ca530236f87db0fcac9e136eafda4d">More...</a><br /></td></tr>
+<tr class="separator:ga02ca530236f87db0fcac9e136eafda4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3141174e38250e0107cc6de9681bcc47"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga3141174e38250e0107cc6de9681bcc47">rr_net_reboot</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga3141174e38250e0107cc6de9681bcc47"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reboots entire network.  <a href="group___system__control.html#ga3141174e38250e0107cc6de9681bcc47">More...</a><br /></td></tr>
+<tr class="separator:ga3141174e38250e0107cc6de9681bcc47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7591c01ec4b20388fad7effe3266e3b1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga7591c01ec4b20388fad7effe3266e3b1">rr_net_reset_communication</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga7591c01ec4b20388fad7effe3266e3b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets entire network communication.  <a href="group___system__control.html#ga7591c01ec4b20388fad7effe3266e3b1">More...</a><br /></td></tr>
+<tr class="separator:ga7591c01ec4b20388fad7effe3266e3b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga427f81205fc35a78a351d1288ea67165"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga427f81205fc35a78a351d1288ea67165">rr_net_set_state_operational</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga427f81205fc35a78a351d1288ea67165"><td class="mdescLeft">&#160;</td><td class="mdescRight">Putss entire network to the operational state.  <a href="group___system__control.html#ga427f81205fc35a78a351d1288ea67165">More...</a><br /></td></tr>
+<tr class="separator:ga427f81205fc35a78a351d1288ea67165"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6a6c46f69a8586cf7bd129a55a775eb7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga6a6c46f69a8586cf7bd129a55a775eb7">rr_net_set_state_pre_operational</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga6a6c46f69a8586cf7bd129a55a775eb7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Putss entire network to the pre-operational state.  <a href="group___system__control.html#ga6a6c46f69a8586cf7bd129a55a775eb7">More...</a><br /></td></tr>
+<tr class="separator:ga6a6c46f69a8586cf7bd129a55a775eb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7dd178eafeae0d80edd60e3aee6e13b9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___system__control.html#ga7dd178eafeae0d80edd60e3aee6e13b9">rr_net_set_state_stopped</a> (const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface)</td></tr>
+<tr class="memdesc:ga7dd178eafeae0d80edd60e3aee6e13b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Puts entire network to the stopped state.  <a href="group___system__control.html#ga7dd178eafeae0d80edd60e3aee6e13b9">More...</a><br /></td></tr>
+<tr class="separator:ga7dd178eafeae0d80edd60e3aee6e13b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4bc3f475fd951403fbd99e51dc3aba4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga4bc3f475fd951403fbd99e51dc3aba4a">rr_stop_and_release</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga4bc3f475fd951403fbd99e51dc3aba4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the servo and releases it.  <a href="group___servo__control.html#ga4bc3f475fd951403fbd99e51dc3aba4a">More...</a><br /></td></tr>
+<tr class="separator:ga4bc3f475fd951403fbd99e51dc3aba4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gabc7b250aba6f86e29692957eac9ecb31"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gabc7b250aba6f86e29692957eac9ecb31">rr_stop_and_freeze</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:gabc7b250aba6f86e29692957eac9ecb31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the servo and make it hold current position.  <a href="group___servo__control.html#gabc7b250aba6f86e29692957eac9ecb31">More...</a><br /></td></tr>
+<tr class="separator:gabc7b250aba6f86e29692957eac9ecb31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac25d20b331b1b985c1f6f50106d5c971"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gac25d20b331b1b985c1f6f50106d5c971">rr_set_current</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float current_a)</td></tr>
+<tr class="memdesc:gac25d20b331b1b985c1f6f50106d5c971"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol current.  <a href="group___servo__control.html#gac25d20b331b1b985c1f6f50106d5c971">More...</a><br /></td></tr>
+<tr class="separator:gac25d20b331b1b985c1f6f50106d5c971"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf790a253c11e2bc0bfb208dd26e7491c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaf790a253c11e2bc0bfb208dd26e7491c">rr_set_velocity</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float velocity_deg_per_sec)</td></tr>
+<tr class="memdesc:gaf790a253c11e2bc0bfb208dd26e7491c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol velocity.  <a href="group___servo__control.html#gaf790a253c11e2bc0bfb208dd26e7491c">More...</a><br /></td></tr>
+<tr class="separator:gaf790a253c11e2bc0bfb208dd26e7491c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaddb31db79640ec345eb237ddc4d1078f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaddb31db79640ec345eb237ddc4d1078f">rr_set_position</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg)</td></tr>
+<tr class="memdesc:gaddb31db79640ec345eb237ddc4d1078f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol position with maximum current.  <a href="group___servo__control.html#gaddb31db79640ec345eb237ddc4d1078f">More...</a><br /></td></tr>
+<tr class="separator:gaddb31db79640ec345eb237ddc4d1078f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga252ba86c50217d9ccf08deaf4c75f2e7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga252ba86c50217d9ccf08deaf4c75f2e7">rr_set_velocity_with_limits</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float velocity_deg_per_sec, const float current_a)</td></tr>
+<tr class="memdesc:ga252ba86c50217d9ccf08deaf4c75f2e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol velocity with limited control phase current.  <a href="group___servo__control.html#ga252ba86c50217d9ccf08deaf4c75f2e7">More...</a><br /></td></tr>
+<tr class="separator:ga252ba86c50217d9ccf08deaf4c75f2e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6927d2a1d6ef5a0564b676817c88b82a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga6927d2a1d6ef5a0564b676817c88b82a">rr_set_position_with_limits</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)</td></tr>
+<tr class="memdesc:ga6927d2a1d6ef5a0564b676817c88b82a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo contol position with limited control flange velocity and limited control phase current.  <a href="group___servo__control.html#ga6927d2a1d6ef5a0564b676817c88b82a">More...</a><br /></td></tr>
+<tr class="separator:ga6927d2a1d6ef5a0564b676817c88b82a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga67890b1af333ce15f291a24ddc5760d1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga67890b1af333ce15f291a24ddc5760d1">rr_set_duty</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, float duty_percent)</td></tr>
+<tr class="memdesc:ga67890b1af333ce15f291a24ddc5760d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo control duty. Duty is the part of the input voltage that is passed to the motor to spin it.  <a href="group___servo__control.html#ga67890b1af333ce15f291a24ddc5760d1">More...</a><br /></td></tr>
+<tr class="separator:ga67890b1af333ce15f291a24ddc5760d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4af8fcaf7ed9cf19673f4bd0fb144927"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga4af8fcaf7ed9cf19673f4bd0fb144927">rr_add_motion_point</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms)</td></tr>
+<tr class="memdesc:ga4af8fcaf7ed9cf19673f4bd0fb144927"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds motion PVT point to the servo queue.  <a href="group___servo__control.html#ga4af8fcaf7ed9cf19673f4bd0fb144927">More...</a><br /></td></tr>
+<tr class="separator:ga4af8fcaf7ed9cf19673f4bd0fb144927"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaeb3f167be0e7caf96d4cb4b648d3a548"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#gaeb3f167be0e7caf96d4cb4b648d3a548">rr_start_motion</a> (<a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *interface, uint32_t timestamp_ms)</td></tr>
+<tr class="memdesc:gaeb3f167be0e7caf96d4cb4b648d3a548"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the servo movement by the spline points. This is a broadcast command. Note: if any servo is not completed the movement (by spline points) it will send broadcast "Goto Stopped State" command to the all servos on the bus.  <a href="group___servo__control.html#gaeb3f167be0e7caf96d4cb4b648d3a548">More...</a><br /></td></tr>
+<tr class="separator:gaeb3f167be0e7caf96d4cb4b648d3a548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga610243c3d25b83475cb8722918b1c915"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga610243c3d25b83475cb8722918b1c915">rr_read_error_status</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, uint8_t *array, uint32_t *size)</td></tr>
+<tr class="memdesc:ga610243c3d25b83475cb8722918b1c915"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads error flag array.  <a href="group___servo__info.html#ga610243c3d25b83475cb8722918b1c915">More...</a><br /></td></tr>
+<tr class="separator:ga610243c3d25b83475cb8722918b1c915"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4d9f2bcfc136357405359c9ca9d4aedf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga4d9f2bcfc136357405359c9ca9d4aedf">rr_param_cache_update</a> (<a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga4d9f2bcfc136357405359c9ca9d4aedf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates enabled cache entries.  <a href="group___servo__info.html#ga4d9f2bcfc136357405359c9ca9d4aedf">More...</a><br /></td></tr>
+<tr class="separator:ga4d9f2bcfc136357405359c9ca9d4aedf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga770c1e8b4d868cea649592e26a2706dd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga770c1e8b4d868cea649592e26a2706dd">rr_param_cache_setup_entry</a> (<a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const <a class="el" href="api_8h.html#aa1f58887fab4642cf49f6f453c1d276d">rr_servo_param_t</a> param, bool enabled)</td></tr>
+<tr class="memdesc:ga770c1e8b4d868cea649592e26a2706dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enables or disables reading specified parameter during cache update.  <a href="group___servo__info.html#ga770c1e8b4d868cea649592e26a2706dd">More...</a><br /></td></tr>
+<tr class="separator:ga770c1e8b4d868cea649592e26a2706dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae665cf9423955f882e94282d66ba6a60"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gae665cf9423955f882e94282d66ba6a60">rr_read_parameter</a> (<a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const <a class="el" href="api_8h.html#aa1f58887fab4642cf49f6f453c1d276d">rr_servo_param_t</a> param, float *value)</td></tr>
+<tr class="memdesc:gae665cf9423955f882e94282d66ba6a60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reads single information parameter. Cache also update during this operation irrespective of enabled status.  <a href="group___servo__info.html#gae665cf9423955f882e94282d66ba6a60">More...</a><br /></td></tr>
+<tr class="separator:gae665cf9423955f882e94282d66ba6a60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga19472cd90ae91f9b9f49edf4f52f35a2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga19472cd90ae91f9b9f49edf4f52f35a2">rr_clear_points_all</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo)</td></tr>
+<tr class="memdesc:ga19472cd90ae91f9b9f49edf4f52f35a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases the whole servo motion queue.  <a href="group___servo__control.html#ga19472cd90ae91f9b9f49edf4f52f35a2">More...</a><br /></td></tr>
+<tr class="separator:ga19472cd90ae91f9b9f49edf4f52f35a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5a39de7fa2777073bbc4d9fc60fa5c38"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__control.html#ga5a39de7fa2777073bbc4d9fc60fa5c38">rr_clear_points</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const uint32_t num_to_clear)</td></tr>
+<tr class="memdesc:ga5a39de7fa2777073bbc4d9fc60fa5c38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Erases number of cells from the tail of the servo motion queue.  <a href="group___servo__control.html#ga5a39de7fa2777073bbc4d9fc60fa5c38">More...</a><br /></td></tr>
+<tr class="separator:ga5a39de7fa2777073bbc4d9fc60fa5c38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae6ed290842e08d349dd86bb1264e6a17"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gae6ed290842e08d349dd86bb1264e6a17">rr_get_points_size</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, uint32_t *num)</td></tr>
+<tr class="memdesc:gae6ed290842e08d349dd86bb1264e6a17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets servo motion queue occupied cells (queue size)  <a href="group___servo__info.html#gae6ed290842e08d349dd86bb1264e6a17">More...</a><br /></td></tr>
+<tr class="separator:gae6ed290842e08d349dd86bb1264e6a17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaafd0d575c047ed269664fbc760a640c1"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gaafd0d575c047ed269664fbc760a640c1">rr_get_points_free_space</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, uint32_t *num)</td></tr>
+<tr class="memdesc:gaafd0d575c047ed269664fbc760a640c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets servo remaining motion queue free cell count.  <a href="group___servo__info.html#gaafd0d575c047ed269664fbc760a640c1">More...</a><br /></td></tr>
+<tr class="separator:gaafd0d575c047ed269664fbc760a640c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga595f780bedaa72433f8788bb962caf95"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga595f780bedaa72433f8788bb962caf95">rr_invoke_time_calculation</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms, const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)</td></tr>
+<tr class="memdesc:ga595f780bedaa72433f8788bb962caf95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates motion point parameters.  <a href="group___servo__info.html#ga595f780bedaa72433f8788bb962caf95">More...</a><br /></td></tr>
+<tr class="separator:ga595f780bedaa72433f8788bb962caf95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga0d01b53187b97dacd7611dacb37024d8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#ga0d01b53187b97dacd7611dacb37024d8">rr_get_time_calculation_result</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, uint32_t *time_ms)</td></tr>
+<tr class="memdesc:ga0d01b53187b97dacd7611dacb37024d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets <a class="el" href="group___servo__info.html#ga595f780bedaa72433f8788bb962caf95" title="Calculates motion point parameters. ">rr_invoke_time_calculation</a> calculated time in milliseconds.  <a href="group___servo__info.html#ga0d01b53187b97dacd7611dacb37024d8">More...</a><br /></td></tr>
+<tr class="separator:ga0d01b53187b97dacd7611dacb37024d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab68e78b8a0d2a9ac38b9a72d78acab85"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#gab68e78b8a0d2a9ac38b9a72d78acab85">rr_set_zero_position</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg)</td></tr>
+<tr class="memdesc:gab68e78b8a0d2a9ac38b9a72d78acab85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo zero position.  <a href="group___servo__config.html#gab68e78b8a0d2a9ac38b9a72d78acab85">More...</a><br /></td></tr>
+<tr class="separator:gab68e78b8a0d2a9ac38b9a72d78acab85"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7ccc75e00e431b8a57150a71791488c3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#ga7ccc75e00e431b8a57150a71791488c3">rr_set_zero_position_and_save</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float position_deg)</td></tr>
+<tr class="memdesc:ga7ccc75e00e431b8a57150a71791488c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets servo zero position and saves it to the servo FLASH memory.  <a href="group___servo__config.html#ga7ccc75e00e431b8a57150a71791488c3">More...</a><br /></td></tr>
+<tr class="separator:ga7ccc75e00e431b8a57150a71791488c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gad388cd353b262b614b563b093d61c911"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__info.html#gad388cd353b262b614b563b093d61c911">rr_get_max_velocity</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, float *velocity_deg_per_sec)</td></tr>
+<tr class="memdesc:gad388cd353b262b614b563b093d61c911"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the maximum servo velocity.  <a href="group___servo__info.html#gad388cd353b262b614b563b093d61c911">More...</a><br /></td></tr>
+<tr class="separator:gad388cd353b262b614b563b093d61c911"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga18d5d9dc728f7cb8e7674b9e9b275aca"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___servo__config.html#ga18d5d9dc728f7cb8e7674b9e9b275aca">rr_set_max_velocity</a> (const <a class="el" href="structrr__servo__t.html">rr_servo_t</a> *servo, const float max_velocity_deg_per_sec)</td></tr>
+<tr class="memdesc:ga18d5d9dc728f7cb8e7674b9e9b275aca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the global limit for the servo velocity. Note: this is power volatile command.  <a href="group___servo__config.html#ga18d5d9dc728f7cb8e7674b9e9b275aca">More...</a><br /></td></tr>
+<tr class="separator:ga18d5d9dc728f7cb8e7674b9e9b275aca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Rozum Robotics API Header File. </p>
 <dl class="section author"><dt>Author</dt><dd>Rozum </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>2018-06-01 </dd></dl>
-</div><h2 class="groupheader">Variable Documentation</h2>
-<a id="aa259de6e47594c3305080e8088fdb53c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa259de6e47594c3305080e8088fdb53c">&#9670;&nbsp;</a></span>activated</h2>
+</div><h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a92d5be5038abcf89837faf85a08debdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92d5be5038abcf89837faf85a08debdc">&#9670;&nbsp;</a></span>rr_ret_status_t</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">uint8_t activated</td>
+          <td class="memname">enum <a class="el" href="api_8h.html#a92d5be5038abcf89837faf85a08debdc">rr_ret_status_t</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Initial value:</b><div class="fragment"><div class="line">=======</div><div class="line">    <span class="keywordtype">float</span> value</div></div><!-- fragment -->
-<p>Source value. </p>
-<p>Source activation flag </p>
+
+<p>Return codes of the API functions. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdca4894234446e2d92068943b3d6d3a0bdc"></a>RET_OK&#160;</td><td class="fielddoc"><p>Status OK. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdcae8ed27c1aabd77d519426a8ad340d76c"></a>RET_ERROR&#160;</td><td class="fielddoc"><p>Generic error. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdcada2fa397afd6b90ecb1c5b9ca3a2d0ee"></a>RET_BAD_INSTANCE&#160;</td><td class="fielddoc"><p>Bad interface or servo instance (null) </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdcacdd796ae2972988d689257753a05b9dd"></a>RET_BUSY&#160;</td><td class="fielddoc"><p>Device is busy. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdcadf1d978b055d00c4036019387acfc60c"></a>RET_WRONG_TRAJ&#160;</td><td class="fielddoc"><p>Wrong trajectory. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdca2840a6ac495b0fe4b9e8565d9f76e29a"></a>RET_LOCKED&#160;</td><td class="fielddoc"><p>Device is locked. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdcad456500c4074aeffb3e5e132bf7d996c"></a>RET_STOPPED&#160;</td><td class="fielddoc"><p>Device is in STOPPED state. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdcadf2eed18ed159c7517505568b0f261dd"></a>RET_TIMEOUT&#160;</td><td class="fielddoc"><p>Communication timeout. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdcac2c7bf0285c804ae03c6628659ce366e"></a>RET_ZERO_SIZE&#160;</td><td class="fielddoc"><p>Zero size. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a92d5be5038abcf89837faf85a08debdca639f91af3521a375df0778f9cd60d60b"></a>RET_SIZE_MISMATCH&#160;</td><td class="fielddoc"><p>Received &amp; target size mismatch. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="aea43ac88d4b935bb3850a69a17462d31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea43ac88d4b935bb3850a69a17462d31">&#9670;&nbsp;</a></span>rr_set_comm_log_stream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void rr_set_comm_log_stream </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structrr__can__interface__t.html">rr_can_interface_t</a> *&#160;</td>
+          <td class="paramname"><em>interface</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>f</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">interface</td><td></td></tr>
+    <tr><td class="paramname">f</td><td>- stdio stream to write communication log to, no logging if 'NULL' </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="a74cb6dc4d15701eaf5c6fd84b1325fc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74cb6dc4d15701eaf5c6fd84b1325fc9">&#9670;&nbsp;</a></span>rr_set_debug_log_stream()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void rr_set_debug_log_stream </td>
+          <td>(</td>
+          <td class="paramtype">FILE *&#160;</td>
+          <td class="paramname"><em>f</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>- stdio stream to write debug log to, no logging if 'NULL' </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
+
+</div>
+</div>
+<a id="aeb26028b83635e028ebc901e1cbf33a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb26028b83635e028ebc901e1cbf33a1">&#9670;&nbsp;</a></span>rr_sleep_ms()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void rr_sleep_ms </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>ms</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ms</td><td>- time to sleep in milleseconds </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>void </dd></dl>
 
 </div>
 </div>
