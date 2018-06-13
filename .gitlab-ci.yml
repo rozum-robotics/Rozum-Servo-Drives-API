@@ -10,7 +10,7 @@ before_script:
 document:
  stage: document
  script: 
-    - doxygen doxyfilee
+    - doxygen
  artifacts:
     paths:
      - html
