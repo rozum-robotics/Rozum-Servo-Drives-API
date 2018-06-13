@@ -1,26 +1,14 @@
 image: rozum/embed-gcc:latest
 
 stages:
-#  - build
-  - documentation
+  - document
   
 before_script:
   - git submodule sync --recursive
   - git submodule update --init --recursive
 
-build:
-  stage: build
-  script: 
-      - make all
-  artifacts:
-    paths:
-      - firmware
-      - settings
-    expire_in: 1 month
-
-
-documentation:
- stage: documentation
+document:
+ stage: document
  script: 
     - doxygen doxyfilee
  artifacts:
