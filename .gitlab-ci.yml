@@ -1,0 +1,34 @@
+image: rozum/embed-gcc:latest
+
+stages:
+#  - build
+  - documentation
+  
+before_script:
+  - git submodule sync --recursive
+  - git submodule update --init --recursive
+
+build:
+  stage: build
+  script: 
+      - make all
+  artifacts:
+    paths:
+      - firmware
+      - settings
+    expire_in: 1 month
+
+
+documentation:
+ stage: documentation
+ script: 
+    - doxygen doxyfilee
+ artifacts:
+    paths:
+     - html
+    expire_in: 1 month
+ only:
+    - master
+
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
