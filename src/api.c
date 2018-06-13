@@ -30,6 +30,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+#define RR_API_WAIT_DEVICE_TIMEOUT_MS 2000
 /* Private macro -------------------------------------------------------------*/
 //! @cond Doxygen_Suppress
 #define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
@@ -179,6 +180,8 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
 		free(s);
 		return NULL;
 	}
+
+	wait_device((usbcan_instance_t *)interface->iface, id, RR_API_WAIT_DEVICE_TIMEOUT_MS);
 
 	return s;
 }

@@ -47,7 +47,13 @@ typedef struct
 {
 	void *cb;
 	usbcan_sdo_t sdo;
-} usbcan_wait_for_t;
+} usbcan_wait_sdo_t;
+
+typedef struct
+{
+	int timer;
+	int id;
+} usbcan_wait_device_t;
 
 typedef struct usbcan_instance_t usbcan_instance_t;
 typedef struct usbcan_device_t usbcan_device_t;
@@ -77,7 +83,8 @@ struct usbcan_instance_t
 	int64_t dev_hb_ival[USB_CAN_MAX_DEV];
 	usbcan_nmt_state_t dev_state[USB_CAN_MAX_DEV];
 
-	usbcan_wait_for_t wait_for;
+	usbcan_wait_sdo_t wait_sdo;
+	usbcan_wait_device_t wait_device;
 	bool inhibit_master_hb;
 	bool usbcan_udp;
 
@@ -108,6 +115,7 @@ typedef enum
 	IPC_SDO,
 	IPC_EMCY,
 	IPC_NMT,
+	IPC_WAIT_DEVICE,
 } ipc_opcode_t;
 
 typedef struct
@@ -124,6 +132,12 @@ typedef struct
 	int id;
 	usbcan_nmt_cmd_t cmd;
 } ipc_nmt_t;
+
+typedef struct
+{
+	int id;
+	int timeout_ms;
+} ipc_wait_device_t;
 
 typedef struct
 {
@@ -160,9 +174,12 @@ int usbcan_instance_deinit(usbcan_instance_t **inst);
 usbcan_device_t *usbcan_device_init(usbcan_instance_t *inst, int id);
 int usbcan_device_deinit(usbcan_device_t **dev);
 
-
-uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout);
-uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout);
+/*
+ * User thread functions
+ */
+int wait_device(const usbcan_instance_t *inst, int id, int timeout_ms);
+uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout_ms);
+uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout_ms);
 int write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg);
 int write_timestamp(const usbcan_instance_t *inst, uint32_t ts);
 int write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
