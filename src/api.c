@@ -703,13 +703,7 @@ int rr_read_parameter( rr_servo_t *servo, const rr_servo_param_t param, float *v
  */
 int rr_clear_points_all(const rr_servo_t *servo)
 {
-	IS_VALID_SERVO(servo);
-    CHECK_NMT_STATE(servo);
-
-    uint32_t num = 0;
-	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&num, sizeof(num), 1, 100);
-    return ret_sdo(sts);
+    return rr_clear_points(servo, 0);
 }
 
 /**

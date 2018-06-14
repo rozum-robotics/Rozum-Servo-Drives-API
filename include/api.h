@@ -11,8 +11,8 @@
 #define _ROZUM_API_H
 
 /* Includes ------------------------------------------------------------------*/
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
 /* Exported macro ------------------------------------------------------------*/
@@ -21,6 +21,12 @@
  * 
  */
 #define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
+
+/**
+ * @brief Stringify macro
+ * 
+ */
+#define STRFY(x) (#x)
 
 /* Exported constants --------------------------------------------------------*/
 /**
@@ -160,7 +166,7 @@ typedef struct
  */
 typedef struct
 {
-    void *dev; ///< Device internals
+    void *dev;                                 ///< Device internals
     para_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
 } rr_servo_t;
 
@@ -230,8 +236,8 @@ int rr_get_points_size(const rr_servo_t *servo, uint32_t *num);
 int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num);
 
 int rr_invoke_time_calculation(const rr_servo_t *servo,
-                              const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
-                              const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms);
+                               const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
+                               const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms);
 int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms);
 
 int rr_set_zero_position(const rr_servo_t *servo, const float position_deg);
