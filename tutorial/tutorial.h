@@ -1,0 +1,14 @@
+#ifndef __TUTORIAL_DOT_H__
+#define __TUTORIAL_DOT_H__
+
+
+#define TUTORIAL_DEVICE		"192.168.0.123"
+#define TUTORIAL_SERVO_0_ID	64
+#define TUTORIAL_SERVO_1_ID 	65
+#define TUTORIAL_SERVO_2_ID	66
+
+
+
+
+#endif
+
