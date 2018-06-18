@@ -167,7 +167,7 @@ typedef struct
 typedef struct
 {
     void *dev;                                 ///< Device internals
-    para_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
+    param_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
 } rr_servo_t;
 
 /**
