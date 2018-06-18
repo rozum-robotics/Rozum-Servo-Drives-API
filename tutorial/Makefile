@@ -2,7 +2,7 @@ FILES = $(wildcard *.c)
 BUILDDIR=build
 
 %.static: %.c 
-	gcc $< -g2 -I../include -o $(BUILDDIR)/$@ ../build/libservo_api.a -lpthread -no-pie
+	gcc $< -g2 -I../include -o $(BUILDDIR)/$@ ../build/libservo_api.a -lpthread
 
 %.run: %.static 
 	./$(BUILDDIR)/$<

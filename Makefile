@@ -39,6 +39,11 @@ MAKE_SHARED_LIB=yes
 MAKE_STATIC_LIB=yes
 
 #
+#Enable MAP-file creation
+#
+CREATE_MAP=no
+
+#
 #Tool-chain prefix
 #
 #TCHAIN = 

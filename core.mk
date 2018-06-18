@@ -46,7 +46,7 @@ CPPFLAGS+=-std=$(CPPDIALECT)
 endif
 
 LDFLAGS+=$(MCPU) 
-ifeq ($(DISABLE_MAP),)
+ifeq ($(strip $(CREATE_MAP)),yes)
 LDFLAGS+=-Wl,-Map=$(BUILDDIR)/map.map
 endif
 LDFLAGS+=$(addprefix -T,$(LDSCRIPT))
