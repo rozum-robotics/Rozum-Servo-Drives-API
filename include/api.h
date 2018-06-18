@@ -152,7 +152,7 @@ typedef struct
 {
     float value;       ///< Source value
     uint8_t activated; ///< Source activation flag
-} para_cache_entry_t;
+} param_cache_entry_t;
 
 /**
  * @brief Device instance structure
@@ -161,7 +161,7 @@ typedef struct
 typedef struct
 {
     void *dev; ///< Device internals
-    para_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
+    param_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
 } rr_servo_t;
 
 /**
