@@ -20,7 +20,7 @@
  * @brief Standart debug 
  * 
  */
-#define API_DEBUG(x, ...) fprintf(stderr, x, __VA_ARGS__)
+#define API_DEBUG(...) fprintf(stderr, __VA_ARGS__)
 
 /**
  * @brief Stringify macro

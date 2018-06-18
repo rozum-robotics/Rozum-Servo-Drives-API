@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
 
-    API_DEBUG("Clearing points\n", 0);
+    API_DEBUG("Clearing points\n");
     rr_clear_points_all(servo);
 
     uint32_t num;
@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     rr_get_points_free_space(servo, &num);
     API_DEBUG("\tPoints queue free size before: %d\n", num);
 
-    API_DEBUG("Appending points\n", 0);
+    API_DEBUG("Appending points\n");
     rr_add_motion_point(servo, 0.0, 0.0, 10000000);
     rr_add_motion_point(servo, 0.0, 0.0, 10000000);
 

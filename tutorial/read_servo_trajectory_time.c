@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     int status = rr_invoke_time_calculation(servo, 0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0);
     if(status != RET_OK)
     {
-        API_DEBUG("Error in the trjectory point calculation\n", 0);
+        API_DEBUG("Error in the trjectory point calculation\n");
         return 1;
     }
 

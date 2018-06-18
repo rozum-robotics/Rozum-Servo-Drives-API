@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling one servo");
 
     rr_clear_points_all(servo);
-    API_DEBUG("Appending points\n", 0);
+    API_DEBUG("Appending points\n");
     int status = rr_add_motion_point(servo, 100.0, 0.0, 6000);
     if(status != RET_OK)
     {

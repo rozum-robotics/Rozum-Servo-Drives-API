@@ -1,14 +1,18 @@
 FILES = $(wildcard *.c)
+BUILDDIR=build
 
 %.static: %.c 
-	gcc $< -g2 -I../include -o $@ ../build/libservo_api.a -lpthread -no-pie
+	gcc $< -g2 -I../include -o $(BUILDDIR)/$@ ../build/libservo_api.a -lpthread -no-pie
 
 %.run: %.static 
-	./$<
+	./$(BUILDDIR)/$<
 
-run: all $(FILES:.c=.run)
+all: prepare $(FILES:.c=.static)
 
 clean:
-	rm -rf *.static
+	rm -rf build
 
-all: $(FILES:.c=.static)
+prepare:
+	mkdir -p $(BUILDDIR)
+
+run: $(FILES:.c=.run)
