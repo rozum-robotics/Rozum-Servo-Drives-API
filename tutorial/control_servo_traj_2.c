@@ -1,15 +1,11 @@
 #include "api.h"
-#include "math.h"
-#include <unistd.h>
-
-#define SERVO_0_ID 123
-#define SERVO_1_ID 124
+#include "tutorial.h"
 
 int main(int argc, char *argv[])
 {
-    rr_can_interface_t *iface = rr_init_interface("/dev/ttyS3");
-    rr_servo_t *servo1 = rr_init_servo(iface, SERVO_0_ID);
-    rr_servo_t *servo2 = rr_init_servo(iface, SERVO_1_ID);
+    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling two servos");
 

@@ -1,13 +1,10 @@
 #include "api.h"
-#include "math.h"
-#include <unistd.h>
-
-#define SERVO_ID 123
+#include "tutorial.h"
 
 int main(int argc, char *argv[])
 {
-    rr_can_interface_t *iface = rr_init_interface("/dev/ttyS3");
-    rr_servo_t *servo = rr_init_servo(iface, SERVO_ID);
+    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
 
     API_DEBUG("========== Tutorial of %s ==========\n", "reading any device parameter (single)");
 

@@ -27,6 +27,7 @@
 #include "usbcan_proto.h"
 #include "usbcan_types.h"
 #include "usbcan_util.h"
+#include <stdio.h>
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -131,6 +132,8 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
 		return NULL;
 	}
 
+	//rr_set_comm_log_stream(i, stderr);
+	rr_set_debug_log_stream(stderr);
 	return i;
 }
 
