@@ -17,7 +17,6 @@ int main(int argc, char *argv[])
 		d[i] = api_initDevice(iface, i + 1);
 	}
 
-
 	api_deinitDevice(&d[4]);
 	api_deinitDevice(&d[1]);
 	api_deinitDevice(&d[8]);

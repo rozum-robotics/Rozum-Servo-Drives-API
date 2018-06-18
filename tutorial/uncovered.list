@@ -1,0 +1,34 @@
+    int rr_deinit_interface(rr_can_interface_t **interface);
+    int rr_deinit_servo(rr_servo_t **servo);
+
+    int rr_servo_reboot(const rr_servo_t *servo);
+    int rr_servo_reset_communication(const rr_servo_t *servo);
+    int rr_servo_set_state_operational(const rr_servo_t *servo);
+    int rr_servo_set_state_pre_operational(const rr_servo_t *servo);
+    int rr_servo_set_state_stopped(const rr_servo_t *servo);
+
+    int rr_net_reboot(const rr_can_interface_t *interface);
+    int rr_net_reset_communication(const rr_can_interface_t *interface);
+    int rr_net_set_state_operational(const rr_can_interface_t *interface);
+    int rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
+    int rr_net_set_state_stopped(const rr_can_interface_t *interface);
+
+    int rr_stop_and_release(const rr_servo_t *servo);
+    int rr_stop_and_freeze(const rr_servo_t *servo);
+
+    int rr_set_current(const rr_servo_t *servo, const float current_a);
+    int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec);
+    int rr_set_position(const rr_servo_t *servo, const float position_deg);
+    int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a);
+    int rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a);
+    int rr_set_duty(const rr_servo_t *servo, float duty_percent);
+
+    int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms);
+    int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
+
+    int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);
+
+    int rr_set_zero_position(const rr_servo_t *servo, const float position_deg);
+    int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg);
+
+    int rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec);

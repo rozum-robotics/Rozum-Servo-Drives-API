@@ -12,7 +12,8 @@ var menudata={children:[
 {text:"File Members",url:"globals.html",children:[
 {text:"All",url:"globals.html",children:[
 {text:"a",url:"globals.html#index_a"},
-{text:"r",url:"globals.html#index_r"}]},
+{text:"r",url:"globals.html#index_r"},
+{text:"s",url:"globals.html#index_s"}]},
 {text:"Functions",url:"globals_func.html",children:[
 {text:"r",url:"globals_func.html#index_r"}]},
 {text:"Enumerations",url:"globals_enum.html"},
