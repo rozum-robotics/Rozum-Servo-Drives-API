@@ -1,0 +1,5 @@
+*.[od]
+*.swp
+tags
+build
+html
