@@ -32,7 +32,7 @@
 /**
  * @brief Return codes of the API functions
  */
-enum rr_ret_status_t
+typedef enum 
 {
     RET_OK = 0,       ///< Status OK
     RET_ERROR,        ///< Generic error
@@ -44,7 +44,7 @@ enum rr_ret_status_t
     RET_TIMEOUT,      ///< Communication timeout
     RET_ZERO_SIZE,    ///< Zero size
     RET_SIZE_MISMATCH ///< Received & target size mismatch
-};
+}rr_ret_status_t;
 
 /**
  * @brief Device parameter & source indexes
