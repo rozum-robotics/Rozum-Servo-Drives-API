@@ -22,13 +22,9 @@
  */
 #define API_DEBUG(...) fprintf(stderr, __VA_ARGS__)
 
-/**
- * @brief Stringify macro
- * 
- */
-#define STRFY(x) (#x)
-
 /* Exported constants --------------------------------------------------------*/
+
+/* Exported types ------------------------------------------------------------*/
 /**
  * @brief Return codes of the API functions
  */
@@ -146,10 +142,24 @@ typedef enum
     APP_PARAM_POWER_IN,
     APP_PARAM_POWER_OUT,
 
-    APP_PARAM_SIZE //...
+    APP_PARAM_SIZE //should be last
 } rr_servo_param_t;
 
-/* Exported types ------------------------------------------------------------*/
+
+/**
+ * @brief Network management (NMT) satates
+ * 
+ */
+typedef enum
+{
+	RR_NMT_INITIALIZING = 0,      /**< Device is initializing */
+	RR_NMT_BOOT = 2,              /**< Device executing bootloader application */
+	RR_NMT_PRE_OPERATIONAL = 127, /**< Device is in pre-operational state */
+	RR_NMT_OPERATIONAL = 5,       /**< Device is in operational state */
+	RR_NMT_STOPPED = 4,           /**< Device is stopped */
+	RR_NMT_HB_TIMEOUT = -1,
+} rr_nmt_state_t;
+
 /**
  * @brief Device information source instance
  * 
@@ -177,7 +187,22 @@ typedef struct
 typedef struct
 {
     void *iface; ///< Interface internals
+	void *nmt_cb; ///< NMT callback pointer
+	void *emcy_cb; ///< EMCY callback pointer
 } rr_can_interface_t;
+
+/**
+ * @brief Network management (NMT) callback type.<br>
+ *
+ */
+typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
+
+/**
+ * @brief Emergency (EMCY) callback type.<br>
+ *
+ */
+typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info);
+
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -191,6 +216,11 @@ void rr_sleep_ms(int ms);
 
 void rr_set_debug_log_stream(FILE *f);
 void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f);
+void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb);
+void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb);
+const char *rr_describe_nmt(rr_nmt_state_t state);
+const char *rr_describe_emcy_code(uint16_t code);
+const char *rr_describe_emcy_bits(uint8_t bits);
 
 rr_can_interface_t *rr_init_interface(const char *interface_name);
 int rr_deinit_interface(rr_can_interface_t **interface);
@@ -228,6 +258,7 @@ int rr_param_cache_update(rr_servo_t *servo);
 int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
 
 int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
+int rr_read_cached_parameter( rr_servo_t *servo, const rr_servo_param_t param, float *value);
 
 int rr_clear_points_all(const rr_servo_t *servo);
 int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);

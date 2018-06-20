@@ -60,6 +60,7 @@ typedef struct usbcan_device_t usbcan_device_t;
 
 struct usbcan_instance_t
 {
+	void *udata;
 	const char *device;
 	int fd;
 

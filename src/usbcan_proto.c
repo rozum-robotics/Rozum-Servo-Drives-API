@@ -927,10 +927,6 @@ static void *usbcan_process(void *udata)
 
 	usbcan_instance_t *inst = (usbcan_instance_t *)udata;
 
-	usbcan_setup_hb_tx_cb(inst, hb_tx_cb, 250);
-	usbcan_setup_hb_rx_cb(inst, hb_rx_cb);
-	usbcan_setup_emcy_cb(inst, emcy_cb);
-	usbcan_setup_nmt_state_cb(inst, nmt_state_cb);
 
 	do
 	{
@@ -1084,6 +1080,11 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 		free(inst);
 		return NULL;
 	}
+
+	usbcan_setup_hb_tx_cb(inst, hb_tx_cb, 250);
+	usbcan_setup_hb_rx_cb(inst, hb_rx_cb);
+	usbcan_setup_emcy_cb(inst, emcy_cb);
+	usbcan_setup_nmt_state_cb(inst, nmt_state_cb);
 
 	return inst;
 }

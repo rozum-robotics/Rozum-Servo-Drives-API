@@ -1,9 +1,20 @@
 #include "api.h"
 
-#define SERVO_ID 123
+#define SERVO_ID 36
 
 //#define M() printf("%d\n", __LINE__)
 #define M()
+
+void nmt_cb(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state)
+{
+	printf("NMT CB\n");
+}
+
+void emcy_cb(rr_can_interface_t *interface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info)
+{	
+	printf("EMCY CB\n");
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -11,8 +22,11 @@ int main(int argc, char *argv[])
 
     rr_set_debug_log_stream(stderr);
 
-    rr_can_interface_t *iface = rr_init_interface("/dev/ttyS3");
+    rr_can_interface_t *iface = rr_init_interface("/dev/ttyACM0");
     //rr_set_comm_log_stream(iface, stderr);
+	//
+	rr_setup_nmt_callback(iface, nmt_cb);
+	rr_setup_emcy_callback(iface, emcy_cb);
 
     rr_servo_t *servo = rr_init_servo(iface, SERVO_ID);
     /*
@@ -24,6 +38,7 @@ int main(int argc, char *argv[])
 
     //rr_set_velocity(servo, 10.0);
     //
+
 
     rr_param_cache_setup_entry(servo, APP_PARAM_POSITION, true);
     rr_param_cache_setup_entry(servo, APP_PARAM_VELOCITY, true);
