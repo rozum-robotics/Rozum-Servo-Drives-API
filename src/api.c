@@ -9,6 +9,7 @@
 /*! \mainpage Rozum Robotics User API
  * 
  * \section intro_section Categories
+ * - \ref Utils
  * - \ref Common
  * - \ref System_control
  * - \ref Servo_control
