@@ -6,7 +6,7 @@ VERBOSE=no
 #
 #Colorize ouput
 #
-COLORIZE=yes
+COLORIZE=no
 
 #
 #Build directory

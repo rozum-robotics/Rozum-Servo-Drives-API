@@ -22,6 +22,13 @@
  */
 #define API_DEBUG(...) fprintf(stderr, __VA_ARGS__)
 
+/**
+ * @brief Make string from variable 
+ * 
+ */
+#define STRFY(x) #x
+
+
 /* Exported constants --------------------------------------------------------*/
 
 /* Exported types ------------------------------------------------------------*/

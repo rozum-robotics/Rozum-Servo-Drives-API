@@ -31,7 +31,7 @@ void LOG_WARN(FILE *stream, const char *fmt, ...);
 void LOG_ERROR(FILE *stream, const char *fmt, ...);
 void _LOG_ASSERT_(FILE *STREAM, bool cond, bool persist, const char *x, const char *c, const char *y, float fx, float fy);
 
-#define STRFY(a) #a
-#define LOG_ASSERT(s, x, c, y, persist) _LOG_ASSERT_(s, x c y, persist, STRFY(x), STRFY(c), STRFY(y), x, y)
+#define __STRFY__(a) #a
+#define LOG_ASSERT(s, x, c, y, persist) _LOG_ASSERT_(s, x c y, persist, __STRFY__(x), __STRFY__(c), __STRFY__(y), x, y)
 
 #endif
