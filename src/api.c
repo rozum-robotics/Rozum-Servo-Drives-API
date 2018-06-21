@@ -35,6 +35,7 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define RR_API_WAIT_DEVICE_TIMEOUT_MS 2000
+
 /* Private macro -------------------------------------------------------------*/
 #define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
 
@@ -59,14 +60,9 @@ static int ret_sdo(int code)
 {
     switch(code)
     {
-    case CO_SDO_AB_NONE:
-        return RET_OK;
-
-    case CO_SDO_AB_TIMEOUT:
-        return RET_TIMEOUT;
-
-    default:
-        return RET_ERROR;
+    case CO_SDO_AB_NONE:    return RET_OK;
+    case CO_SDO_AB_TIMEOUT: return RET_TIMEOUT;
+    default:                return RET_ERROR;
     }
 }
 
@@ -88,7 +84,7 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
 	rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
 
 	LOG_WARN(debug_log, "Emergency frame received: id(%"PRId8") code(0x%"PRIX16") reg(0x%"PRIX8") bits(0x%"PRIX8") info(0x%"PRIX32"):\n    '%s, %s'",
-			id, code, reg, bits, info, rr_describe_emcy_code(code), rr_describe_emcy_bits(bits));
+			id, code, reg, bits, info, rr_describe_emcy_code(code), rr_describe_emcy_bit(bits));
 
 	if(i->emcy_cb)
 	{
@@ -179,104 +175,97 @@ const char *rr_describe_nmt(rr_nmt_state_t state)
 {
 	switch(state)
 	{
-		case RR_NMT_INITIALIZING:
-			return "device initializing";
-		case RR_NMT_BOOT:
-			return "executing bootloader";
-		case RR_NMT_PRE_OPERATIONAL:
-			return "device in pre-operational mode";
-		case RR_NMT_OPERATIONAL:
-			return "device in operational mode";
-		case RR_NMT_STOPPED:
-			return "device in stopped mode";
-		case RR_NMT_HB_TIMEOUT:
-			return "device disappeared";
-		default:
-			return "N/A";
+		case RR_NMT_INITIALIZING:               return "Device is initializing";
+		case RR_NMT_BOOT:                       return "Bootloader mode";
+		case RR_NMT_PRE_OPERATIONAL:            return "Device is in pre-operational mode";
+		case RR_NMT_OPERATIONAL:                return "Device is in operational mode";
+		case RR_NMT_STOPPED:                    return "Device is in stopped mode";
+		case RR_NMT_HB_TIMEOUT:                 return "Device disappeared";
+		default:                                return "N/A";
 	}
 }
 
 /**
  * @brief Returns descriptive string for specified EMCY codes
  * 
- * @param bits EMCY error bit field according to CanOpen standard
+ * @param bit EMCY error bit field according to CanOpen standard
  * @return void
  * @ingroup Utils
  */
-const char *rr_describe_emcy_bits(uint8_t bits)
+const char *rr_describe_emcy_bit(uint8_t bit)
 {
-	switch(bits)
+	switch(bit)
 	{
-		case CO_EM_NO_ERROR: return "Error Reset or No Error";
-		case CO_EM_CAN_BUS_WARNING: return "CAN bus warning limit reached";
-		case CO_EM_RXMSG_WRONG_LENGTH: return "Wrong data length of the received CAN message";
-		case CO_EM_RXMSG_OVERFLOW: return "Previous received CAN message wasn't processed yet";
-		case CO_EM_RPDO_WRONG_LENGTH: return "Wrong data length of received PDO";
-		case CO_EM_RPDO_OVERFLOW: return "Previous received PDO wasn't processed yet";
-		case CO_EM_CAN_RX_BUS_PASSIVE: return "CAN Rx passive";
-		case CO_EM_CAN_TX_BUS_PASSIVE: return "CAN Tx passive";
+		case CO_EM_NO_ERROR:                    return "Error Reset or No Error";
+		case CO_EM_CAN_BUS_WARNING:             return "CAN bus warning limit reached";
+		case CO_EM_RXMSG_WRONG_LENGTH:          return "Wrong data length of the received CAN message";
+		case CO_EM_RXMSG_OVERFLOW:              return "Previous received CAN message wasn't processed yet";
+		case CO_EM_RPDO_WRONG_LENGTH:           return "Wrong data length of received PDO";
+		case CO_EM_RPDO_OVERFLOW:               return "Previous received PDO wasn't processed yet";
+		case CO_EM_CAN_RX_BUS_PASSIVE:          return "CAN Rx passive";
+		case CO_EM_CAN_TX_BUS_PASSIVE:          return "CAN Tx passive";
 
-		case CO_EM_NMT_WRONG_COMMAND: return "Wrong NMT command received";
-									  //case 09-11 unused
+		case CO_EM_NMT_WRONG_COMMAND:           return "Wrong NMT command received";
+        //case 09-11 unused
 
-		case CO_EM_CAN_TX_BUS_OFF: return "CAN transmit bus is off";
-		case CO_EM_CAN_RXB_OVERFLOW: return "CAN module receive buffer has overflowed";
-		case CO_EM_CAN_TX_OVERFLOW: return "CAN transmit buffer has overflowed";
-		case CO_EM_TPDO_OUTSIDE_WINDOW: return "TPDO is outside SYNC window";
+		case CO_EM_CAN_TX_BUS_OFF:              return "CAN transmit bus is off";
+		case CO_EM_CAN_RXB_OVERFLOW:            return "CAN module receive buffer has overflowed";
+		case CO_EM_CAN_TX_OVERFLOW:             return "CAN transmit buffer has overflowed";
+		case CO_EM_TPDO_OUTSIDE_WINDOW:         return "TPDO is outside SYNC window";
 
-										//case 16-17 unused
+        //case 16-17 unused
 
-		case CO_EM_SYNC_TIME_OUT: return "SYNC message timeout";
-		case CO_EM_SYNC_LENGTH: return "Unexpected SYNC data length";
-		case CO_EM_PDO_WRONG_MAPPING: return "Error with PDO mapping";
-		case CO_EM_HB_CONSUMER_REMOTE_RESET: return "Heartbeat consumer detected remote node reset";
+		case CO_EM_SYNC_TIME_OUT:               return "SYNC message timeout";
+		case CO_EM_SYNC_LENGTH:                 return "Unexpected SYNC data length";
+		case CO_EM_PDO_WRONG_MAPPING:           return "Error with PDO mapping";
+		case CO_EM_HB_CONSUMER_REMOTE_RESET:    return "Heartbeat consumer detected remote node reset";
 
-											 //case 1D-1F unused
+        //case 1D-1F unused
 
-		case CO_EM_EMERGENCY_BUFFER_FULL: return "Emergency buffer is full, Emergency message wasn't sent";
-		case CO_EM_MOTION_ERROR: return "Motion Error";
-		case CO_EM_MICROCONTROLLER_RESET: return "Microcontroller has just started";
-		case CO_EM_UNAUTHORIZED_ACCESS: return "Access is only available to service engineer";
-		case CO_EM_TEMPERATURE_ERROR: return "Temperature is too high";
-		case CO_EM_TEMPERATURE_INTRNL_ERROR: return "Temp PCB is too high";
-		case CO_EM_HARDWARE_ERROR: return "Hardware error (driver error)";
-		case CO_EM_MOTION_INVALID: return "Invalid motion command received";
+		case CO_EM_EMERGENCY_BUFFER_FULL:       return "Emergency buffer is full, Emergency message wasn't sent";
+		case CO_EM_MOTION_ERROR:                return "Motion Error";
+		case CO_EM_MICROCONTROLLER_RESET:       return "Microcontroller has just started";
+		case CO_EM_UNAUTHORIZED_ACCESS:         return "Access is only available to service engineer";
+		case CO_EM_TEMPERATURE_ERROR:           return "Temperature Motor is too high";
+		case CO_EM_TEMPERATURE_INTRNL_ERROR:    return "Temperature PCB is too high";
+		case CO_EM_HARDWARE_ERROR:              return "Hardware error (driver error)";
+		case CO_EM_MOTION_INVALID:              return "Invalid motion command received";
 
-		case CO_EM_WRONG_ERROR_REPORT: return "Wrong parameters to CO_EM_reportError() function";
-		case CO_EM_ISR_TIMER_OVERFLOW: return "Timer task has overflowed";
-		case CO_EM_MEMORY_ALLOCATION_ERROR: return "Unable to allocate memory for objects";
-		case CO_EM_GENERIC_ERROR: return "Generic error, test usage";
-		case CO_EM_GENERIC_SOFTWARE_ERROR: return "Software error";
-		case CO_EM_INCONSISTENT_OBJECT_DICT: return "Object dictionary does not match the software";
-		case CO_EM_CALCULATION_OF_PARAMETERS: return "Error in calculation of device parameters";
-		case CO_EM_NON_VOLATILE_MEMORY: return "Error with access to non volatile device memory";
+		case CO_EM_WRONG_ERROR_REPORT:          return "Wrong parameters to CO_EM_reportError() function";
+		case CO_EM_ISR_TIMER_OVERFLOW:          return "Timer task has overflowed";
+		case CO_EM_MEMORY_ALLOCATION_ERROR:     return "Unable to allocate memory for objects";
+		case CO_EM_GENERIC_ERROR:               return "Generic error, test usage";
+		case CO_EM_GENERIC_SOFTWARE_ERROR:      return "Software error";
+		case CO_EM_INCONSISTENT_OBJECT_DICT:    return "Object dictionary does not match the software";
+		case CO_EM_CALCULATION_OF_PARAMETERS:   return "Error in calculation of device parameters";
+		case CO_EM_NON_VOLATILE_MEMORY:         return "Error with access to non volatile device memory";
 
-		case CO_EM_FLT_CONFIG_CONSTRAINT: return "Constraint was applied to the settings";
-		case CO_EM_FLT_CONFIG_CRC: return "CRC check of the setings failed";
-		case CO_EM_FLT_NTC: return "NTC Error";
-		case CO_EM_FLT_CS0: return "Current sensor 0 error";
-		case CO_EM_FLT_CS1: return "Current sensor 1 error";
-		case CO_EM_FLT_CS2: return "Current sensor 2 error";
-		case CO_EM_FLT_DRIVER: return "Driver error";
-		case CO_EM_FLT_VS0: return "Voltage sensor error";
+		case CO_EM_FLT_CONFIG_CONSTRAINT:       return "Constraint was applied to the settings";
+		case CO_EM_FLT_CONFIG_CRC:              return "CRC check of the setings failed";
+		case CO_EM_FLT_NTC:                     return "NTC Error";
+		case CO_EM_FLT_CS0:                     return "Current sensor 0 error";
+		case CO_EM_FLT_CS1:                     return "Current sensor 1 error";
+		case CO_EM_FLT_CS2:                     return "Current sensor 2 error";
+		case CO_EM_FLT_DRIVER:                  return "Driver error";
+		case CO_EM_FLT_VS0:                     return "Voltage sensor error";
 
-		case CO_EM_FLT_ENC_M_OFF: return "Encoder M disconnected";
-		case CO_EM_FLT_ENC_G_OFF: return "Encoder G disconnected";
-		case CO_EM_FLT_ENC_M_STUP_CRC: return "M CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
-		case CO_EM_FLT_ENC_G_STUP_CRC: return "G CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
-		case CO_EM_FLT_ENC_M_LEVEL: return "M FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
-		case CO_EM_FLT_ENC_G_LEVEL: return "G FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
-		case CO_EM_FLT_ENC_M_SIG: return "M NON_CTR bit in STATUS1";
-		case CO_EM_FLT_ENC_G_SIG: return "G NON_CTR bit in STATUS1";
+		case CO_EM_FLT_ENC_M_OFF:               return "Motor Encoder disconnected";
+		case CO_EM_FLT_ENC_G_OFF:               return "Gear Encoder disconnected";
+		case CO_EM_FLT_ENC_M_STUP_CRC:          return "Motor Encoder CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
+		case CO_EM_FLT_ENC_G_STUP_CRC:          return "Gear Encoder CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
+		case CO_EM_FLT_ENC_M_LEVEL:             return "Motor Encoder FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
+		case CO_EM_FLT_ENC_G_LEVEL:             return "Gear Encoder FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
+		case CO_EM_FLT_ENC_M_SIG:               return "Motor Encoder NON_CTR bit in STATUS1";
+		case CO_EM_FLT_ENC_G_SIG:               return "Gear Encoder NON_CTR bit in STATUS1";
 
-		case CO_EM_HW_VOLT_LO: return "CO_EM_HW_VOLT_LO";
-		case CO_EM_HW_VOLT_HI: return "CO_EM_HW_VOLT_HI";
-		case CO_EM_HW_CUR_LIMIT: return "CO_EM_HW_CUR_LIMIT";
-		case CO_EM_POWER_ERROR: return "CO_EM_POWER_ERROR";
-		case CO_EM_FORCE_ERROR: return "CO_EM_FORCE_ERROR";
-		case CO_EM_HEARTBEAT_CONSUMER: return "Heartbeat consumer timeout";
+		case CO_EM_HW_VOLT_LO:                  return "Under Voltage";
+		case CO_EM_HW_VOLT_HI:                  return "Over Voltage";
+		case CO_EM_HW_CUR_LIMIT:                return "Over Current";
+		case CO_EM_POWER_ERROR:                 return "Over Power";
+		case CO_EM_FORCE_ERROR:                 return "Over Force";
+		case CO_EM_HEARTBEAT_CONSUMER:          return "Heartbeat consumer timeout";
 
-		default: return "N/A";
+		default:                                return "N/A";
 	}
 }
 
@@ -291,71 +280,71 @@ const char *rr_describe_emcy_code(uint16_t code)
 {
 	switch(code)
 	{
-		case CO_EMC_NO_ERROR: return "Error Reset or No Error";
-		case CO_EMC_GENERIC: return "Generic Error";
-		case CO_EMC_CURRENT: return "Current";
-		case CO_EMC_CURRENT_INPUT: return "Current, device input side";
-		case CO_EMC_CURRENT_INSIDE: return "Current inside the device";
-		case CO_EMC_CURRENT_OUTPUT: return "Current, device output side";
-		case CO_EMC_VOLTAGE: return "Voltage";
-		case CO_EMC_VOLTAGE_MAINS: return "Mains Voltage";
-		case CO_EMC_VOLTAGE_INSIDE: return "Voltage inside the device";
-		case CO_EMC_VOLTAGE_OUTPUT: return "Output Voltage";
-		case CO_EMC_TEMPERATURE: return "Temperature";
-		case CO_EMC_TEMP_AMBIENT: return "Ambient Temperature";
-		case CO_EMC_TEMP_DEVICE: return "Device Temperature";
-		case CO_EMC_HARDWARE: return "Device Hardware";
-		case CO_EMC_SOFTWARE_DEVICE: return "Device Software";
-		case CO_EMC_SOFTWARE_INTERNAL: return "Internal Software";
-		case CO_EMC_SOFTWARE_USER: return "User Software";
-		case CO_EMC_DATA_SET: return "Data Set";
-		case CO_EMC_ADDITIONAL_MODUL: return "Additional Modules";
-		case CO_EMC_MONITORING: return "Monitoring";
-		case CO_EMC_COMMUNICATION: return "Communication";
-		case CO_EMC_CAN_OVERRUN: return "CAN Overrun (Objects lost)";
-		case CO_EMC_CAN_PASSIVE: return "CAN Passive Mode";
-		case CO_EMC_HEARTBEAT: return "Life Guard Error or Heartbeat Error";
-		case CO_EMC_BUS_OFF_RECOVERED: return "recovered from bus off";
-		case CO_EMC_CAN_ID_COLLISION: return "CAN-ID collision";
-		case CO_EMC_PROTOCOL_ERROR: return "Protocol Error";
-		case CO_EMC_PDO_LENGTH: return "PDO not processed due to length error";
-		case CO_EMC_PDO_LENGTH_EXC: return "PDO length exceeded";
-		case CO_EMC_DAM_MPDO: return "DAM MPDO not processed, destination object not available";
-		case CO_EMC_SYNC_DATA_LENGTH: return "Unexpected SYNC data length";
-		case CO_EMC_RPDO_TIMEOUT: return "RPDO timeout";
-		case CO_EMC_EXTERNAL_ERROR: return "External Error";
-		case CO_EMC_ADDITIONAL_FUNC: return "Additional Functions";
-		case CO_EMC_DEVICE_SPECIFIC: return "Device specific";
+		case CO_EMC_NO_ERROR:                   return "Error Reset or No Error";
+		case CO_EMC_GENERIC:                    return "Generic Error";
+		case CO_EMC_CURRENT:                    return "Current";
+		case CO_EMC_CURRENT_INPUT:              return "Current, device input side";
+		case CO_EMC_CURRENT_INSIDE:             return "Current inside the device";
+		case CO_EMC_CURRENT_OUTPUT:             return "Current, device output side";
+		case CO_EMC_VOLTAGE:                    return "Voltage";
+		case CO_EMC_VOLTAGE_MAINS:              return "Mains Voltage";
+		case CO_EMC_VOLTAGE_INSIDE:             return "Voltage inside the device";
+		case CO_EMC_VOLTAGE_OUTPUT:             return "Output Voltage";
+		case CO_EMC_TEMPERATURE:                return "Temperature";
+		case CO_EMC_TEMP_AMBIENT:               return "Ambient Temperature";
+		case CO_EMC_TEMP_DEVICE:                return "Device Temperature";
+		case CO_EMC_HARDWARE:                   return "Device Hardware";
+		case CO_EMC_SOFTWARE_DEVICE:            return "Device Software";
+		case CO_EMC_SOFTWARE_INTERNAL:          return "Internal Software";
+		case CO_EMC_SOFTWARE_USER:              return "User Software";
+		case CO_EMC_DATA_SET:                   return "Data Set";
+		case CO_EMC_ADDITIONAL_MODUL:           return "Additional Modules";
+		case CO_EMC_MONITORING:                 return "Monitoring";
+		case CO_EMC_COMMUNICATION:              return "Communication";
+		case CO_EMC_CAN_OVERRUN:                return "CAN Overrun (Objects lost)";
+		case CO_EMC_CAN_PASSIVE:                return "CAN Passive Mode";
+		case CO_EMC_HEARTBEAT:                  return "Life Guard Error or Heartbeat Error";
+		case CO_EMC_BUS_OFF_RECOVERED:          return "recovered from bus off";
+		case CO_EMC_CAN_ID_COLLISION:           return "CAN-ID collision";
+		case CO_EMC_PROTOCOL_ERROR:             return "Protocol Error";
+		case CO_EMC_PDO_LENGTH:                 return "PDO not processed due to length error";
+		case CO_EMC_PDO_LENGTH_EXC:             return "PDO length exceeded";
+		case CO_EMC_DAM_MPDO:                   return "DAM MPDO not processed, destination object not available";
+		case CO_EMC_SYNC_DATA_LENGTH:           return "Unexpected SYNC data length";
+		case CO_EMC_RPDO_TIMEOUT:               return "RPDO timeout";
+		case CO_EMC_EXTERNAL_ERROR:             return "External Error";
+		case CO_EMC_ADDITIONAL_FUNC:            return "Additional Functions";
+		case CO_EMC_DEVICE_SPECIFIC:            return "Device specific";
 
-		case CO_EMC401_OUT_CUR_HI: return "DS401:Current at outputs too high (overload)";
-		case CO_EMC401_OUT_SHORTED: return "DS401:Short circuit at outputs";
-		case CO_EMC401_OUT_LOAD_DUMP: return "DS401:Load dump at outputs";
-		case CO_EMC401_IN_VOLT_HI: return "DS401:Input voltage too high";
-		case CO_EMC401_IN_VOLT_LOW: return "DS401:Input voltage too low";
-		case CO_EMC401_INTERN_VOLT_HI: return "DS401:Internal voltage too high";
-		case CO_EMC401_INTERN_VOLT_LO: return "DS401:Internal voltage too low";
-		case CO_EMC401_OUT_VOLT_HIGH: return "DS401:Output voltage too high";
-		case CO_EMC401_OUT_VOLT_LOW: return "DS401:Output voltage too low";
-		case CO_EMC401_POWER_TEMP_OVER: return "Excess temperature of the inverter";
-		case CO_EMC401_MOTOR_TEMP_OVER: return "Excess temperature of the motor";
-		case CO_EMC401_SYS_ERROR: return "System error";
-		case CO_EMC401_POINT_ERROR: return "System error: invalid motion point";
-		case CO_EMC401_CURR_MEAS_OFFSET: return "Control: Current measurement offset";
-		case CO_EMC401_EE_FAULT: return "EEPROM Fault";
-		case CO_EMC401_EE_CRC_ERROR: return "EEPROM checksum error";
-		case CO_EMC401_CONF_ERROR: return "Configuration error";
-		case CO_EMC401_ENC_CNT_ERROR: return "Encoder counting error";
-		case CO_EMC401_VEL_FLW_ERROR: return "Velocity controller following error";
-		case CO_EMC401_POS_LIMIT: return "Position controller limits";
-		case CO_EMC401_POS_FLW_ERROR: return "Position controller following error";
-		case CO_EMC401_POS_FLW_STATIC_ERROR: return "Position controller static following error";
-		case CO_EMC401_ACCESS_ERROR: return "Unauthorized access";
-		case CO_EMC401_PWRCTRL_ERROR: return "Power Stage Controller Error";
-		case CO_EMC401_BUSY: return "Busy";
-		case CO_EMC401_PROCEDURE_ERROR: return "Procedure error";
-		case CO_EMC401_FORCE_OVER: return "Over force";
-		case CO_EMC401_POWER_OVER: return "Over power";
-		default: return "N/A";
+		case CO_EMC401_OUT_CUR_HI:              return "DS401: Current at outputs too high (overload)";
+		case CO_EMC401_OUT_SHORTED:             return "DS401: Short circuit at outputs";
+		case CO_EMC401_OUT_LOAD_DUMP:           return "DS401: Load dump at outputs";
+		case CO_EMC401_IN_VOLT_HI:              return "DS401: Input voltage too high";
+		case CO_EMC401_IN_VOLT_LOW:             return "DS401: Input voltage too low";
+		case CO_EMC401_INTERN_VOLT_HI:          return "DS401: Internal voltage too high";
+		case CO_EMC401_INTERN_VOLT_LO:          return "DS401: Internal voltage too low";
+		case CO_EMC401_OUT_VOLT_HIGH:           return "DS401: Output voltage too high";
+		case CO_EMC401_OUT_VOLT_LOW:            return "DS401: Output voltage too low";
+		case CO_EMC401_POWER_TEMP_OVER:         return "High temperature of the PCB";
+		case CO_EMC401_MOTOR_TEMP_OVER:         return "High temperature of the motor";
+		case CO_EMC401_SYS_ERROR:               return "System error";
+		case CO_EMC401_POINT_ERROR:             return "System error: invalid motion point";
+		case CO_EMC401_CURR_MEAS_OFFSET:        return "Control: Current measurement offset";
+		case CO_EMC401_EE_FAULT:                return "EEPROM fault";
+		case CO_EMC401_EE_CRC_ERROR:            return "EEPROM checksum error";
+		case CO_EMC401_CONF_ERROR:              return "Configuration error";
+		case CO_EMC401_ENC_CNT_ERROR:           return "Encoder counting error";
+		case CO_EMC401_VEL_FLW_ERROR:           return "Velocity controller following error";
+		case CO_EMC401_POS_LIMIT:               return "Position controller limits";
+		case CO_EMC401_POS_FLW_ERROR:           return "Position controller following error";
+		case CO_EMC401_POS_FLW_STATIC_ERROR:    return "Position controller static following error";
+		case CO_EMC401_ACCESS_ERROR:            return "Unauthorized access";
+		case CO_EMC401_PWRCTRL_ERROR:           return "Power Stage Controller Error";
+		case CO_EMC401_BUSY:                    return "Busy";
+		case CO_EMC401_PROCEDURE_ERROR:         return "Procedure error";
+		case CO_EMC401_FORCE_OVER:              return "Over force";
+		case CO_EMC401_POWER_OVER:              return "Over power";
+		default:                                return "N/A";
 	}
 }
 
@@ -831,26 +820,47 @@ int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
     write_timestamp(inst, timestamp_ms);
     return RET_OK;
 }
-
+ 
 /**
  * @brief Reads error flag array
  * 
  * @param servo Device instance 
- * @param array Pointer to the error array
- * @param size Size of the received array
+ * @param error_count Pointer to the error count variable
+ * @param error_array Pointer to the error array. Array contains the codes of the errors that can be described with ::rr_describe_emcy_bit function. ::error_count is a size of the array.
+ * If it is not used - pass 0 argument
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
-int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size)
+int rr_read_error_status(const rr_servo_t *servo, uint32_t * const error_count, uint8_t * const error_array)
 {
 	IS_VALID_SERVO(servo);
+
     CHECK_NMT_STATE(servo);
 
-    int _size = *size;
-	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = read_raw_sdo(dev, 0x2000, 0, array, &_size, 1, 200);
+    uint8_t array[32];
+    uint8_t *ptr = error_array == 0 ? array : error_array;
+    *error_count = 0;
 
-    *size = _size;
+    int size = sizeof(array); //? think about
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+
+    uint8_t sts = read_raw_sdo(dev, 0x2000, 0, ptr, &size, 1, 200);
+
+    if(sts == CO_SDO_AB_NONE)
+    {
+        for(int i = 0; i < size*8; i++)
+        {
+            if(ptr[i / 8] & (1 << (i % 8)))
+            {            
+                if(error_array)
+                {
+                    error_array[*error_count] = i;
+                }
+                *error_count += 1;
+            }
+        }
+    }
+
     return ret_sdo(sts);
 }
 
