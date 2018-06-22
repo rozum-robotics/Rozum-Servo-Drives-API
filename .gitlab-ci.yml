@@ -22,6 +22,9 @@ document:
     - cd ..
     - git config --global credential.helper store
     - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
+    - git checkout master
+    - git reset --hard HEAD
+    - git pull
     - git push -f "$GITHUB_URL" master
  artifacts:
     paths:
