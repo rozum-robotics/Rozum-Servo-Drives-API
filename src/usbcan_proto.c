@@ -20,11 +20,7 @@ static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts);
 static int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state);
 static int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd);
 static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m);
-static int usbcan_build_sdo_req(uint8_t *dst,
-		usbcan_sdo_t *sdo,
-		void *data, 
-		uint16_t len,
-		sdo_resp_cb_t cb);
+static int usbcan_build_sdo_req(uint8_t *dst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb);
 static int usbcan_rx(usbcan_instance_t *inst);
 
 static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb);
