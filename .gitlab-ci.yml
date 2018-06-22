@@ -19,6 +19,9 @@ document:
     - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
     - ssh "$COMPANY_SRV" "mkdir -p $COMPANY_SRV_DOC_DIR/servo_api"
     - scp -r html "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR/servo_api"
+    - cd ..
+    - git remote add github https://github.com/rozum-robotics/Rozum-Servo-Drives-API.git
+    - git push -f github master
  artifacts:
     paths:
      - c/html
