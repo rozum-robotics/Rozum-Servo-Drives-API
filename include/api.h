@@ -206,7 +206,7 @@ typedef struct
 typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
 
 /**
- * @brief Emergency (EMCY) callback type.<br>
+ * @brief Method to describe the intiated emergency (EMCY) callback<br>
  *
  */
 typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info);
