@@ -162,7 +162,7 @@ typedef enum
     RR_NMT_PRE_OPERATIONAL = 127, /**< Device is in pre-operational state */
     RR_NMT_OPERATIONAL = 5,       /**< Device is in operational state */
     RR_NMT_STOPPED = 4,           /**< Device is stopped */
-    RR_NMT_HB_TIMEOUT = -1,       /**< Device heartbeat timeout */
+    RR_NMT_HB_TIMEOUT = -1,       /**< Device heartbeat timeout (device disappeared from bus)*/
 } rr_nmt_state_t;
 
 /**
@@ -198,9 +198,9 @@ typedef struct
 
 /**
  * @brief Method to describe the intiated network management (NMT) callback<br>
- * @parameter interface Descriptor of the interface (see ::rr_init_interface) where the NMT state occured
- * servo_id Descriptor of the servo (see ::rr_init_servo) where the NMT state occured
- * nmt_state Network management state (::rr_nmt_state_t) that occured
+ * @param interface Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
+ * @param servo_id Descriptor of the servo (see ::rr_init_servo) where the NMT event occured
+ * @param nmt_state Network management state (::rr_nmt_state_t) that servo entered in
  * 
  */
 typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
