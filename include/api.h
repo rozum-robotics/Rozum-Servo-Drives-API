@@ -152,7 +152,7 @@ typedef enum
 } rr_servo_param_t;
 
 /**
- * @brief Network management (NMT) satates
+ * @brief Network management (NMT) states
  * 
  */
 typedef enum
