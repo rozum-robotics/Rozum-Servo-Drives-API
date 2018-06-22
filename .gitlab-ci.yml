@@ -21,8 +21,8 @@ document:
     - scp -r html "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR/servo_api"
     - cd ..
     - git config --global credential.helper store
-    - echo "$GITHUB_CREDENTIALS" ~/.git-credentials
-    - git remote add "$GITHUB_URL"
+    - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
+    - git remote add github "$GITHUB_URL"
     - git push -f github master
  artifacts:
     paths:
