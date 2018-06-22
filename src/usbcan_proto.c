@@ -123,7 +123,7 @@ static void ipc_create_link(usbcan_instance_t *inst)
  */
 static size_t read_sig_safe(int fd, void *data, size_t sz)
 {
-    size_t l, bytes = 0;
+    ssize_t l, bytes = 0;
 
     while(sz)
     {
@@ -150,7 +150,7 @@ static size_t read_sig_safe(int fd, void *data, size_t sz)
  */
 static size_t write_sig_safe(int fd, void *data, size_t sz)
 {
-    size_t l, bytes = 0;
+    ssize_t l, bytes = 0;
 
     while(sz)
     {

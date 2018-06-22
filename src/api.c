@@ -75,11 +75,11 @@ void rr_nmt_state_master_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t 
 {
 	rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
 
-	LOG_INFO(debug_log, "Device %d state changed to %d:\n    '%s'", id, state, rr_describe_nmt(state));
+	LOG_INFO(debug_log, "Device %d state changed to %d:\n    '%s'", id, state, rr_describe_nmt((rr_nmt_state_t)state));
 
 	if(i->nmt_cb)
 	{
-		((rr_nmt_cb_t)(i->nmt_cb))(i, id, state);
+		((rr_nmt_cb_t)(i->nmt_cb))(i, id, (rr_nmt_state_t)state);
 	}
 }
 
@@ -620,7 +620,7 @@ int rr_stop_and_release(const rr_servo_t *servo)
 
     uint8_t data = 0;
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = write_raw_sdo(dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -639,7 +639,7 @@ int rr_stop_and_freeze(const rr_servo_t *servo)
 
     uint8_t data = 0;
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = write_raw_sdo(dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -660,7 +660,7 @@ int rr_set_current(const rr_servo_t *servo, const float current_a)
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &current_a, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -681,7 +681,7 @@ int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -702,7 +702,7 @@ int rr_set_position(const rr_servo_t *servo, const float position_deg)
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &position_deg, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -725,7 +725,7 @@ int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_de
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
     usb_can_put_float(data, 0, &current_a, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -752,7 +752,7 @@ int rr_set_position_with_limits(const rr_servo_t *servo, const float position_de
     usb_can_put_float(data, 0, &position_deg, 1);
     usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
     usb_can_put_float(data, 0, &current_a, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -774,7 +774,7 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent)
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &duty_percent, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
@@ -848,7 +848,7 @@ int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size
 
     int _size = *size;
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = read_raw_sdo(dev, 0x2000, 0, array, &_size, 1, 200);
+    uint32_t sts = read_raw_sdo(dev, 0x2000, 0, array, &_size, 1, 200);
 
     *size = _size;
     return ret_sdo(sts);
@@ -920,7 +920,7 @@ int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, 
 		}
     }
 
-    int sts = write_raw_sdo(dev, 0x2015, 1, array, sizeof(array), 1, 200);
+    uint32_t sts = write_raw_sdo(dev, 0x2015, 1, array, sizeof(array), 1, 200);
 
 	return ret_sdo(sts);
 }
@@ -943,7 +943,7 @@ int rr_read_parameter( rr_servo_t *servo, const rr_servo_param_t param, float *v
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     int size = sizeof(data);
 
-    int sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
+    uint32_t sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
     if(sts == CO_SDO_AB_NONE && size == 4)
     {        
         usb_can_get_float(data, 0, (float *)&servo->pcache[param].value, 1);
@@ -996,7 +996,7 @@ int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
     CHECK_NMT_STATE(servo);
 
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&num_to_clear, sizeof(num_to_clear), 1, 100); 
+    uint32_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&num_to_clear, sizeof(num_to_clear), 1, 100); 
     return ret_sdo(sts);
 }
 
@@ -1016,7 +1016,7 @@ int rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     int len = sizeof(data);
-    uint8_t sts = read_raw_sdo(dev, 0x2202, 0x02, data, &len, 1, 100);
+    uint32_t sts = read_raw_sdo(dev, 0x2202, 0x02, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
@@ -1043,7 +1043,7 @@ int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
     uint8_t data[4];
     int len = sizeof(data);
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = read_raw_sdo(dev, 0x2202, 0x03, data, &len, 1, 100);
+    uint32_t sts = read_raw_sdo(dev, 0x2202, 0x03, data, &len, 1, 100);
 
     if(sts == CO_SDO_AB_NONE && len == 4)
     {
@@ -1090,7 +1090,7 @@ int rr_invoke_time_calculation(const rr_servo_t *servo,
     p = usb_can_put_float(data, p, &end_acceleration_deg_per_sec2, 1);
     p = usb_can_put_uint32_t(data, p, &end_time_ms, 1);
 
-    uint8_t sts = write_raw_sdo(dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
+    uint32_t sts = write_raw_sdo(dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
     if(sts == CO_SDO_AB_GENERAL)
     {
@@ -1118,7 +1118,7 @@ int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     int len = sizeof(data);
-    uint8_t sts = read_raw_sdo(dev, 0x2203, 0x02, data, &len, 1, 100);
+    uint32_t sts = read_raw_sdo(dev, 0x2203, 0x02, data, &len, 1, 100);
     uint32_t num;
 
     if(sts == CO_SDO_AB_NONE && len == 4)
@@ -1147,7 +1147,7 @@ int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &position_deg, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
+    uint32_t sts = write_raw_sdo(dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
 
     return ret_sdo(sts);
 }
@@ -1168,7 +1168,7 @@ int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &position_deg, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2208, 0x02, data, sizeof(data), 0, 200);
+    uint32_t sts = write_raw_sdo(dev, 0x2208, 0x02, data, sizeof(data), 0, 200);
 
     return ret_sdo(sts);
 }
@@ -1190,7 +1190,7 @@ int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
     int len = sizeof(data);
 
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t sts = read_raw_sdo(dev, 0x2207, 0x02, data, &len, 1, 100);
+    uint32_t sts = read_raw_sdo(dev, 0x2207, 0x02, data, &len, 1, 100);
     if(sts == CO_SDO_AB_NONE)
     {
         usb_can_get_float(data, 0, velocity_deg_per_sec, 1);
@@ -1216,7 +1216,7 @@ int rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_pe
     uint8_t data[4];
 	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &max_velocity_deg_per_sec, 1);
-    uint8_t sts = write_raw_sdo(dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
+    uint32_t sts = write_raw_sdo(dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }
