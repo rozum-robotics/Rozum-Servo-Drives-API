@@ -136,7 +136,7 @@ void rr_set_debug_log_stream(FILE *f)
  * @brief Register user callback for network management (NMT) events
  * 
  * @param interface to register callback on
- * @param cb (:rr_nmt_cb_t) function to be called when NMT event occures. set to NULL to disable.
+ * @param cb (::rr_nmt_cb_t) function to be called when NMT event occures. set to NULL to disable.
  * @return void
  * @ingroup Utils
  */
@@ -152,7 +152,7 @@ void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb)
  * @brief Register user callback for Emergency (EMCY) events
  * 
  * @param interface to register callback on
- * @param cb (:rr_emcy_cb_t) function to be called when NMT event occures. Set to NULL to disable.
+ * @param cb (::rr_emcy_cb_t) function to be called when NMT event occures. Set to NULL to disable.
  * @return void
  * @ingroup Utils
  */
@@ -1179,7 +1179,7 @@ int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
 /**
  * @brief The function enables setting the current servo position (in degrees) to any value defined by the user (see ::rr_set_zero_position) and
  * saving it to the FLASH memory.<br>
- <p><b>Note:</b>The FLASH memory limit is 1,000 entries. Therefore, it is not advisable to use the function on a regular basis.
+ <p><b>Note:</b>The FLASH memory limit is 1,000 write cycles. Therefore, it is not advisable to use the function on a regular basis.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg User-defined position (in degrees) to replace the current position value
  * @return int Status code (::rr_ret_status_t)
