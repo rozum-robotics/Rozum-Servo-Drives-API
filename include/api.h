@@ -197,8 +197,11 @@ typedef struct
 } rr_can_interface_t;
 
 /**
- * @brief Network management (NMT) callback type.<br>
- *
+ * @brief Method to describe the intiated network management (NMT) callback<br>
+ * @parameter interface Descriptor of the interface (see ::rr_init_interface) where the NMT state occured
+ * servo_id Descriptor of the servo (see ::rr_init_servo) where the NMT state occured
+ * nmt_state Network management state (::rr_nmt_state_t) that occured
+ * 
  */
 typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
 
