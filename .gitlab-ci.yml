@@ -6,26 +6,21 @@ stages:
 before_script:
   - eval $(ssh-agent)
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
-  
-  - git submodule sync --recursive
-  - git submodule update --init --recursive
-
 
 document:
  stage: document
  script: 
+    - git checkout master
+    - git reset --hard HEAD
+    - git pull
+    - git config --global credential.helper store
+    - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
+    - git push -f "$GITHUB_URL" master
     - cd c
     - doxygen
     - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
     - ssh "$COMPANY_SRV" "mkdir -p $COMPANY_SRV_DOC_DIR/servo_api"
-    - scp -r html "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR/servo_api"
-    - cd ..
-    - git config --global credential.helper store
-    - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
-    - git checkout master
-    - git reset --hard HEAD
-    - git pull
-    - git push -f "$GITHUB_URL" master
+    - scp -r html/ "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR/servo_api"
  artifacts:
     paths:
      - c/html
