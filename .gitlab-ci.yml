@@ -10,10 +10,11 @@ before_script:
 document:
  stage: document
  script: 
+    - cd c
     - doxygen
  artifacts:
     paths:
-     - html
+     - c/html
     expire_in: 1 month
  only:
     - master
