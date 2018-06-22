@@ -22,8 +22,7 @@ document:
     - cd ..
     - git config --global credential.helper store
     - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
-    - git remote add github "$GITHUB_URL"
-    - git push -f github master
+    - git push -f "$GITHUB_URL" master
  artifacts:
     paths:
      - c/html
