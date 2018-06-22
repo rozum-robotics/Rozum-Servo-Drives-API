@@ -4,14 +4,19 @@ stages:
   - document
   
 before_script:
+  - eval $(ssh-agent)
+  - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
+  
   - git submodule sync --recursive
   - git submodule update --init --recursive
+
 
 document:
  stage: document
  script: 
     - cd c
     - doxygen
+    - scp -r html "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR/servo_api"
  artifacts:
     paths:
      - c/html
