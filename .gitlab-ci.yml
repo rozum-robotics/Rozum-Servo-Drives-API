@@ -16,6 +16,7 @@ document:
  script: 
     - cd c
     - doxygen
+    - ssh "$COMPANY_SRV" "mkdir -p $COMPANY_SRV_DOC_DIR/servo_api"
     - scp -r html "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR/servo_api"
  artifacts:
     paths:
