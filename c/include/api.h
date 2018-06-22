@@ -152,7 +152,7 @@ typedef enum
 } rr_servo_param_t;
 
 /**
- * @brief Network management (NMT) satates
+ * @brief Network management (NMT) states
  * 
  */
 typedef enum
@@ -197,13 +197,16 @@ typedef struct
 } rr_can_interface_t;
 
 /**
- * @brief Network management (NMT) callback type.<br>
- *
+ * @brief Method to describe the intiated network management (NMT) callback<br>
+ * @parameter interface Descriptor of the interface (see ::rr_init_interface) where the NMT state occured
+ * servo_id Descriptor of the servo (see ::rr_init_servo) where the NMT state occured
+ * nmt_state Network management state (::rr_nmt_state_t) that occured
+ * 
  */
 typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
 
 /**
- * @brief Emergency (EMCY) callback type.<br>
+ * @brief Method to describe the intiated emergency (EMCY) callback<br>
  *
  */
 typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info);
