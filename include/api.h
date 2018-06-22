@@ -23,11 +23,10 @@
 #define API_DEBUG(...) fprintf(stderr, __VA_ARGS__)
 
 /**
- * @brief Make string from variable 
+ * @brief Makeы string from еру variable 
  * 
  */
 #define STRFY(x) #x
-
 
 /* Exported constants --------------------------------------------------------*/
 
@@ -35,7 +34,7 @@
 /**
  * @brief Return codes of the API functions
  */
-typedef enum 
+typedef enum
 {
     RET_OK = 0,       ///< Status OK
     RET_ERROR,        ///< Generic error
@@ -47,7 +46,7 @@ typedef enum
     RET_TIMEOUT,      ///< Communication timeout
     RET_ZERO_SIZE,    ///< Zero size
     RET_SIZE_MISMATCH ///< Received & target size mismatch
-}rr_ret_status_t;
+} rr_ret_status_t;
 
 /**
  * @brief Device parameter & source indexes
@@ -149,9 +148,8 @@ typedef enum
     APP_PARAM_POWER_IN,
     APP_PARAM_POWER_OUT,
 
-    APP_PARAM_SIZE //should be last
+    APP_PARAM_SIZE
 } rr_servo_param_t;
-
 
 /**
  * @brief Network management (NMT) satates
@@ -159,12 +157,12 @@ typedef enum
  */
 typedef enum
 {
-	RR_NMT_INITIALIZING = 0,      /**< Device is initializing */
-	RR_NMT_BOOT = 2,              /**< Device executing bootloader application */
-	RR_NMT_PRE_OPERATIONAL = 127, /**< Device is in pre-operational state */
-	RR_NMT_OPERATIONAL = 5,       /**< Device is in operational state */
-	RR_NMT_STOPPED = 4,           /**< Device is stopped */
-	RR_NMT_HB_TIMEOUT = -1,
+    RR_NMT_INITIALIZING = 0,      /**< Device is initializing */
+    RR_NMT_BOOT = 2,              /**< Device executing bootloader application */
+    RR_NMT_PRE_OPERATIONAL = 127, /**< Device is in pre-operational state */
+    RR_NMT_OPERATIONAL = 5,       /**< Device is in operational state */
+    RR_NMT_STOPPED = 4,           /**< Device is stopped */
+    RR_NMT_HB_TIMEOUT = -1,       /**< Device heartbeat timeout */
 } rr_nmt_state_t;
 
 /**
@@ -183,7 +181,7 @@ typedef struct
  */
 typedef struct
 {
-    void *dev;                                 ///< Device internals
+    void *dev;                                  ///< Device internals
     param_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
 } rr_servo_t;
 
@@ -193,9 +191,9 @@ typedef struct
  */
 typedef struct
 {
-    void *iface; ///< Interface internals
-	void *nmt_cb; ///< NMT callback pointer
-	void *emcy_cb; ///< EMCY callback pointer
+    void *iface;   ///< Interface internals
+    void *nmt_cb;  ///< NMT callback pointer
+    void *emcy_cb; ///< EMCY callback pointer
 } rr_can_interface_t;
 
 /**
@@ -209,7 +207,6 @@ typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_
  *
  */
 typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info);
-
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -227,7 +224,7 @@ void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb);
 void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb);
 const char *rr_describe_nmt(rr_nmt_state_t state);
 const char *rr_describe_emcy_code(uint16_t code);
-const char *rr_describe_emcy_bits(uint8_t bits);
+const char *rr_describe_emcy_bit(uint8_t bit);
 
 rr_can_interface_t *rr_init_interface(const char *interface_name);
 int rr_deinit_interface(rr_can_interface_t **interface);
@@ -259,13 +256,13 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent);
 int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms);
 int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
 
-int rr_read_error_status(const rr_servo_t *servo, uint8_t *array, uint32_t *size);
+int rr_read_error_status(const rr_servo_t *servo, uint32_t * const error_count, uint8_t * const error_array);
 
 int rr_param_cache_update(rr_servo_t *servo);
 int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
 
 int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
-int rr_read_cached_parameter( rr_servo_t *servo, const rr_servo_param_t param, float *value);
+int rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
 
 int rr_clear_points_all(const rr_servo_t *servo);
 int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);
