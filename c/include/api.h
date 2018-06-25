@@ -197,17 +197,22 @@ typedef struct
 } rr_can_interface_t;
 
 /**
- * @brief Method to describe the intiated network management (NMT) callback<br>
+ * @brief Type of the intiated network management (NMT) callback<br>
  * @param interface Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
  * @param servo_id Descriptor of the servo (see ::rr_init_servo) where the NMT event occured
- * @param nmt_state Network management state (::rr_nmt_state_t) that servo entered in
+ * @param nmt_state Network management state (::rr_nmt_state_t) that the servo entered
  * 
  */
 typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
 
 /**
- * @brief Method to describe the intiated emergency (EMCY) callback<br>
- *
+ * @brief Type of the intiated emergency (EMCY) callback<br>
+ * @param interface Descriptor of the interface (see ::rr_init_interface) where the EMCY event occured
+ * @param servo_id Descriptor of the servo (see ::rr_init_servo) where the EMCY event occured
+ * @param code Error code
+ * @param reg register field of the EMCY message (see CanOpen documentation)
+ * @param bits bits field of the EMCY message (see CanOpen documentation)
+ * @param info additional field (see CanOpen documentation)
  */
 typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info);
 
