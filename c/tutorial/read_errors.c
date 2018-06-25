@@ -1,9 +1,23 @@
+/**
+ * @brief Tutorial example of reading device errors
+ * 
+ * @file read_errors.c
+ * @author Rozum
+ * @date 2018-06-25
+ */
 #include "api.h"
 #include "tutorial.h"
 
+/**
+ * @brief Tutorial example of reading device errors
+ * 
+ * @ingroup tutor_c_error_read
+ */
 int main(int argc, char *argv[])
 {
-    rr_can_interface_t *iface = rr_init_interface(/*TUTORIAL_DEVICE*/"/dev/ttyS3");
+    /** @code{.c} 
+    */
+    rr_can_interface_t *iface = rr_init_interface(/*TUTORIAL_DEVICE*/ "/dev/ttyS3");
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading servo error count");
@@ -20,4 +34,5 @@ int main(int argc, char *argv[])
     {
         API_DEBUG("\t\tError: %s\n", rr_describe_emcy_bit(array[i]));
     }
+    /** @endcode */
 }

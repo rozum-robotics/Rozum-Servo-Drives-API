@@ -1,8 +1,23 @@
+/**
+ * @brief Tutorial example of reading motion queue parameters
+ * 
+ * @file read_servo_motion_queue.c
+ * @author Rozum
+ * @date 2018-06-25
+ */
+
 #include "api.h"
 #include "tutorial.h"
 
+/**
+ * @brief Tutorial example of reading motion queue parameters
+ * 
+ * @ingroup tutor_c_read_motion_queue
+ */
 int main(int argc, char *argv[])
 {
+    /** @code{.c} 
+    */
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
 
@@ -27,4 +42,5 @@ int main(int argc, char *argv[])
 
     rr_get_points_free_space(servo, &num);
     API_DEBUG("\tPoints queue free size after: %d\n", num);
+    /** @endcode */
 }
