@@ -4,8 +4,8 @@ stages:
   - document
   
 before_script:
-#  - eval $(ssh-agent)
-#  - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
+  - eval $(ssh-agent)
+  - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
 
 document:
  stage: document
