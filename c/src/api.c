@@ -124,9 +124,9 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
 /// @endcond
 
 /**
- * @brief The function stops execution of the user program for the specified idle time. 
+ * @brief The function sets a system latency period. Until the period expires, the user program will not execute any actions.
  * However, the network management, CAN communication, emergency, and Heartbeat functions remain available.
- * @param ms Idle time (in milleseconds)
+ * @param ms Latency period (in milleseconds)
  * @return void
  * @ingroup Utils
  */
@@ -952,7 +952,7 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * @param servo Servo descriptor returned by the ::rr_init_servo function. 
  * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
  * @param velocity_deg Velocity(in degrees/sec) at which the servo should move to reach the specified position
- * @param time_ms Time (in milliseconds) it should take the servo to move from its current position to the commanded one. The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
+ * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one. The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
