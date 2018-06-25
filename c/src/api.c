@@ -1141,11 +1141,11 @@ int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *va
 }
 
 /**
- * @brief Reads single information parameter from cache.
- * 
- * @param servo Device instance 
- * @param param Parameter index to read (::rr_servo_param_t)
- * @param value Pointer to the readed variable
+ * @brief The function enables reading a single parameter from the cache. Prior to reading the parameter,
+ * make sure to update the cache using the ::rr_param_cache_update function.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
+ * @param param Index of the parameter to read as indicated in the rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
+ * @param value Pointer to the parameter where the reading is saved
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
