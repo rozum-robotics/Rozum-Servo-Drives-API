@@ -20,7 +20,7 @@ document:
     - doxygen
 #    - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
 #    - ssh "$COMPANY_SRV" "rm -fr $COMPANY_SRV_DOC_DIR"
-    - scp -r html/* "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR"
+    - scp -o StrictHostKeyChecking=no -r html/* "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR"
  artifacts:
     paths:
      - c/html
