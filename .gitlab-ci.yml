@@ -4,8 +4,8 @@ stages:
   - document
   
 before_script:
-  - eval $(ssh-agent)
-  - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
+#  - eval $(ssh-agent)
+#  - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
 
 document:
  stage: document
@@ -18,8 +18,8 @@ document:
     - git push -f "$GITHUB_URL" master
     - cd c
     - doxygen
-    - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
-    - ssh "$COMPANY_SRV" "rm -fr $COMPANY_SRV_DOC_DIR"
+#    - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
+#    - ssh "$COMPANY_SRV" "rm -fr $COMPANY_SRV_DOC_DIR"
     - scp -r html/* "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR"
  artifacts:
     paths:
