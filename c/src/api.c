@@ -1003,12 +1003,12 @@ int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
 }
 
 /**
- * @brief Reads error flag array
+ * @brief The functions enables reading the total current count of servo errors and their codes.
  * 
- * @param servo Servo descriptor 
- * @param error_count Pointer to the error count variable
- * @param error_array Pointer to the error array. Array contains the codes of the errors that can be described with ::rr_describe_emcy_bit function.
- * If it is not used - pass 0 argument
+ * @param servo Servo Servo descriptor returned by the ::rr_init_servo function.  
+ * @param error_count Pointer to the variable where the function will read the current servo error count
+ * @param error_array Pointer to the array of errors that contains error codes. These error codes can be described by the ::rr_describe_emcy_bit function.
+ * If the array is not used, set the parameter to 0.
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
