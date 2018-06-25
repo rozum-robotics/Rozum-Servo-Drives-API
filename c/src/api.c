@@ -6,7 +6,8 @@
  * @date 2018-06-01
  */
 
-/*! \mainpage Rozum Robotics User API
+/*! \mainpage Rozum Robotics User API & Servo Box
+ * - \subpage servo_box
  * 
  * \section intro_section Categories
  * - \ref Utils
@@ -15,6 +16,7 @@
  * - \ref Servo_control
  * - \ref Servo_config
  * - \ref Servo_info
+ * - \ref hw_manual
  * 
  * \section tutor Tutorials
  * - C
@@ -38,13 +40,15 @@
  * \defgroup Servo_config Servo configuration functions
  * \defgroup Servo_info Servo info functions
  * 
+ * \defgroup hw_manual Servo box specs & manual
+ * 
  * \defgroup tutor_c_servomove1 One servo PVT move
  * \defgroup tutor_c_servomove2 Two servos PVT move
  * \defgroup tutor_c_servomove3 Three servos PVT move
  * \defgroup tutor_c_param_cache Device parameter cache programming and reading
  * \defgroup tutor_c_param Device parameters reading
  * \defgroup tutor_c_calculate_point Servo PVT point calculation
- * \defgroup tutor_c_error_read Device errors reading
+ * 
  * \defgroup tutor_c_get_max_velocity Reading of the maximum velocity
  * \defgroup tutor_c_read_motion_queue Reading of the motion queue parameters
  */
