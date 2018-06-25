@@ -136,7 +136,7 @@ void rr_sleep_ms(int ms)
 }
 
 /**
- * @brief The function sets a stream to save information about CAN communication via the specified interface.
+ * @brief The function sets a stream to save CAN communication dump from the specified interface.
  * Subsequently, the user can look through the logs to identify causes of CAN communication failures.
  * @param interface Descriptor of the interface where the logged CAN communication occurs (as returned by the ::rr_init_interface function) 
  * @param f stdio stream for saving the communication log. When the parameter is set to "NULL," logging of CAN communication events is disabled.
@@ -195,7 +195,7 @@ void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb)
 }
 
 /**
- * @brief The function returns a string descibing the specified NMT state code. 
+ * @brief The function returns a string describing the specified NMT state code. 
  * You can also use the function as part of the ::rr_setup_nmt_callback function.
  * @param state NMT state code to descibe
  * @return void
@@ -550,9 +550,9 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
 }
 
 /**
- * @brief The function closes the COM port where the corresponding CAN-USB dongle is connected, disabling all servo motors associated with this interface.
+ * @brief The function closes the COM port where the corresponding CAN-USB dongle is connected, removing from the memory all data associated with the interface descriptor.
  * It is advisable to call the function every time before quitting the user program.
- * @param interface Full path to the COM port to close. The path can vary, depending on the operating system (see ::rr_init_interface).
+ * @param interface Interface descriptor (see ::rr_init_interface).
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Common
  */
@@ -572,8 +572,8 @@ int rr_deinit_interface(rr_can_interface_t **interface)
 /**
  * @brief The function determines whether the servo motor with the speficied ID is connected to the specified interface.<br>
    <p>The function waits for 2 seconds to receive a Heartbeat message from the servo. When the message arrives within the interval, the servo is available for communication and commands.<br>
- * Its return is the servo descriptor that you will need for subsequent API calls to the servo.</p> 
- * @param interface Handle to the interface where the servo is connected (as returned by the ::rr_init_interface function)
+ * The function returns the servo descriptor that you will need for subsequent API calls to the servo.</p> 
+ * @param interface Descriptor of the interface (returned by the ::rr_init_interface function) where the servo is connected
  * @param id Unique identifier of the servo in this interface. The available value range is from 0 to 127.
  * @return Servo descriptor (::rr_servo_t) <br> or NULL when no Heartbeat message is received within the specified interval
  * @ingroup Common
@@ -601,7 +601,7 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
 }
 
 /**
- * @brief The function disables the servo motor specified in the parameter of the function.
+ * @brief The function clears all data associated with the servo descriptor.
  * 
  * @param servo Servo descriptor returned by the ::rr_init_servo function.
  * @return int Status code (::rr_ret_status_t)
@@ -715,8 +715,7 @@ int rr_net_reboot(const rr_can_interface_t *interface)
 
 /**
  * @brief The function resets communication via the specified interface.
- * Simultaneoulsy, all servos connected to the interface become unavailable for communication. 
- * <p>For instance, you may need to use the function when changing settings that require a reset after modification.
+ * For instance, you may need to use the function when changing settings that require a reset after modification.
  * @param interface Interface descriptor returned by the ::rr_init_interface function. 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
