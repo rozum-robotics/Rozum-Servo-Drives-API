@@ -1,5 +1,16 @@
 /**
  * @brief The tutorial describes how to set two PVT (point, velocity, time) points for one servo and
+ * to execute the resulting motion trajectory.
+ * @file control_servo_traj_1.c
+ * @author Rozum
+ * @date 2018-06-25
+ */
+
+#include "api.h"
+#include "tutorial.h"
+
+/**
+ * @brief The tutorial describes how to set two PVT (point, velocity, time) points for one servo and
  * to execute the resulting motion trajectory.<br>
  * The general sequence of actions is as follows:
  * 1. Open the USB port where your CAN-USB dongle is connected using the ::rr_init_interface function.
@@ -19,17 +30,7 @@
  * velocity_deg: 0.0 degrees
  * time_ms: 6000 milliseconds
  * 6. Call the ::rr_start_motion to execute the motion queue comprising the two points added in Step 4 and Step 5.
- * 7. Call the ::rr_sleep_ms function to set a latency period of 14 seconds. Calling the function ensures that master Heartbeats will be still available and the servo will not stop.
- * @file control_servo_traj_1.c
- * @author Rozum
- * @date 2018-06-25
- */
-
-#include "api.h"
-#include "tutorial.h"
-
-/**
- * @brief Tutorial example of one servo PVT move
+ * 7. Call the ::rr_sleep_ms function to set a latency period of 14 seconds (or 14000 milliseconds). Calling the function ensures that master Heartbeats will be still available and the servo will not stop.
  * 
  * @ingroup tutor_c_servomove1
  */
