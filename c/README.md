@@ -4,7 +4,7 @@
 
 2. File structure
 
-    `buid` - folder containing compiled library (dynamic and static) and
+    `build` - folder containing compiled library (dynamic and static) and
         intermidiate compiler files
         
     `html` - Doxygen generated documentation
