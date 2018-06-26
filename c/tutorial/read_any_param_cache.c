@@ -5,7 +5,6 @@
  * @author Rozum
  * @date 2018-06-25
  */
-
 #include "api.h"
 #include "tutorial.h"
 
