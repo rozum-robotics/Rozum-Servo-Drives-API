@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
     //! [Adding the interface]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding the interface]
-    //! [Adding servo one]
+    //! [Adding servo first]
     rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding servo one]
+    //! [Adding servo first]
     //! [Adding servo second]
     rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
     //! [Adding servo second]
