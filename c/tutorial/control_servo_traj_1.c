@@ -25,11 +25,9 @@
  * 4. Set the first PVT point, commanding the servo to move to the position of 100 degrees in 6,000 milliseconds.
  * \snippet control_servo_traj_1.c Add motion point first
  * 
- * 5. Set the second PVT point, commanding the servo to move to the position of -100 degrees in 6,000 milliseconds.
- * \snippet control_servo_traj_1.c Add motion point second
- * 
- * <b>Note</b>: When a point is added successfully to the motion queue, the function will return OK.
+ * 5. Set the second PVT point, commanding the servo to move to the position of -100 degrees in 6,000 milliseconds. <b>Note</b>: When a point is added successfully to the motion queue, the function will return OK.
  * Otherwise, the function returns an error warning and quits the program.
+ * \snippet control_servo_traj_1.c Add motion point second
  * 
  * <b> Executing the motion queue </b>
  * 
