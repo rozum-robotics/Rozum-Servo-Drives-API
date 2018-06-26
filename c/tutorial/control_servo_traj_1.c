@@ -78,8 +78,8 @@ int main(int argc, char *argv[])
     //! [Add motion point second]
     //! [Start motion]
     rr_start_motion(iface, 0);
-   //! [Start motion]
-   //! [Sleep]
+    //! [Start motion]
+    //! [Sleep]
     rr_sleep_ms(14000); // wait till the movement end
     //! [Sleep]
     //! [cccode 1]
