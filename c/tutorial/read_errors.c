@@ -9,34 +9,34 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_error_read Device errors reading
+ * \defgroup tutor_c_error_read Reading device errors
  * 
- *  Initialize the interface
+ * 1. Initialize the interface.
  * \snippet read_errors.c Adding the interface 1
  * 
- *  Initialize the servo
+ * 2. Initialize the servo.
  * \snippet read_errors.c Adding the servo
  * 
- * <b> Reading error count </b>
+ * <b> Reading the current error count</b>
  * 
- * Create variable to read the current error count in it
+ * 3. Create a variable where the function will read the current error count.
  * \snippet read_errors.c Error count var
  * 
- * Reading error count. Notice: the "array" argument is zero (we don't need to read error bits)
+ * 4. Read the current error count. <b>Note</b>: The "array" argument is zero (we don't need to read error bits).
  * \snippet read_errors.c Error count read
  * 
- * <b> Reading error count and error bits </b>
+ * <b> Reading the current error count and error bits</b>
  * 
- * Create array to read the current error bits in it
- * \snippet read_errors.c Error array 2
+ * 5. Create an array where the function will read the current error bits.
+ *  \snippet read_errors.c Error array 2
  * 
- * Create variable to read the current error count in it
+ * 6. Create a variable where the function will read the current error count.
  * \snippet read_errors.c Error count var 2
  * 
- * Reading error count and error bits (if are present)
+ * 7. Read the current error count and error bits (if any).
  * \snippet read_errors.c Error count read
  * 
- * Cycle print of error bits (described by ::rr_describe_emcy_bit function)
+ * 8. Cycle print of error bits (described by ::rr_describe_emcy_bit function).
  * \snippet read_errors.c Cyclic read
  * 
  * <b> Complete tutorial code: </b>
