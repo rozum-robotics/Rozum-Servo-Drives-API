@@ -48,7 +48,11 @@
  * 
  * 10. Read how many more points can be added to the motion queue.
  * \snippet read_servo_motion_queue.c  Points free2
+ *
+ * <b> Complete tutorial code: </b>
+ * \snippet read_errors.c cccode 1
  */ 
+ 
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
