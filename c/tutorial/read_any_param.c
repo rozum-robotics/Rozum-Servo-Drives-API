@@ -1,5 +1,5 @@
 /**
- * @brief Tutorial example of the device parameters read
+ * @brief Tutorial example of reading device parameters
  * 
  * @file read_any_param.c
  * @author your name
@@ -10,31 +10,72 @@
 #include "tutorial.h"
 
 /**
- * @brief Tutorial example of the device parameters read
+ * \defgroup tutor_c_param Reading current device parameters
+ * The tutorial describes how to read a sequence of single variables representing current device parameters (e.g., position, voltage, etc.)
+ * <b> Note </b>: For reference, the tutorial includes more than one parameter.
+ * In paractice, if you need to read more than one parameter, refer to the tutorial ::Device parameter cache programming and reading.
  * 
- * @ingroup tutor_c_param
+ * 1. Initialize the interface.
+ * \snippet read_any_param.c Adding the interface
+ * 
+ * 2. Initialize the servo.
+ * \snippet read_any_param.c Adding the servo
+ * 
+ * <b> Reading current device parameters </b>
+ * 
+ * 3. Create a variable where the function will read the parameters.
+ * \snippet read_any_param.c Read parameter variable
+ * 
+ * 4. Read the rotor position.
+ * \snippet read_any_param.c Read rotor position
+ * 
+ * 5. Read the rotor velocity.
+ * \snippet read_any_param.c Read rotor velocity
+ * 
+ * 6. Read the input voltage.
+ * \snippet read_any_param.c Read voltage
+ * 
+ * 7. Read the input current.
+ * \snippet read_any_param.c Read current
+ * 
+ * <b> Complete tutorial code: </b>
+ * \snippet read_errors.c cccode 1
  */
+ 
 int main(int argc, char *argv[])
 {
-    /** @code{.c} 
-    */
+    //! [cccode 1] 
+    //! [Adding the interface]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    //! [Adding the interface]
+    //! [Adding the servo]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    //! [Adding the servo]
 
     API_DEBUG("========== Tutorial of %s ==========\n", "reading any device parameter (single)");
 
+    //! [Read parameter variable]
     float value;
+    //! [Read parameter variable]
 
+    //! [Read rotor position]
     rr_read_parameter(servo, APP_PARAM_POSITION_ROTOR, &value);
+    //! [Read rotor position]
     API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_POSITION_ROTOR), value);
 
+    //! [Read rotor velocity]
     rr_read_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &value);
+    //! [Read rotor velocity]
     API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VELOCITY_ROTOR), value);
 
+    //! [Read voltage]
     rr_read_parameter(servo, APP_PARAM_VOLTAGE_INPUT, &value);
+    //! [Read voltage]
     API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VOLTAGE_INPUT), value);
 
+    //! [Read current]
     rr_read_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
+    //! [Read current]
     API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
-    /** @endcode */
+    //! [cccode 1]
 }
