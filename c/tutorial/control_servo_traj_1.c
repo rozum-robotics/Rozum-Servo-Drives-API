@@ -9,8 +9,6 @@
 #include "tutorial.h"
 
 /**
- * @brief Setting PVT points for one servo
- * 
  * \defgroup tutor_c_servomove1 <b>Setting PVT points for one servo</b>
  * 
  * 1. Initialize the interface.
@@ -25,10 +23,10 @@
  * <b> Adding PVT points to form a motion queue </b>
  * 
  * 4. Set the first PVT point, commanding the servo to move to the position of 100 degrees in 6,000 milliseconds.
- * \snippet control_servo_traj_1.c Add motion point one
+ * \snippet control_servo_traj_1.c Add motion point first
  * 
  * 5. Set the second PVT point, commanding the servo to move to the position of -100 degrees in 6,000 milliseconds.
- * \snippet control_servo_traj_1.c Add motion point two
+ * \snippet control_servo_traj_1.c Add motion point second
  * 
  * <b>Note</b>: When a point is added successfully to the motion queue, the function will return OK.
  * Otherwise, the function returns an error warning and quits the program.
@@ -62,22 +60,22 @@ int main(int argc, char *argv[])
     rr_clear_points_all(servo);
     //! [Clear points all]
     API_DEBUG("Appending points\n");
-    //! [Add motion point one]
+    //! [Add motion point first]
     int status = rr_add_motion_point(servo, 100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add motion point one]
-    //! [Add motion point two]
+    //! [Add motion point first]
+    //! [Add motion point second]
     status = rr_add_motion_point(servo, -100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add motion point two]
+    //! [Add motion point second]
     //! [Start motion]
     rr_start_motion(iface, 0);
    //! [Start motion]
