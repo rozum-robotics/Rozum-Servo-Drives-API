@@ -1,5 +1,5 @@
 /**
- * @brief Tutorial example of one servo PVT move.
+ * @brief Setting PVT points for one servo
  * @file control_servo_traj_1.c
  * @author Rozum
  * @date 2018-06-25
@@ -9,13 +9,12 @@
 #include "tutorial.h"
 
 /**
- * @brief Tutorial example of one servo PVT move.
+ * @brief Setting PVT points for one servo
  * 
  * \defgroup tutor_c_servomove1 Setting PVT points for one servo
  * 
  * 1. Initialize the interface.
- * 
- * \snippet control_servo_traj_1.c Adding the interface 1
+ * \snippet control_servo_traj_1.c Adding the interface
  * 
  * 2. Initialize the servo.
  * \snippet control_servo_traj_1.c Adding the servo
@@ -23,7 +22,7 @@
  * 3. Clear the motion queue.
  * \snippet control_servo_traj_1.c Clear points all
  * 
- * <b>Adding PVT points to form a motion queue</b>
+ * <b> Adding PVT points to form a motion queue </b>
  * 
  * 4. Set the first PVT point, commanding the servo to move to the position of 100 degrees in 6 seconds.
  * \snippet control_servo_traj_1.c Add motion point 1
@@ -34,12 +33,12 @@
  * <b>Note</b>: When a point is added successfully to the motion queue, the function will return OK.
  * Otherwise, the function returns an error warning and quits the program.
  * 
- * <b>Executing the motion queue</b>
+ * <b> Executing the motion queue </b>
  * 
  * 7. Command the servo to move through the PVT points you added to the motion queue.
  * \snippet control_servo_traj_1.c Start motion
  * 
- * 8. To ensure the servo will keep on working, set a latency period of 14,000 milliseconds.
+ * 8. To ensure the servo will keep on working and will be available for master heartbeats, set a latency period of 14,000 milliseconds.
  * \snippet control_servo_traj_1.c Sleep
  * 
  * <b> Complete tutorial code: </b>
@@ -48,9 +47,9 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface 1]
+    //! [Adding the interface]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface 1]
+    //! [Adding the interface]
     
     //! [Adding the servo]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
