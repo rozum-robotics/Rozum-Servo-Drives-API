@@ -15,10 +15,10 @@
  * 1. Initialize the interface.
  * \snippet control_servo_traj_2.c Adding the interface
  * 
- * 2. Initialize the first servo.
+ * 2. Initialize servo 1.
  * \snippet control_servo_traj_2.c Adding servo ID0
  * 
- * 3. Initialize the second servo.
+ * 3. Initialize servo 2.
  * \snippet control_servo_traj_2.c Adding servo ID1
  * 
  * 4. Clear the motion queue of servo 1.
@@ -41,12 +41,12 @@
  * 9. Set the second PVT point for servo 2, commanding it to move to the position of -100 degrees in 6,000 milliseconds.
  * \snippet control_servo_traj_2.c Add point2 servo ID1
  * 
- * <b> Executing the motion queue</b>
+ * <b> Executing the resulting motion queues</b>
  * 
- * 10. Command both motors to move through the preset PVT points. Make sure to set the function parameter to 0.
+ * 10. Command all servos to move simultaneously. Each of the two servos will execute their preset motion queues. Set the function parameter to 0 to get the servos moving without a delay.
  * \snippet control_servo_traj_2.c Start motion
  * 
- * 11. To ensure the servo will keep on working and will be available for master heartbeats, set a latency period of 14,000 milliseconds.
+ * 11. To ensure the servo will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
  * \snippet control_servo_traj_2.c Sleep
  * 
  * <b> Complete tutorial code: </b>
