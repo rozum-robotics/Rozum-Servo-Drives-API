@@ -17,10 +17,10 @@
  * \snippet control_servo_traj_2.c Adding the interface
  * 
  * 2.Initialize the first servo.
- * \snippet control_servo_traj_2.c Adding servo1
+ * \snippet control_servo_traj_2.c Adding servo first
  * 
  * 3. Initialize the second servo.
- * \snippet control_servo_traj_2.c Adding servo2
+ * \snippet control_servo_traj_2.c Adding servo second
  * 
  * 4. Clear the motion queue of servo 1.
  * \snippet control_servo_traj_2.c Clear points servo1
@@ -59,12 +59,12 @@ int main(int argc, char *argv[])
     //! [Adding the interface]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding the interface]
-    //! [Adding servo1]
+    //! [Adding servo one]
     rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding servo1]
-    //! [Adding servo2]
+    //! [Adding servo one]
+    //! [Adding servo second]
     rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
-    //! [Adding servo2]
+    //! [Adding servo second]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling two servos");
 
