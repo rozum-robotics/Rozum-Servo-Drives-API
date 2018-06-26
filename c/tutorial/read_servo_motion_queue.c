@@ -13,7 +13,7 @@
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
  * This tutorial describes how to determine the current size of the motion queue for a servo.
  * To do that, we will read the number of free and occupied PVT points in the motion queue.
- * <b> Note:<b> Currently, the maximum size of a motion queue is 100 PVT.
+ * <b> Note:</b> Currently, the maximum size of a motion queue is 100 PVT.
  * 
  * 1. Initialize the interface.
  * \snippet read_servo_motion_queue.c Adding the interface
