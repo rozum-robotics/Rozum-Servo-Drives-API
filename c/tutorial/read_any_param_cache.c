@@ -60,6 +60,8 @@
  * <b> Complete tutorial code: </b>
  * \snippet read_errors.c cccode 1
  */
+ 
+ 
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
