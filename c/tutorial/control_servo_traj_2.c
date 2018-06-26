@@ -10,7 +10,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_servomove2 <b>Setting PVT points for two servos
+ * \defgroup tutor_c_servomove2 <b>Setting PVT points for two servos</b>
  * 
  * 1.Initialize the interface.
  * 
@@ -22,10 +22,10 @@
  * 3. Initialize the second servo.
  * \snippet control_servo_traj_2.c Adding servo2
  * 
- * 4. Clear the motion queue of the first servo.
+ * 4. Clear the motion queue of servo 1.
  * \snippet control_servo_traj_2.c Clear points servo1
  * 
- * 5. Clear the motion queue of the second servo.
+ * 5. Clear the motion queue of servo 2.
  * \snippet control_servo_traj_2.c Clear points servo2
  * 
  * <b>Adding PVT points to motion queues</b>
