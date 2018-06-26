@@ -1,5 +1,5 @@
 /**
- * @brief Tutorial example of calculating PVT point 
+ * @brief Tutorial example of calculating a PVT point 
  * 
  * @file read_servo_trajectory_time.c
  * @author Rozum
@@ -10,28 +10,57 @@
 #include "tutorial.h"
 
 /**
- * @brief Tutorial example of calculating PVT point 
+ * \defgroup tutor_c_calculate_point Calculating a PVT point
+ * This tutorial describes how you can calculate and read the minimum time that it will take the servo to reach the position of 100 degrees.
+ * <b> Note:</b> You can get the said travel time value without actually moving the servo.
  * 
- * @ingroup tutor_c_calculate_point
+ * 1. Initialize the interface.
+ * \snippet read_servo_trajectory_time.c Adding the interface
+ * 
+ * 2. Initialize the servo.
+ * \snippet read_servo_trajectory_time.c Adding the servo
+ * 
+ * <b> Calculating the time to reach the specified position </b>
+ * 
+ * 3. Calculate the time it will take the servo to reach the position of 100 degrees at the specified parameters.
+ * The calculation result is the minumum time value.
+ * \snippet read_servo_trajectory_time.c Time calculation
+ * 
+ * <b> Reading the calculation result </b>
+ * 
+ * 4. Create a variable where the function will return the calculation result.
+ * \snippet read_servo_trajectory_time.c Travel time variable
+ * 
+ * 5. Read the calculation result.
+ * \snippet read_servo_trajectory_time.c Get calculation result
  */
+ 
 int main(int argc, char *argv[])
 {
-    /** @code{.c} 
-    */
+    //! [cccode 1] 
+    //! [Adding the interface]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    //! [Adding the interface]
+    //! [Adding the servo]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    //! [Adding the servo]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "trajectory calculation");
 
+    //! [Time calculation]
     int status = rr_invoke_time_calculation(servo, 0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation\n");
         return 1;
     }
-
+    //! [Time calculation]
+    //! [Travel time variable]
     uint32_t travel_time;
+    //! [Travel time variable]
+    //! [Get calculation result]
     rr_get_time_calculation_result(servo, &travel_time);
+    //! [Get calculation result]
     API_DEBUG("\tCalculated travel time: %d ms.\n", travel_time);
-    /** @endcode */
+     //! [cccode 1]
 }
