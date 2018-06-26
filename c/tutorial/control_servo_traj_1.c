@@ -29,12 +29,12 @@
  * Otherwise, the function returns an error warning and quits the program.
  * \snippet control_servo_traj_1.c Add motion point second
  * 
- * <b> Executing the motion queue </b>
+ * <b> Executing the resulting motion queue </b>
  * 
- * 7. Command the servo to move through the PVT points you added to the motion queue.
+ * 7. Command the servo to move through the PVT points you added to the motion queue. Set the function parameter to 0 to get the servo moving without a delay.
  * \snippet control_servo_traj_1.c Start motion
  * 
- * 8. To ensure the servo will keep on working and will be available for master heartbeats, set a latency period of 14,000 milliseconds.
+ * 8. To ensure the servo will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
  * \snippet control_servo_traj_1.c Sleep
  * 
  * <b> Complete tutorial code: </b>
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
     rr_start_motion(iface, 0);
     //! [Start motion]
     //! [Sleep]
-    rr_sleep_ms(14000); // wait till the movement end
+    rr_sleep_ms(14000); // wait till the movement ends
     //! [Sleep]
     //! [cccode 1]
 }
