@@ -12,7 +12,9 @@
  * \defgroup tutor_c_error_read Reading device errors
  * 
  * 1. Initialize the interface.
+ * 
  * \snippet read_errors.c Adding the interface 1
+ * 
  * 
  * 2. Initialize the servo.
  * \snippet read_errors.c Adding the servo
