@@ -10,7 +10,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_servomove2 <b>Setting PVT points for two servos</b>
+ * \defgroup tutor_c_servomove2 Setting PVT points for two servos
  * 
  * 1.Initialize the interface.
  * 
@@ -28,7 +28,7 @@
  * 5. Clear the motion queue of servo 2.
  * \snippet control_servo_traj_2.c Clear points servo2
  * 
- * <b>Adding PVT points to motion queues</b>
+ * <b> Adding PVT points to motion queues</b>
  * 
  * 6. Set the first PVT point for servo 1, commanding it to move to the position of 100 degrees in 6,000 milliseconds.
  * \snippet control_servo_traj_2.c Add point1 servo1
@@ -42,7 +42,7 @@
  * 9. Set the second PVT point for servo 2, commanding it to move to the position of -100 degrees in 6,000 milliseconds.
  * \snippet control_servo_traj_2.c Add point2 servo2
  * 
- * <b>Executing the motion queue</b>
+ * <b> Executing the motion queue</b>
  * 
  * 10. Command both motors to move through the preset PVT points. Make sure to set the function parameter to 0.
  * \snippet control_servo_traj_2.c Start motion
