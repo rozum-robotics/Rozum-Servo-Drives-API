@@ -30,9 +30,19 @@ int main(int argc, char *argv[])
 
     rr_param_cache_update(servo);
 
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_POSITION_ROTOR), servo->pcache[APP_PARAM_POSITION_ROTOR].value);
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VELOCITY_ROTOR), servo->pcache[APP_PARAM_VELOCITY_ROTOR].value);
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VOLTAGE_INPUT), servo->pcache[APP_PARAM_VOLTAGE_INPUT].value);
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), servo->pcache[APP_PARAM_CURRENT_INPUT].value);
+    float value;
+
+    rr_read_cached_parameter(servo, APP_PARAM_POSITION_ROTOR, &value);
+    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_POSITION_ROTOR), value);
+
+    rr_read_cached_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &value);
+    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VELOCITY_ROTOR), value);
+
+    rr_read_cached_parameter(servo, APP_PARAM_VOLTAGE_INPUT, &value);
+    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VOLTAGE_INPUT), value);
+
+    rr_read_cached_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
+    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
+
     /** @endcode */
 }
