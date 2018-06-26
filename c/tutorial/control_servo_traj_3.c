@@ -55,10 +55,10 @@
  * 
  * <b> Executing the resulting motion queues </b>
  * 
- * 14. Command all servos of the interface to start moving simulateneously. Each of them will execute their own motion queues. Set the function parameter to 0 to get the servos moving without a delay.
+ * 14. Command all servos to start moving simulateneously. Each of the three servos will execute their own motion queues. Set the function parameter to 0 to get the servos moving without a delay.
  * \snippet control_servo_traj_3.c Start motion
  * 
- * 15. To ensure the servos will remain available for master heartbeat communication, set a latency period of 14,000 milliseconds.
+ * 15. To ensure the servos will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
  * \snippet control_servo_traj_1.c Sleep
  * 
  * <b> Complete tutorial code: </b>
@@ -73,10 +73,12 @@ int main(int argc, char *argv[])
     //! [Adding servo ID0]
     rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
     //! [Adding servo ID0]
+    //! [Adding servo ID1]
     rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
     //! [Adding servo ID1]
+    //! [Adding servo ID2]
     rr_servo_t *servo3 = rr_init_servo(iface, TUTORIAL_SERVO_2_ID);
-    //! [Adding servo ID1]
+    //! [Adding servo ID2]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling three servos");
 
@@ -142,7 +144,7 @@ int main(int argc, char *argv[])
     //! [Start motion]
 
     //! [Sleep]
-    rr_sleep_ms(14000); // wait till tyhe movement end
+    rr_sleep_ms(14000); // wait till the movement ends
     //! [Sleep]
     //! [cccode 1]
 }
