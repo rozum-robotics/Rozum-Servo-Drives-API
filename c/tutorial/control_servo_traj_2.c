@@ -13,7 +13,6 @@
  * \defgroup tutor_c_servomove2 Setting PVT points for two servos
  * 
  * 1. Initialize the interface.
- * 
  * \snippet control_servo_traj_2.c Adding the interface
  * 
  * 2. Initialize the first servo.
