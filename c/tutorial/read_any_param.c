@@ -10,7 +10,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_param_read Reading current device parameters
+ * \defgroup tutor_c_param Reading current device parameters
  * 
  * The tutorial describes how to read a sequence of single variables representing current device parameters (e.g., position, voltage, etc.)
  * <b> Note </b>: For reference, the tutorial includes more than one parameter.
