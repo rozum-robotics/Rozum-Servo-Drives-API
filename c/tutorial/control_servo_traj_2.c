@@ -46,7 +46,7 @@
  * 10. Command all servos to move simultaneously. Each of the two servos will execute their preset motion queues. Set the function parameter to 0 to get the servos moving without a delay.
  * \snippet control_servo_traj_2.c Start motion
  * 
- * 11. To ensure the servo will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
+ * 11. To ensure the servos will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
  * \snippet control_servo_traj_2.c Sleep
  * 
  * <b> Complete tutorial code: </b>
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
     //! [Start motion]
 
     //! [Sleep]
-    rr_sleep_ms(14000); //wait till the movement end
+    rr_sleep_ms(14000); //wait till the movement ends
     //! [Sleep]
     //! [cccode 1]
 }
