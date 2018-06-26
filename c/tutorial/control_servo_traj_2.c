@@ -17,30 +17,30 @@
  * \snippet control_servo_traj_2.c Adding the interface
  * 
  * 2.Initialize the first servo.
- * \snippet control_servo_traj_2.c Adding servo first
+ * \snippet control_servo_traj_2.c Adding servo ID0
  * 
  * 3. Initialize the second servo.
- * \snippet control_servo_traj_2.c Adding servo second
+ * \snippet control_servo_traj_2.c Adding servo ID1
  * 
  * 4. Clear the motion queue of servo 1.
- * \snippet control_servo_traj_2.c Clear points servo1
+ * \snippet control_servo_traj_2.c Clear points servo ID0
  * 
  * 5. Clear the motion queue of servo 2.
- * \snippet control_servo_traj_2.c Clear points servo2
+ * \snippet control_servo_traj_2.c Clear points servo ID1
  * 
  * <b> Adding PVT points to motion queues</b>
  * 
  * 6. Set the first PVT point for servo 1, commanding it to move to the position of 100 degrees in 6,000 milliseconds.
- * \snippet control_servo_traj_2.c Add point1 servo1
+ * \snippet control_servo_traj_2.c Add point1 servo ID0
  * 
  * 7. Set the first PVT point for servo 2, commanding it to move to the position of 100 degrees in 6,000 milliseconds.
- * \snippet control_servo_traj_2.c Add point1 servo2
+ * \snippet control_servo_traj_2.c Add point1 servo ID1
  * 
  * 8. Set the second PVT point for servo 1, commanding it to move to the position of -100 degrees in 6,000 milliseconds.
- * \snippet control_servo_traj_2.c Add point2 servo1
+ * \snippet control_servo_traj_2.c Add point2 servo ID0
  * 
  * 9. Set the second PVT point for servo 2, commanding it to move to the position of -100 degrees in 6,000 milliseconds.
- * \snippet control_servo_traj_2.c Add point2 servo2
+ * \snippet control_servo_traj_2.c Add point2 servo ID1
  * 
  * <b> Executing the motion queue</b>
  * 
@@ -59,54 +59,54 @@ int main(int argc, char *argv[])
     //! [Adding the interface]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding the interface]
-    //! [Adding servo first]
+    //! [Adding servo ID0]
     rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding servo first]
-    //! [Adding servo second]
+    //! [Adding servo ID0]
+    //! [Adding servo ID1]
     rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
-    //! [Adding servo second]
+    //! [Adding servo ID1]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling two servos");
 
-    //! [Clear points servo1]
+    //! [Clear points servo ID0]
     rr_clear_points_all(servo1);
-    //! [Clear points servo1]
-    //! [Clear points servo2]
+    //! [Clear points servo ID0]
+    //! [Clear points servo ID1]
     rr_clear_points_all(servo2);
-    //! [Clear points servo2]
+    //! [Clear points servo ID1]
 
-    //! [Add point1 servo1]
+    //! [Add point1 servo ID0]
     int status = rr_add_motion_point(servo1, 100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add point1 servo1]
-    //! [Add point1 servo2]
+    //! [Add point1 servo ID0]
+    //! [Add point1 servo ID1]
     status = rr_add_motion_point(servo2, 100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add point1 servo2]
-    //! [Add point2 servo1]
+    //! [Add point1 servo ID1]
+    //! [Add point2 servo ID0]
     status = rr_add_motion_point(servo1, -100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add point2 servo1]
-    //! [Add point2 servo2]
+    //! [Add point2 servo ID0]
+    //! [Add point2 servo ID1]
     status = rr_add_motion_point(servo2, -100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add point2 servo2]
+    //! [Add point2 servo ID1]
     //! [Start motion]
     rr_start_motion(iface, 0);
     //! [Start motion]
