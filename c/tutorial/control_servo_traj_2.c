@@ -10,8 +10,12 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_servomove2 Setting PVT points for two servos
- * 
+ * \defgroup tutor_c_servomove2
+ * The tutorial describes how to set up and execute motion trajectories for two servo. In this example, the motion trajectory comprises two PVT (position-time-velocity) points for each of the two servos:
+ * <ul><li>one PVT commanding the servos to move to the position of 100 degrees in 6,000 milliseconds</li>
+ * <li>one PVT commanding the servos to move to the position of -100 degrees in 6,000 milliseconds</li></ul>
+ * <b>Note:</b> The servos will execute the resulting motion trajectory simultaneously.
+
  * 1. Initialize the interface.
  * \snippet control_servo_traj_2.c Adding the interface
  * 
@@ -27,7 +31,7 @@
  * 5. Clear the motion queue of servo 2.
  * \snippet control_servo_traj_2.c Clear points servo ID1
  * 
- * <b> Adding PVT points to motion queues</b>
+ * <b> Adding PVT points to form motion queues</b>
  * 
  * 6. Set the first PVT point for servo 1, commanding it to move to the position of 100 degrees in 6,000 milliseconds.
  * \snippet control_servo_traj_2.c Add point1 servo ID0
@@ -46,7 +50,7 @@
  * 10. Command all servos to move simultaneously. Each of the two servos will execute their preset motion queues. Set the function parameter to 0 to get the servos moving without a delay.
  * \snippet control_servo_traj_2.c Start motion
  * 
- * 11. To ensure the servos will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
+ * 11. To ensure the program will not move on to execute another operation, set an idle period of 14,000 milliseconds.
  * \snippet control_servo_traj_2.c Sleep
  * 
  * <b> Complete tutorial code: </b>
