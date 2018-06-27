@@ -10,11 +10,11 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_param Reading current device parameters
+ * \defgroup tutor_c_param
  * 
  * The tutorial describes how to read a sequence of single variables representing current device parameters (e.g., position, voltage, etc.)
  * <b> Note </b>: For reference, the tutorial includes more than one parameter.
- * In paractice, if you need to read more than one parameter, refer to the tutorial ::Device parameter cache programming and reading.
+ * In practice, however, if you need to read more than one parameter, refer to the tutorial <b>Setting up cache and reading cached parameters</b>.
  * 
  * 1. Initialize the interface.
  * \snippet read_any_param.c Adding the interface
@@ -24,7 +24,7 @@
  * 
  * <b> Reading current device parameters </b>
  * 
- * 3. Create a variable where the function will read the parameters.
+ * 3. Create a variable where the function will save the parameters.
  * \snippet read_any_param.c Read parameter variable
  * 
  * 4. Read the rotor position.
