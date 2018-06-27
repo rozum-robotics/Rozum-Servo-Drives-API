@@ -885,7 +885,7 @@ int rr_set_position(const rr_servo_t *servo, const float position_deg)
 }
 
 /**
- * @brief he function commands the specified servo to rotate at the specified velocity,
+ * @brief The function commands the specified servo to rotate at the specified velocity,
  * while setting the maximum limit for the servo current (below the servo motor specifications).
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param velocity_deg_per_sec Velocity (in degrees/sec) at the servo flange. The value can have a "-" sign, in which case the servo will rotate in the opposite direction.
