@@ -954,7 +954,7 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent)
 }
 
 /**
- * @briefThe function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo specified in the 'servo' parameter.
+ * @brief The function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo specified in the 'servo' parameter.
  PVT points define the following:<br>
  <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
  <li>what time the movement to the specified position should take</li><br>
@@ -994,7 +994,7 @@ int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const
 }
 
 /**
- * @brief he function commands all servos connected to the specified interface (CAN bus) 
+ * @brief The function commands all servos connected to the specified interface (CAN bus) 
  * to move simultaneously through a number of preset PVT points (see ::rr_add_motion_point).<br> 
  * <p><b>Note:</b> When any of the servos fails to reach any of the PVT points due to an error, it will broadcast
  * a "Go to Stopped State" command to all the other servos on the same bus. The servos will stop executing the preset PVT points and go to the stopped state.
