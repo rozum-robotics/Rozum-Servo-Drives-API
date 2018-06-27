@@ -38,7 +38,7 @@
  * 7. Command the servo to move through the PVT points you added to the motion queue. Set the function parameter to 0 to get the servo moving without a delay.
  * \snippet control_servo_traj_1.c Start motion
  * 
- * 8. To ensure the servo will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
+ * 8. To ensure the program will not move on to execute another operation, set an idle period of 14,000 milliseconds.
  * \snippet control_servo_traj_1.c Sleep
  * 
  * <b> Complete tutorial code: </b>
