@@ -10,6 +10,8 @@
 
 /**
  * \defgroup tutor_c_error_read Reading device errors
+ * The tutorial describes how to read the total number of errors that occurred on the servo
+ * and to display their description.
  * 
  * 1. Initialize the interface.
  * 
