@@ -610,9 +610,8 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
 }
 
 /**
- * @brief The function clears all data associated with the servo descriptor.
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function.
+ * @brief The function deinitializes the servo, clearing all data associated with the servo descriptor.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Common
  */
@@ -631,9 +630,8 @@ int rr_deinit_servo(rr_servo_t **servo)
 }
 
 /**
- * @brief The function reboots the servo specified in the parameter of the function, resetting it to the power-on state.
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief The function reboots the servo specified in the 'servo' parameter of the function, resetting it to the power-on state.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -646,9 +644,8 @@ int rr_servo_reboot(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function resets communication with the specified servo without resetting the entire interface.
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief he function resets communication with the servo specified in the 'servo' parameter without resetting the entire interface.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -661,10 +658,11 @@ int rr_servo_reset_communication(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function sets the specified servo to the operational state.  
- * In the state, you can communicate with the servo and set it to execute commands.
- * <p>For instance, you may need to call the function to switch the servo from the pre-operational state to the operational one after an error (e.g., due to overcurrent).
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief The function sets the servo specified in the 'servo' parameter to the operational state.  
+ * In the state, the servo is both available for communication and can execute commands.
+ * <p>For instance, you may need to call the function to switch the servo 
+ * from the pre-operational state to the operational one after an error (e.g., due to overcurrent).</p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  *  If the parameter is set to 0, all servos connected to the interface will be set to the operational state.
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
@@ -678,9 +676,9 @@ int rr_servo_set_state_operational(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function sets the specified servo to the pre-operational state. In the state, the servo is available for communication, but cannot execute any commands.  
- * <p>For instance, you may need to call the function, if you want to force the servo to stop executing commands, e.g., in an emergency.
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief The function sets the servo specified in the 'servo' parameter to the pre-operational state. In the state, the servo is available for communication, but cannot execute any commands.  
+ * <p>For instance, you may need to call the function, if you want to force the servo to stop executing commands, e.g., in an emergency.</p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -693,9 +691,9 @@ int rr_servo_set_state_pre_operational(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function sets the specified servo to the stopped state. In the state, only Heartbeats are available. You can neither communicate with the servo nor make it execute any commands.  
- * <p>For instance, you may need to call the fuction to reduce the workload of a CAN bus by disabling individual servos connected to it without deninitiating them.</p>
- * @param servo Servo descriptor returned by the ::rr_init_servo function.  
+ * @brief The function sets the servo specified in the 'servo' parameter to the stopped state. In the state, only Heartbeats are available. You can neither communicate with the servo nor make it execute any commands.  
+ * <p>For instance, you may need to call the fuction to reduce the workload of a CAN bus by disabling individual servos connected to it without deninitializing them.</p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function  
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -708,9 +706,9 @@ int rr_servo_set_state_stopped(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function reboots all servos connected to the specified interface (CAN bus), resetting them back to the power-on state.
- * 
- * @param interface Interface descriptor returned by the ::rr_init_interface function.
+ * @brief The function reboots all servos connected to the interface specified in the 'interface' parameter,
+ * resetting them back to the power-on state.
+ * @param interface Interface descriptor returned by the ::rr_init_interface function
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -723,9 +721,9 @@ int rr_net_reboot(const rr_can_interface_t *interface)
 }
 
 /**
- * @brief The function resets communication via the specified interface.
+ * @brief The function resets communication via the interface specified in the 'interface' parameter.
  * For instance, you may need to use the function when changing settings that require a reset after modification.
- * @param interface Interface descriptor returned by the ::rr_init_interface function. 
+ * @param interface Interface descriptor returned by the ::rr_init_interface function 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -738,9 +736,11 @@ int rr_net_reset_communication(const rr_can_interface_t *interface)
 }
 
 /**
- * @brief The function sets all servos connected to the specified interface to the operational state. In the state, the servos can both communicate with the user program and execute commands.  
- * <p>For instance, you may need to call the function to switch all servos from the pre-operational state to the operational one after an error (e.g., due to overcurrent).
- * @param interface Interface descriptor returned by the ::rr_init_interface function.  
+ * @brief The function sets all servos connected to the interface (CAN bus) specified in the 'interface' parameter to the operational state.
+ *  In the state, the servos can both communicate with the user program and execute commands.
+ *  <p>For instance, you may need to call the function to switch all servos on a specific bus from the
+ *  pre-operational state to the operational one after an error (e.g., due to overcurrent).</p>
+ * @param interface Interface descriptor returned by the ::rr_init_interface function  
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -753,9 +753,10 @@ int rr_net_set_state_operational(const rr_can_interface_t *interface)
 }
 
 /**
- * @brief The function sets all servos connected to the specified interface to the pre-operational state.  
+ * @brief The function sets all servos connected to the interface specified in the 'interface' parameter to the pre-operational state.  
  * In the state, the servos are available for communication, but cannot execute commands.
- * @param interface Interface descriptor returned by the ::rr_init_interface function. 
+ * <p>For instance, you may need to call the function, if you want to force all servos on a specific bus to stop executing commands, e.g., in an emergency.</p>
+ * @param interface Interface descriptor returned by the ::rr_init_interface function 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
  */
@@ -768,8 +769,9 @@ int rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
 }
 
 /**
- * @brief The function sets all servos connected to the specified interface to the stopped state.  
+ * @brief The function sets all servos connected to the interface specified in the 'interface' parameter to the stopped state.  
  * In the state, the servos are neither available for communication nor can execute commands.
+ * <p>For instance, you may need to call the fuction to stop all servos on a specific bus without deinitializing them.</p>
  * @param interface Interface descriptor returned by the ::rr_init_interface function. 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
@@ -782,9 +784,10 @@ int rr_net_set_state_stopped(const rr_can_interface_t *interface)
 }
 
 /**
- * @brief The function sets the specified servo to the released state. The servo completes the command it started prior to the function call, then stops without retaining its position, and is de-energized.
- * <p> <b>Note</b>: When there is an external force affecting the servo (e.g., inertia, gravity), the servo may continue rotating or begin rotating in the opposite direction.
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief The function sets the specified servo to the released state. The servo is de-energized and stops without retaining its position.
+ * <p><b>Note:</b> When there is an external force affecting the servo (e.g., inertia, gravity), 
+ * the servo may continue rotating or begin rotating in the opposite direction.</p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
@@ -802,8 +805,7 @@ int rr_stop_and_release(const rr_servo_t *servo)
 
 /**
  * @brief The function sets the specified servo to the freeze state. The servo stops, retaining its last position.
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
@@ -820,9 +822,9 @@ int rr_stop_and_freeze(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function sets the current supplied to the stator of the specified servo motor. Changing the parameter value, it is possible to adjust the servo's torque (Torque = stator current*Kt).
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief The function sets the current supplied to the stator of the servo specified in the 'servo' parameter.
+ * Changing the 'current_a parameter' value, it is possible to adjust the servo's torque (Torque = stator current*Kt).
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param current_a Phase current of the stator in Amperes
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
