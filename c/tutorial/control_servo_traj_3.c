@@ -11,7 +11,10 @@
 
 /**
  * \defgroup tutor_c_servomove3 Setting PVT points for three servos
- * 
+ * The tutorial describes how to set up motion trajectories for three servos and to execute them simultaneously. In this example, each motion trajectory comprises two PVT (position-time-velocity) points:
+ * <ul><li>one PVT commanding servos to move to the position of 100 degrees in 6,000 milliseconds</li>
+ * <li>one PVT commanding servos to move to the position of -100 degrees in 6,000 milliseconds</li></ul>
+
  * 1. Initialize the interface.
  * \snippet control_servo_traj_3.c Adding the interface
  * 
@@ -58,7 +61,7 @@
  * 14. Command all servos to start moving simulateneously. Each of the three servos will execute their own motion queues. Set the function parameter to 0 to get the servos moving without a delay.
  * \snippet control_servo_traj_3.c Start motion
  * 
- * 15. To ensure the servos will remain available for master heartbeat communication during motion, set a latency period of 14,000 milliseconds.
+ * 15. To ensure the program will not move on to execute another operation, set an idle period of 14,000 milliseconds.
  * \snippet control_servo_traj_1.c Sleep
  * 
  * <b> Complete tutorial code: </b>
