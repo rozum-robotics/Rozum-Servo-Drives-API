@@ -1249,8 +1249,8 @@ int rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
 }
 
 /**
- * @brief The function returns how much space is available in the motion queue of the specified servo for adding new PVT points.
- * 
+ * @brief The function returns how many more PVT points the user can add to the motion queue of the servo specified in the 'servo' parameter.
+ * <p><b>Note:</b> Currently, the maximum motion queue size is 100 PVT.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param num Pointer to the variable where the function will save the reading
  * @return int Status code (::rr_ret_status_t)
@@ -1276,25 +1276,26 @@ int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
 }
 
 /**
- * @brief The function enables calculating the time it will take for the specified servo to get from one position to another at the specified parameters (e.g., velocity, acceleration).
- * <b>Note:</b>The function is executed without the servo moving.<br>
- <p>When the start time and the end time parameters are set to 0, the function returns the time value you can subsequently read with the ::rr_get_time_calculation_result function.
- When the parameters are set to values other than 0, the function will either return OK or an error to validate whether the specified motion is possible to execute or not.</p>
+ * @brief The function enables calculating the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.g., velocity, acceleration).
+ * To read the calculation result, use the the ::rr_get_time_calculation_result function. <b>Note:</b>The function is executed without the servo moving.<br>
+ *<p>When the start time and the end time parameters are set to 0, the function returns the calculated time value. When the parameters are set to
+ * values other than 0, the function will either return OK or an error. 'OK' means the motion at the specified function parameters is possible,
+ * whereas an error indicates that the motion cannot be executed.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param start_position_deg Position (in degrees) from where the specified servo should start moving
- * @param start_velocity_deg Servo velocity (in degrees/sec) at the start 
- * @param start_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2)at the start
+ * @param start_velocity_deg_per_sec Servo velocity (in degrees/sec) at the start of motion
+ * @param start_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2) at the start of motion
  * @param start_time_ms Initial time setting (in milliseconds)
  * @param end_position_deg Position (in degrees) where the servo should arrive
- * @param end_velocity_deg Servo velocity (in degrees/sec) at its final position
- * @param end_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2)at its final position
+ * @param end_velocity_per_sec Servo velocity (in degrees/sec) in the end of motion
+ * @param end_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2) in the end of motion
  * @param end_time_ms Final time setting (in milliseconds)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
 int rr_invoke_time_calculation(const rr_servo_t *servo,
-                               const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
-                               const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)
+                               const float start_position_deg, const float start_velocity_deg_per_sec, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
+                               const float end_position_deg, const float end_velocity_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1304,12 +1305,12 @@ int rr_invoke_time_calculation(const rr_servo_t *servo,
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
     p = usb_can_put_float(data, p, &start_position_deg, 1);
-    p = usb_can_put_float(data, p, &start_velocity_deg, 1);
+    p = usb_can_put_float(data, p, &start_velocity_per_sec, 1);
     p = usb_can_put_float(data, p, &start_acceleration_deg_per_sec2, 1);
     p = usb_can_put_uint32_t(data, p, &start_time_ms, 1);
 
     p = usb_can_put_float(data, p, &end_position_deg, 1);
-    p = usb_can_put_float(data, p, &end_velocity_deg, 1);
+    p = usb_can_put_float(data, p, &end_velocity_per_sec, 1);
     p = usb_can_put_float(data, p, &end_acceleration_deg_per_sec2, 1);
     p = usb_can_put_uint32_t(data, p, &end_time_ms, 1);
 
@@ -1326,10 +1327,10 @@ int rr_invoke_time_calculation(const rr_servo_t *servo,
 }
 
 /**
- * @brief The function enables reading the result of the calculations with the ::rr_invoke_time_calculation function.
- * It returns the calculated time (in milliseconds) it will take the specified servo to go from one position to another.
+ * @brief The function enables reading the result of the calculations made using the ::rr_invoke_time_calculation function.
+ * It returns the calculated time (in milliseconds) it will take the servo with the specified descriptor to go from one position to another.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param time_ms Pointer to the parameter where the function will return the calculated time
+ * @param time_ms Pointer to the variable where the function will save the calculated time
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
@@ -1355,9 +1356,9 @@ int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
 }
 
 /**
- * @brief The function enables setting the current servo position (in degrees) to any value defined by the user.
- * For instance, when the current position is 101 degrees and the position_deg parameter is set to 25 degrees, the servo is assumed to be positioned at 25 degrees.
-<p>The setting is volatile: after a reset or a power outage, it is back to its previous value.</p>
+ * @brief The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user.
+ * For instance, when the current servo position is 101 degrees and the 'position_deg' parameter is set to 25 degrees, the servo is assumed to be positioned at 25 degrees.
+* <p>The setting is volatile: after a reset or a power outage, it is no longer valid.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg User-defined position (in degrees) to replace the current position value
  * @return int Status code (::rr_ret_status_t)
@@ -1377,9 +1378,9 @@ int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
 }
 
 /**
- * @brief The function enables setting the current servo position (in degrees) to any value defined by the user (see ::rr_set_zero_position) and
- * saving it to the FLASH memory.<br>
- <p><b>Note:</b>The FLASH memory limit is 1,000 write cycles. Therefore, it is not advisable to use the function on a regular basis.
+ * @brief The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user and
+ * saving it to the FLASH memory. If you don't want to save the newly set position, use the ::rr_set_zero_position function.<br>
+ * <p><b>Note:</b>The FLASH memory limit is 1,000 write cycles. Therefore, it is not advisable to use the function on a regular basis.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg User-defined position (in degrees) to replace the current position value
  * @return int Status code (::rr_ret_status_t)
@@ -1399,8 +1400,8 @@ int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_
 }
 
 /**
- * @brief The function reads the actual maximum velocity of the servo at a given moment. It returns the smallest of the three values—the user-defined limit (::rr_set_max_velocity),
- * the value indicated in the specifications, or the value calculated based on the supply voltage.
+ * @brief The function reads the maximum velocity of the servo at the current moment. It returns the smallest of the three values—the user-defined maximum velocity limit (::rr_set_max_velocity),
+ * the maximum velocity value based on the servo specifications, or the calculated maximum velocity based on the supply voltage.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param velocity_deg_per_sec Maximum servo velocity (in degrees/sec)
  * @return int Status code (::rr_ret_status_t)
@@ -1425,9 +1426,8 @@ int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
 }
 
 /**
- * @brief The function sets the maximum velocity limit for the specified servo.
- * The setting is volatile: after a reset or a power outage, it is back to its previous value.
- * 
+ * @brief The function sets the maximum velocity limit for the servo specified in the 'servo' parameter.
+ * The setting is volatile: after a reset or a power outage, it is no longer valid.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param max_velocity_deg_per_sec Velocity at the servo flange (in degrees/sec)
  * @return int Status code (::rr_ret_status_t)
