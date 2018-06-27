@@ -643,7 +643,7 @@ int rr_servo_reboot(const rr_servo_t *servo)
 }
 
 /**
- * @brief he function resets communication with the servo specified in the 'servo' parameter without resetting the entire interface.
+ * @brief The function resets communication with the servo specified in the 'servo' parameter without resetting the entire interface.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @return int Status code (::rr_ret_status_t)
  * @ingroup System_control
@@ -657,10 +657,8 @@ int rr_servo_reset_communication(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function sets the servo specified in the 'servo' parameter to the operational state.  
- * In the state, the servo is both available for communication and can execute commands.
- * <p>For instance, you may need to call the function to switch the servo 
- * from the pre-operational state to the operational one after an error (e.g., due to overcurrent).</p>
+ * @brief The function sets the servo specified in the 'servo' parameter to the operational state. In the state, the servo is both available for communication and can execute commands.
+ * <p>For instance, you may need to call the function to switch the servo from the pre-operational state to the operational one after an error (e.g., due to overcurrent).</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  *  If the parameter is set to 0, all servos connected to the interface will be set to the operational state.
  * @return int Status code (::rr_ret_status_t)
