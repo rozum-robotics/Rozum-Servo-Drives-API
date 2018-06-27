@@ -9,12 +9,13 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_param_cache Reading servo parameters from the cache
+ * \defgroup tutor_c_param_cache
  * 
- * This tutorial describes how to read an array of servo parameters at a time and save them to the program cache where they will be stored and available for reading until you quit the program.
- * In this example, we will read an array of four parameters: rotor position, rotor velocity, input voltage, and input current.
- * <b> Note </b>: In general, it is advisable to use the function, when you need to read more than one parameter from the servo.
- * If you need to read a single parameter, use the ::rr_read_parameter function (refer to the Device parameters reading tutorial).
+ * This tutorial describes how to set up an array of servo parameters, save them to the program cache in one operation,
+ * and then read them one by one from the cache.
+ * In this example, we will work with four parameters: rotor position, rotor velocity, input voltage, and input current.
+ * <b> Note </b>: In general, it is advisable to use the function, when you need to read <b>more than one parameter</b> from the servo.
+ * If you need to read a single parameter, use the ::rr_read_parameter function (refer to the Reading device parameters tutorial).
  * 
  * 1. Initialize the interface.
  * \snippet read_any_param_cache.c Adding the interface
@@ -39,7 +40,7 @@
  * 7. Save the parameters to the program cache.
  * \snippet read_any_param_cache.c Cache update
  * 
- * <b> Reading the preset array of parameters from the cache </b>
+ * <b> Reading the parameters from the cache </b>
  * 
  * 8. Create a variable where the function will read the parameters from the cache.
  * \snippet read_any_param_cache.c Parameter array
