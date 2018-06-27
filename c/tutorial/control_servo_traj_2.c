@@ -11,10 +11,9 @@
 
 /**
  * \defgroup tutor_c_servomove2
- * The tutorial describes how to set up and execute motion trajectories for two servo. In this example, the motion trajectory comprises two PVT (position-time-velocity) points for each of the two servos:
- * <ul><li>one PVT commanding the servos to move to the position of 100 degrees in 6,000 milliseconds</li>
- * <li>one PVT commanding the servos to move to the position of -100 degrees in 6,000 milliseconds</li></ul>
- * <b>Note:</b> The servos will execute the resulting motion trajectory simultaneously.
+ * The tutorial describes how to set up motion trajectories for two servos and to execute them simultaneously. In this example, each motion trajectory comprises two PVT (position-time-velocity) points:
+ * <ul><li>one PVT commanding servos to move to the position of 100 degrees in 6,000 milliseconds</li>
+ * <li>one PVT commanding servos to move to the position of -100 degrees in 6,000 milliseconds</li></ul>
 
  * 1. Initialize the interface.
  * \snippet control_servo_traj_2.c Adding the interface
