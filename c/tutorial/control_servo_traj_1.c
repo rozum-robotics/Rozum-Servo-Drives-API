@@ -9,7 +9,10 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_servomove1 <b>Setting PVT points for one servo</b>
+ * \defgroup tutor_c_servomove1
+ * The tutorial describes how to set up and execute a motion trajectory for one servo. In this example, the motion trajectory comprises two PVT (position-time-velocity) points:
+ * <ul><li>one PVT commanding the servo to move to the position of 100 degrees in 6,000 milliseconds</li>
+ * <li>one PVT commanding the servo to move to the position of -100 degrees in 6,000 milliseconds</li><ul>
  * 
  * 1. Initialize the interface.
  * \snippet control_servo_traj_1.c Adding the interface
@@ -22,7 +25,8 @@
  * 
  * <b> Adding PVT points to form a motion queue </b>
  * 
- * 4. Set the first PVT point, commanding the servo to move to the position of 100 degrees in 6,000 milliseconds.
+ * 4. Set the first PVT point, commanding the servo to move to the position of 100 degrees in 6,000 milliseconds. <b>Note</b>: When a point is added successfully to the motion queue, the function will return OK.
+ * Otherwise, the function returns an error warning and quits the program.
  * \snippet control_servo_traj_1.c Add motion point first
  * 
  * 5. Set the second PVT point, commanding the servo to move to the position of -100 degrees in 6,000 milliseconds. <b>Note</b>: When a point is added successfully to the motion queue, the function will return OK.
