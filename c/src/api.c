@@ -578,10 +578,9 @@ int rr_deinit_interface(rr_can_interface_t **interface)
 }
 
 /**
- * @brief The function determines whether the servo motor with the speficied ID is connected to the specified interface.<br>
- *  <p>The function waits for 2 seconds to receive a Heartbeat message from the servo. When the message arrives within the interval,
- * the servo is identified as successfully connected.<br>
- * The function returns the servo descriptor that you will need for subsequent API calls to the servo.</p> 
+ * @brief The function determines whether the servo motor with the speficied ID is connected to the specified interface. It waits for 2 seconds to receive a Heartbeat message from the servo.
+ * When the message arrives within the interval, the servo is identified as successfully connected.<br>
+ * <p>The function returns the servo descriptor that you will need for subsequent API calls to the servo.</p> 
  * @param interface Descriptor of the interface (returned by the ::rr_init_interface function) where the servo is connected
  * @param id Unique identifier of the servo in the specified interface. The available value range is from 0 to 127.
  * @return Servo descriptor (::rr_servo_t) <br> or NULL when no Heartbeat message is received within the specified interval
@@ -843,9 +842,10 @@ int rr_set_current(const rr_servo_t *servo, const float current_a)
 }
 
 /**
- * @brief The function sets the velocity at which the specified servo should move at its maximum current. The maximum current is in accordance with the servo motor specification.
+ * @brief The function sets the velocity at which the specified servo should move at its maximum current.
+ * The maximum current is in accordance with the servo motor specification.
  * <p>When you need to set a lower current limit, use the ::rr_set_velocity_with_limits function.</p>
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param velocity_deg_per_sec Velocity (in degrees/sec) at the servo flange 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
@@ -864,11 +864,12 @@ int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
 }
 
 /**
- * @brief The function sets the position that the speficied servo should reach as a result of executing the command.
- * The velocity and current are maximum values in accordance with the servo motor specification. For setting lower limits, use the ::rr_set_position_with_limits function.
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
- * @param position_deg Position of the servo flange (in degrees) to be reached. The parameter is a multi-turn value (e.g., when set to 720, the servo will make two turns, 360 degrees each).
- When the parameter is set to a "-" sign value, the servo will rotate in the opposite direction. 
+ * @brief The function sets the position that the specified servo should reach as a result of executing the command.
+ * The velocity and current are maximum values in accordance with the servo motor specifications.
+ * For setting lower velocity and current limits, use the ::rr_set_position_with_limits function.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param position_deg Position of the servo (in degrees) to be reached. The parameter is a multi-turn value (e.g., when set to 720, the servo will make two turns, 360 degrees each).
+  When the parameter is set to a "-" sign value, the servo will rotate in the opposite direction. 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
@@ -886,8 +887,9 @@ int rr_set_position(const rr_servo_t *servo, const float position_deg)
 }
 
 /**
- * @brief The function commands the specified servo to rotate at the specified velocity, while setting the maximum limit for the servo current(below the specification).
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief he function commands the specified servo to rotate at the specified velocity,
+ * while setting the maximum limit for the servo current (below the servo motor specifications).
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param velocity_deg_per_sec Velocity (in degrees/sec) at the servo flange. The value can have a "-" sign, in which case the servo will rotate in the opposite direction.
  * @param current_a Maximum user-defined current limit in Amperes.
  * @return int Status code (::rr_ret_status_t)
@@ -908,10 +910,11 @@ int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_de
 }
 
 /**
- * @brief The function sets the position that the specified servo should reach as a result of executing the command at the user-defined velocity and current.
- * @param servo Servo descriptor returned by the ::rr_init_servo function.
- * @param position_deg Final position of the servo flange (in degrees) to be reached.
- * @param velocity_deg_per_sec Velocity (in degrees/sec)at which the servo should move to the specified position.
+ * @brief The function sets the position that the specified servo should reach
+ * at user-defined velocity and current as a result of executing the command.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
+ * @param position_deg Final position of the servo flange (in degrees) to be reached
+ * @param velocity_deg_per_sec Velocity (in degrees/sec)at which the servo should move to the specified position
  * @param current_a Maximum user-defined current limit in Amperes
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
@@ -932,10 +935,9 @@ int rr_set_position_with_limits(const rr_servo_t *servo, const float position_de
 }
 
 /**
- * @brief The function limits the input voltage to be supplied to the servo, thus enabling to adjust its motion velocity.<br>
+ * @brief The function limits the input voltage supplied to the servo, enabling to adjust its motion velocity.
  * For instance, when the input voltage is 20V, setting the duty_percent parameter to 40% will result in 8V supplied to the servo.
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param duty_percent User-defined percentage of the input voltage to be supplied to the servo
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
@@ -954,20 +956,24 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent)
 }
 
 /**
- * @brief The function enables creating PVT points that define the following:<br>
- <ul><li>what position the servo should reach</li><br>
- <li>what time the movement should take</li><br>
- <li>at what velocity the servo should move</li></ul>.<br>
- * The PVT points are then arranged into a motion queue that defines the motion trajectory of the specified servo.<br>
- When any of the parameters (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications (whichever is the smallest value), the function returns an error.
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @briefThe function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo specified in the 'servo' parameter.
+ PVT points define the following:<br>
+ <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
+ <li>what time the movement to the specified position should take</li><br>
+ <li>how fast the servo should move to the specified position</li></ul>.<br>
+ *Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, 
+ *use the ::rr_start_motion function.<br>
+ *When any of the parameter values (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications 
+ *(whichever is the smallest value), the function returns an error.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
- * @param velocity_deg Velocity(in degrees/sec) at which the servo should move to reach the specified position
- * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one. The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
+ * @param velocity_deg_per_sec Velocity(in degrees/sec) at which the servo should move to reach the specified position
+ * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one.
+ * The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
-int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms)
+int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_per_sec, const uint32_t time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -975,7 +981,7 @@ int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const
     uint8_t data[12];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_float(data + 4, 0, &velocity_deg, 1);
+    usb_can_put_float(data + 4, 0, &velocity_per_sec, 1);
     usb_can_put_uint32_t(data + 8, 0, &time_ms, 1);
 
     uint32_t sts = write_raw_sdo(dev, 0x2200, 2, data, sizeof(data), 1, 200);
@@ -990,11 +996,13 @@ int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const
 }
 
 /**
- * @brief The function commands all servos connected to the specified interface(CAN bus)to move simultaneously through a number of predefined PVT points (see ::rr_add_motion_point).<br> 
- * <p> <b>Note</b>: When any of the servos fails to complete the motion trajectory defined by the points due to an error, it will broadcast
- * a "Go to Stopped State" command to all the other servos on the same bus.</p>
- * 
- * @param interface Interface descriptor returned by the ::rr_init_interface function. 
+ * @brief he function commands all servos connected to the specified interface (CAN bus) 
+ * to move simultaneously through a number of preset PVT points (see ::rr_add_motion_point).<br> 
+ * <p><b>Note:</b> When any of the servos fails to reach any of the PVT points due to an error, it will broadcast
+ * a "Go to Stopped State" command to all the other servos on the same bus. The servos will stop executing the preset PVT points and go to the stopped state.
+ * In the state, only Heartbeats are available. You can neither communicate with servos nor command them to execute any operations.</p>
+ * <p><b>Note:</b> Once servos execute the last PVT in their preset motion queue, the queue is cleared automatically.</p>
+ * @param interface Interface descriptor returned by the ::rr_init_interface function
  * @param timestamp_ms Delay (in milliseconds) before the servos associated with the interface start to move. When the value is set to 0, the servos will start moving immediately.
  * The available value range is from 0 to 2^24-1.
  * @return int Status code (::rr_ret_status_t)
@@ -1011,10 +1019,9 @@ int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
 
 /**
  * @brief The functions enables reading the total current count of servo errors and their codes.
- * 
- * @param servo Servo Servo descriptor returned by the ::rr_init_servo function.  
- * @param error_count Pointer to the variable where the function will read the current servo error count
- * @param error_array Pointer to the array of errors that contains error codes. These error codes can be described by the ::rr_describe_emcy_bit function.
+ * @param servo Servo Servo descriptor returned by the ::rr_init_servo function  
+ * @param error_count Pointer to the variable where the function will save the current servo error count
+ * @param error_array Pointer to the array where the function will save the codes of all errors<b>Note:</b> Call the ::rr_describe_emcy_bit function, to get a detailed error code description.
  * If the array is not used, set the parameter to 0.
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
@@ -1053,10 +1060,10 @@ int rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, u
 
 /**
  * @brief The function is always used in combination with the ::rr_param_cache_setup_entry function. It retreives from the servo the array of parameters
- * set up using ::rr_param_cache_setup_entry function and saves it to the program cache. You can subsequently read the parameters from the program
- * cache with the ::rr_read_cached_parameter function.For more information, see ::rr_param_cache_setup_entry function.
- *  <b>Note</b>: After you exit the program, the cache will no longer be available.
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * set up using ::rr_param_cache_setup_entry function and saves the array to the program cache. You can subsequently read the parameters from the program
+ * cache with the ::rr_read_cached_parameter function. For more information, see ::rr_param_cache_setup_entry.
+ * <p><b>Note</b>: After you exit the program, the cache will be cleared.</p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
@@ -1095,17 +1102,18 @@ int rr_param_cache_update(rr_servo_t *servo)
 /**
  * @brief The function is the fist one in the API call sequence that enables reading multiple servo paramaters (e.g., velocity, voltage,
  * and position) as a data array. Using the sequence is advisable when you need to read <b>more than one parameter at a time</b>.
+ * The user can set up the array to include up to 50 parameters.
  * In all, the sequence comprises the following functions:
  * <ul> <li>::rr_param_cache_setup_entry for setting up an array of servo parameters to read</li>
  * <li>::rr_param_cache_update for retreiving the parameters from the servo and saving them to the program cache</li>
- * <li>::rr_read_cached_parameter for reading single parameters from the cache</li></ul>
+ * <li>::rr_read_cached_parameter for reading parameters from the program cache</li></ul>
  * Using the sequence of API calls allows for speeding up data acquisition by nearly two times.
- * For example, if you need to read 49 parameters at a bit rate of 1 MBit/s,
- * reading them one by one will take about 35 ms, whereas reading them as an array will only take 10 ms.
- * <b>Note:</b> When you need to read a single parameter, it is better to use the ::rr_read_parameter function.
+ * Let's assume you need to read 49 parameters. At a bit rate of 1 MBit/s, reading them one by one will take about 35 ms, 
+ * whereas reading them as an array will only take 10 ms.
+ * <p><b>Note:</b> When you need to read a single parameter, it is better to use the ::rr_read_parameter function.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @param param Index of the parameter to read indicated in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
- * @param enabled Set True/False to enable/ disable reading the specified parameter
+ * @param param Index of the parameter to read as indicated in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
+ * @param enabled Set True/False to enable/ disable the specified parameter for reading
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
@@ -1133,10 +1141,12 @@ int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, 
 }
 
 /**
- * @brief The function enables reading a single parameter. Its return is the parameter value at a given moment during servo operation.
- * Additionally, the parameter is saved to the parameter cache, irrespective of whether it was enabled/ disabled with the ::rr_param_cache_setup_entry function.
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
- * @param param Index of the parameter to read as indicated in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR).
+ * @brief The function enables reading a single parameter directly from the servo specified in the 'servo' parameter of the function. 
+ * The function returns the current value of the parameter.
+ * Additionally, the parameter is saved to the program cache, irrespective of whether 
+ * it was enabled/ disabled with the ::rr_param_cache_setup_entry function.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
+ * @param param Index of the parameter to read; you can find these indices in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR).
  * @param value Pointer to the variable where the function will save the reading
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
@@ -1166,9 +1176,9 @@ int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *va
  * For more information, see ::rr_param_cache_setup_entry.
  * <p>The function enables reading parameters from the program cache. If you want to read more than one parameter,
  * you will need to make a separate API call for each of them.</p>
- * <b>Note</b>: Prior to reading the parameter, make sure to update the cache using the ::rr_param_cache_update function.
+ * <b>Note</b>: Prior to reading a parameter, make sure to update the program cache using the ::rr_param_cache_update function.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @param param Index of the parameter to read indicated in the rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
+ * @param param Index of the parameter to read; you can find these indices in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
  * @param value Pointer to the variable where the function will save the reading
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
@@ -1181,9 +1191,9 @@ int rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, fl
 }
 
 /**
- * @brief The function clears the entire motion queue of the specified servo.
- * The servo executes the PVT point it started before the function call and then clears all the remaining PVT points in the queue.
- * @param servo Servo descriptor returned by the ::rr_init_servo function. 
+ * @brief The function clears the entire motion queue of the servo specified in the 'servo' parameter of the function.
+ * The servo completes the move it started before the function call and then clears all the remaining PVT points in the queue.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_control
  */
@@ -1193,8 +1203,9 @@ int rr_clear_points_all(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function removes the specified number of PVT points from the tail of the motion queue.
- * When the specified number of PVT points to be removed exceeds the actual remaining number of PVT points in the queue, the funtion removes only the actual remaining number of PVT points.
+ * @brief The function removes the number of PVT points indicated in the 'num_to_clear' parameter from the tail of the motion queue
+ * preset for the specified servo. When the indicated number of PVT points to be removed exceeds the actual remaining number of PVT points in the queue, 
+ * the funtion clears only the actual remaining number of PVT points.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param num_to_clear Number of PVT points to be removed from the motion queue of the specified servo
  * @return int Status code (::rr_ret_status_t)
@@ -1212,9 +1223,9 @@ int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
 
 /**
  * @brief The function returns the actual motion queue size of the specified servo.
- * The return value indicates how much space in the motion queue is already occupied with PVT points.
+ * The return value indicates how many PVT points have already been added to the motion queue.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param num Pointer to the parameter where the function will return the reading
+ * @param num Pointer to the parameter where the function will save the reading
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Servo_info
  */
