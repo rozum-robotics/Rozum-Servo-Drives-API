@@ -7,9 +7,10 @@
  */
 
 /*! \mainpage Rozum Robotics User API & Servo Box
+ * \section sbox Servo box
  * - \subpage servo_box
  * 
- * \section intro_section Categories
+ * \section intro_section API Categories
  * - \ref Utils
  * - \ref Common
  * - \ref System_control
@@ -18,7 +19,7 @@
  * - \ref Servo_info
  * - \ref hw_manual
  * 
- * \section tutor Tutorials
+ * \section tutor API Tutorials
  * - C
  *    -# \ref tutor_c_servomove1
  *    -# \ref tutor_c_servomove2
