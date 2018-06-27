@@ -8,32 +8,42 @@
 /**
  * @page servo_box 
  * @section sect_descr 1. Product overview
- * A <b>servo box</b> is a solution designed to control the motion of one or more RDrive servos. The solution comprises the following components:
- * - one or more energy eaters to dissipate the dynamic braking energy
- * - one or more capacitor modules
+ * 
+ * <b>A servobox</b> is a solution designed to control motion of one or more RDrive servos. The solution comprises the following components:
+ * - one or more energy eaters (see Section 3.1)
+ * - one or more capacitor modules (see Section 3.2)
  * - a CAN-USB dongle to provide CANOpen communication between the box and the servos
  * 
- * <b>Note:</b> Never connect eater+capacitor+servos to the working power supply. Capacitor charging current can break the power supply or injure the user!
- * At first turn off the power, assembly the circuits, and then power on the Servo box.
+ * Additionally, to ensure operation of the servo box, the user has to provide a power supply and USB-A to Micro USB cable to connect the CAN-USB dongle to your PC.
  * 
- * @section sect_conn 2. Connecting servos to a servobox
- * To connect a RDrive servo to a servo box, you need to connect the following two cables:
+ * The power supply should meet the following requirements:
+ * - its supply voltage should not exceed 48 V
+ * - its power should be equal to the total peak power of all servo motors connected to it
+ * 
+ * @section sect_conn 2. Integrating servos with a power supply and a servobox
+ * 
+ * To integrate a RDrive servo into one circuit with a power supply and a servobox, you need to connect the following two cables:
+ * 
  * - a two-wire cable for connecting the servo to power supply
  * - a two-wire cable for enabling CAN communication
- * Sections 2.1 and 2.2 feature connection diagrams and requirements.
+ * 
+ * For connection diagrams and requirements, see Sections 2.1 and 2.2.
  * 
  * @subsection sect_21 2.1. Electrical connection
+ * 
+ * <b>Note:</b> Never connect power supply before a servo(s) are fully integrated with a servobox and a power supply into one circuit. Charging current of the capacitor(s) can damage the power supply or injure the user!
+ * 
  * The configuration of the servo box solution (e.g., how many eaters and capacitors it uses) and the electrical connection diagram depend on whether your intention is:
- * - to connect a single servo
+ * - to connect a single servo (for connection diagram, see figure below)
  * @image html "single_servo_conn.png" width=800
- * - to connect multiple servos
+ * - to connect multiple servos (for connection diagram, see figure below)
  * @image html "multiple_servo_conn.png" width=800
  * 
  * In any case, make sure to meet the following electrical connection requirements:
- * - Typically, the total circuit length from the power supply to the servo motor must not exceed 10 meters.
+ * - Typically, the total circuit length from the power supply any servo motor must not exceed 10 meters.
  * - Length "L1" must not be longer than 10 meters.
- * - Length "L2" (from an eater to a capacitor) should not exceed the values from Table 1.
- * - Length "L3" (from a capacitor to a motor) should not exceed the values from Table 1.
+ * - Length "L2" (from the eater to the capacitor) should not exceed the values from Table 1.
+ * - Length "L3" (from the capacitor to any servo) should not exceed the values from Table 1.
  * 
  * <b>Table 1: Line segment lengths vs. cross-sections</b> 
  * |Servo model|L1||||||L2||||||
@@ -50,7 +60,7 @@
  * @subsection sect_22 2.2. CAN connection
  * The CAN connection of RDrive servos is a two-wire bus line transmitting differential signals: CAN_HIGH and CAN_LOW. 
  * The configuration of the bus line is as illustrated below:
- * @image html "can_conn.png" "Connecting RDrive servos to USB-CAN" width=800 
+ * @image html "servobox_CAN (3).pdf" "Connecting RDrive servos to USB-CAN" width=800 
  * 
  * Providing the CAN connection, make sure to comply with the following requirements:
  * - The CAN bus lines should be terminated with 120 Ohm resistors at both ends. You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servo box solution.
@@ -63,9 +73,9 @@
  * |------------------------|---------|---------|---------|---------|---------|
  * |Total line length, LΣ, m|< 1000 m|< 500 m|< 200 m|< 100 m|< 40 m|
  * 
- * @section sect1 3. DIY
- * @subsection eater 3.1 Eater Module
- * Eater module is used to dissipate the dynamic braking energy when the servo generates the voltage higher than the power supply voltage.
+ * @section sect1 3. Servobox components
+ * @subsection eater 3.1 Energy eater
+ * An energy eater is used to dissipate the dynamic braking energy that can result from a servo generating voltages higher than the power supply voltage.
  * @image html "eater.png" "Eater module schematic" width=400
  * <b>Part List:</b>
  * |Component|Value|Replacement|Comment|
@@ -75,13 +85,13 @@
  * |R1|1K Ohm, 1 W| | |
  * |R2|4.7 Ohm, P<SUB>d</SUB> ≥ 25 W| | |
  * 
- * <b>Note:</b> D1, Q1 and R2 should be attached to the appropriate heatsink. 
- * Active cooling should be applied if the dissisipation power is too high (dynamic brake power is more than 50?W) .
+ * <b>Note:</b> D1, Q1, and R2 should be connected to an appropriate heatsink. 
+ * Active cooling should be provided if the dissisipation power is too high (dynamic braking power is more than 50 W) .
  * 
- * @subsection capacitor 3.2 Capacitor Module
- * Capacitor module is used to deliver the stored electric energy to the servo. The main idea is to provide the "pulse" power to the servo, 
- * which can't be provided by the power supply unit cause of the long power wires between the power supply and the servo (most of cases).
- * That's why it should be placed to the servo as close as possible.
+ * @subsection capacitor 3.2 Capacitor module
+ * Capacitors accumulate and deliver electric energy to servos. The main idea is to supply servos with "pulse" power that
+ * the power supply unit cannot provide because the wiring between the power supply and the servo is too long (in most of cases).
+ * For this reason, capacitors should be placed as close as possible to the servo.
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * <b>Part List:</b>
  * |Component|Value|Comment|
