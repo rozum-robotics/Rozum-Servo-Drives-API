@@ -168,11 +168,11 @@ void rr_set_debug_log_stream(FILE *f)
 }
 
 /**
- * @brief The function sets a user callback intiated in connection with network management(NMT)states 
+ * @brief The function sets a user callback to be intiated in connection with  with changes of network management (NMT) states
  * (e.g., a servo connected to/ disconnected from the CAN bus, the interface/ a servo going to the operational state, etc.).
- * The callback can warn about changes of NMT states or execute user-defined operations.
+ * User callbacks are functions to execute specific user-defined operations, e.g., to  display a warning about an NMT state change or stop the program.
  * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
- * @param cb (::rr_nmt_cb_t) Type of the callback initiated when an NMT event occurs. When the parameter is set to "NULL," the function is disabled.
+ * @param cb (::rr_nmt_cb_t) Type of the callback to be initiated when an NMT event occurs. When the parameter is set to "NULL," the function is disabled.
  * @return void
  * @ingroup Utils
  */
@@ -185,10 +185,10 @@ void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb)
 }
 
 /**
- * @brief The function sets a user callback intiated in connection with emergency (EMCY) events (e.g., overcurrent, power outage, etc.).
- * 
+ * @brief The function sets a user callback to be intiated in connection with emergency (EMCY) events (e.g., overcurrent, power outage, etc.).
+ * User callbacks are functions to execute specific user-defined operations, e.g., to  display a warning about an EMCY event or stop the program.
  * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
- * @param cb (::rr_emcy_cb_t) Type of the callback initiated when an NMT event occurs. When the parameter is set to "NULL," the function is disabled.
+ * @param cb (::rr_emcy_cb_t) Type of the callback to be initiated when an NMT event occurs. When the parameter is set to "NULL," the function is disabled.
  * @return void
  * @ingroup Utils
  */
@@ -201,10 +201,11 @@ void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb)
 }
 
 /**
- * @brief The function returns a string describing the specified NMT state code. 
- * You can also use the function as part of the ::rr_setup_nmt_callback function.
+ * @brief The function returns a string describing the NMT state code specified in the 'state' parameter. 
+ * You can also use the function with ::rr_setup_nmt_callback, setting the callback to display a detailed message
+ * describing an NMT event.
  * @param state NMT state code to descibe
- * @return void
+ * @return Pointer to the description string
  * @ingroup Utils
  */
 const char *rr_describe_nmt(rr_nmt_state_t state)
@@ -229,10 +230,10 @@ const char *rr_describe_nmt(rr_nmt_state_t state)
 }
 
 /**
- * @brief The function returns a string descibing the specified EMCY code.
- *  It is advisable to use it together with the ::rr_describe_emcy_code function.
- * @param bit Error bit field content of the corresponding EMCY message (according to the CanOpen standard)
- * @return void
+ * @brief The function returns a string describing in detail a specific EMCY event based on the code in the 'bit' parameter (e.g., "CAN bus warning limit reached").
+ * The function can be used in combination with ::rr_describe_emcy_code. The latter provides a more generic description of an EMCY event.
+ * @param bit Error bit field of the corresponding EMCY message (according to the CanOpen standard)
+ * @return Pointer to the description string
  * @ingroup Utils
  */
 const char *rr_describe_emcy_bit(uint8_t bit)
@@ -369,11 +370,11 @@ const char *rr_describe_emcy_bit(uint8_t bit)
 }
 
 /**
- * @brief The function returns a string descibing the specified EMCY code. 
- * The returned description is a generic type of the occured emergency event (e.g., "Temperature").
+ * @brief The function returns a string descibing a specific EMCY event based on the error code in the 'code' parameter. 
+ * The description in the string is a generic type of the occured emergency event (e.g., "Temperature").
  * For a more detailed description, use the function together with the ::rr_describe_emcy_bit one.
- * @param code Error code content of the corresponding EMCY message(according to the CanOpen standard)
- * @return void
+ * @param code Error code from the corresponding EMCY message (according to the CanOpen standard)
+ * @return Pointer to the description string
  * @ingroup Utils
  */
 const char *rr_describe_emcy_code(uint16_t code)
@@ -513,8 +514,8 @@ const char *rr_describe_emcy_code(uint16_t code)
 }
 
 /**
- * @brief The function is the first to call to be able to work with the user API. It opens the COM port where the corresponding CAN-USB dongle is connected,
- *  enabling communication between the user program and the servo motors on the corresponding CAN bus.
+ * @brief The function is the first to call to be able to work with the user API. It opens the COM port where the corresponding CAN-USB dongle
+ * is connected, enabling communication between the user program and the servo motors on the respective CAN bus.
  <p><b>Example:</b></p>
  * <p>rr_can_interface_t *interface =  rr_init_interface	("/dev/ttyACM0");</p>
  * <p><code>if(!interface)<br>
@@ -525,7 +526,7 @@ const char *rr_describe_emcy_code(uint16_t code)
  <p><b>Examples:</b></p>
  <p>OS Linux: "/dev/ttyACM0"</p>
  <p>mac OS: "/dev/cu.modem301"</p>
- * @return handle to interface (::rr_can_interface_t)<br> or NULL when an error occurs
+ * @return Interface descriptor (::rr_can_interface_t)<br> or NULL when an error occurs
  * @ingroup Common
  */
 rr_can_interface_t *rr_init_interface(const char *interface_name)
@@ -556,7 +557,8 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
 }
 
 /**
- * @brief The function closes the COM port where the corresponding CAN-USB dongle is connected, removing from the memory all data associated with the interface descriptor.
+ * @brief The function closes the COM port where the corresponding CAN-USB dongle is connected,
+ * clearing all data associated with the interface descriptor.
  * It is advisable to call the function every time before quitting the user program.
  * @param interface Interface descriptor (see ::rr_init_interface).
  * @return int Status code (::rr_ret_status_t)
@@ -577,10 +579,11 @@ int rr_deinit_interface(rr_can_interface_t **interface)
 
 /**
  * @brief The function determines whether the servo motor with the speficied ID is connected to the specified interface.<br>
-   <p>The function waits for 2 seconds to receive a Heartbeat message from the servo. When the message arrives within the interval, the servo is available for communication and commands.<br>
+ *  <p>The function waits for 2 seconds to receive a Heartbeat message from the servo. When the message arrives within the interval,
+ * the servo is identified as successfully connected.<br>
  * The function returns the servo descriptor that you will need for subsequent API calls to the servo.</p> 
  * @param interface Descriptor of the interface (returned by the ::rr_init_interface function) where the servo is connected
- * @param id Unique identifier of the servo in this interface. The available value range is from 0 to 127.
+ * @param id Unique identifier of the servo in the specified interface. The available value range is from 0 to 127.
  * @return Servo descriptor (::rr_servo_t) <br> or NULL when no Heartbeat message is received within the specified interval
  * @ingroup Common
  */
