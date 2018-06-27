@@ -11,9 +11,9 @@
 
 /**
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
- * This tutorial describes how to determine the current size of the motion queue for a servo.
- * To do that, we will read the number of free and occupied PVT points in the motion queue.
- * <b> Note:</b> Currently, the maximum size of a motion queue is 100 PVT.
+ * This tutorial describes how to determine the current size of a motion queue. In this example, we will read the number of free 
+ * and occupied PVT points in a motion queue before and after adding PVT (position-velocity-time) points to the motion queue.
+ * <b> Note:</b> Currently, the maximum motion queue size is 100 PVT.
  * 
  * 1. Initialize the interface.
  * \snippet read_servo_motion_queue.c Adding the interface
@@ -26,10 +26,10 @@
  * 
  * <b> Reading the initial motion queue size</b>
  * 
- * 4. Create a variable where the function will read the motion queue size values (free and occupied PVT points).
+ * 4. Create a variable where the function will save the motion queue size values (free and occupied PVT points).
  * \snippet read_servo_motion_queue.c Points size variable
  * 
- * 5. Read how many PVT points are already added to the motion queue.
+ * 5. Read how many PVT points have been already added to the motion queue.
  * \snippet read_servo_motion_queue.c Points size1
  * 
  * 6. Read how many more PVT points can be added to the motion queue.
@@ -37,16 +37,16 @@
  * 
  * <b> Reading the motion queue size after adding new PVT points to the motion queue</b>
  * 
- * 7. Add point 1 to the motion queue, setting the time parameter to 10000000 ms.
+ * 7. Add PVT point 1 to the motion queue, setting the time parameter to 10000000 ms.
  * \snippet read_servo_motion_queue.c Add point1
  * 
- * 8. Add point 2 to the motion queue, setting the time parameter to 10000000 ms.
+ * 8. Add PVT point 2 to the motion queue, setting the time parameter to 10000000 ms.
  * \snippet read_servo_motion_queue.c Add point2
  * 
  * 9. Read how many PVT points are already in the motion queue.
  * \snippet read_servo_motion_queue.c Points size2
  * 
- * 10. Read how many more points can be added to the motion queue.
+ * 10. Read how many more PVT points can be added to the motion queue.
  * \snippet read_servo_motion_queue.c  Points free2
  *
  * <b> Complete tutorial code: </b>
