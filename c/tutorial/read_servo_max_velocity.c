@@ -1,5 +1,5 @@
 /**
- * @brief Tutorial example of reading the maximum velocity of the servo
+ * @brief Tutorial example of reading the maximum servo
  * 
  * @file read_servo_max_velocity.c
  * @author Rozum
@@ -10,8 +10,8 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_get_max_velocity Reading the maximum velocity of the servo
- * This tutorial describes how to read the maximum velocity at which the servo can move at a given moment. <b> Note: </b> The function will return the least of
+ * \defgroup tutor_c_get_max_velocity Reading the maximum servo velocity
+ * This tutorial describes how to read the maximum velocity at which the servo can move at the current moment. <b> Note: </b> The function will return the least of
  * the three limits: the servo motor specifications, the user-defined maximum velocity limit (see ::rr_set_velocity_with_limits),
  *  or the calculated value based on the input voltage.
  * 
