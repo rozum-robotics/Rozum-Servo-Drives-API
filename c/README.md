@@ -76,7 +76,7 @@ The `c` folder includes a library in the C language, which is intended to enable
 7. Dynamic linking
 
     To link against the shared library, specify the path to the library using the `-L` linker
-    option and the library name using the `-l option:
+    option and the library name using the `-l` option:
     
         gcc -o app obj1.o obj2.o -Lpath-to-library -lservo_api -lpthread
         
