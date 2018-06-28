@@ -1,0 +1,658 @@
+\hypertarget{api_8h}{}\section{include/api.h File Reference}
+\label{api_8h}\index{include/api.\+h@{include/api.\+h}}
+
+
+Rozum Robotics A\+PI Header File.  
+
+
+{\ttfamily \#include $<$stdbool.\+h$>$}\newline
+{\ttfamily \#include $<$stdint.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structparam__cache__entry__t}{param\+\_\+cache\+\_\+entry\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Device information source instance. \end{DoxyCompactList}\item 
+struct \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Device instance structure. \end{DoxyCompactList}\item 
+struct \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t}
+\begin{DoxyCompactList}\small\item\em Interface instance structure. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{api_8h_a0e4aafa2ca9bd25219713176906b7c40}\label{api_8h_a0e4aafa2ca9bd25219713176906b7c40}} 
+\#define \hyperlink{api_8h_a0e4aafa2ca9bd25219713176906b7c40}{A\+P\+I\+\_\+\+D\+E\+B\+UG}(...)~fprintf(stderr, \+\_\+\+\_\+\+V\+A\+\_\+\+A\+R\+G\+S\+\_\+\+\_\+)
+\begin{DoxyCompactList}\small\item\em Standart debug. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{api_8h_adc312160e19d38d99e82afe91cbcdfe5}\label{api_8h_adc312160e19d38d99e82afe91cbcdfe5}} 
+\#define \hyperlink{api_8h_adc312160e19d38d99e82afe91cbcdfe5}{S\+T\+R\+FY}(x)~\#x
+\begin{DoxyCompactList}\small\item\em Make string from the variable. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef void($\ast$ \hyperlink{api_8h_ae0f9f2b200672126bb1f6eb3e66c27fc}{rr\+\_\+nmt\+\_\+cb\+\_\+t}) (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, int servo\+\_\+id, \hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29}{rr\+\_\+nmt\+\_\+state\+\_\+t} nmt\+\_\+state)
+\begin{DoxyCompactList}\small\item\em Type of the intiated network management (N\+MT) callback~\newline
+ \end{DoxyCompactList}\item 
+typedef void($\ast$ \hyperlink{api_8h_a3850d8aa5bc177cb66b7638cafd30204}{rr\+\_\+emcy\+\_\+cb\+\_\+t}) (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, int servo\+\_\+id, uint16\+\_\+t code, uint8\+\_\+t reg, uint8\+\_\+t bits, uint32\+\_\+t info)
+\begin{DoxyCompactList}\small\item\em Type of the intiated emergency (E\+M\+CY) callback~\newline
+ \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t} \{ \newline
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdca4894234446e2d92068943b3d6d3a0bdc}{R\+E\+T\+\_\+\+OK} = 0, 
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdcae8ed27c1aabd77d519426a8ad340d76c}{R\+E\+T\+\_\+\+E\+R\+R\+OR}, 
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdcada2fa397afd6b90ecb1c5b9ca3a2d0ee}{R\+E\+T\+\_\+\+B\+A\+D\+\_\+\+I\+N\+S\+T\+A\+N\+CE}, 
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdcacdd796ae2972988d689257753a05b9dd}{R\+E\+T\+\_\+\+B\+U\+SY}, 
+\newline
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdcadf1d978b055d00c4036019387acfc60c}{R\+E\+T\+\_\+\+W\+R\+O\+N\+G\+\_\+\+T\+R\+AJ}, 
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdca2840a6ac495b0fe4b9e8565d9f76e29a}{R\+E\+T\+\_\+\+L\+O\+C\+K\+ED}, 
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdcad456500c4074aeffb3e5e132bf7d996c}{R\+E\+T\+\_\+\+S\+T\+O\+P\+P\+ED}, 
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdcadf2eed18ed159c7517505568b0f261dd}{R\+E\+T\+\_\+\+T\+I\+M\+E\+O\+UT}, 
+\newline
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdcac2c7bf0285c804ae03c6628659ce366e}{R\+E\+T\+\_\+\+Z\+E\+R\+O\+\_\+\+S\+I\+ZE}, 
+\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdca639f91af3521a375df0778f9cd60d60b}{R\+E\+T\+\_\+\+S\+I\+Z\+E\+\_\+\+M\+I\+S\+M\+A\+T\+CH}
+ \}\begin{DoxyCompactList}\small\item\em Return codes of the A\+PI functions. \end{DoxyCompactList}
+\item 
+enum \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} \{ \newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daf92693e0b44950ce14a0e4c467ca9d08}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+N\+U\+LL} = 0, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dab079617b03cb882ecb48c06ae6603363}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+ON}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da7c7eb311e57837875791d5e58982661c}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+TY}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daa8dafaaa373617ef2f8585b3d4177115}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dade3db1d484cf6dd69b115e37ab77051b}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+R\+O\+T\+OR}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dab8e557b8564d2bf579cc199b343644f2}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+360}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da27cb6c1302d1ed7545ee8c8ee020b9c1}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+\+E\+M\+U\+L\+A\+T\+ED}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dafb1be8c565208f94596b980788ac52fe}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+I\+N\+P\+UT}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dae8c5d203df5baa3a329b89e4e3c05e31}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+O\+U\+T\+P\+UT}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da78bc54701f1fe1ce6b90b70bbfa62483}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+N\+P\+UT}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da09d81b3e2fccfa745188ab46c8dd7263}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+O\+U\+T\+P\+UT}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dad60719b243d4c9abd6c6c2566266fa52}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+SE}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da1a3c86ed7fe187d364809094d3c1dc3a}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+A\+C\+T\+U\+A\+T\+OR}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da48d8972dac6ee7ea647431a83dd88143}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+E\+L\+E\+C\+T\+R\+O\+N\+I\+CS}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da5bc9d6003879b42f41d8db8ee443afbf}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+UE}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dae433fe695af5d074e34503e78802e79c}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+ON}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da6f9d3e5a018689702d2f070888af6882}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dae2db7f59e354f0adf411ebc097be9615}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+1}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daecd1a50b950e607328843d7ab44ef37b}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+2}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daf52784c6a104216ecddc02d08edca79b}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+3}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da2612f6ba14c9dd0ad30ac7d67c3a9707}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+AW}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daa28d107cc1bfbff653eee6bc0abc9df1}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+2}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da44c5166f84bc671786688186ca4f34d0}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+3}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da882f43f6b3595fe0a321f208a41d726e}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da3facac23b091243602b47fd2576b2823}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da9abecc57566475fa5d0a47a30d3eb7b7}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dad2803d24470187ed238ad95997bfe9be}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da354f3004c944556f129c2b590b80c629}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+U\+E\+\_\+\+E\+L\+E\+C\+T\+R\+I\+C\+\_\+\+C\+A\+LC}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dae48e6cfbaff81ae1166e684b004f868d}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+E\+R\+R\+OR}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da91fd08d4408a3251703cef5153b6006e}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+S\+E\+T\+P\+O\+I\+NT}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da0434a3f113392ee4eefc32a78c61b52b}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+F\+E\+E\+D\+B\+A\+CK}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da8b6cbe796f36ba0e86a09a21c04c65f5}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+O\+U\+T\+P\+UT}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da56a3f7c3f40262a8e771a19ecda28336}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+E\+R\+R\+OR}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da25c849d6776790828eec0884f4e1a4ec}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+S\+E\+T\+P\+O\+I\+NT}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da3020332205840419d9e853fc91a77150}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+F\+E\+E\+D\+B\+A\+CK}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da499b7b92c7d38ca32bfad3f774b69bf2}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+O\+U\+T\+P\+UT}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da486101d3961797df2f71d944e09806fc}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+\_\+\+M\+O\+DE}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da5d39d5f2d4ec671512f0fb2c3d909cb7}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+A\+N\+G\+LE}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dadb088007a4cbbb03059abe3fe7146dd1}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IA}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dad467e8050746e3ee7c4ec2feacc3bd3c}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IB}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da01758ca2594861bbda0763f325ca3aca}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+S\+ET}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da6f42d9552fbac9730024cca43523a242}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+S\+ET}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da73f70b69632299140d13b5c478adc7b4}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IQ}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da319baaf4a82176f75f0a8f8cc087a5d7}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+ID}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dacdba14f6f1bc732d0ccae9bc815e0bd2}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+E\+R\+R\+OR}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da86ce5142afb8969bc5bc47e4c081d5e3}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+E\+R\+R\+OR}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da9fbb32722da1e00d15978c4c7d2e79c2}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UQ}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da6061e4dd81c828196553b88062a62ada}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UD}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da7afcc32cc4c18e09d72a7169a9492566}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UA}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da8927f0ebd1b6eb9b4797d2eec7802c01}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UB}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da8711d53dcfb19db3d2433e684196ec12}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U1}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daaacd65258dd57131fca177ce77e87f90}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U2}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da3f34364027e0a438200ae65f5240a977}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U3}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da50b57287acfbd01ee1cc9f81cc5bbae8}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M1}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276dae00c758b5a840d5cd3721b24786f6e74}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M2}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da1cfe88d23e154013d53d5f9b436441da}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M3}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daeac24550704ad65662feab7eff3efb56}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+T\+I\+M\+E\+R\+\_\+\+T\+OP}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da8afb9b113dd0f0716c427764558eb4ba}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+D\+U\+TY}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da64bd53346ff3be314052b1bc4e6df444}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+\+A\+BS}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da222475d9d9057e1b4ee6d8a729de1a6c}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+M\+S\+\_\+\+A\+BS}, 
+\newline
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276da7a8a9b8af6784574c799964a58c5b84c}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+Q\+U\+A\+L\+I\+TY}, 
+\hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276daf913094f39a1622c91c85b522ccd4b0e}{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+S\+I\+ZE}
+ \}\begin{DoxyCompactList}\small\item\em Device parameter \& source indexes. \end{DoxyCompactList}
+\item 
+enum \hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29}{rr\+\_\+nmt\+\_\+state\+\_\+t} \{ \newline
+\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29ac2550cce228ff5512ea417e2b035b665}{R\+R\+\_\+\+N\+M\+T\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+I\+NG} = 0, 
+\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29a4b2cf9b28688f7985afff0c25a7da61b}{R\+R\+\_\+\+N\+M\+T\+\_\+\+B\+O\+OT} = 2, 
+\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29ace8deaf0d4ce3230fb48c15de516e474}{R\+R\+\_\+\+N\+M\+T\+\_\+\+P\+R\+E\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL} = 127, 
+\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29a57e41d0fd4f218c20acc57061b28f52d}{R\+R\+\_\+\+N\+M\+T\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL} = 5, 
+\newline
+\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29a0b3bd632c9abf67a54795f902b0cb2f8}{R\+R\+\_\+\+N\+M\+T\+\_\+\+S\+T\+O\+P\+P\+ED} = 4, 
+\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29af745eff49927034f66cbd67835b2fd26}{R\+R\+\_\+\+N\+M\+T\+\_\+\+H\+B\+\_\+\+T\+I\+M\+E\+O\+UT} = -\/1
+ \}\begin{DoxyCompactList}\small\item\em Network management (N\+MT) states. \end{DoxyCompactList}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{group___aux_gaeb26028b83635e028ebc901e1cbf33a1}{rr\+\_\+sleep\+\_\+ms} (int ms)
+\begin{DoxyCompactList}\small\item\em The function sets an idle period for the user program (e.\+g., to wait till a servo executes a motion trajectory). Until the period expires, the user program will not execute any further operations. However, the network management, C\+AN communication, emergency, and Heartbeat functions remain available. \end{DoxyCompactList}\item 
+void \hyperlink{group___dbg_ga74cb6dc4d15701eaf5c6fd84b1325fc9}{rr\+\_\+set\+\_\+debug\+\_\+log\+\_\+stream} (F\+I\+LE $\ast$f)
+\begin{DoxyCompactList}\small\item\em The function sets a stream for saving the debugging messages generated by the A\+PI library. Subsequently, the user can look through the logs to identify and locate the events associated with certain problems. \end{DoxyCompactList}\item 
+void \hyperlink{group___dbg_gaea43ac88d4b935bb3850a69a17462d31}{rr\+\_\+set\+\_\+comm\+\_\+log\+\_\+stream} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, F\+I\+LE $\ast$f)
+\begin{DoxyCompactList}\small\item\em The function sets a stream for saving C\+AN communication dump from the specified interface. Subsequently, the user can look through the logs saved to the stream to identify causes of C\+AN communication failures. \end{DoxyCompactList}\item 
+void \hyperlink{group___state_ga2433f49950ad40f06537287b52852c13}{rr\+\_\+setup\+\_\+nmt\+\_\+callback} (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, \hyperlink{api_8h_ae0f9f2b200672126bb1f6eb3e66c27fc}{rr\+\_\+nmt\+\_\+cb\+\_\+t} cb)
+\begin{DoxyCompactList}\small\item\em The function sets a user callback to be intiated in connection with with changes of network management (N\+MT) states (e.\+g., a servo connected to/ disconnected from the C\+AN bus, the interface/ a servo going to the operational state, etc.). User callbacks are functions to execute specific user-\/defined operations, e.\+g., to display a warning about an N\+MT state change or stop the program. \end{DoxyCompactList}\item 
+void \hyperlink{group___err_ga40acd9287486a662f2b17b89c4f08aed}{rr\+\_\+setup\+\_\+emcy\+\_\+callback} (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, \hyperlink{api_8h_a3850d8aa5bc177cb66b7638cafd30204}{rr\+\_\+emcy\+\_\+cb\+\_\+t} cb)
+\begin{DoxyCompactList}\small\item\em The function sets a user callback to be intiated in connection with emergency (E\+M\+CY) events (e.\+g., overcurrent, power outage, etc.). User callbacks are functions to execute specific user-\/defined operations, e.\+g., to display a warning about an E\+M\+CY event or stop the program. \end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{group___state_ga91beec8d2ca8ea03583c21a285297861}{rr\+\_\+describe\+\_\+nmt} (\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29}{rr\+\_\+nmt\+\_\+state\+\_\+t} state)
+\begin{DoxyCompactList}\small\item\em The function returns a string describing the N\+MT state code specified in the \textquotesingle{}state\textquotesingle{} parameter. You can also use the function with \hyperlink{group___state_ga2433f49950ad40f06537287b52852c13}{rr\+\_\+setup\+\_\+nmt\+\_\+callback}, setting the callback to display a detailed message describing an N\+MT event. \end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{group___err_ga2a5b7ff5f0e37ae3a856757cff7ced4f}{rr\+\_\+describe\+\_\+emcy\+\_\+code} (uint16\+\_\+t code)
+\begin{DoxyCompactList}\small\item\em The function returns a string descibing a specific E\+M\+CY event based on the error code in the \textquotesingle{}code\textquotesingle{} parameter. The description in the string is a generic type of the occured emergency event (e.\+g., \char`\"{}\+Temperature\char`\"{}). For a more detailed description, use the function together with the \hyperlink{group___err_gaa949cec80a64afa06ed9816fe1132888}{rr\+\_\+describe\+\_\+emcy\+\_\+bit} one. \end{DoxyCompactList}\item 
+const char $\ast$ \hyperlink{group___err_gaa949cec80a64afa06ed9816fe1132888}{rr\+\_\+describe\+\_\+emcy\+\_\+bit} (uint8\+\_\+t bit)
+\begin{DoxyCompactList}\small\item\em The function returns a string describing in detail a specific E\+M\+CY event based on the code in the \textquotesingle{}bit\textquotesingle{} parameter (e.\+g., \char`\"{}\+C\+A\+N bus warning limit reached\char`\"{}). The function can be used in combination with \hyperlink{group___err_ga2a5b7ff5f0e37ae3a856757cff7ced4f}{rr\+\_\+describe\+\_\+emcy\+\_\+code}. The latter provides a more generic description of an E\+M\+CY event. \end{DoxyCompactList}\item 
+\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$ \hyperlink{group___init_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface} (const char $\ast$interface\+\_\+name)
+\begin{DoxyCompactList}\small\item\em The function is the first to call to be able to work with the user A\+PI. It opens the C\+OM port where the corresponding C\+A\+N-\/\+U\+SB dongle is connected, enabling communication between the user program and the servo motors on the respective C\+AN bus. \end{DoxyCompactList}\item 
+int \hyperlink{group___init_ga10cbfcf4b80ebfd0d4df74441bbbe91a}{rr\+\_\+deinit\+\_\+interface} (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$$\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function closes the C\+OM port where the corresponding C\+A\+N-\/\+U\+SB dongle is connected, clearing all data associated with the interface descriptor. It is advisable to call the function every time before quitting the user program. \end{DoxyCompactList}\item 
+\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$ \hyperlink{group___init_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, const uint8\+\_\+t id)
+\begin{DoxyCompactList}\small\item\em The function determines whether the servo motor with the speficied ID is connected to the specified interface. It waits for 2 seconds to receive a Heartbeat message from the servo. When the message arrives within the interval, the servo is identified as successfully connected.~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___init_gafebc52982ef705b8d0f805d5ee5ca9f7}{rr\+\_\+deinit\+\_\+servo} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$$\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function deinitializes the servo, clearing all data associated with the servo descriptor. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga1239a8f4a80ea1c33f599a0cdc58048c}{rr\+\_\+servo\+\_\+reboot} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function reboots the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function, resetting it to the power-\/on state. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga59060b95f6ee0614cbec3500ba08b7a0}{rr\+\_\+servo\+\_\+reset\+\_\+communication} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function resets communication with the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter without resetting the entire interface. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga799d61d6eb811cba7f9097a5d9bfd0a8}{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the operational state. In the state, the servo is both available for communication and can execute commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga39559219bfb36d4d9359365ac3656a74}{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the pre-\/operational state. In the state, the servo is available for communication, but cannot execute any commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga02ca530236f87db0fcac9e136eafda4d}{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the stopped state. In the state, only Heartbeats are available. You can neither communicate with the servo nor make it execute any commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga3141174e38250e0107cc6de9681bcc47}{rr\+\_\+net\+\_\+reboot} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function reboots all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter, resetting them back to the power-\/on state. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga7591c01ec4b20388fad7effe3266e3b1}{rr\+\_\+net\+\_\+reset\+\_\+communication} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function resets communication via the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter. For instance, you may need to use the function when changing settings that require a reset after modification. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga427f81205fc35a78a351d1288ea67165}{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function sets all servos connected to the interface (C\+AN bus) specified in the \textquotesingle{}interface\textquotesingle{} parameter to the operational state. In the state, the servos can both communicate with the user program and execute commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga6a6c46f69a8586cf7bd129a55a775eb7}{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function sets all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter to the pre-\/operational state. In the state, the servos are available for communication, but cannot execute commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___state_ga7dd178eafeae0d80edd60e3aee6e13b9}{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function sets all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter to the stopped state. In the state, the servos are neither available for communication nor can execute commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_ga4bc3f475fd951403fbd99e51dc3aba4a}{rr\+\_\+stop\+\_\+and\+\_\+release} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the specified servo to the released state. The servo is de-\/energized and stops without retaining its position. \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_gabc7b250aba6f86e29692957eac9ecb31}{rr\+\_\+stop\+\_\+and\+\_\+freeze} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the specified servo to the freeze state. The servo stops, retaining its last position. \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_gac25d20b331b1b985c1f6f50106d5c971}{rr\+\_\+set\+\_\+current} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float current\+\_\+a)
+\begin{DoxyCompactList}\small\item\em The function sets the current supplied to the stator of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. Changing the \textquotesingle{}current\+\_\+a parameter\textquotesingle{} value, it is possible to adjust the servo\textquotesingle{}s torque (Torque = stator current$\ast$\+Kt). \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_gaf790a253c11e2bc0bfb208dd26e7491c}{rr\+\_\+set\+\_\+velocity} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float velocity\+\_\+deg\+\_\+per\+\_\+sec)
+\begin{DoxyCompactList}\small\item\em The function sets the velocity at which the specified servo should move at its maximum current. The maximum current is in accordance with the servo motor specification. \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_gaddb31db79640ec345eb237ddc4d1078f}{rr\+\_\+set\+\_\+position} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg)
+\begin{DoxyCompactList}\small\item\em The function sets the position that the specified servo should reach as a result of executing the command. The velocity and current are maximum values in accordance with the servo motor specifications. For setting lower velocity and current limits, use the \hyperlink{group___motion_ga6927d2a1d6ef5a0564b676817c88b82a}{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits} function. \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_ga252ba86c50217d9ccf08deaf4c75f2e7}{rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float velocity\+\_\+deg\+\_\+per\+\_\+sec, const float current\+\_\+a)
+\begin{DoxyCompactList}\small\item\em The function commands the specified servo to rotate at the specified velocity, while setting the maximum limit for the servo current (below the servo motor specifications). \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_ga6927d2a1d6ef5a0564b676817c88b82a}{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg, const float velocity\+\_\+deg\+\_\+per\+\_\+sec, const float current\+\_\+a)
+\begin{DoxyCompactList}\small\item\em The function sets the position that the specified servo should reach at user-\/defined velocity and current as a result of executing the command. \end{DoxyCompactList}\item 
+int \hyperlink{group___motion_ga67890b1af333ce15f291a24ddc5760d1}{rr\+\_\+set\+\_\+duty} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, float duty\+\_\+percent)
+\begin{DoxyCompactList}\small\item\em The function limits the input voltage supplied to the servo, enabling to adjust its motion velocity. For instance, when the input voltage is 20V, setting the duty\+\_\+percent parameter to 40\% will result in 8V supplied to the servo. \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_gaba5ac04eeadd4a8d888b409f34837ece}{rr\+\_\+add\+\_\+motion\+\_\+point} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg, const float velocity\+\_\+deg, const uint32\+\_\+t time\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function enables creating P\+VT (position-\/velocity-\/time) points to set the motion trajectory of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. P\+VT points define the following\+:~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_gaeb3f167be0e7caf96d4cb4b648d3a548}{rr\+\_\+start\+\_\+motion} (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, uint32\+\_\+t timestamp\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function commands all servos connected to the specified interface (C\+AN bus) to move simultaneously through a number of preset P\+VT points (see \hyperlink{group___trajectory_gaba5ac04eeadd4a8d888b409f34837ece}{rr\+\_\+add\+\_\+motion\+\_\+point}).~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___err_ga0803e0fab3e22b1bcb3f51aa393328b4}{rr\+\_\+read\+\_\+error\+\_\+status} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$const error\+\_\+count, uint8\+\_\+t $\ast$const error\+\_\+array)
+\begin{DoxyCompactList}\small\item\em The functions enables reading the total current count of servo errors and their codes. \end{DoxyCompactList}\item 
+int \hyperlink{group___realtime_ga4d9f2bcfc136357405359c9ca9d4aedf}{rr\+\_\+param\+\_\+cache\+\_\+update} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function is always used in combination with the \hyperlink{group___realtime_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function. It retreives from the servo the array of parameters set up using \hyperlink{group___realtime_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function and saves the array to the program cache. You can subsequently read the parameters from the program cache with the \hyperlink{group___realtime_ga9249202a29031f84b7dc3da37db05dfc}{rr\+\_\+read\+\_\+cached\+\_\+parameter} function. For more information, see \hyperlink{group___realtime_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}. \end{DoxyCompactList}\item 
+int \hyperlink{group___realtime_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} param, bool enabled)
+\begin{DoxyCompactList}\small\item\em The function is the fist one in the A\+PI call sequence that enables reading multiple servo paramaters (e.\+g., velocity, voltage, and position) as a data array. Using the sequence is advisable when you need to read {\bfseries more than one parameter at a time}. The user can set up the array to include up to 50 parameters. In all, the sequence comprises the following functions\+: \end{DoxyCompactList}\item 
+int \hyperlink{group___realtime_gae665cf9423955f882e94282d66ba6a60}{rr\+\_\+read\+\_\+parameter} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} param, float $\ast$value)
+\begin{DoxyCompactList}\small\item\em The function enables reading a single parameter directly from the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function. The function returns the current value of the parameter. Additionally, the parameter is saved to the program cache, irrespective of whether it was enabled/ disabled with the \hyperlink{group___realtime_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function. \end{DoxyCompactList}\item 
+int \hyperlink{group___realtime_ga9249202a29031f84b7dc3da37db05dfc}{rr\+\_\+read\+\_\+cached\+\_\+parameter} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} param, float $\ast$value)
+\begin{DoxyCompactList}\small\item\em The function is always used in combination with the \hyperlink{group___realtime_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} and the\+::rr\+\_\+param\+\_\+cache\+\_\+update functions. For more information, see \hyperlink{group___realtime_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}. \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_ga19472cd90ae91f9b9f49edf4f52f35a2}{rr\+\_\+clear\+\_\+points\+\_\+all} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function clears the entire motion queue of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function. The servo completes the move it started before the function call and then clears all the remaining P\+VT points in the queue. \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_ga5a39de7fa2777073bbc4d9fc60fa5c38}{rr\+\_\+clear\+\_\+points} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const uint32\+\_\+t num\+\_\+to\+\_\+clear)
+\begin{DoxyCompactList}\small\item\em The function removes the number of P\+VT points indicated in the \textquotesingle{}num\+\_\+to\+\_\+clear\textquotesingle{} parameter from the tail of the motion queue preset for the specified servo. When the indicated number of P\+VT points to be removed exceeds the actual remaining number of P\+VT points in the queue, the funtion clears only the actual remaining number of P\+VT points. \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_gae6ed290842e08d349dd86bb1264e6a17}{rr\+\_\+get\+\_\+points\+\_\+size} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$num)
+\begin{DoxyCompactList}\small\item\em The function returns the actual motion queue size of the specified servo. The return value indicates how many P\+VT points have already been added to the motion queue. \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_gaafd0d575c047ed269664fbc760a640c1}{rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$num)
+\begin{DoxyCompactList}\small\item\em The function returns how many more P\+VT points the user can add to the motion queue of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_gabaa2275097c9ec4bb2807b65d83e3303}{rr\+\_\+invoke\+\_\+time\+\_\+calculation} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float start\+\_\+position\+\_\+deg, const float start\+\_\+velocity\+\_\+deg, const float start\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2, const uint32\+\_\+t start\+\_\+time\+\_\+ms, const float end\+\_\+position\+\_\+deg, const float end\+\_\+velocity\+\_\+deg, const float end\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2, const uint32\+\_\+t end\+\_\+time\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function enables calculating the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.\+g., velocity, acceleration). To read the calculation result, use the the \hyperlink{group___trajectory_ga0d01b53187b97dacd7611dacb37024d8}{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result} function. {\bfseries Note\+:}The function is executed without the servo moving.~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___trajectory_ga0d01b53187b97dacd7611dacb37024d8}{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$time\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function enables reading the result of the calculations made using the \hyperlink{group___trajectory_gabaa2275097c9ec4bb2807b65d83e3303}{rr\+\_\+invoke\+\_\+time\+\_\+calculation} function. It returns the calculated time (in milliseconds) it will take the servo with the specified descriptor to go from one position to another. \end{DoxyCompactList}\item 
+int \hyperlink{group___config_gab68e78b8a0d2a9ac38b9a72d78acab85}{rr\+\_\+set\+\_\+zero\+\_\+position} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg)
+\begin{DoxyCompactList}\small\item\em The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user. For instance, when the current servo position is 101 degrees and the \textquotesingle{}position\+\_\+deg\textquotesingle{} parameter is set to 25 degrees, the servo is assumed to be positioned at 25 degrees. \end{DoxyCompactList}\item 
+int \hyperlink{group___config_ga7ccc75e00e431b8a57150a71791488c3}{rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg)
+\begin{DoxyCompactList}\small\item\em The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user and saving it to the F\+L\+A\+SH memory. If you don\textquotesingle{}t want to save the newly set position, use the \hyperlink{group___config_gab68e78b8a0d2a9ac38b9a72d78acab85}{rr\+\_\+set\+\_\+zero\+\_\+position} function.~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___config_gad388cd353b262b614b563b093d61c911}{rr\+\_\+get\+\_\+max\+\_\+velocity} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, float $\ast$velocity\+\_\+deg\+\_\+per\+\_\+sec)
+\begin{DoxyCompactList}\small\item\em The function reads the maximum velocity of the servo at the current moment. It returns the smallest of the three values—the user-\/defined maximum velocity limit (\hyperlink{group___config_ga18d5d9dc728f7cb8e7674b9e9b275aca}{rr\+\_\+set\+\_\+max\+\_\+velocity}), the maximum velocity value based on the servo specifications, or the calculated maximum velocity based on the supply voltage. \end{DoxyCompactList}\item 
+int \hyperlink{group___config_ga18d5d9dc728f7cb8e7674b9e9b275aca}{rr\+\_\+set\+\_\+max\+\_\+velocity} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float max\+\_\+velocity\+\_\+deg\+\_\+per\+\_\+sec)
+\begin{DoxyCompactList}\small\item\em The function sets the maximum velocity limit for the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. The setting is volatile\+: after a reset or a power outage, it is no longer valid. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Rozum Robotics A\+PI Header File. 
+
+\begin{DoxyAuthor}{Author}
+Rozum 
+\end{DoxyAuthor}
+\begin{DoxyDate}{Date}
+2018-\/06-\/01 
+\end{DoxyDate}
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{api_8h_a3850d8aa5bc177cb66b7638cafd30204}\label{api_8h_a3850d8aa5bc177cb66b7638cafd30204}} 
+\index{api.\+h@{api.\+h}!rr\+\_\+emcy\+\_\+cb\+\_\+t@{rr\+\_\+emcy\+\_\+cb\+\_\+t}}
+\index{rr\+\_\+emcy\+\_\+cb\+\_\+t@{rr\+\_\+emcy\+\_\+cb\+\_\+t}!api.\+h@{api.\+h}}
+\subsubsection{\texorpdfstring{rr\+\_\+emcy\+\_\+cb\+\_\+t}{rr\_emcy\_cb\_t}}
+{\footnotesize\ttfamily typedef void($\ast$ rr\+\_\+emcy\+\_\+cb\+\_\+t) (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, int servo\+\_\+id, uint16\+\_\+t code, uint8\+\_\+t reg, uint8\+\_\+t bits, uint32\+\_\+t info)}
+
+
+
+Type of the intiated emergency (E\+M\+CY) callback~\newline
+ 
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Descriptor of the interface (see \hyperlink{group___init_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface}) where the E\+M\+CY event occured \\
+\hline
+{\em servo\+\_\+id} & Descriptor of the servo (see \hyperlink{group___init_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo}) where the E\+M\+CY event occured \\
+\hline
+{\em code} & Error code \\
+\hline
+{\em reg} & Register field of the E\+M\+CY message (see Can\+Open documentation) \\
+\hline
+{\em bits} & Bits field of the E\+M\+CY message (see Can\+Open documentation) \\
+\hline
+{\em info} & Additional field (see Can\+Open documentation) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{api_8h_ae0f9f2b200672126bb1f6eb3e66c27fc}\label{api_8h_ae0f9f2b200672126bb1f6eb3e66c27fc}} 
+\index{api.\+h@{api.\+h}!rr\+\_\+nmt\+\_\+cb\+\_\+t@{rr\+\_\+nmt\+\_\+cb\+\_\+t}}
+\index{rr\+\_\+nmt\+\_\+cb\+\_\+t@{rr\+\_\+nmt\+\_\+cb\+\_\+t}!api.\+h@{api.\+h}}
+\subsubsection{\texorpdfstring{rr\+\_\+nmt\+\_\+cb\+\_\+t}{rr\_nmt\_cb\_t}}
+{\footnotesize\ttfamily typedef void($\ast$ rr\+\_\+nmt\+\_\+cb\+\_\+t) (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, int servo\+\_\+id, \hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29}{rr\+\_\+nmt\+\_\+state\+\_\+t} nmt\+\_\+state)}
+
+
+
+Type of the intiated network management (N\+MT) callback~\newline
+ 
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Descriptor of the interface (see \hyperlink{group___init_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface}) where the N\+MT event occured \\
+\hline
+{\em servo\+\_\+id} & Descriptor of the servo (see \hyperlink{group___init_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo}) where the N\+MT event occured \\
+\hline
+{\em nmt\+\_\+state} & Network management state (\hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29}{rr\+\_\+nmt\+\_\+state\+\_\+t}) that the servo entered \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Enumeration Type Documentation}
+\mbox{\Hypertarget{api_8h_afaf255d20b35be64a488b42e11feab29}\label{api_8h_afaf255d20b35be64a488b42e11feab29}} 
+\index{api.\+h@{api.\+h}!rr\+\_\+nmt\+\_\+state\+\_\+t@{rr\+\_\+nmt\+\_\+state\+\_\+t}}
+\index{rr\+\_\+nmt\+\_\+state\+\_\+t@{rr\+\_\+nmt\+\_\+state\+\_\+t}!api.\+h@{api.\+h}}
+\subsubsection{\texorpdfstring{rr\+\_\+nmt\+\_\+state\+\_\+t}{rr\_nmt\_state\_t}}
+{\footnotesize\ttfamily enum \hyperlink{api_8h_afaf255d20b35be64a488b42e11feab29}{rr\+\_\+nmt\+\_\+state\+\_\+t}}
+
+
+
+Network management (N\+MT) states. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+R\+\_\+\+N\+M\+T\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+I\+NG@{R\+R\+\_\+\+N\+M\+T\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+I\+NG}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+R\+\_\+\+N\+M\+T\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+I\+NG@{R\+R\+\_\+\+N\+M\+T\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+I\+NG}}}\mbox{\Hypertarget{api_8h_afaf255d20b35be64a488b42e11feab29ac2550cce228ff5512ea417e2b035b665}\label{api_8h_afaf255d20b35be64a488b42e11feab29ac2550cce228ff5512ea417e2b035b665}} 
+R\+R\+\_\+\+N\+M\+T\+\_\+\+I\+N\+I\+T\+I\+A\+L\+I\+Z\+I\+NG&Device is initializing \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+R\+\_\+\+N\+M\+T\+\_\+\+B\+O\+OT@{R\+R\+\_\+\+N\+M\+T\+\_\+\+B\+O\+OT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+R\+\_\+\+N\+M\+T\+\_\+\+B\+O\+OT@{R\+R\+\_\+\+N\+M\+T\+\_\+\+B\+O\+OT}}}\mbox{\Hypertarget{api_8h_afaf255d20b35be64a488b42e11feab29a4b2cf9b28688f7985afff0c25a7da61b}\label{api_8h_afaf255d20b35be64a488b42e11feab29a4b2cf9b28688f7985afff0c25a7da61b}} 
+R\+R\+\_\+\+N\+M\+T\+\_\+\+B\+O\+OT&Device executing bootloader application \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+R\+\_\+\+N\+M\+T\+\_\+\+P\+R\+E\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL@{R\+R\+\_\+\+N\+M\+T\+\_\+\+P\+R\+E\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+R\+\_\+\+N\+M\+T\+\_\+\+P\+R\+E\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL@{R\+R\+\_\+\+N\+M\+T\+\_\+\+P\+R\+E\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL}}}\mbox{\Hypertarget{api_8h_afaf255d20b35be64a488b42e11feab29ace8deaf0d4ce3230fb48c15de516e474}\label{api_8h_afaf255d20b35be64a488b42e11feab29ace8deaf0d4ce3230fb48c15de516e474}} 
+R\+R\+\_\+\+N\+M\+T\+\_\+\+P\+R\+E\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL&Device is in pre-\/operational state \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+R\+\_\+\+N\+M\+T\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL@{R\+R\+\_\+\+N\+M\+T\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+R\+\_\+\+N\+M\+T\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL@{R\+R\+\_\+\+N\+M\+T\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL}}}\mbox{\Hypertarget{api_8h_afaf255d20b35be64a488b42e11feab29a57e41d0fd4f218c20acc57061b28f52d}\label{api_8h_afaf255d20b35be64a488b42e11feab29a57e41d0fd4f218c20acc57061b28f52d}} 
+R\+R\+\_\+\+N\+M\+T\+\_\+\+O\+P\+E\+R\+A\+T\+I\+O\+N\+AL&Device is in operational state \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+R\+\_\+\+N\+M\+T\+\_\+\+S\+T\+O\+P\+P\+ED@{R\+R\+\_\+\+N\+M\+T\+\_\+\+S\+T\+O\+P\+P\+ED}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+R\+\_\+\+N\+M\+T\+\_\+\+S\+T\+O\+P\+P\+ED@{R\+R\+\_\+\+N\+M\+T\+\_\+\+S\+T\+O\+P\+P\+ED}}}\mbox{\Hypertarget{api_8h_afaf255d20b35be64a488b42e11feab29a0b3bd632c9abf67a54795f902b0cb2f8}\label{api_8h_afaf255d20b35be64a488b42e11feab29a0b3bd632c9abf67a54795f902b0cb2f8}} 
+R\+R\+\_\+\+N\+M\+T\+\_\+\+S\+T\+O\+P\+P\+ED&Device is stopped \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+R\+\_\+\+N\+M\+T\+\_\+\+H\+B\+\_\+\+T\+I\+M\+E\+O\+UT@{R\+R\+\_\+\+N\+M\+T\+\_\+\+H\+B\+\_\+\+T\+I\+M\+E\+O\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+R\+\_\+\+N\+M\+T\+\_\+\+H\+B\+\_\+\+T\+I\+M\+E\+O\+UT@{R\+R\+\_\+\+N\+M\+T\+\_\+\+H\+B\+\_\+\+T\+I\+M\+E\+O\+UT}}}\mbox{\Hypertarget{api_8h_afaf255d20b35be64a488b42e11feab29af745eff49927034f66cbd67835b2fd26}\label{api_8h_afaf255d20b35be64a488b42e11feab29af745eff49927034f66cbd67835b2fd26}} 
+R\+R\+\_\+\+N\+M\+T\+\_\+\+H\+B\+\_\+\+T\+I\+M\+E\+O\+UT&Device heartbeat timeout (device disappeared from bus) \\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdc}\label{api_8h_a92d5be5038abcf89837faf85a08debdc}} 
+\index{api.\+h@{api.\+h}!rr\+\_\+ret\+\_\+status\+\_\+t@{rr\+\_\+ret\+\_\+status\+\_\+t}}
+\index{rr\+\_\+ret\+\_\+status\+\_\+t@{rr\+\_\+ret\+\_\+status\+\_\+t}!api.\+h@{api.\+h}}
+\subsubsection{\texorpdfstring{rr\+\_\+ret\+\_\+status\+\_\+t}{rr\_ret\_status\_t}}
+{\footnotesize\ttfamily enum \hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}}
+
+
+
+Return codes of the A\+PI functions. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+OK@{R\+E\+T\+\_\+\+OK}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+OK@{R\+E\+T\+\_\+\+OK}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdca4894234446e2d92068943b3d6d3a0bdc}\label{api_8h_a92d5be5038abcf89837faf85a08debdca4894234446e2d92068943b3d6d3a0bdc}} 
+R\+E\+T\+\_\+\+OK&Status OK. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+E\+R\+R\+OR@{R\+E\+T\+\_\+\+E\+R\+R\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+E\+R\+R\+OR@{R\+E\+T\+\_\+\+E\+R\+R\+OR}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdcae8ed27c1aabd77d519426a8ad340d76c}\label{api_8h_a92d5be5038abcf89837faf85a08debdcae8ed27c1aabd77d519426a8ad340d76c}} 
+R\+E\+T\+\_\+\+E\+R\+R\+OR&Generic error. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+B\+A\+D\+\_\+\+I\+N\+S\+T\+A\+N\+CE@{R\+E\+T\+\_\+\+B\+A\+D\+\_\+\+I\+N\+S\+T\+A\+N\+CE}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+B\+A\+D\+\_\+\+I\+N\+S\+T\+A\+N\+CE@{R\+E\+T\+\_\+\+B\+A\+D\+\_\+\+I\+N\+S\+T\+A\+N\+CE}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdcada2fa397afd6b90ecb1c5b9ca3a2d0ee}\label{api_8h_a92d5be5038abcf89837faf85a08debdcada2fa397afd6b90ecb1c5b9ca3a2d0ee}} 
+R\+E\+T\+\_\+\+B\+A\+D\+\_\+\+I\+N\+S\+T\+A\+N\+CE&Bad interface or servo instance (null) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+B\+U\+SY@{R\+E\+T\+\_\+\+B\+U\+SY}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+B\+U\+SY@{R\+E\+T\+\_\+\+B\+U\+SY}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdcacdd796ae2972988d689257753a05b9dd}\label{api_8h_a92d5be5038abcf89837faf85a08debdcacdd796ae2972988d689257753a05b9dd}} 
+R\+E\+T\+\_\+\+B\+U\+SY&Device is busy. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+W\+R\+O\+N\+G\+\_\+\+T\+R\+AJ@{R\+E\+T\+\_\+\+W\+R\+O\+N\+G\+\_\+\+T\+R\+AJ}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+W\+R\+O\+N\+G\+\_\+\+T\+R\+AJ@{R\+E\+T\+\_\+\+W\+R\+O\+N\+G\+\_\+\+T\+R\+AJ}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdcadf1d978b055d00c4036019387acfc60c}\label{api_8h_a92d5be5038abcf89837faf85a08debdcadf1d978b055d00c4036019387acfc60c}} 
+R\+E\+T\+\_\+\+W\+R\+O\+N\+G\+\_\+\+T\+R\+AJ&Wrong trajectory. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+L\+O\+C\+K\+ED@{R\+E\+T\+\_\+\+L\+O\+C\+K\+ED}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+L\+O\+C\+K\+ED@{R\+E\+T\+\_\+\+L\+O\+C\+K\+ED}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdca2840a6ac495b0fe4b9e8565d9f76e29a}\label{api_8h_a92d5be5038abcf89837faf85a08debdca2840a6ac495b0fe4b9e8565d9f76e29a}} 
+R\+E\+T\+\_\+\+L\+O\+C\+K\+ED&Device is locked. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+S\+T\+O\+P\+P\+ED@{R\+E\+T\+\_\+\+S\+T\+O\+P\+P\+ED}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+S\+T\+O\+P\+P\+ED@{R\+E\+T\+\_\+\+S\+T\+O\+P\+P\+ED}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdcad456500c4074aeffb3e5e132bf7d996c}\label{api_8h_a92d5be5038abcf89837faf85a08debdcad456500c4074aeffb3e5e132bf7d996c}} 
+R\+E\+T\+\_\+\+S\+T\+O\+P\+P\+ED&Device is in S\+T\+O\+P\+P\+ED state. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+T\+I\+M\+E\+O\+UT@{R\+E\+T\+\_\+\+T\+I\+M\+E\+O\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+T\+I\+M\+E\+O\+UT@{R\+E\+T\+\_\+\+T\+I\+M\+E\+O\+UT}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdcadf2eed18ed159c7517505568b0f261dd}\label{api_8h_a92d5be5038abcf89837faf85a08debdcadf2eed18ed159c7517505568b0f261dd}} 
+R\+E\+T\+\_\+\+T\+I\+M\+E\+O\+UT&Communication timeout. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+Z\+E\+R\+O\+\_\+\+S\+I\+ZE@{R\+E\+T\+\_\+\+Z\+E\+R\+O\+\_\+\+S\+I\+ZE}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+Z\+E\+R\+O\+\_\+\+S\+I\+ZE@{R\+E\+T\+\_\+\+Z\+E\+R\+O\+\_\+\+S\+I\+ZE}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdcac2c7bf0285c804ae03c6628659ce366e}\label{api_8h_a92d5be5038abcf89837faf85a08debdcac2c7bf0285c804ae03c6628659ce366e}} 
+R\+E\+T\+\_\+\+Z\+E\+R\+O\+\_\+\+S\+I\+ZE&Zero size. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{R\+E\+T\+\_\+\+S\+I\+Z\+E\+\_\+\+M\+I\+S\+M\+A\+T\+CH@{R\+E\+T\+\_\+\+S\+I\+Z\+E\+\_\+\+M\+I\+S\+M\+A\+T\+CH}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!R\+E\+T\+\_\+\+S\+I\+Z\+E\+\_\+\+M\+I\+S\+M\+A\+T\+CH@{R\+E\+T\+\_\+\+S\+I\+Z\+E\+\_\+\+M\+I\+S\+M\+A\+T\+CH}}}\mbox{\Hypertarget{api_8h_a92d5be5038abcf89837faf85a08debdca639f91af3521a375df0778f9cd60d60b}\label{api_8h_a92d5be5038abcf89837faf85a08debdca639f91af3521a375df0778f9cd60d60b}} 
+R\+E\+T\+\_\+\+S\+I\+Z\+E\+\_\+\+M\+I\+S\+M\+A\+T\+CH&Received \& target size mismatch. \\
+\hline
+
+\end{DoxyEnumFields}
+\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276d}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276d}} 
+\index{api.\+h@{api.\+h}!rr\+\_\+servo\+\_\+param\+\_\+t@{rr\+\_\+servo\+\_\+param\+\_\+t}}
+\index{rr\+\_\+servo\+\_\+param\+\_\+t@{rr\+\_\+servo\+\_\+param\+\_\+t}!api.\+h@{api.\+h}}
+\subsubsection{\texorpdfstring{rr\+\_\+servo\+\_\+param\+\_\+t}{rr\_servo\_param\_t}}
+{\footnotesize\ttfamily enum \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t}}
+
+
+
+Device parameter \& source indexes. 
+
+\begin{DoxyEnumFields}{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+N\+U\+LL@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+N\+U\+LL}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+N\+U\+LL@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+N\+U\+LL}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daf92693e0b44950ce14a0e4c467ca9d08}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daf92693e0b44950ce14a0e4c467ca9d08}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+N\+U\+LL&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+ON@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+ON}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+ON@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+ON}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dab079617b03cb882ecb48c06ae6603363}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dab079617b03cb882ecb48c06ae6603363}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+ON&Actual multi-\/turn position of the output shaft (degrees) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+TY@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+TY}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+TY@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+TY}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da7c7eb311e57837875791d5e58982661c}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da7c7eb311e57837875791d5e58982661c}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+TY&Actual velocity of the output shaft (degrees per second) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daa8dafaaa373617ef2f8585b3d4177115}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daa8dafaaa373617ef2f8585b3d4177115}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR&Actual position of the motor shaft (degrees) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+R\+O\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+R\+O\+T\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+R\+O\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+R\+O\+T\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dade3db1d484cf6dd69b115e37ab77051b}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dade3db1d484cf6dd69b115e37ab77051b}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+R\+O\+T\+OR&Actual velocity of the motor shaft (degrees per second) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+360@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+360}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+360@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+360}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dab8e557b8564d2bf579cc199b343644f2}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dab8e557b8564d2bf579cc199b343644f2}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+360&Actual single-\/turn position of the output shaft (from 0 to 360 degrees) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+\+E\+M\+U\+L\+A\+T\+ED@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+\+E\+M\+U\+L\+A\+T\+ED}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+\+E\+M\+U\+L\+A\+T\+ED@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+\+E\+M\+U\+L\+A\+T\+ED}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da27cb6c1302d1ed7545ee8c8ee020b9c1}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da27cb6c1302d1ed7545ee8c8ee020b9c1}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+G\+E\+A\+R\+\_\+\+E\+M\+U\+L\+A\+T\+ED&Actual multi-\/turn position of the motor shaft multiplied by gear ratio (degrees) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+I\+N\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+I\+N\+P\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+I\+N\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+I\+N\+P\+UT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dafb1be8c565208f94596b980788ac52fe}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dafb1be8c565208f94596b980788ac52fe}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+I\+N\+P\+UT&Actual DC current (amperes) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+O\+U\+T\+P\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+O\+U\+T\+P\+UT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dae8c5d203df5baa3a329b89e4e3c05e31}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dae8c5d203df5baa3a329b89e4e3c05e31}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+O\+U\+T\+P\+UT&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+N\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+N\+P\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+N\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+N\+P\+UT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da78bc54701f1fe1ce6b90b70bbfa62483}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da78bc54701f1fe1ce6b90b70bbfa62483}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+I\+N\+P\+UT&Actual DC voltage (volts) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+O\+U\+T\+P\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+O\+U\+T\+P\+UT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da09d81b3e2fccfa745188ab46c8dd7263}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da09d81b3e2fccfa745188ab46c8dd7263}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+V\+O\+L\+T\+A\+G\+E\+\_\+\+O\+U\+T\+P\+UT&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+SE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+SE}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+SE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+SE}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dad60719b243d4c9abd6c6c2566266fa52}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dad60719b243d4c9abd6c6c2566266fa52}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+SE&Actual magnitude of AC current (amperes) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+A\+C\+T\+U\+A\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+A\+C\+T\+U\+A\+T\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+A\+C\+T\+U\+A\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+A\+C\+T\+U\+A\+T\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da1a3c86ed7fe187d364809094d3c1dc3a}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da1a3c86ed7fe187d364809094d3c1dc3a}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+A\+C\+T\+U\+A\+T\+OR&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+E\+L\+E\+C\+T\+R\+O\+N\+I\+CS@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+E\+L\+E\+C\+T\+R\+O\+N\+I\+CS}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+E\+L\+E\+C\+T\+R\+O\+N\+I\+CS@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+E\+L\+E\+C\+T\+R\+O\+N\+I\+CS}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da48d8972dac6ee7ea647431a83dd88143}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da48d8972dac6ee7ea647431a83dd88143}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+E\+M\+P\+E\+R\+A\+T\+U\+R\+E\+\_\+\+E\+L\+E\+C\+T\+R\+O\+N\+I\+CS&Actual temperature of the motor controller. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+UE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+UE}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+UE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+UE}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da5bc9d6003879b42f41d8db8ee443afbf}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da5bc9d6003879b42f41d8db8ee443afbf}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+UE&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+ON@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+ON}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+ON@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+ON}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dae433fe695af5d074e34503e78802e79c}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dae433fe695af5d074e34503e78802e79c}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+ON&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da6f9d3e5a018689702d2f070888af6882}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da6f9d3e5a018689702d2f070888af6882}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+A\+C\+C\+E\+L\+E\+R\+A\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+1@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+1}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+1@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+1}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dae2db7f59e354f0adf411ebc097be9615}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dae2db7f59e354f0adf411ebc097be9615}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+1&Actual phase 1 current. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+2}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+2}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daecd1a50b950e607328843d7ab44ef37b}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daecd1a50b950e607328843d7ab44ef37b}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+2&Actual phase 2 current. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+3}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+3}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daf52784c6a104216ecddc02d08edca79b}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daf52784c6a104216ecddc02d08edca79b}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+3&Actual phase 3 current. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+AW@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+AW}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+AW@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+AW}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da2612f6ba14c9dd0ad30ac7d67c3a9707}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da2612f6ba14c9dd0ad30ac7d67c3a9707}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+AW&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+2}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+2}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daa28d107cc1bfbff653eee6bc0abc9df1}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daa28d107cc1bfbff653eee6bc0abc9df1}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+2&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+3}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+3}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da44c5166f84bc671786688186ca4f34d0}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da44c5166f84bc671786688186ca4f34d0}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+A\+W\+\_\+3&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da882f43f6b3595fe0a321f208a41d726e}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da882f43f6b3595fe0a321f208a41d726e}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da3facac23b091243602b47fd2576b2823}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da3facac23b091243602b47fd2576b2823}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da9abecc57566475fa5d0a47a30d3eb7b7}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da9abecc57566475fa5d0a47a30d3eb7b7}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+M\+A\+S\+T\+E\+R\+\_\+\+T\+R\+A\+CK&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dad2803d24470187ed238ad95997bfe9be}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dad2803d24470187ed238ad95997bfe9be}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+E\+N\+C\+O\+D\+E\+R\+\_\+\+M\+O\+T\+O\+R\+\_\+\+N\+O\+N\+I\+U\+S\+\_\+\+T\+R\+A\+CK&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+U\+E\+\_\+\+E\+L\+E\+C\+T\+R\+I\+C\+\_\+\+C\+A\+LC@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+U\+E\+\_\+\+E\+L\+E\+C\+T\+R\+I\+C\+\_\+\+C\+A\+LC}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+U\+E\+\_\+\+E\+L\+E\+C\+T\+R\+I\+C\+\_\+\+C\+A\+LC@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+U\+E\+\_\+\+E\+L\+E\+C\+T\+R\+I\+C\+\_\+\+C\+A\+LC}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da354f3004c944556f129c2b590b80c629}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da354f3004c944556f129c2b590b80c629}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+T\+O\+R\+Q\+U\+E\+\_\+\+E\+L\+E\+C\+T\+R\+I\+C\+\_\+\+C\+A\+LC&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+E\+R\+R\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+E\+R\+R\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dae48e6cfbaff81ae1166e684b004f868d}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dae48e6cfbaff81ae1166e684b004f868d}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+E\+R\+R\+OR&Velocity following error. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+S\+E\+T\+P\+O\+I\+NT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+S\+E\+T\+P\+O\+I\+NT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+S\+E\+T\+P\+O\+I\+NT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+S\+E\+T\+P\+O\+I\+NT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da91fd08d4408a3251703cef5153b6006e}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da91fd08d4408a3251703cef5153b6006e}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+S\+E\+T\+P\+O\+I\+NT&Velocity target. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+F\+E\+E\+D\+B\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+F\+E\+E\+D\+B\+A\+CK}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+F\+E\+E\+D\+B\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+F\+E\+E\+D\+B\+A\+CK}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da0434a3f113392ee4eefc32a78c61b52b}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da0434a3f113392ee4eefc32a78c61b52b}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+F\+E\+E\+D\+B\+A\+CK&Actual velocity (degrees per second) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+O\+U\+T\+P\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+O\+U\+T\+P\+UT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da8b6cbe796f36ba0e86a09a21c04c65f5}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da8b6cbe796f36ba0e86a09a21c04c65f5}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+V\+E\+L\+O\+C\+I\+T\+Y\+\_\+\+O\+U\+T\+P\+UT&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+E\+R\+R\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+E\+R\+R\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da56a3f7c3f40262a8e771a19ecda28336}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da56a3f7c3f40262a8e771a19ecda28336}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+E\+R\+R\+OR&Position following error. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+S\+E\+T\+P\+O\+I\+NT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+S\+E\+T\+P\+O\+I\+NT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+S\+E\+T\+P\+O\+I\+NT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+S\+E\+T\+P\+O\+I\+NT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da25c849d6776790828eec0884f4e1a4ec}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da25c849d6776790828eec0884f4e1a4ec}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+S\+E\+T\+P\+O\+I\+NT&Position target. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+F\+E\+E\+D\+B\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+F\+E\+E\+D\+B\+A\+CK}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+F\+E\+E\+D\+B\+A\+CK@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+F\+E\+E\+D\+B\+A\+CK}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da3020332205840419d9e853fc91a77150}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da3020332205840419d9e853fc91a77150}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+F\+E\+E\+D\+B\+A\+CK&Actual position (degrees) \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+O\+U\+T\+P\+UT}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+O\+U\+T\+P\+UT@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+O\+U\+T\+P\+UT}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da499b7b92c7d38ca32bfad3f774b69bf2}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da499b7b92c7d38ca32bfad3f774b69bf2}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+L\+E\+R\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+O\+U\+T\+P\+UT&Not used. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+\_\+\+M\+O\+DE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+\_\+\+M\+O\+DE}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+\_\+\+M\+O\+DE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+\_\+\+M\+O\+DE}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da486101d3961797df2f71d944e09806fc}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da486101d3961797df2f71d944e09806fc}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+O\+N\+T\+R\+O\+L\+\_\+\+M\+O\+DE&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+A\+N\+G\+LE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+A\+N\+G\+LE}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+A\+N\+G\+LE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+A\+N\+G\+LE}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da5d39d5f2d4ec671512f0fb2c3d909cb7}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da5d39d5f2d4ec671512f0fb2c3d909cb7}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+A\+N\+G\+LE&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IA@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IA}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IA@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IA}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dadb088007a4cbbb03059abe3fe7146dd1}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dadb088007a4cbbb03059abe3fe7146dd1}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IA&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IB@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IB}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IB@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IB}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dad467e8050746e3ee7c4ec2feacc3bd3c}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dad467e8050746e3ee7c4ec2feacc3bd3c}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IB&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+S\+ET@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+S\+ET}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+S\+ET@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+S\+ET}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da01758ca2594861bbda0763f325ca3aca}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da01758ca2594861bbda0763f325ca3aca}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+S\+ET&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+S\+ET@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+S\+ET}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+S\+ET@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+S\+ET}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da6f42d9552fbac9730024cca43523a242}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da6f42d9552fbac9730024cca43523a242}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+S\+ET&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IQ@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IQ}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IQ@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IQ}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da73f70b69632299140d13b5c478adc7b4}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da73f70b69632299140d13b5c478adc7b4}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+IQ&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+ID@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+ID}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+ID@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+ID}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da319baaf4a82176f75f0a8f8cc087a5d7}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da319baaf4a82176f75f0a8f8cc087a5d7}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+ID&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+E\+R\+R\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+E\+R\+R\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dacdba14f6f1bc732d0ccae9bc815e0bd2}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dacdba14f6f1bc732d0ccae9bc815e0bd2}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+Q\+\_\+\+E\+R\+R\+OR&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+E\+R\+R\+OR}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+E\+R\+R\+OR@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+E\+R\+R\+OR}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da86ce5142afb8969bc5bc47e4c081d5e3}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da86ce5142afb8969bc5bc47e4c081d5e3}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+I\+D\+\_\+\+E\+R\+R\+OR&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UQ@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UQ}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UQ@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UQ}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da9fbb32722da1e00d15978c4c7d2e79c2}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da9fbb32722da1e00d15978c4c7d2e79c2}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UQ&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UD@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UD}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UD@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UD}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da6061e4dd81c828196553b88062a62ada}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da6061e4dd81c828196553b88062a62ada}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UD&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UA@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UA}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UA@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UA}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da7afcc32cc4c18e09d72a7169a9492566}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da7afcc32cc4c18e09d72a7169a9492566}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UA&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UB@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UB}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UB@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UB}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da8927f0ebd1b6eb9b4797d2eec7802c01}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da8927f0ebd1b6eb9b4797d2eec7802c01}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+UB&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U1@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U1}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U1@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U1}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da8711d53dcfb19db3d2433e684196ec12}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da8711d53dcfb19db3d2433e684196ec12}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U1&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U2}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U2}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daaacd65258dd57131fca177ce77e87f90}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daaacd65258dd57131fca177ce77e87f90}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U2&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U3}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U3}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da3f34364027e0a438200ae65f5240a977}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da3f34364027e0a438200ae65f5240a977}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+U3&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M1@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M1}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M1@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M1}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da50b57287acfbd01ee1cc9f81cc5bbae8}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da50b57287acfbd01ee1cc9f81cc5bbae8}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M1&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M2}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M2@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M2}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276dae00c758b5a840d5cd3721b24786f6e74}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276dae00c758b5a840d5cd3721b24786f6e74}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M2&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M3}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M3@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M3}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da1cfe88d23e154013d53d5f9b436441da}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da1cfe88d23e154013d53d5f9b436441da}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+P\+W\+M3&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+T\+I\+M\+E\+R\+\_\+\+T\+OP@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+T\+I\+M\+E\+R\+\_\+\+T\+OP}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+T\+I\+M\+E\+R\+\_\+\+T\+OP@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+T\+I\+M\+E\+R\+\_\+\+T\+OP}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daeac24550704ad65662feab7eff3efb56}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daeac24550704ad65662feab7eff3efb56}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+F\+O\+C\+\_\+\+T\+I\+M\+E\+R\+\_\+\+T\+OP&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+D\+U\+TY@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+D\+U\+TY}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+D\+U\+TY@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+D\+U\+TY}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da8afb9b113dd0f0716c427764558eb4ba}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da8afb9b113dd0f0716c427764558eb4ba}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+D\+U\+TY&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+\+A\+BS@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+\+A\+BS}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+\+A\+BS@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+\+A\+BS}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da64bd53346ff3be314052b1bc4e6df444}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da64bd53346ff3be314052b1bc4e6df444}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+P\+H\+A\+S\+E\+\_\+\+A\+BS&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+M\+S\+\_\+\+A\+BS@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+M\+S\+\_\+\+A\+BS}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+M\+S\+\_\+\+A\+BS@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+M\+S\+\_\+\+A\+BS}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da222475d9d9057e1b4ee6d8a729de1a6c}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da222475d9d9057e1b4ee6d8a729de1a6c}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+C\+U\+R\+R\+E\+N\+T\+\_\+\+R\+M\+S\+\_\+\+A\+BS&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+Q\+U\+A\+L\+I\+TY@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+Q\+U\+A\+L\+I\+TY}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+Q\+U\+A\+L\+I\+TY@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+Q\+U\+A\+L\+I\+TY}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276da7a8a9b8af6784574c799964a58c5b84c}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276da7a8a9b8af6784574c799964a58c5b84c}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+Q\+U\+A\+L\+I\+TY&Internal use only. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+S\+I\+ZE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+S\+I\+ZE}!api.\+h@{api.\+h}}\index{api.\+h@{api.\+h}!A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+S\+I\+ZE@{A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+S\+I\+ZE}}}\mbox{\Hypertarget{api_8h_aa1f58887fab4642cf49f6f453c1d276daf913094f39a1622c91c85b522ccd4b0e}\label{api_8h_aa1f58887fab4642cf49f6f453c1d276daf913094f39a1622c91c85b522ccd4b0e}} 
+A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+S\+I\+ZE&Use when you need to define the total param arrray size. \\
+\hline
+
+\end{DoxyEnumFields}

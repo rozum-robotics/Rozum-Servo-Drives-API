@@ -1,0 +1,83 @@
+\hypertarget{group___servo__config}{}\section{Servo configuration functions}
+\label{group___servo__config}\index{Servo configuration functions@{Servo configuration functions}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group___servo__config_gab68e78b8a0d2a9ac38b9a72d78acab85}{rr\+\_\+set\+\_\+zero\+\_\+position} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg)
+\begin{DoxyCompactList}\small\item\em The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user. For instance, when the current servo position is 101 degrees and the \textquotesingle{}position\+\_\+deg\textquotesingle{} parameter is set to 25 degrees, the servo is assumed to be positioned at 25 degrees. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__config_ga7ccc75e00e431b8a57150a71791488c3}{rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg)
+\begin{DoxyCompactList}\small\item\em The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user and saving it to the F\+L\+A\+SH memory. If you don\textquotesingle{}t want to save the newly set position, use the \hyperlink{group___servo__config_gab68e78b8a0d2a9ac38b9a72d78acab85}{rr\+\_\+set\+\_\+zero\+\_\+position} function.~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__config_ga18d5d9dc728f7cb8e7674b9e9b275aca}{rr\+\_\+set\+\_\+max\+\_\+velocity} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float max\+\_\+velocity\+\_\+deg\+\_\+per\+\_\+sec)
+\begin{DoxyCompactList}\small\item\em The function sets the maximum velocity limit for the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. The setting is volatile\+: after a reset or a power outage, it is no longer valid. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group___servo__config_ga18d5d9dc728f7cb8e7674b9e9b275aca}\label{group___servo__config_ga18d5d9dc728f7cb8e7674b9e9b275aca}} 
+\index{Servo configuration functions@{Servo configuration functions}!rr\+\_\+set\+\_\+max\+\_\+velocity@{rr\+\_\+set\+\_\+max\+\_\+velocity}}
+\index{rr\+\_\+set\+\_\+max\+\_\+velocity@{rr\+\_\+set\+\_\+max\+\_\+velocity}!Servo configuration functions@{Servo configuration functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+max\+\_\+velocity()}{rr\_set\_max\_velocity()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+max\+\_\+velocity (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{max\+\_\+velocity\+\_\+deg\+\_\+per\+\_\+sec }\end{DoxyParamCaption})}
+
+
+
+The function sets the maximum velocity limit for the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. The setting is volatile\+: after a reset or a power outage, it is no longer valid. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em max\+\_\+velocity\+\_\+deg\+\_\+per\+\_\+sec} & Velocity at the servo flange (in degrees/sec) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__config_gab68e78b8a0d2a9ac38b9a72d78acab85}\label{group___servo__config_gab68e78b8a0d2a9ac38b9a72d78acab85}} 
+\index{Servo configuration functions@{Servo configuration functions}!rr\+\_\+set\+\_\+zero\+\_\+position@{rr\+\_\+set\+\_\+zero\+\_\+position}}
+\index{rr\+\_\+set\+\_\+zero\+\_\+position@{rr\+\_\+set\+\_\+zero\+\_\+position}!Servo configuration functions@{Servo configuration functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+zero\+\_\+position()}{rr\_set\_zero\_position()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+zero\+\_\+position (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{position\+\_\+deg }\end{DoxyParamCaption})}
+
+
+
+The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user. For instance, when the current servo position is 101 degrees and the \textquotesingle{}position\+\_\+deg\textquotesingle{} parameter is set to 25 degrees, the servo is assumed to be positioned at 25 degrees. 
+
+The setting is volatile\+: after a reset or a power outage, it is no longer valid.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em position\+\_\+deg} & User-\/defined position (in degrees) to replace the current position value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__config_ga7ccc75e00e431b8a57150a71791488c3}\label{group___servo__config_ga7ccc75e00e431b8a57150a71791488c3}} 
+\index{Servo configuration functions@{Servo configuration functions}!rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save@{rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save}}
+\index{rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save@{rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save}!Servo configuration functions@{Servo configuration functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save()}{rr\_set\_zero\_position\_and\_save()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+zero\+\_\+position\+\_\+and\+\_\+save (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{position\+\_\+deg }\end{DoxyParamCaption})}
+
+
+
+The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user and saving it to the F\+L\+A\+SH memory. If you don\textquotesingle{}t want to save the newly set position, use the \hyperlink{group___servo__config_gab68e78b8a0d2a9ac38b9a72d78acab85}{rr\+\_\+set\+\_\+zero\+\_\+position} function.~\newline
+ 
+
+{\bfseries Note\+:}The F\+L\+A\+SH memory limit is 1,000 write cycles. Therefore, it is not advisable to use the function on a regular basis.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em position\+\_\+deg} & User-\/defined position (in degrees) to replace the current position value \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}

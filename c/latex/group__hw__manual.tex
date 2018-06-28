@@ -1,0 +1,114 @@
+\hypertarget{group__hw__manual}{}\section{Servo box specs \& manual}
+\label{group__hw__manual}\index{Servo box specs \& manual@{Servo box specs \& manual}}
+\hypertarget{group__hw__manual_sect_descr}{}\subsection{1. Product overview}\label{group__hw__manual_sect_descr}
+{\bfseries A servobox} is a solution designed to control motion of one or more R\+Drive servos. The solution comprises the following components\+:
+\begin{DoxyItemize}
+\item one or more energy eaters (see Section 3.\+1)
+\item one or more capacitor modules (see Section 3.\+2)
+\item a C\+A\+N-\/\+U\+SB dongle to provide C\+A\+N\+Open communication between the servobox and the servos
+\end{DoxyItemize}
+
+Additionally, to ensure operation of the servobox, the user has to provide a power supply and U\+S\+B-\/A to Micro U\+SB cable to connect the C\+A\+N-\/\+U\+SB dongle to PC.
+
+The power supply should meet the following requirements\+:
+\begin{DoxyItemize}
+\item its supply voltage should be 48 V
+\item its power should be equal to the total peak power of all servo motors connected to it
+\end{DoxyItemize}\hypertarget{group__hw__manual_sect_conn}{}\subsection{2. Integrating servos with a power supply and a servobox}\label{group__hw__manual_sect_conn}
+To integrate a R\+Drive servo into one circuit with a power supply and a servobox, you need to provide the following connections\+:
+
+
+\begin{DoxyItemize}
+\item power supply connection (two wires on the servo housing)
+\item C\+AN communication connection (two wires on the servo housing)
+\end{DoxyItemize}
+
+For connection diagrams and requirements, see Sections 2.\+1 and 2.\+2. For eater and capacitor requirements and schematic, see Section 3.\+1 and 3.\+2.\hypertarget{group__hw__manual_sect_21}{}\subsubsection{2.\+1. Power supply connection}\label{group__hw__manual_sect_21}
+{\bfseries Note\+:} Never supply power before a servo (servos) is (are) fully integrated with a servobox and a power supply into one circuit. Charging current of the capacitor(s) can damage the power supply or injure the user!
+
+The configuration of the servo box solution (e.\+g., how many eaters and capacitors it uses) and the electrical connection diagram depend on whether your intention is\+:
+\begin{DoxyItemize}
+\item to connect a single servo, in which case the configuration and the connection diagram are as below\+: 
+\item to connect multiple servos, in which case the configuration and the connection diagram are as below\+: 
+\end{DoxyItemize}
+
+In any case, make sure to meet the following electrical connection requirements\+:
+\begin{DoxyItemize}
+\item Typically, the total circuit length from the power supply to any servo motor must not exceed 10 meters.
+\item Length \char`\"{}\+L1\char`\"{} must not be longer than 10 meters.
+\item Length \char`\"{}\+L2\char`\"{} (from the eater to the capacitor) should not exceed the values from Table 1.
+\item Length \char`\"{}\+L3\char`\"{} (from the capacitor to any servo) should not exceed the values from Table 1.
+\end{DoxyItemize}
+
+{\bfseries Table 1\+: Line segment lengths vs. cross-\/sections} \tabulinesep=1mm
+\begin{longtabu} spread 0pt [c]{*{13}{|X[-1]}|}
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Servo model}&\textbf{ L2}&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ L3}&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }\\\cline{1-13}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Servo model}&\textbf{ L2}&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ L3}&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }&\textbf{ }\\\cline{1-13}
+\endhead
+&0.\+75 mm2&1.\+0 mm2&1.\+5 mm2&2.\+5 mm2&4.\+0 mm2&6.\+0 mm2&0.\+75 mm2&1.\+0 mm2&1.\+5 mm2&2.\+5 mm2&4.\+0 mm2&6.\+0 mm2 \\\cline{1-13}
+R\+D50 &4 m &5 m &8 m &10 m &10 m &10 m &0,2 m &0,2 m &0,4 m &0,7 m &1,0 m &1,0 m \\\cline{1-13}
+R\+D60 &2 m &3 m &5 m &9 m &10 m &10 m &0,1 m &0,1 m &0,2 m &0,4 m &1,0 m &1,0 m \\\cline{1-13}
+R\+D85 &0,8 m &1 m &1 m &2 m &4 m &6 m &0,04 m &0,05 m &0,08 m &0,13 m &0,21 m &0,32 m \\\cline{1-13}
+\end{longtabu}
+For length 1, make sure the cable cross-\/section is as specified below\+:
+\begin{DoxyItemize}
+\item When the total connected motor power is {\bfseries less than 250 W}, the cable cross-\/section within the segment must be at least 1.\+00 mm2.
+\item When the total connected motor power is {\bfseries less than 500 W}, the cable cross-\/section within the segment must be at least 2.\+00 mm2.
+\end{DoxyItemize}\hypertarget{group__hw__manual_sect_22}{}\subsubsection{2.\+2. C\+A\+N connection}\label{group__hw__manual_sect_22}
+The C\+AN connection of R\+Drive servos is a two-\/wire bus line transmitting differential signals\+: C\+A\+N\+\_\+\+H\+I\+GH and C\+A\+N\+\_\+\+L\+OW. The configuration of the bus line is as illustrated below\+: 
+
+Providing the C\+AN connection, make sure to comply with the following requirements\+:
+\begin{DoxyItemize}
+\item The C\+AN bus lines should be terminated with 120 Ohm resistors at both ends. You have to provide only one resistor because one is already integrated into the C\+A\+N-\/\+U\+SB dongle supplied as part of the servobox solution.
+\item The bus line cable must be a twisted pair cable with the lay length of 2 to 4 cm.
+\item The cross section of the bus line cable must be between 0.\+12 mm2 to 0.\+3 mm2.
+\item To ensure the baud rate required for your application, L{$\Sigma$} should meet the specific values as indicated in Table 2.
+\end{DoxyItemize}
+
+{\bfseries Table 2\+: C\+AN line length vs. baud rate} \tabulinesep=1mm
+\begin{longtabu} spread 0pt [c]{*{6}{|X[-1]}|}
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Baud Rate}&\textbf{ 50 kbit/s}&\textbf{ 100 kbit/s}&\textbf{ 250 kbit/s}&\textbf{ 500 kbit/s}&\textbf{ 1 Mbit/s  }\\\cline{1-6}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Baud Rate}&\textbf{ 50 kbit/s}&\textbf{ 100 kbit/s}&\textbf{ 250 kbit/s}&\textbf{ 500 kbit/s}&\textbf{ 1 Mbit/s  }\\\cline{1-6}
+\endhead
+Total line length, L{$\Sigma$}, m&$<$ 1000 m&$<$ 500 m&$<$ 200 m&$<$ 100 m&$<$ 40 m \\\cline{1-6}
+\end{longtabu}
+\hypertarget{group__hw__manual_sect1}{}\subsection{3. Servobox components}\label{group__hw__manual_sect1}
+\hypertarget{group__hw__manual_eater}{}\subsubsection{3.\+1 Energy eater}\label{group__hw__manual_eater}
+An energy eater is used to dissipate the dynamic braking energy that can result from servos generating voltages in excess of the power supply voltage. Use the schematic below to assemble the device\+:  {\bfseries Required components\+:} \tabulinesep=1mm
+\begin{longtabu} spread 0pt [c]{*{4}{|X[-1]}|}
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Component}&\textbf{ Type}&\textbf{ Other options}&\textbf{ Comment  }\\\cline{1-4}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Component}&\textbf{ Type}&\textbf{ Other options}&\textbf{ Comment  }\\\cline{1-4}
+\endhead
+D1 -\/ Diode&A\+P\+T30\+S20\+BG&Schottky diode, I\textsubscript{f} {$\ge$} 20 A, V\textsubscript{r} {$\ge$} 96 V&I\textsubscript{f} {$\ge$} 1.\+5 × Total current of all connected servos \\\cline{1-4}
+Q1 -\/ Transistor&T\+I\+P147&P\+NP darlington transistor, V\textsubscript{ce} {$\ge$} 96V, I\textsubscript{c} {$\ge$} 10 A&\\\cline{1-4}
+R1 -\/ Resistor 1&1K Ohm, 1 W&&\\\cline{1-4}
+R2 -\/ Resistor 1&4.\+7 Ohm, P\textsubscript{d} {$\ge$} 25 W&&\\\cline{1-4}
+\end{longtabu}
+{\bfseries Note\+:} D1, Q1, and R2 should be connected to an appropriate heatsink. The maximum dissipated power of the heatsink should be equal to the maximum dynamic braking energy in your circuit. When the power to dissipate is too high (dynamic braking power is more than 50 W), it also is essential to provide active cooling, such as a fan.\hypertarget{group__hw__manual_capacitor}{}\subsubsection{3.\+2 Capacitor module}\label{group__hw__manual_capacitor}
+In the servobox solution, capacitors are intended to accumulate and supply electric energy to servos. The devices allow for compensating short-\/duration power consumption peaks that are due to servos located at a distance (usually quite long) from the power supply unit. For the same reason, make sure to place capacitors as close as possible to the servo. To assemble the device, use the schematic below.  {\bfseries Requirements\+:} \tabulinesep=1mm
+\begin{longtabu} spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Component}&\textbf{ Type}&\textbf{ Comment  }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\rowcolor{\tableheadbgcolor}\textbf{ Component}&\textbf{ Type}&\textbf{ Comment  }\\\cline{1-3}
+\endhead
+C1...Cn&Aluminum electrolytic capacitor or tantalum/polymer capacitor, U {$\ge$} 80 V, E\+SR {$\le$} 0.\+1 Ohm&Total capacitance should be {$\ge$} 5 uF per 1 W of connected servo \\\cline{1-3}
+\end{longtabu}

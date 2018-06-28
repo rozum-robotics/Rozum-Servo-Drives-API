@@ -1,0 +1,300 @@
+\hypertarget{group___servo__control}{}\section{Servo control functions}
+\label{group___servo__control}\index{Servo control functions@{Servo control functions}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group___servo__control_ga4bc3f475fd951403fbd99e51dc3aba4a}{rr\+\_\+stop\+\_\+and\+\_\+release} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the specified servo to the released state. The servo is de-\/energized and stops without retaining its position. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_gabc7b250aba6f86e29692957eac9ecb31}{rr\+\_\+stop\+\_\+and\+\_\+freeze} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the specified servo to the freeze state. The servo stops, retaining its last position. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_gac25d20b331b1b985c1f6f50106d5c971}{rr\+\_\+set\+\_\+current} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float current\+\_\+a)
+\begin{DoxyCompactList}\small\item\em The function sets the current supplied to the stator of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. Changing the \textquotesingle{}current\+\_\+a parameter\textquotesingle{} value, it is possible to adjust the servo\textquotesingle{}s torque (Torque = stator current$\ast$\+Kt). \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_gaf790a253c11e2bc0bfb208dd26e7491c}{rr\+\_\+set\+\_\+velocity} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float velocity\+\_\+deg\+\_\+per\+\_\+sec)
+\begin{DoxyCompactList}\small\item\em The function sets the velocity at which the specified servo should move at its maximum current. The maximum current is in accordance with the servo motor specification. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_gaddb31db79640ec345eb237ddc4d1078f}{rr\+\_\+set\+\_\+position} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg)
+\begin{DoxyCompactList}\small\item\em The function sets the position that the specified servo should reach as a result of executing the command. The velocity and current are maximum values in accordance with the servo motor specifications. For setting lower velocity and current limits, use the \hyperlink{group___servo__control_ga6927d2a1d6ef5a0564b676817c88b82a}{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits} function. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_ga252ba86c50217d9ccf08deaf4c75f2e7}{rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float velocity\+\_\+deg\+\_\+per\+\_\+sec, const float current\+\_\+a)
+\begin{DoxyCompactList}\small\item\em The function commands the specified servo to rotate at the specified velocity, while setting the maximum limit for the servo current (below the servo motor specifications). \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_ga6927d2a1d6ef5a0564b676817c88b82a}{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg, const float velocity\+\_\+deg\+\_\+per\+\_\+sec, const float current\+\_\+a)
+\begin{DoxyCompactList}\small\item\em The function sets the position that the specified servo should reach at user-\/defined velocity and current as a result of executing the command. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_ga67890b1af333ce15f291a24ddc5760d1}{rr\+\_\+set\+\_\+duty} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, float duty\+\_\+percent)
+\begin{DoxyCompactList}\small\item\em The function limits the input voltage supplied to the servo, enabling to adjust its motion velocity. For instance, when the input voltage is 20V, setting the duty\+\_\+percent parameter to 40\% will result in 8V supplied to the servo. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_gac8f66751d1047a4d067e3ff5b388a7f9}{rr\+\_\+add\+\_\+motion\+\_\+point} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float position\+\_\+deg, const float velocity\+\_\+per\+\_\+sec, const uint32\+\_\+t time\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function enables creating P\+VT (position-\/velocity-\/time) points to set the motion trajectory of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. P\+VT points define the following\+:~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_gaeb3f167be0e7caf96d4cb4b648d3a548}{rr\+\_\+start\+\_\+motion} (\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface, uint32\+\_\+t timestamp\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function commands all servos connected to the specified interface (C\+AN bus) to move simultaneously through a number of preset P\+VT points (see \hyperlink{group___servo__control_gac8f66751d1047a4d067e3ff5b388a7f9}{rr\+\_\+add\+\_\+motion\+\_\+point}).~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_ga19472cd90ae91f9b9f49edf4f52f35a2}{rr\+\_\+clear\+\_\+points\+\_\+all} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function clears the entire motion queue of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function. The servo completes the move it started before the function call and then clears all the remaining P\+VT points in the queue. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__control_ga5a39de7fa2777073bbc4d9fc60fa5c38}{rr\+\_\+clear\+\_\+points} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const uint32\+\_\+t num\+\_\+to\+\_\+clear)
+\begin{DoxyCompactList}\small\item\em The function removes the number of P\+VT points indicated in the \textquotesingle{}num\+\_\+to\+\_\+clear\textquotesingle{} parameter from the tail of the motion queue preset for the specified servo. When the indicated number of P\+VT points to be removed exceeds the actual remaining number of P\+VT points in the queue, the funtion clears only the actual remaining number of P\+VT points. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group___servo__control_gac8f66751d1047a4d067e3ff5b388a7f9}\label{group___servo__control_gac8f66751d1047a4d067e3ff5b388a7f9}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+add\+\_\+motion\+\_\+point@{rr\+\_\+add\+\_\+motion\+\_\+point}}
+\index{rr\+\_\+add\+\_\+motion\+\_\+point@{rr\+\_\+add\+\_\+motion\+\_\+point}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+add\+\_\+motion\+\_\+point()}{rr\_add\_motion\_point()}}
+{\footnotesize\ttfamily int rr\+\_\+add\+\_\+motion\+\_\+point (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{position\+\_\+deg,  }\item[{const float}]{velocity\+\_\+per\+\_\+sec,  }\item[{const uint32\+\_\+t}]{time\+\_\+ms }\end{DoxyParamCaption})}
+
+
+
+The function enables creating P\+VT (position-\/velocity-\/time) points to set the motion trajectory of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. P\+VT points define the following\+:~\newline
+ 
+
+
+\begin{DoxyItemize}
+\item what position the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter should reach~\newline
+ 
+\item what time the movement to the specified position should take~\newline
+ 
+\item how fast the servo should move to the specified position
+\end{DoxyItemize}.~\newline
+ Created P\+VT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, use the \hyperlink{group___servo__control_gaeb3f167be0e7caf96d4cb4b648d3a548}{rr\+\_\+start\+\_\+motion} function.~\newline
+ When any of the parameter values (e.\+g., position, velocity) exceeds user-\/defined limits or the servo motor specifications (whichever is the smallest value), the function returns an error. 
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em position\+\_\+deg} & Position that the servo flange (in degrees) should reach as a result of executing the command \\
+\hline
+{\em velocity\+\_\+deg\+\_\+per\+\_\+sec} & Velocity(in degrees/sec) at which the servo should move to reach the specified position \\
+\hline
+{\em time\+\_\+ms} & Time (in milliseconds) it should take the servo to move from the previous position (P\+VT point in a motion trajectory or an initial point) to the commanded one. The maximum admissible value is (2$^\wedge$32-\/1)/10 (roughly equivalent to 4.\+9 days). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_ga5a39de7fa2777073bbc4d9fc60fa5c38}\label{group___servo__control_ga5a39de7fa2777073bbc4d9fc60fa5c38}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+clear\+\_\+points@{rr\+\_\+clear\+\_\+points}}
+\index{rr\+\_\+clear\+\_\+points@{rr\+\_\+clear\+\_\+points}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+clear\+\_\+points()}{rr\_clear\_points()}}
+{\footnotesize\ttfamily int rr\+\_\+clear\+\_\+points (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const uint32\+\_\+t}]{num\+\_\+to\+\_\+clear }\end{DoxyParamCaption})}
+
+
+
+The function removes the number of P\+VT points indicated in the \textquotesingle{}num\+\_\+to\+\_\+clear\textquotesingle{} parameter from the tail of the motion queue preset for the specified servo. When the indicated number of P\+VT points to be removed exceeds the actual remaining number of P\+VT points in the queue, the funtion clears only the actual remaining number of P\+VT points. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em num\+\_\+to\+\_\+clear} & Number of P\+VT points to be removed from the motion queue of the specified servo \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_ga19472cd90ae91f9b9f49edf4f52f35a2}\label{group___servo__control_ga19472cd90ae91f9b9f49edf4f52f35a2}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+clear\+\_\+points\+\_\+all@{rr\+\_\+clear\+\_\+points\+\_\+all}}
+\index{rr\+\_\+clear\+\_\+points\+\_\+all@{rr\+\_\+clear\+\_\+points\+\_\+all}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+clear\+\_\+points\+\_\+all()}{rr\_clear\_points\_all()}}
+{\footnotesize\ttfamily int rr\+\_\+clear\+\_\+points\+\_\+all (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function clears the entire motion queue of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function. The servo completes the move it started before the function call and then clears all the remaining P\+VT points in the queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_gac25d20b331b1b985c1f6f50106d5c971}\label{group___servo__control_gac25d20b331b1b985c1f6f50106d5c971}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+set\+\_\+current@{rr\+\_\+set\+\_\+current}}
+\index{rr\+\_\+set\+\_\+current@{rr\+\_\+set\+\_\+current}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+current()}{rr\_set\_current()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+current (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{current\+\_\+a }\end{DoxyParamCaption})}
+
+
+
+The function sets the current supplied to the stator of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. Changing the \textquotesingle{}current\+\_\+a parameter\textquotesingle{} value, it is possible to adjust the servo\textquotesingle{}s torque (Torque = stator current$\ast$\+Kt). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em current\+\_\+a} & Phase current of the stator in Amperes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_ga67890b1af333ce15f291a24ddc5760d1}\label{group___servo__control_ga67890b1af333ce15f291a24ddc5760d1}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+set\+\_\+duty@{rr\+\_\+set\+\_\+duty}}
+\index{rr\+\_\+set\+\_\+duty@{rr\+\_\+set\+\_\+duty}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+duty()}{rr\_set\_duty()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+duty (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{float}]{duty\+\_\+percent }\end{DoxyParamCaption})}
+
+
+
+The function limits the input voltage supplied to the servo, enabling to adjust its motion velocity. For instance, when the input voltage is 20V, setting the duty\+\_\+percent parameter to 40\% will result in 8V supplied to the servo. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em duty\+\_\+percent} & User-\/defined percentage of the input voltage to be supplied to the servo \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_gaddb31db79640ec345eb237ddc4d1078f}\label{group___servo__control_gaddb31db79640ec345eb237ddc4d1078f}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+set\+\_\+position@{rr\+\_\+set\+\_\+position}}
+\index{rr\+\_\+set\+\_\+position@{rr\+\_\+set\+\_\+position}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+position()}{rr\_set\_position()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+position (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{position\+\_\+deg }\end{DoxyParamCaption})}
+
+
+
+The function sets the position that the specified servo should reach as a result of executing the command. The velocity and current are maximum values in accordance with the servo motor specifications. For setting lower velocity and current limits, use the \hyperlink{group___servo__control_ga6927d2a1d6ef5a0564b676817c88b82a}{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits} function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em position\+\_\+deg} & Position of the servo (in degrees) to be reached. The parameter is a multi-\/turn value (e.\+g., when set to 720, the servo will make two turns, 360 degrees each). When the parameter is set to a \char`\"{}-\/\char`\"{} sign value, the servo will rotate in the opposite direction. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_ga6927d2a1d6ef5a0564b676817c88b82a}\label{group___servo__control_ga6927d2a1d6ef5a0564b676817c88b82a}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits@{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits}}
+\index{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits@{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits()}{rr\_set\_position\_with\_limits()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+position\+\_\+with\+\_\+limits (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{position\+\_\+deg,  }\item[{const float}]{velocity\+\_\+deg\+\_\+per\+\_\+sec,  }\item[{const float}]{current\+\_\+a }\end{DoxyParamCaption})}
+
+
+
+The function sets the position that the specified servo should reach at user-\/defined velocity and current as a result of executing the command. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em position\+\_\+deg} & Final position of the servo flange (in degrees) to be reached \\
+\hline
+{\em velocity\+\_\+deg\+\_\+per\+\_\+sec} & Velocity (in degrees/sec)at which the servo should move to the specified position \\
+\hline
+{\em current\+\_\+a} & Maximum user-\/defined current limit in Amperes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_gaf790a253c11e2bc0bfb208dd26e7491c}\label{group___servo__control_gaf790a253c11e2bc0bfb208dd26e7491c}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+set\+\_\+velocity@{rr\+\_\+set\+\_\+velocity}}
+\index{rr\+\_\+set\+\_\+velocity@{rr\+\_\+set\+\_\+velocity}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+velocity()}{rr\_set\_velocity()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+velocity (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{velocity\+\_\+deg\+\_\+per\+\_\+sec }\end{DoxyParamCaption})}
+
+
+
+The function sets the velocity at which the specified servo should move at its maximum current. The maximum current is in accordance with the servo motor specification. 
+
+When you need to set a lower current limit, use the \hyperlink{group___servo__control_ga252ba86c50217d9ccf08deaf4c75f2e7}{rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits} function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em velocity\+\_\+deg\+\_\+per\+\_\+sec} & Velocity (in degrees/sec) at the servo flange \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_ga252ba86c50217d9ccf08deaf4c75f2e7}\label{group___servo__control_ga252ba86c50217d9ccf08deaf4c75f2e7}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits@{rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits}}
+\index{rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits@{rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits()}{rr\_set\_velocity\_with\_limits()}}
+{\footnotesize\ttfamily int rr\+\_\+set\+\_\+velocity\+\_\+with\+\_\+limits (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{velocity\+\_\+deg\+\_\+per\+\_\+sec,  }\item[{const float}]{current\+\_\+a }\end{DoxyParamCaption})}
+
+
+
+The function commands the specified servo to rotate at the specified velocity, while setting the maximum limit for the servo current (below the servo motor specifications). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em velocity\+\_\+deg\+\_\+per\+\_\+sec} & Velocity (in degrees/sec) at the servo flange. The value can have a \char`\"{}-\/\char`\"{} sign, in which case the servo will rotate in the opposite direction. \\
+\hline
+{\em current\+\_\+a} & Maximum user-\/defined current limit in Amperes. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_gaeb3f167be0e7caf96d4cb4b648d3a548}\label{group___servo__control_gaeb3f167be0e7caf96d4cb4b648d3a548}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+start\+\_\+motion@{rr\+\_\+start\+\_\+motion}}
+\index{rr\+\_\+start\+\_\+motion@{rr\+\_\+start\+\_\+motion}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+start\+\_\+motion()}{rr\_start\_motion()}}
+{\footnotesize\ttfamily int rr\+\_\+start\+\_\+motion (\begin{DoxyParamCaption}\item[{\hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$}]{interface,  }\item[{uint32\+\_\+t}]{timestamp\+\_\+ms }\end{DoxyParamCaption})}
+
+
+
+The function commands all servos connected to the specified interface (C\+AN bus) to move simultaneously through a number of preset P\+VT points (see \hyperlink{group___servo__control_gac8f66751d1047a4d067e3ff5b388a7f9}{rr\+\_\+add\+\_\+motion\+\_\+point}).~\newline
+ 
+
+{\bfseries Note\+:} When any of the servos fails to reach any of the P\+VT points due to an error, it will broadcast a \char`\"{}\+Go to Stopped State\char`\"{} command to all the other servos on the same bus. The servos will stop executing the preset P\+VT points and go to the stopped state. In the state, only Heartbeats are available. You can neither communicate with servos nor command them to execute any operations.
+
+{\bfseries Note\+:} Once servos execute the last P\+VT in their preset motion queue, the queue is cleared automatically.
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Interface descriptor returned by the \hyperlink{group___common_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface} function \\
+\hline
+{\em timestamp\+\_\+ms} & Delay (in milliseconds) before the servos associated with the interface start to move. When the value is set to 0, the servos will start moving immediately. The available value range is from 0 to 2$^\wedge$24-\/1. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_gabc7b250aba6f86e29692957eac9ecb31}\label{group___servo__control_gabc7b250aba6f86e29692957eac9ecb31}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+stop\+\_\+and\+\_\+freeze@{rr\+\_\+stop\+\_\+and\+\_\+freeze}}
+\index{rr\+\_\+stop\+\_\+and\+\_\+freeze@{rr\+\_\+stop\+\_\+and\+\_\+freeze}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+stop\+\_\+and\+\_\+freeze()}{rr\_stop\_and\_freeze()}}
+{\footnotesize\ttfamily int rr\+\_\+stop\+\_\+and\+\_\+freeze (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function sets the specified servo to the freeze state. The servo stops, retaining its last position. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__control_ga4bc3f475fd951403fbd99e51dc3aba4a}\label{group___servo__control_ga4bc3f475fd951403fbd99e51dc3aba4a}} 
+\index{Servo control functions@{Servo control functions}!rr\+\_\+stop\+\_\+and\+\_\+release@{rr\+\_\+stop\+\_\+and\+\_\+release}}
+\index{rr\+\_\+stop\+\_\+and\+\_\+release@{rr\+\_\+stop\+\_\+and\+\_\+release}!Servo control functions@{Servo control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+stop\+\_\+and\+\_\+release()}{rr\_stop\_and\_release()}}
+{\footnotesize\ttfamily int rr\+\_\+stop\+\_\+and\+\_\+release (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function sets the specified servo to the released state. The servo is de-\/energized and stops without retaining its position. 
+
+{\bfseries Note\+:} When there is an external force affecting the servo (e.\+g., inertia, gravity), the servo may continue rotating or begin rotating in the opposite direction.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}

@@ -1,0 +1,223 @@
+\hypertarget{group___system__control}{}\section{System control functions}
+\label{group___system__control}\index{System control functions@{System control functions}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group___system__control_ga1239a8f4a80ea1c33f599a0cdc58048c}{rr\+\_\+servo\+\_\+reboot} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function reboots the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function, resetting it to the power-\/on state. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga59060b95f6ee0614cbec3500ba08b7a0}{rr\+\_\+servo\+\_\+reset\+\_\+communication} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function resets communication with the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter without resetting the entire interface. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga799d61d6eb811cba7f9097a5d9bfd0a8}{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the operational state. In the state, the servo is both available for communication and can execute commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga39559219bfb36d4d9359365ac3656a74}{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the pre-\/operational state. In the state, the servo is available for communication, but cannot execute any commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga02ca530236f87db0fcac9e136eafda4d}{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the stopped state. In the state, only Heartbeats are available. You can neither communicate with the servo nor make it execute any commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga3141174e38250e0107cc6de9681bcc47}{rr\+\_\+net\+\_\+reboot} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function reboots all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter, resetting them back to the power-\/on state. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga7591c01ec4b20388fad7effe3266e3b1}{rr\+\_\+net\+\_\+reset\+\_\+communication} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function resets communication via the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter. For instance, you may need to use the function when changing settings that require a reset after modification. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga427f81205fc35a78a351d1288ea67165}{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function sets all servos connected to the interface (C\+AN bus) specified in the \textquotesingle{}interface\textquotesingle{} parameter to the operational state. In the state, the servos can both communicate with the user program and execute commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga6a6c46f69a8586cf7bd129a55a775eb7}{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function sets all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter to the pre-\/operational state. In the state, the servos are available for communication, but cannot execute commands. \end{DoxyCompactList}\item 
+int \hyperlink{group___system__control_ga7dd178eafeae0d80edd60e3aee6e13b9}{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped} (const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$interface)
+\begin{DoxyCompactList}\small\item\em The function sets all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter to the stopped state. In the state, the servos are neither available for communication nor can execute commands. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group___system__control_ga3141174e38250e0107cc6de9681bcc47}\label{group___system__control_ga3141174e38250e0107cc6de9681bcc47}} 
+\index{System control functions@{System control functions}!rr\+\_\+net\+\_\+reboot@{rr\+\_\+net\+\_\+reboot}}
+\index{rr\+\_\+net\+\_\+reboot@{rr\+\_\+net\+\_\+reboot}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+net\+\_\+reboot()}{rr\_net\_reboot()}}
+{\footnotesize\ttfamily int rr\+\_\+net\+\_\+reboot (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$}]{interface }\end{DoxyParamCaption})}
+
+
+
+The function reboots all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter, resetting them back to the power-\/on state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Interface descriptor returned by the \hyperlink{group___common_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga7591c01ec4b20388fad7effe3266e3b1}\label{group___system__control_ga7591c01ec4b20388fad7effe3266e3b1}} 
+\index{System control functions@{System control functions}!rr\+\_\+net\+\_\+reset\+\_\+communication@{rr\+\_\+net\+\_\+reset\+\_\+communication}}
+\index{rr\+\_\+net\+\_\+reset\+\_\+communication@{rr\+\_\+net\+\_\+reset\+\_\+communication}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+net\+\_\+reset\+\_\+communication()}{rr\_net\_reset\_communication()}}
+{\footnotesize\ttfamily int rr\+\_\+net\+\_\+reset\+\_\+communication (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$}]{interface }\end{DoxyParamCaption})}
+
+
+
+The function resets communication via the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter. For instance, you may need to use the function when changing settings that require a reset after modification. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Interface descriptor returned by the \hyperlink{group___common_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga427f81205fc35a78a351d1288ea67165}\label{group___system__control_ga427f81205fc35a78a351d1288ea67165}} 
+\index{System control functions@{System control functions}!rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational@{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational}}
+\index{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational@{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational()}{rr\_net\_set\_state\_operational()}}
+{\footnotesize\ttfamily int rr\+\_\+net\+\_\+set\+\_\+state\+\_\+operational (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$}]{interface }\end{DoxyParamCaption})}
+
+
+
+The function sets all servos connected to the interface (C\+AN bus) specified in the \textquotesingle{}interface\textquotesingle{} parameter to the operational state. In the state, the servos can both communicate with the user program and execute commands. 
+
+For instance, you may need to call the function to switch all servos on a specific bus from the pre-\/operational state to the operational one after an error (e.\+g., due to overcurrent).
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Interface descriptor returned by the \hyperlink{group___common_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga6a6c46f69a8586cf7bd129a55a775eb7}\label{group___system__control_ga6a6c46f69a8586cf7bd129a55a775eb7}} 
+\index{System control functions@{System control functions}!rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational@{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational}}
+\index{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational@{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational()}{rr\_net\_set\_state\_pre\_operational()}}
+{\footnotesize\ttfamily int rr\+\_\+net\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$}]{interface }\end{DoxyParamCaption})}
+
+
+
+The function sets all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter to the pre-\/operational state. In the state, the servos are available for communication, but cannot execute commands. 
+
+For instance, you may need to call the function, if you want to force all servos on a specific bus to stop executing commands, e.\+g., in an emergency.
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Interface descriptor returned by the \hyperlink{group___common_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga7dd178eafeae0d80edd60e3aee6e13b9}\label{group___system__control_ga7dd178eafeae0d80edd60e3aee6e13b9}} 
+\index{System control functions@{System control functions}!rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped@{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped}}
+\index{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped@{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped()}{rr\_net\_set\_state\_stopped()}}
+{\footnotesize\ttfamily int rr\+\_\+net\+\_\+set\+\_\+state\+\_\+stopped (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__can__interface__t}{rr\+\_\+can\+\_\+interface\+\_\+t} $\ast$}]{interface }\end{DoxyParamCaption})}
+
+
+
+The function sets all servos connected to the interface specified in the \textquotesingle{}interface\textquotesingle{} parameter to the stopped state. In the state, the servos are neither available for communication nor can execute commands. 
+
+For instance, you may need to call the fuction to stop all servos on a specific bus without deinitializing them.
+
+
+\begin{DoxyParams}{Parameters}
+{\em interface} & Interface descriptor returned by the \hyperlink{group___common_ga472a4890dcc7d7a13123c56a06946d91}{rr\+\_\+init\+\_\+interface} function. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga1239a8f4a80ea1c33f599a0cdc58048c}\label{group___system__control_ga1239a8f4a80ea1c33f599a0cdc58048c}} 
+\index{System control functions@{System control functions}!rr\+\_\+servo\+\_\+reboot@{rr\+\_\+servo\+\_\+reboot}}
+\index{rr\+\_\+servo\+\_\+reboot@{rr\+\_\+servo\+\_\+reboot}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+servo\+\_\+reboot()}{rr\_servo\_reboot()}}
+{\footnotesize\ttfamily int rr\+\_\+servo\+\_\+reboot (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function reboots the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function, resetting it to the power-\/on state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga59060b95f6ee0614cbec3500ba08b7a0}\label{group___system__control_ga59060b95f6ee0614cbec3500ba08b7a0}} 
+\index{System control functions@{System control functions}!rr\+\_\+servo\+\_\+reset\+\_\+communication@{rr\+\_\+servo\+\_\+reset\+\_\+communication}}
+\index{rr\+\_\+servo\+\_\+reset\+\_\+communication@{rr\+\_\+servo\+\_\+reset\+\_\+communication}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+servo\+\_\+reset\+\_\+communication()}{rr\_servo\_reset\_communication()}}
+{\footnotesize\ttfamily int rr\+\_\+servo\+\_\+reset\+\_\+communication (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function resets communication with the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter without resetting the entire interface. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga799d61d6eb811cba7f9097a5d9bfd0a8}\label{group___system__control_ga799d61d6eb811cba7f9097a5d9bfd0a8}} 
+\index{System control functions@{System control functions}!rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational@{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational}}
+\index{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational@{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational()}{rr\_servo\_set\_state\_operational()}}
+{\footnotesize\ttfamily int rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+operational (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the operational state. In the state, the servo is both available for communication and can execute commands. 
+
+For instance, you may need to call the function to switch the servo from the pre-\/operational state to the operational one after an error (e.\+g., due to overcurrent).
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function If the parameter is set to 0, all servos connected to the interface will be set to the operational state. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga39559219bfb36d4d9359365ac3656a74}\label{group___system__control_ga39559219bfb36d4d9359365ac3656a74}} 
+\index{System control functions@{System control functions}!rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational@{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational}}
+\index{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational@{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational()}{rr\_servo\_set\_state\_pre\_operational()}}
+{\footnotesize\ttfamily int rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+pre\+\_\+operational (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the pre-\/operational state. In the state, the servo is available for communication, but cannot execute any commands. 
+
+For instance, you may need to call the function, if you want to force the servo to stop executing commands, e.\+g., in an emergency.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___system__control_ga02ca530236f87db0fcac9e136eafda4d}\label{group___system__control_ga02ca530236f87db0fcac9e136eafda4d}} 
+\index{System control functions@{System control functions}!rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped@{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped}}
+\index{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped@{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped}!System control functions@{System control functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped()}{rr\_servo\_set\_state\_stopped()}}
+{\footnotesize\ttfamily int rr\+\_\+servo\+\_\+set\+\_\+state\+\_\+stopped (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function sets the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter to the stopped state. In the state, only Heartbeats are available. You can neither communicate with the servo nor make it execute any commands. 
+
+For instance, you may need to call the fuction to reduce the workload of a C\+AN bus by disabling individual servos connected to it without deninitializing them.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}

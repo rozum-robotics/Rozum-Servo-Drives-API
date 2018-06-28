@@ -1,0 +1,270 @@
+\hypertarget{group___servo__info}{}\section{Servo info functions}
+\label{group___servo__info}\index{Servo info functions@{Servo info functions}}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{group___servo__info_ga0803e0fab3e22b1bcb3f51aa393328b4}{rr\+\_\+read\+\_\+error\+\_\+status} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$const error\+\_\+count, uint8\+\_\+t $\ast$const error\+\_\+array)
+\begin{DoxyCompactList}\small\item\em The functions enables reading the total current count of servo errors and their codes. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_ga4d9f2bcfc136357405359c9ca9d4aedf}{rr\+\_\+param\+\_\+cache\+\_\+update} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo)
+\begin{DoxyCompactList}\small\item\em The function is always used in combination with the \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function. It retreives from the servo the array of parameters set up using \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function and saves the array to the program cache. You can subsequently read the parameters from the program cache with the \hyperlink{group___servo__info_ga9249202a29031f84b7dc3da37db05dfc}{rr\+\_\+read\+\_\+cached\+\_\+parameter} function. For more information, see \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} param, bool enabled)
+\begin{DoxyCompactList}\small\item\em The function is the fist one in the A\+PI call sequence that enables reading multiple servo paramaters (e.\+g., velocity, voltage, and position) as a data array. Using the sequence is advisable when you need to read {\bfseries more than one parameter at a time}. The user can set up the array to include up to 50 parameters. In all, the sequence comprises the following functions\+: \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_gae665cf9423955f882e94282d66ba6a60}{rr\+\_\+read\+\_\+parameter} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} param, float $\ast$value)
+\begin{DoxyCompactList}\small\item\em The function enables reading a single parameter directly from the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function. The function returns the current value of the parameter. Additionally, the parameter is saved to the program cache, irrespective of whether it was enabled/ disabled with the \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_ga9249202a29031f84b7dc3da37db05dfc}{rr\+\_\+read\+\_\+cached\+\_\+parameter} (\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} param, float $\ast$value)
+\begin{DoxyCompactList}\small\item\em The function is always used in combination with the \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} and the\+::rr\+\_\+param\+\_\+cache\+\_\+update functions. For more information, see \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_gae6ed290842e08d349dd86bb1264e6a17}{rr\+\_\+get\+\_\+points\+\_\+size} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$num)
+\begin{DoxyCompactList}\small\item\em The function returns the actual motion queue size of the specified servo. The return value indicates how many P\+VT points have already been added to the motion queue. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_gaafd0d575c047ed269664fbc760a640c1}{rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$num)
+\begin{DoxyCompactList}\small\item\em The function returns how many more P\+VT points the user can add to the motion queue of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_ga33c16ac8844acb025f57fd3e5d946f11}{rr\+\_\+invoke\+\_\+time\+\_\+calculation} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, const float start\+\_\+position\+\_\+deg, const float start\+\_\+velocity\+\_\+deg\+\_\+per\+\_\+sec, const float start\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2, const uint32\+\_\+t start\+\_\+time\+\_\+ms, const float end\+\_\+position\+\_\+deg, const float end\+\_\+velocity\+\_\+per\+\_\+sec, const float end\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2, const uint32\+\_\+t end\+\_\+time\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function enables calculating the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.\+g., velocity, acceleration). To read the calculation result, use the the \hyperlink{group___servo__info_ga0d01b53187b97dacd7611dacb37024d8}{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result} function. {\bfseries Note\+:}The function is executed without the servo moving.~\newline
+ \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_ga0d01b53187b97dacd7611dacb37024d8}{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, uint32\+\_\+t $\ast$time\+\_\+ms)
+\begin{DoxyCompactList}\small\item\em The function enables reading the result of the calculations made using the \hyperlink{group___servo__info_ga33c16ac8844acb025f57fd3e5d946f11}{rr\+\_\+invoke\+\_\+time\+\_\+calculation} function. It returns the calculated time (in milliseconds) it will take the servo with the specified descriptor to go from one position to another. \end{DoxyCompactList}\item 
+int \hyperlink{group___servo__info_gad388cd353b262b614b563b093d61c911}{rr\+\_\+get\+\_\+max\+\_\+velocity} (const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$servo, float $\ast$velocity\+\_\+deg\+\_\+per\+\_\+sec)
+\begin{DoxyCompactList}\small\item\em The function reads the maximum velocity of the servo at the current moment. It returns the smallest of the three values—the user-\/defined maximum velocity limit (\hyperlink{group___servo__config_ga18d5d9dc728f7cb8e7674b9e9b275aca}{rr\+\_\+set\+\_\+max\+\_\+velocity}), the maximum velocity value based on the servo specifications, or the calculated maximum velocity based on the supply voltage. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{group___servo__info_gad388cd353b262b614b563b093d61c911}\label{group___servo__info_gad388cd353b262b614b563b093d61c911}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+get\+\_\+max\+\_\+velocity@{rr\+\_\+get\+\_\+max\+\_\+velocity}}
+\index{rr\+\_\+get\+\_\+max\+\_\+velocity@{rr\+\_\+get\+\_\+max\+\_\+velocity}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+get\+\_\+max\+\_\+velocity()}{rr\_get\_max\_velocity()}}
+{\footnotesize\ttfamily int rr\+\_\+get\+\_\+max\+\_\+velocity (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{float $\ast$}]{velocity\+\_\+deg\+\_\+per\+\_\+sec }\end{DoxyParamCaption})}
+
+
+
+The function reads the maximum velocity of the servo at the current moment. It returns the smallest of the three values—the user-\/defined maximum velocity limit (\hyperlink{group___servo__config_ga18d5d9dc728f7cb8e7674b9e9b275aca}{rr\+\_\+set\+\_\+max\+\_\+velocity}), the maximum velocity value based on the servo specifications, or the calculated maximum velocity based on the supply voltage. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em velocity\+\_\+deg\+\_\+per\+\_\+sec} & Maximum servo velocity (in degrees/sec) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_gaafd0d575c047ed269664fbc760a640c1}\label{group___servo__info_gaafd0d575c047ed269664fbc760a640c1}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space@{rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space}}
+\index{rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space@{rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space()}{rr\_get\_points\_free\_space()}}
+{\footnotesize\ttfamily int rr\+\_\+get\+\_\+points\+\_\+free\+\_\+space (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{uint32\+\_\+t $\ast$}]{num }\end{DoxyParamCaption})}
+
+
+
+The function returns how many more P\+VT points the user can add to the motion queue of the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter. 
+
+{\bfseries Note\+:} Currently, the maximum motion queue size is 100 P\+VT.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em num} & Pointer to the variable where the function will save the reading \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_gae6ed290842e08d349dd86bb1264e6a17}\label{group___servo__info_gae6ed290842e08d349dd86bb1264e6a17}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+get\+\_\+points\+\_\+size@{rr\+\_\+get\+\_\+points\+\_\+size}}
+\index{rr\+\_\+get\+\_\+points\+\_\+size@{rr\+\_\+get\+\_\+points\+\_\+size}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+get\+\_\+points\+\_\+size()}{rr\_get\_points\_size()}}
+{\footnotesize\ttfamily int rr\+\_\+get\+\_\+points\+\_\+size (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{uint32\+\_\+t $\ast$}]{num }\end{DoxyParamCaption})}
+
+
+
+The function returns the actual motion queue size of the specified servo. The return value indicates how many P\+VT points have already been added to the motion queue. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em num} & Pointer to the parameter where the function will save the reading \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_ga0d01b53187b97dacd7611dacb37024d8}\label{group___servo__info_ga0d01b53187b97dacd7611dacb37024d8}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result@{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result}}
+\index{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result@{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result()}{rr\_get\_time\_calculation\_result()}}
+{\footnotesize\ttfamily int rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{uint32\+\_\+t $\ast$}]{time\+\_\+ms }\end{DoxyParamCaption})}
+
+
+
+The function enables reading the result of the calculations made using the \hyperlink{group___servo__info_ga33c16ac8844acb025f57fd3e5d946f11}{rr\+\_\+invoke\+\_\+time\+\_\+calculation} function. It returns the calculated time (in milliseconds) it will take the servo with the specified descriptor to go from one position to another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em time\+\_\+ms} & Pointer to the variable where the function will save the calculated time \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_ga33c16ac8844acb025f57fd3e5d946f11}\label{group___servo__info_ga33c16ac8844acb025f57fd3e5d946f11}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+invoke\+\_\+time\+\_\+calculation@{rr\+\_\+invoke\+\_\+time\+\_\+calculation}}
+\index{rr\+\_\+invoke\+\_\+time\+\_\+calculation@{rr\+\_\+invoke\+\_\+time\+\_\+calculation}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+invoke\+\_\+time\+\_\+calculation()}{rr\_invoke\_time\_calculation()}}
+{\footnotesize\ttfamily int rr\+\_\+invoke\+\_\+time\+\_\+calculation (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const float}]{start\+\_\+position\+\_\+deg,  }\item[{const float}]{start\+\_\+velocity\+\_\+deg\+\_\+per\+\_\+sec,  }\item[{const float}]{start\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2,  }\item[{const uint32\+\_\+t}]{start\+\_\+time\+\_\+ms,  }\item[{const float}]{end\+\_\+position\+\_\+deg,  }\item[{const float}]{end\+\_\+velocity\+\_\+per\+\_\+sec,  }\item[{const float}]{end\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2,  }\item[{const uint32\+\_\+t}]{end\+\_\+time\+\_\+ms }\end{DoxyParamCaption})}
+
+
+
+The function enables calculating the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.\+g., velocity, acceleration). To read the calculation result, use the the \hyperlink{group___servo__info_ga0d01b53187b97dacd7611dacb37024d8}{rr\+\_\+get\+\_\+time\+\_\+calculation\+\_\+result} function. {\bfseries Note\+:}The function is executed without the servo moving.~\newline
+ 
+
+When the start time and the end time parameters are set to 0, the function returns the calculated time value. When the parameters are set to values other than 0, the function will either return OK or an error. \textquotesingle{}OK\textquotesingle{} means the motion at the specified function parameters is possible, whereas an error indicates that the motion cannot be executed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em start\+\_\+position\+\_\+deg} & Position (in degrees) from where the specified servo should start moving \\
+\hline
+{\em start\+\_\+velocity\+\_\+deg\+\_\+per\+\_\+sec} & Servo velocity (in degrees/sec) at the start of motion \\
+\hline
+{\em start\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2} & Servo acceleration (in degrees/sec$^\wedge$2) at the start of motion \\
+\hline
+{\em start\+\_\+time\+\_\+ms} & Initial time setting (in milliseconds) \\
+\hline
+{\em end\+\_\+position\+\_\+deg} & Position (in degrees) where the servo should arrive \\
+\hline
+{\em end\+\_\+velocity\+\_\+per\+\_\+sec} & Servo velocity (in degrees/sec) in the end of motion \\
+\hline
+{\em end\+\_\+acceleration\+\_\+deg\+\_\+per\+\_\+sec2} & Servo acceleration (in degrees/sec$^\wedge$2) in the end of motion \\
+\hline
+{\em end\+\_\+time\+\_\+ms} & Final time setting (in milliseconds) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}\label{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry@{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}}
+\index{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry@{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry()}{rr\_param\_cache\_setup\_entry()}}
+{\footnotesize\ttfamily int rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry (\begin{DoxyParamCaption}\item[{\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t}}]{param,  }\item[{bool}]{enabled }\end{DoxyParamCaption})}
+
+
+
+The function is the fist one in the A\+PI call sequence that enables reading multiple servo paramaters (e.\+g., velocity, voltage, and position) as a data array. Using the sequence is advisable when you need to read {\bfseries more than one parameter at a time}. The user can set up the array to include up to 50 parameters. In all, the sequence comprises the following functions\+: 
+
+
+\begin{DoxyItemize}
+\item \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} for setting up an array of servo parameters to read 
+\item \hyperlink{group___servo__info_ga4d9f2bcfc136357405359c9ca9d4aedf}{rr\+\_\+param\+\_\+cache\+\_\+update} for retreiving the parameters from the servo and saving them to the program cache 
+\item \hyperlink{group___servo__info_ga9249202a29031f84b7dc3da37db05dfc}{rr\+\_\+read\+\_\+cached\+\_\+parameter} for reading parameters from the program cache
+\end{DoxyItemize}Using the sequence of A\+PI calls allows for speeding up data acquisition by nearly two times. Let\textquotesingle{}s assume you need to read 49 parameters. At a bit rate of 1 M\+Bit/s, reading them one by one will take about 35 ms, whereas reading them as an array will only take 10 ms. 
+
+{\bfseries Note\+:} When you need to read a single parameter, it is better to use the \hyperlink{group___servo__info_gae665cf9423955f882e94282d66ba6a60}{rr\+\_\+read\+\_\+parameter} function.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em param} & Index of the parameter to read as indicated in the \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} list (e.\+g., A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR) \\
+\hline
+{\em enabled} & Set True/\+False to enable/ disable the specified parameter for reading \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_ga4d9f2bcfc136357405359c9ca9d4aedf}\label{group___servo__info_ga4d9f2bcfc136357405359c9ca9d4aedf}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+param\+\_\+cache\+\_\+update@{rr\+\_\+param\+\_\+cache\+\_\+update}}
+\index{rr\+\_\+param\+\_\+cache\+\_\+update@{rr\+\_\+param\+\_\+cache\+\_\+update}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+param\+\_\+cache\+\_\+update()}{rr\_param\_cache\_update()}}
+{\footnotesize\ttfamily int rr\+\_\+param\+\_\+cache\+\_\+update (\begin{DoxyParamCaption}\item[{\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo }\end{DoxyParamCaption})}
+
+
+
+The function is always used in combination with the \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function. It retreives from the servo the array of parameters set up using \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function and saves the array to the program cache. You can subsequently read the parameters from the program cache with the \hyperlink{group___servo__info_ga9249202a29031f84b7dc3da37db05dfc}{rr\+\_\+read\+\_\+cached\+\_\+parameter} function. For more information, see \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}. 
+
+{\bfseries Note}\+: After you exit the program, the cache will be cleared.
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_ga9249202a29031f84b7dc3da37db05dfc}\label{group___servo__info_ga9249202a29031f84b7dc3da37db05dfc}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+read\+\_\+cached\+\_\+parameter@{rr\+\_\+read\+\_\+cached\+\_\+parameter}}
+\index{rr\+\_\+read\+\_\+cached\+\_\+parameter@{rr\+\_\+read\+\_\+cached\+\_\+parameter}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+read\+\_\+cached\+\_\+parameter()}{rr\_read\_cached\_parameter()}}
+{\footnotesize\ttfamily int rr\+\_\+read\+\_\+cached\+\_\+parameter (\begin{DoxyParamCaption}\item[{\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t}}]{param,  }\item[{float $\ast$}]{value }\end{DoxyParamCaption})}
+
+
+
+The function is always used in combination with the \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} and the\+::rr\+\_\+param\+\_\+cache\+\_\+update functions. For more information, see \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry}. 
+
+The function enables reading parameters from the program cache. If you want to read more than one parameter, you will need to make a separate A\+PI call for each of them.
+
+{\bfseries Note}\+: Prior to reading a parameter, make sure to update the program cache using the \hyperlink{group___servo__info_ga4d9f2bcfc136357405359c9ca9d4aedf}{rr\+\_\+param\+\_\+cache\+\_\+update} function. 
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em param} & Index of the parameter to read; you can find these indices in the \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} list (e.\+g., A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR) \\
+\hline
+{\em value} & Pointer to the variable where the function will save the reading \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_ga0803e0fab3e22b1bcb3f51aa393328b4}\label{group___servo__info_ga0803e0fab3e22b1bcb3f51aa393328b4}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+read\+\_\+error\+\_\+status@{rr\+\_\+read\+\_\+error\+\_\+status}}
+\index{rr\+\_\+read\+\_\+error\+\_\+status@{rr\+\_\+read\+\_\+error\+\_\+status}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+read\+\_\+error\+\_\+status()}{rr\_read\_error\_status()}}
+{\footnotesize\ttfamily int rr\+\_\+read\+\_\+error\+\_\+status (\begin{DoxyParamCaption}\item[{const \hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{uint32\+\_\+t $\ast$const}]{error\+\_\+count,  }\item[{uint8\+\_\+t $\ast$const}]{error\+\_\+array }\end{DoxyParamCaption})}
+
+
+
+The functions enables reading the total current count of servo errors and their codes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em error\+\_\+count} & Pointer to the variable where the function will save the current servo error count \\
+\hline
+{\em error\+\_\+array} & Pointer to the array where the function will save the codes of all errors{\bfseries Note\+:} Call the \hyperlink{group___utils_gaa949cec80a64afa06ed9816fe1132888}{rr\+\_\+describe\+\_\+emcy\+\_\+bit} function, to get a detailed error code description. If the array is not used, set the parameter to 0. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{group___servo__info_gae665cf9423955f882e94282d66ba6a60}\label{group___servo__info_gae665cf9423955f882e94282d66ba6a60}} 
+\index{Servo info functions@{Servo info functions}!rr\+\_\+read\+\_\+parameter@{rr\+\_\+read\+\_\+parameter}}
+\index{rr\+\_\+read\+\_\+parameter@{rr\+\_\+read\+\_\+parameter}!Servo info functions@{Servo info functions}}
+\subsubsection{\texorpdfstring{rr\+\_\+read\+\_\+parameter()}{rr\_read\_parameter()}}
+{\footnotesize\ttfamily int rr\+\_\+read\+\_\+parameter (\begin{DoxyParamCaption}\item[{\hyperlink{structrr__servo__t}{rr\+\_\+servo\+\_\+t} $\ast$}]{servo,  }\item[{const \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t}}]{param,  }\item[{float $\ast$}]{value }\end{DoxyParamCaption})}
+
+
+
+The function enables reading a single parameter directly from the servo specified in the \textquotesingle{}servo\textquotesingle{} parameter of the function. The function returns the current value of the parameter. Additionally, the parameter is saved to the program cache, irrespective of whether it was enabled/ disabled with the \hyperlink{group___servo__info_ga770c1e8b4d868cea649592e26a2706dd}{rr\+\_\+param\+\_\+cache\+\_\+setup\+\_\+entry} function. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em servo} & Servo descriptor returned by the \hyperlink{group___common_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\+\_\+init\+\_\+servo} function \\
+\hline
+{\em param} & Index of the parameter to read; you can find these indices in the \hyperlink{api_8h_aa1f58887fab4642cf49f6f453c1d276d}{rr\+\_\+servo\+\_\+param\+\_\+t} list (e.\+g., A\+P\+P\+\_\+\+P\+A\+R\+A\+M\+\_\+\+P\+O\+S\+I\+T\+I\+O\+N\+\_\+\+R\+O\+T\+OR). \\
+\hline
+{\em value} & Pointer to the variable where the function will save the reading \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int Status code (\hyperlink{api_8h_a92d5be5038abcf89837faf85a08debdc}{rr\+\_\+ret\+\_\+status\+\_\+t}) 
+\end{DoxyReturn}

@@ -1,0 +1,83 @@
+\hypertarget{group__tutor__c__read__motion__queue}{}\section{Reading of the motion queue parameters}
+\label{group__tutor__c__read__motion__queue}\index{Reading of the motion queue parameters@{Reading of the motion queue parameters}}
+This tutorial describes how to determine the current size of a motion queue. In this example, we will read the number of free and occupied P\+VT points in a motion queue before and after adding P\+VT (position-\/velocity-\/time) points to the motion queue. {\bfseries  Note\+:} Currently, the maximum motion queue size is 100 P\+VT.
+
+
+\begin{DoxyEnumerate}
+\item Initialize the interface. 
+\begin{DoxyCodeInclude}
+    \hyperlink{structrr__can__interface__t}{rr\_can\_interface\_t} *iface = \hyperlink{group___init_ga472a4890dcc7d7a13123c56a06946d91}{rr\_init\_interface}(
+      \hyperlink{tutorial_8h_a90947332a0345dc693905e3fc04dbeb2}{TUTORIAL\_DEVICE});
+\end{DoxyCodeInclude}
+
+\item Initialize the servo. 
+\begin{DoxyCodeInclude}
+    \hyperlink{structrr__servo__t}{rr\_servo\_t} *servo = \hyperlink{group___init_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\_init\_servo}(iface, 
+      \hyperlink{tutorial_8h_a9a3d33f25d3a72a8e30c885d238b3b65}{TUTORIAL\_SERVO\_0\_ID});
+\end{DoxyCodeInclude}
+
+\item Clear the motion queue of the servo. 
+\begin{DoxyCodeInclude}
+    \hyperlink{group___trajectory_ga19472cd90ae91f9b9f49edf4f52f35a2}{rr\_clear\_points\_all}(servo);
+\end{DoxyCodeInclude}
+ {\bfseries  Reading the initial motion queue size}
+\item Create a variable where the function will save the motion queue size values (free and occupied P\+VT points). 
+\begin{DoxyCodeInclude}
+    uint32\_t num;
+\end{DoxyCodeInclude}
+
+\item Read how many P\+VT points have been already added to the motion queue. 
+\begin{DoxyCodeInclude}
+    \hyperlink{group___trajectory_gae6ed290842e08d349dd86bb1264e6a17}{rr\_get\_points\_size}(servo, &num);
+\end{DoxyCodeInclude}
+
+\item Read how many more P\+VT points can be added to the motion queue. 
+\begin{DoxyCodeInclude}
+    \hyperlink{group___trajectory_gaafd0d575c047ed269664fbc760a640c1}{rr\_get\_points\_free\_space}(servo, &num);
+\end{DoxyCodeInclude}
+ {\bfseries  Reading the motion queue size after adding new P\+VT points to the motion queue}
+\item Add P\+VT point 1 to the motion queue, setting the time parameter to 10000000 ms. 
+\begin{DoxyCodeInclude}
+    \hyperlink{group___trajectory_gaba5ac04eeadd4a8d888b409f34837ece}{rr\_add\_motion\_point}(servo, 0.0, 0.0, 10000000);
+\end{DoxyCodeInclude}
+
+\item Add P\+VT point 2 to the motion queue, setting the time parameter to 10000000 ms. 
+\begin{DoxyCodeInclude}
+    \hyperlink{group___trajectory_gaba5ac04eeadd4a8d888b409f34837ece}{rr\_add\_motion\_point}(servo, 0.0, 0.0, 10000000);
+\end{DoxyCodeInclude}
+
+\item Read how many P\+VT points are already in the motion queue. 
+\begin{DoxyCodeInclude}
+    \hyperlink{group___trajectory_gae6ed290842e08d349dd86bb1264e6a17}{rr\_get\_points\_size}(servo, &num);
+\end{DoxyCodeInclude}
+
+\item Read how many more P\+VT points can be added to the motion queue. 
+\begin{DoxyCodeInclude}
+    \hyperlink{group___trajectory_gaafd0d575c047ed269664fbc760a640c1}{rr\_get\_points\_free\_space}(servo, &num);
+\end{DoxyCodeInclude}
+ {\bfseries  Complete tutorial code\+: } 
+\begin{DoxyCodeInclude}
+    \hyperlink{structrr__can__interface__t}{rr\_can\_interface\_t} *iface = \hyperlink{group___init_ga472a4890dcc7d7a13123c56a06946d91}{rr\_init\_interface}(\textcolor{comment}{/*TUTORIAL\_DEVICE*/} \textcolor{stringliteral}{"
+      /dev/ttyS3"});
+
+    \hyperlink{structrr__servo__t}{rr\_servo\_t} *servo = \hyperlink{group___init_ga0adb313a3eeb8a4399431e940a1f3e9e}{rr\_init\_servo}(iface, 
+      \hyperlink{tutorial_8h_a9a3d33f25d3a72a8e30c885d238b3b65}{TUTORIAL\_SERVO\_0\_ID});
+
+    \hyperlink{api_8h_a0e4aafa2ca9bd25219713176906b7c40}{API\_DEBUG}(\textcolor{stringliteral}{"========== Tutorial of the %s ==========\(\backslash\)n"}, \textcolor{stringliteral}{"reading servo error count"});
+
+    uint32\_t \_size;
+    \hyperlink{group___err_ga0803e0fab3e22b1bcb3f51aa393328b4}{rr\_read\_error\_status}(servo, &\_size, 0);
+    \hyperlink{api_8h_a0e4aafa2ca9bd25219713176906b7c40}{API\_DEBUG}(\textcolor{stringliteral}{"\(\backslash\)tError count: %d %s\(\backslash\)n"}, \_size, \_size ? \textcolor{stringliteral}{""} : \textcolor{stringliteral}{"(No errors)"});
+
+    \hyperlink{api_8h_a0e4aafa2ca9bd25219713176906b7c40}{API\_DEBUG}(\textcolor{stringliteral}{"========== Tutorial of the %s ==========\(\backslash\)n"}, \textcolor{stringliteral}{"reading servo error list"});
+    uint8\_t array[100];
+    uint32\_t size;
+    \hyperlink{group___err_ga0803e0fab3e22b1bcb3f51aa393328b4}{rr\_read\_error\_status}(servo, &size, array);
+    \hyperlink{api_8h_a0e4aafa2ca9bd25219713176906b7c40}{API\_DEBUG}(\textcolor{stringliteral}{"\(\backslash\)tError count: %d %s\(\backslash\)n"}, size, size ? \textcolor{stringliteral}{""} : \textcolor{stringliteral}{"(No errors)"});
+    \textcolor{keywordflow}{for}(\textcolor{keywordtype}{int} i = 0; i < size; i++)
+    \{
+        \hyperlink{api_8h_a0e4aafa2ca9bd25219713176906b7c40}{API\_DEBUG}(\textcolor{stringliteral}{"\(\backslash\)t\(\backslash\)tError: %s\(\backslash\)n"}, \hyperlink{group___err_gaa949cec80a64afa06ed9816fe1132888}{rr\_describe\_emcy\_bit}(array[i]));
+    \}
+\end{DoxyCodeInclude}
+
+\end{DoxyEnumerate}
