@@ -39,12 +39,12 @@
  * - to connect a single servo, in which case the configuration and the connection diagram are as below:
  * @image html "single_servo_conn.png" width=800
  * @latexonly
- * \raisebox{-1.5\height}{\includegraphics{single_servo_conn.png}} &
+ * \raisebox{-1.5\height}{\includegraphics{doc-src/img/single_servo_conn.png}} &
  * @endlatexonly
  * - to connect multiple servos, in which case the configuration and the connection diagram are as below:
  * @image html "multiple_servo_conn.png" width=800
  * @latexonly
- * \raisebox{-1.5\height}{\includegraphics{multiple_servo_conn.png}} &
+ * \raisebox{-1.5\height}{\includegraphics{doc-src/img/multiple_servo_conn.png}} &
  * @endlatexonly
  * 
  * In any case, make sure to meet the following electrical connection requirements:
@@ -70,7 +70,7 @@
  * The configuration of the bus line is as illustrated below:
  * @image html "servobox_CAN_PC.png" "Connecting RDrive servos to USB-CAN" width=800 
  * @latexonly
- * \raisebox{-1.5\height}{\includegraphics{servobox_CAN_PC.png}} &
+ * \raisebox{-1.5\height}{\includegraphics{doc-src/img/servobox_CAN_PC.png}} &
  * @endlatexonly
  * 
  * Providing the CAN connection, make sure to comply with the following requirements:
@@ -88,9 +88,9 @@
  * @subsection eater 3.1 Energy eater
  * An energy eater is used to dissipate the dynamic braking energy that can result from servos generating voltages in excess of the power supply voltage.
  * Use the schematic below to assemble the device:  
- * @image html "eater.png" "Eater module schematic" width=400
+ * @ieatersmage html "eater.png" "Eater module schematic" width=400
  * @latexonly
- * \raisebox{-1.5\height}{\includegraphics{eaters.png}} &
+ * \raisebox{-1.5\height}{\includegraphics{doc-src/img/eater.png}} &
  * @endlatexonly
  * <b>Required components:</b>
  * |Component|Type|Other options|Comment|
@@ -110,7 +110,7 @@
  * To assemble the device, use the schematic below.
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * @latexonly
- * \raisebox{-1.5\height}{\includegraphics{capacitor.png}} &
+ * \raisebox{-1.5\height}{\includegraphics{doc-src/img/capacitor.png}} &
  * @endlatexonly
  * <b>Requirements:</b>
  * |Component|Type|Comment|
