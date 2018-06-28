@@ -4,4 +4,4 @@ The `java`, `python`, and `ruby` folders are wrappers for the library in the cor
 For details of implementation in the three languages, see the Readme files in the respective folders.
 
 Online ducumentation
-https://rozum.com/support/docs/
+https://rozum.com/support/docs/servo-api
