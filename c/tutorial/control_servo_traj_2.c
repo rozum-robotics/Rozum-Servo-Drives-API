@@ -16,7 +16,7 @@
  * <li>one PVT commanding servos to move to the position of -100 degrees in 6,000 milliseconds</li></ul>
 
  * 1. Initialize the interface.
- * \snippet control_servo_traj_2.c Adding the interface
+ * \snippet control_servo_traj_2.c Adding the interface2
  * 
  * 2. Initialize servo 1.
  * \snippet control_servo_traj_2.c Adding servo ID0
@@ -47,10 +47,10 @@
  * <b> Executing the resulting motion queues</b>
  * 
  * 10. Command all servos to move simultaneously. Each of the two servos will execute their preset motion queues. Set the function parameter to 0 to get the servos moving without a delay.
- * \snippet control_servo_traj_2.c Start motion
+ * \snippet control_servo_traj_2.c Start motion2
  * 
  * 11. To ensure the program will not move on to execute another operation, set an idle period of 14,000 milliseconds.
- * \snippet control_servo_traj_2.c Sleep
+ * \snippet control_servo_traj_2.c Sleep2
  * 
  * <b> Complete tutorial code: </b>
  * \snippet control_servo_traj_2.c cccode 1
@@ -58,9 +58,9 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface]
+    //! [Adding the interface2]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface]
+    //! [Adding the interface2]
     //! [Adding servo ID0]
     rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
     //! [Adding servo ID0]
@@ -109,12 +109,12 @@ int main(int argc, char *argv[])
         return 1;
     }
     //! [Add point2 servo ID1]
-    //! [Start motion]
+    //! [Start motion2]
     rr_start_motion(iface, 0);
-    //! [Start motion]
+    //! [Start motion2]
 
-    //! [Sleep]
+    //! [Sleep2]
     rr_sleep_ms(14000); //wait till the movement ends
-    //! [Sleep]
+    //! [Sleep2]
     //! [cccode 1]
 }
