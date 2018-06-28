@@ -18,9 +18,13 @@ document:
     - git push -f "$GITHUB_URL" master
     - cd c
     - doxygen
+    - cd latex
+    - make
+    - cd ..
 #    - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
 #    - ssh "$COMPANY_SRV" "rm -fr $COMPANY_SRV_DOC_DIR"
     - scp -o StrictHostKeyChecking=no -r html/* "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR"
+    - scp -o StrictHostKeyChecking=no -r latex/refman.pdf "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR/RR-UserAPI.pdf"
  artifacts:
     paths:
      - c/html
