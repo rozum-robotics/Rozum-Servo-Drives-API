@@ -9,7 +9,9 @@ The `c` folder includes a library in the C language, which is intended to enable
     `build` - folder containing the compiled library (dynamic and static) and
               intermediate compiler files
         
-    `html` - Doxygen-generated documentation
+    `html` - Doxygen-generated documentation HTML version
+    
+    `latex` - Doxygen-generated documentation latex & PDF versions
 
     `doc-src` - ServoBox hardware documentation sources
     
