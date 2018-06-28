@@ -46,7 +46,7 @@ The `c` folder includes a library in the C language, which is intended to enable
     The `html` folder should be created. Open html/index.html in a browser to view the
     documentation.
 
-5. Running a tutorial
+5. Compiling tutorials
 
     Go to the tutorial folder:
     
@@ -60,6 +60,12 @@ The `c` folder includes a library in the C language, which is intended to enable
     
         make
 
+5. Running tutorials
+
+    Go to the `build` folder created during compilation. Run the executable files from this folder, one by one,
+    to check operation of the servos.
+    <b>Note:</b>Before running the executable files, make sure the hardware (servos, a servo box, a power supply) is connected as appropriate.
+
 6. Static linking
 
     To link statically, pass `libservo_api.a` to linker together with other 
@@ -67,15 +73,11 @@ The `c` folder includes a library in the C language, which is intended to enable
     
         gcc -o app obj1.o obj2.o path_to_library/libservo_api.a -lpthread
         
-7. Dynamic linkinkg
+7. Dynamic linking
 
     To link against the shared library, specify the path to the library using the `-L` linker
     option and the library name using the `-l option:
     
         gcc -o app obj1.o obj2.o -Lpath-to-library -lservo_api -lpthread
         
-    To run application without installing the library into the system, find the
-    `rpath` path and add the linker option:
-    
-        gcc -o app obj1.o obj2.o -Lpath-to-library -lservo_api -lpthread \
-        -Wl,-rpath=relative-path-to-library
+   
