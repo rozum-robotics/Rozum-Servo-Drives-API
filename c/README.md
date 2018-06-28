@@ -2,7 +2,11 @@
 
 1. Introduction
 
-The `c` folder includes a library in the C language, which is intended to enable control of Rozum Robotics servo motors.
+    The `c` folder includes a library in the C language, which is intended to enable control of Rozum Robotics servo motors.
+    
+    Online ducumentation https://rozum.com/support/docs/servo-api
+
+    Offline PDF ducumentation https://rozum.com/support/docs/servo-api/RR-UserAPI.pdf
 
 2. File structure
 
