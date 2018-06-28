@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
     //! [cccode 1] 
     //! [Adding the interface1]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface 1]
+    //! [Adding the interface1]
     
     //! [Adding the servo1]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
