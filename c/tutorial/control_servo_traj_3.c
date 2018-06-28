@@ -70,47 +70,47 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface]
+    //! [Adding the interface3]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface]
-    //! [Adding servo ID0]
+    //! [Adding the interface3]
+    //! [Adding servo first]
     rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding servo ID0]
-    //! [Adding servo ID1]
+    //! [Adding servo first]
+    //! [Adding servo2]
     rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
-    //! [Adding servo ID1]
-    //! [Adding servo ID2]
+    //! [Adding servo2]
+    //! [Adding servo3]
     rr_servo_t *servo3 = rr_init_servo(iface, TUTORIAL_SERVO_2_ID);
-    //! [Adding servo ID2]
+    //! [Adding servo3]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling three servos");
 
-    //! [Clear points servo ID0]
+    //! [Clear points for servo1]
     rr_clear_points_all(servo1);
-    //! [Clear points servo ID0]
-    //! [Clear points servo ID1]
+    //! [Clear points for servo1]
+    //! [Clear points for servo2]
     rr_clear_points_all(servo2);
-    //! [Clear points servo ID1]
-    //! [Clear points servo ID2]
+    //! [Clear points for servo2]
+    //! [Clear points for servo3]
     rr_clear_points_all(servo3);
-    //! [Clear points servo ID2]
-    //! [Add motion point 1 servo ID0]
+    //! [Clear points for servo3]
+    //! [Add motion point one for servo1]
     int status = rr_add_motion_point(servo1, 100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add motion point 1 servo ID0]
-    //! [Add motion point 1 servo ID1]
+    //! [Add motion point one for servo1]
+    //! [Add motion point two for servo2]
     status = rr_add_motion_point(servo2, 100.0, 0.0, 6000);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation: %d\n", status);
         return 1;
     }
-    //! [Add motion point 1 servo ID1]
-    //! [Add motion point 1 servo ID2]
+    //! [Add motion point two for servo2]
+    //! [Add motion point three for servo3]
     status = rr_add_motion_point(servo3, 100.0, 0.0, 6000);
     if(status != RET_OK)
     {
