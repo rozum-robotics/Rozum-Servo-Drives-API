@@ -977,7 +977,7 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_per_sec, const uint32_t time_ms)
+int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const uint32_t time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -985,7 +985,7 @@ int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const
     uint8_t data[12];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_float(data + 4, 0, &velocity_per_sec, 1);
+    usb_can_put_float(data + 4, 0, &velocity_deg_per_sec, 1);
     usb_can_put_uint32_t(data + 8, 0, &time_ms, 1);
 
     uint32_t sts = write_raw_sdo(dev, 0x2200, 2, data, sizeof(data), 1, 200);
@@ -1291,7 +1291,7 @@ int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
  * @param start_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2) at the start of motion
  * @param start_time_ms Initial time setting (in milliseconds)
  * @param end_position_deg Position (in degrees) where the servo should arrive
- * @param end_velocity_per_sec Servo velocity (in degrees/sec) in the end of motion
+ * @param end_velocity_deg_per_sec Servo velocity (in degrees/sec) in the end of motion
  * @param end_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2) in the end of motion
  * @param end_time_ms Final time setting (in milliseconds)
  * @return int Status code (::rr_ret_status_t)
@@ -1299,7 +1299,7 @@ int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
  */
 int rr_invoke_time_calculation(const rr_servo_t *servo,
                                const float start_position_deg, const float start_velocity_deg_per_sec, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
-                               const float end_position_deg, const float end_velocity_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)
+                               const float end_position_deg, const float end_velocity_deg_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1309,12 +1309,12 @@ int rr_invoke_time_calculation(const rr_servo_t *servo,
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
     p = usb_can_put_float(data, p, &start_position_deg, 1);
-    p = usb_can_put_float(data, p, &start_velocity_per_sec, 1);
+    p = usb_can_put_float(data, p, &start_velocity_deg_per_sec, 1);
     p = usb_can_put_float(data, p, &start_acceleration_deg_per_sec2, 1);
     p = usb_can_put_uint32_t(data, p, &start_time_ms, 1);
 
     p = usb_can_put_float(data, p, &end_position_deg, 1);
-    p = usb_can_put_float(data, p, &end_velocity_per_sec, 1);
+    p = usb_can_put_float(data, p, &end_velocity_deg_per_sec, 1);
     p = usb_can_put_float(data, p, &end_acceleration_deg_per_sec2, 1);
     p = usb_can_put_uint32_t(data, p, &end_time_ms, 1);
 
