@@ -5,3 +5,6 @@ For details of implementation in the three languages, see the Readme files in th
 
 Online ducumentation
 https://rozum.com/support/docs/servo-api
+
+Offline PDF ducumentation
+https://rozum.com/support/docs/servo-api/RR-UserAPI.pdf
