@@ -38,10 +38,10 @@
  * The configuration of the servo box solution (e.g., how many eaters and capacitors it uses) and the electrical connection diagram depend on whether your intention is:
  * - to connect a single servo, in which case the configuration and the connection diagram are as below:
  * @image html "single_servo_conn.png" width=800
- * @image latex "single_servo_conn.ps" width=800
+ * @image latex "single_servo_conn.png" "Connecting single RDrive servo to power supply" width=300pt
  * - to connect multiple servos, in which case the configuration and the connection diagram are as below:
  * @image html "multiple_servo_conn.png" width=800
- * @image latex "multiple_servo_conn.ps" width=800
+ * @image latex "multiple_servo_conn.png" "Connecting multiple RDrive servos to power supply" width=300pt
  * 
  * In any case, make sure to meet the following electrical connection requirements:
  * - Typically, the total circuit length from the power supply to any servo motor must not exceed 10 meters.
@@ -65,7 +65,7 @@
  * The CAN connection of RDrive servos is a two-wire bus line transmitting differential signals: CAN_HIGH and CAN_LOW. 
  * The configuration of the bus line is as illustrated below:
  * @image html "servobox_CAN_PC.png" "Connecting RDrive servos to USB-CAN" width=800 
- * @image latex "servobox_CAN_PC.ps" "Connecting RDrive servos to USB-CAN" width=800 
+ * @image latex "servobox_CAN_PC.png" "Connecting RDrive servos to USB-CAN" width=300pt
  * 
  * Providing the CAN connection, make sure to comply with the following requirements:
  * - The CAN bus lines should be terminated with 120 Ohm resistors at both ends. You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
@@ -83,7 +83,7 @@
  * An energy eater is used to dissipate the dynamic braking energy that can result from servos generating voltages in excess of the power supply voltage.
  * Use the schematic below to assemble the device:  
  * @ieatersmage html "eater.png" "Eater module schematic" width=400
- * @ieatersmage latex "eater.ps" "Eater module schematic" width=400
+ * @ieatersmage latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
  * |Component|Type|Other options|Comment|
  * |---------|-----|-----------|-------|
@@ -101,7 +101,7 @@
  * For the same reason, make sure to place capacitors as close as possible to the servo.
  * To assemble the device, use the schematic below.
  * @image html "capacitor.png" "Capacitor module schematic" width=400
- * @image latex "capacitor.ps" "Capacitor module schematic" width=400
+ * @image latex "capacitor.png" "Capacitor module schematic" width=200pt
  * <b>Requirements:</b>
  * |Component|Type|Comment|
  * |---------|-----|-------|
