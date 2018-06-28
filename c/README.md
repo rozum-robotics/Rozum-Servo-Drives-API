@@ -2,6 +2,8 @@
 
 1. Introduction
 
+The `c` folder includes a library in the C language, which is intended to enable control of Rozum Robotics servo motors.
+
 2. File structure
 
     `build` - folder containing the compiled library (dynamic and static) and
@@ -33,26 +35,26 @@
     
         make clean; make
         
-    Two files `build/libservo_api.so` and `build/libservo_api.a` should be created
+    Two files should be created: `build/libservo_api.so` and `build/libservo_api.a`.
 
-4. Building documentation
+4. Building the documentation
 
     Run:
     
         doxygen
         
-    `html` folder should be created. Open html/index.html in a browser to view
+    The `html` folder should be created. Open html/index.html in a browser to view the
     documentation.
 
-5. Running tutorial
+5. Running a tutorial
 
     Go to the tutorial folder:
     
         cd tutorial
         
-    Open and edit `tutorial.h`. Replace `TUTORIAL_DEVICE` value with your device
+    Open and edit `tutorial.h`. Replace the `TUTORIAL_DEVICE` value with your device:
     
-        name (`/dev/ttyACM0`, for example).
+        name (e.g.,`/dev/ttyACM0`)
         
     Run:
     
@@ -67,13 +69,13 @@
         
 7. Dynamic linkinkg
 
-    To link against the shared library supply path to the library using the `-L` linker
-    option and the library name using `-l option:
+    To link against the shared library, specify the path to the library using the `-L` linker
+    option and the library name using the `-l option:
     
         gcc -o app obj1.o obj2.o -Lpath-to-library -lservo_api -lpthread
         
-    To run application without installing the library into the system search path
-    `rpath`, add the linker option:
+    To run application without installing the library into the system, find the
+    `rpath` path and add the linker option:
     
         gcc -o app obj1.o obj2.o -Lpath-to-library -lservo_api -lpthread \
         -Wl,-rpath=relative-path-to-library
