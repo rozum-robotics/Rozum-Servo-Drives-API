@@ -20,7 +20,6 @@
  * - \ref Realtime
  * - \ref Err
  * - \ref Dbg
- * - \ref hw_manual
  * 
  * \section tutor API Tutorials
  * - C
