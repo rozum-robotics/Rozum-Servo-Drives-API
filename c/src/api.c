@@ -41,7 +41,7 @@
  * \defgroup Init Initialization and deinitialization
  * \defgroup State  Switching servo working states
  * \defgroup Motion Simple motion control (duty, current, velocity, position)
- * \defgroup Motion Trajectory motion control (PVT)
+ * \defgroup Trajectory Trajectory motion control (PVT)
  * \defgroup Config Reading and writing servo configuration
  * \defgroup Realtime Reading realtime parameter
  * \defgroup Err Error handling
