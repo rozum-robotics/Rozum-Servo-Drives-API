@@ -94,6 +94,7 @@
  * In the servobox solution, capacitors are intended to accumulate and supply electric energy to servos. The devices allow for compensating
  * short-duration power consumption peaks that are due to servos located at a distance (usually quite long) from the power supply unit.
  * For the same reason, make sure to place capacitors as close as possible to the servo.
+ * To assemble the device, use the schematic below.
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * <b>Requirements:</b>
  * |Component|Recommended|Comment|
