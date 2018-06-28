@@ -68,12 +68,12 @@
  * - The CAN bus lines should be terminated with 120 Ohm resistors at both ends. You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
  * - The bus line cable must be a twisted pair cable with the lay length of 2 to 4 cm.
  * - The cross section of the bus line cable must be between 0.12 mm2 to 0.3 mm2.
- * - To ensure the baud rate required for your application, LΣ should meet the specific values as indicated in Table 2.
+ * - To ensure the baud rate required for your application, L&Sigma; should meet the specific values as indicated in Table 2.
  * 
  * <b>Table 2: CAN line length vs. baud rate</b> 
  * |Baud Rate|50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 Mbit/s|
  * |------------------------|---------|---------|---------|---------|---------|
- * |Total line length, LΣ, m|< 1000 m|< 500 m|< 200 m|< 100 m|< 40 m|
+ * |Total line length, L&Sigma;, m|< 1000 m|< 500 m|< 200 m|< 100 m|< 40 m|
  * 
  * @section sect1 3. Servobox components
  * @subsection eater 3.1 Energy eater
@@ -83,10 +83,10 @@
  * <b>Required components:</b>
  * |Component|Type|Other options|Comment|
  * |---------|-----|-----------|-------|
- * |D1 - Diode|APT30S20BG|Schottky diode, I<SUB>f</SUB> ≥ 20 A, V<SUB>r</SUB> ≥ 96 V|I<SUB>f</SUB> ≥ 1.5 × Total current of all connected servos|
- * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> ≥ 96V, I<SUB>c</SUB> ≥ 10 A| |
+ * |D1 - Diode|APT30S20BG|Schottky diode, I<SUB>f</SUB> &ge; 20 A, V<SUB>r</SUB> &ge; 96 V|I<SUB>f</SUB> &ge; 1.5 × Total current of all connected servos|
+ * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> &ge; 96V, I<SUB>c</SUB> &ge; 10 A| |
  * |R1 - Resistor 1|1K Ohm, 1 W| | |
- * |R2 - Resistor 1|4.7 Ohm, P<SUB>d</SUB> ≥ 25 W| | |
+ * |R2 - Resistor 1|4.7 Ohm, P<SUB>d</SUB> &ge; 25 W| | |
  * 
  * <b>Note:</b> D1, Q1, and R2 should be connected to an appropriate heatsink. The maximum dissipated power of the heatsink should be equal to the maximum dynamic braking energy in your circuit.   
  * When the power to dissipate is too high (dynamic braking power is more than 50 W), it also is essential to provide active cooling, such as a fan.
@@ -100,6 +100,6 @@
  * <b>Requirements:</b>
  * |Component|Type|Comment|
  * |---------|-----|-------|
- * |С1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U ≥ 80 V, ESR ≤ 0.1 Ohm|Total capacitance should be ≥ 5 uF per 1 W of connected servo|
+ * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V, ESR &le; 0.1 Ohm|Total capacitance should be &ge; 5 uF per 1 W of connected servo|
  * @ingroup hw_manual
  */
