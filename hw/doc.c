@@ -28,6 +28,7 @@
  * - CAN communication connection (two wires on the servo housing)
  * 
  * For connection diagrams and requirements, see Sections 2.1 and 2.2.
+ * For eater and capacitor requirements and schematic, see Section 3.1 and 3.2.
  * 
  * @subsection sect_21 2.1. Power supply connection
  * 
