@@ -80,7 +80,7 @@
  * Use the schematic below to assemble the device:  
  * @image html "eater.png" "Eater module schematic" width=400
  * <b>Required components:</b>
- * |Component|Recommended|Alternative|Comment|
+ * |Component|Type|Other options|Comment|
  * |---------|-----|-----------|-------|
  * |D1 - Diode|APT30S20BG|Schottky diode, I<SUB>f</SUB> ≥ 20 A, V<SUB>r</SUB> ≥ 96 V|I<SUB>f</SUB> ≥ 1.5 × Total current of all connected servos|
  * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> ≥ 96V, I<SUB>c</SUB> ≥ 10 A| |
@@ -97,7 +97,7 @@
  * To assemble the device, use the schematic below.
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * <b>Requirements:</b>
- * |Component|Recommended|Comment|
+ * |Component|Type|Comment|
  * |---------|-----|-------|
  * |С1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U ≥ 80 V, ESR ≤ 0.1 Ohm|Total capacitance should be ≥ 5 uF per 1 W of connected servo|
  * @ingroup hw_manual
