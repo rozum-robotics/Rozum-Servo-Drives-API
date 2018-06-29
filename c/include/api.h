@@ -120,10 +120,6 @@ typedef enum
     APP_PARAM_FOC_TIMER_TOP, ///< Internal use only
     APP_PARAM_DUTY,          ///< Internal use only
 
-    APP_PARAM_CURRENT_PHASE_ABS, ///< Internal use only
-    APP_PARAM_CURRENT_RMS_ABS,   ///< Internal use only
-    APP_PARAM_QUALITY,           ///< Internal use only
-
     APP_PARAM_SIZE, ///< Use when you need to define the total param arrray size
 } rr_servo_param_t;
 
