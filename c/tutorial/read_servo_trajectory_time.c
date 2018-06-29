@@ -12,13 +12,13 @@
 /**
  * \defgroup tutor_c_calculate_point
  * This tutorial describes how you can calculate and read the minimum time that it will take the servo to reach the position of 100 degrees.
- * <b> Note:</b> Following the instructions in the tutorial, you can get the said travel time value without actually moving the servo.
+ * <b>Note:</b> Following the instructions in the tutorial, you can get the said travel time value without actually moving the servo.
  * 
  * 1. Initialize the interface.
- * \snippet read_servo_trajectory_time.c Adding the interface
+ * \snippet read_servo_trajectory_time.c Adding interface 9
  * 
  * 2. Initialize the servo.
- * \snippet read_servo_trajectory_time.c Adding the servo
+ * \snippet read_servo_trajectory_time.c Adding servo 9
  * 
  * <b> Calculating the time to reach the specified position </b>
  * 
@@ -33,17 +33,20 @@
  * 
  * 5. Read the calculation result.
  * \snippet read_servo_trajectory_time.c Get calculation result
+ * 
+ * <b> Complete tutorial code: </b>
+ * \snippet control_servo_traj_2.c cccode 1
  */
  
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface]
+    //! [Adding interface 9]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface]
-    //! [Adding the servo]
+    //! [Adding interface 9]
+    //! [Adding servo 9]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding the servo]
+    //! [Adding servo 9]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "trajectory calculation");
 
