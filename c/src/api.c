@@ -1203,7 +1203,7 @@ rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param
  * @brief The function clears the entire motion queue of the servo specified in the 'servo' parameter of the function.
  * The servo completes the move it started before the function call and then clears all the remaining PVT points in the queue.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo)
