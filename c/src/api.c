@@ -1025,8 +1025,8 @@ rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestam
 /**
  * @brief The functions enables reading the total actual count of servo hardware errors (e.g., no Heartbeats/overcurrent, etc.).
  * In addition, the function returns the codes of all the detected errors as a single array. 
- * <p><b>Note</b>: The ::rr_ret_status_t codes returned by API functions only indicate that an error occured during program execution.
- * Use the ::rr_read_error_status to determine the cause of the errors.</p>  
+ * <p><b>Note</b>: The ::rr_ret_status_t codes returned by API functions only indicate that an error occured during communication between the user program and a servo.
+ * If it is a hardware error, the ::rr_ret_status_t code will be ::RET_ERROR. Use ::rr_read_error_status to determine the cause of the error.</p>  
  * @param servo Servo Servo descriptor returned by the ::rr_init_servo function  
  * @param error_count Pointer to the variable where the function will save the current servo error count
  * @param error_array Pointer to the array where the function will save the codes of all errors. Default array size is ::ARRAY_ERROR_BITS_SIZE
