@@ -9,7 +9,6 @@ plot(t(:, 3), t(:, 1), 'o');
 hold off;
 grid on;
 legend('Calculated position', 'PVT position');
-title('Calculated trajectory using PVT points');
 xlabel('Time, ms');
 ylabel('Position, deg');
 
@@ -23,4 +22,4 @@ legend('Calculated velocity', 'PVT velocity');
 xlabel('Time, ms');
 ylabel('Velocity, deg/s');
 
-print ('PVT', '-dsvg');
+print ('PVT', '-dpng');
