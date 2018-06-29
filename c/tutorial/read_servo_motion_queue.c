@@ -16,13 +16,13 @@
  * <b> Note:</b> Currently, the maximum motion queue size is 100 PVT.
  * 
  * 1. Initialize the interface.
- * \snippet read_servo_motion_queue.c Adding the interface
+ * \snippet read_servo_motion_queue.c Adding interface8
  * 
  * 2. Initialize the servo.
- * \snippet read_servo_motion_queue.c Adding the servo
+ * \snippet read_servo_motion_queue.c Adding servo8
  * 
  * 3. Clear the motion queue of the servo.
- * \snippet read_servo_motion_queue.c Clear points
+ * \snippet read_servo_motion_queue.c Clear points8
  * 
  * <b> Reading the initial motion queue size</b>
  * 
@@ -56,19 +56,19 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface]
+    //! [Adding interface8]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface]
-    //! [Adding the servo]
+    //! [Adding interface8]
+    //! [Adding servo8]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding the servo]
+    //! [Adding servo8]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
 
     API_DEBUG("Clearing points\n");
-    //! [Clear points]
+    //! [Clear points8]
     rr_clear_points_all(servo);
-    //! [Clear points]
+    //! [Clear points8]
     
 
     //! [Points size variable]
