@@ -13,7 +13,7 @@
  * \defgroup tutor_c_param
  * 
  * The tutorial describes how to read a sequence of single variables representing current device parameters (e.g., position, voltage, etc.)
- * <b> Note </b>: For reference, the tutorial includes more than one parameter.
+ * <b>Note</b>: For reference, the tutorial includes more than one parameter.
  * In practice, however, if you need to read more than one parameter, refer to the tutorial <b>Setting up parameter cache and reading cached parameters</b>.
  * 
  * 1. Initialize the interface.
@@ -27,16 +27,16 @@
  * 3. Create a variable where the function will save the parameters.
  * \snippet read_any_param.c Read parameter variable
  * 
- * 4. Read the rotor position.
+ * 4. Read the actual rotor position.
  * \snippet read_any_param.c Read rotor position
  * 
- * 5. Read the rotor velocity.
+ * 5. Read the actual rotor velocity.
  * \snippet read_any_param.c Read rotor velocity
  * 
- * 6. Read the input voltage.
+ * 6. Read the actual input voltage.
  * \snippet read_any_param.c Read voltage
  * 
- * 7. Read the input current.
+ * 7. Read the actual input current.
  * \snippet read_any_param.c Read current
  * 
  * <b> Complete tutorial code: </b>
