@@ -49,15 +49,15 @@
  * 
  * \defgroup hw_manual Servo box specs & manual
  * 
- * \defgroup tutor_c_servomove1 One servo PVT move
- * \defgroup tutor_c_servomove2 Two servos PVT move
- * \defgroup tutor_c_servomove3 Three servos PVT move
- * \defgroup tutor_c_param_cache Device parameter cache programming and reading
- * \defgroup tutor_c_param Device parameters reading
- * \defgroup tutor_c_calculate_point Servo PVT point calculation
+ * \defgroup tutor_c_servomove1 PVT trajectory for one servo
+ * \defgroup tutor_c_servomove2 PVT trajectory for two servos
+ * \defgroup tutor_c_servomove3 PVT trajectory for three servos
+ * \defgroup tutor_c_param_cache Setting up parameter cache and reading cached parameters
+ * \defgroup tutor_c_param Reading device parameters
+ * \defgroup tutor_c_calculate_point PVT point calculations
  * 
- * \defgroup tutor_c_get_max_velocity Reading of the maximum velocity
- * \defgroup tutor_c_read_motion_queue Reading of the motion queue parameters
+ * \defgroup tutor_c_get_max_velocity Reading the maximum velocity of the servo
+ * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
  */
 /* Includes ------------------------------------------------------------------*/
 #include "api.h"
