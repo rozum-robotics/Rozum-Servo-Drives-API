@@ -55,27 +55,23 @@ typedef enum
  */
 typedef enum
 {
-    APP_PARAM_NULL = 0,               ///< Not used
-    APP_PARAM_POSITION,               ///< Actual multi-turn position of the output shaft (degrees)
-    APP_PARAM_VELOCITY,               ///< Actual velocity of the output shaft (degrees per second)
-    APP_PARAM_POSITION_ROTOR,         ///< Actual position of the motor shaft (degrees)
-    APP_PARAM_VELOCITY_ROTOR,         ///< Actual velocity of the motor shaft (degrees per second)
-    APP_PARAM_POSITION_GEAR_360,      ///< Actual single-turn position of the output shaft (from 0 to 360 degrees)
-    APP_PARAM_POSITION_GEAR_EMULATED, ///< Actual multi-turn position of the motor shaft multiplied by gear ratio (degrees)
-
-    APP_PARAM_CURRENT_INPUT,  ///< Actual DC current (amperes)
-    APP_PARAM_CURRENT_OUTPUT, ///< Not used
-    APP_PARAM_VOLTAGE_INPUT,  ///< Actual DC voltage (volts)
-    APP_PARAM_VOLTAGE_OUTPUT, ///< Not used
-    APP_PARAM_CURRENT_PHASE,  ///< Actual magnitude of AC current (amperes)
-
-    APP_PARAM_TEMPERATURE_ACTUATOR,    ///< Not used
-    APP_PARAM_TEMPERATURE_ELECTRONICS, ///< Actual temperature of the motor controller
-    APP_PARAM_TORQUE,                  ///< Not used
-
-    APP_PARAM_ACCELERATION,       ///< Not used
-    APP_PARAM_ACCELERATION_ROTOR, ///< Not used
-
+    APP_PARAM_NULL = 0,                     ///< Not used
+    APP_PARAM_POSITION,                     ///< Actual multi-turn position of the output shaft (degrees)
+    APP_PARAM_VELOCITY,                     ///< Actual velocity of the output shaft (degrees per second)
+    APP_PARAM_POSITION_ROTOR,               ///< Actual position of the motor shaft (degrees)
+    APP_PARAM_VELOCITY_ROTOR,               ///< Actual velocity of the motor shaft (degrees per second)
+    APP_PARAM_POSITION_GEAR_360,            ///< Actual single-turn position of the output shaft (from 0 to 360 degrees)
+    APP_PARAM_POSITION_GEAR_EMULATED,       ///< Actual multi-turn position of the motor shaft multiplied by gear ratio (degrees)
+    APP_PARAM_CURRENT_INPUT,                ///< Actual DC current (amperes)
+    APP_PARAM_CURRENT_OUTPUT,               ///< Not used
+    APP_PARAM_VOLTAGE_INPUT,                ///< Actual DC voltage (volts)
+    APP_PARAM_VOLTAGE_OUTPUT,               ///< Not used
+    APP_PARAM_CURRENT_PHASE,                ///< Actual magnitude of AC current (amperes)
+    APP_PARAM_TEMPERATURE_ACTUATOR,         ///< Not used
+    APP_PARAM_TEMPERATURE_ELECTRONICS,      ///< Actual temperature of the motor controller
+    APP_PARAM_TORQUE,                       ///< Not used
+    APP_PARAM_ACCELERATION,                 ///< Not used
+    APP_PARAM_ACCELERATION_ROTOR,           ///< Not used
     APP_PARAM_CURRENT_PHASE_1,              ///< Actual phase 1 current
     APP_PARAM_CURRENT_PHASE_2,              ///< Actual phase 2 current
     APP_PARAM_CURRENT_PHASE_3,              ///< Actual phase 3 current
@@ -95,32 +91,29 @@ typedef enum
     APP_PARAM_CONTROLLER_POSITION_SETPOINT, ///< Position target
     APP_PARAM_CONTROLLER_POSITION_FEEDBACK, ///< Actual position (degrees)
     APP_PARAM_CONTROLLER_POSITION_OUTPUT,   ///< Not used
-
-    APP_PARAM_CONTROL_MODE, ///< Internal use only
-
-    APP_PARAM_FOC_ANGLE,     ///< Internal use only
-    APP_PARAM_FOC_IA,        ///< Internal use only
-    APP_PARAM_FOC_IB,        ///< Internal use only
-    APP_PARAM_FOC_IQ_SET,    ///< Internal use only
-    APP_PARAM_FOC_ID_SET,    ///< Internal use only
-    APP_PARAM_FOC_IQ,        ///< Internal use only
-    APP_PARAM_FOC_ID,        ///< Internal use only
-    APP_PARAM_FOC_IQ_ERROR,  ///< Internal use only
-    APP_PARAM_FOC_ID_ERROR,  ///< Internal use only
-    APP_PARAM_FOC_UQ,        ///< Internal use only
-    APP_PARAM_FOC_UD,        ///< Internal use only
-    APP_PARAM_FOC_UA,        ///< Internal use only
-    APP_PARAM_FOC_UB,        ///< Internal use only
-    APP_PARAM_FOC_U1,        ///< Internal use only
-    APP_PARAM_FOC_U2,        ///< Internal use only
-    APP_PARAM_FOC_U3,        ///< Internal use only
-    APP_PARAM_FOC_PWM1,      ///< Internal use only
-    APP_PARAM_FOC_PWM2,      ///< Internal use only
-    APP_PARAM_FOC_PWM3,      ///< Internal use only
-    APP_PARAM_FOC_TIMER_TOP, ///< Internal use only
-    APP_PARAM_DUTY,          ///< Internal use only
-
-    APP_PARAM_SIZE, ///< Use when you need to define the total param arrray size
+    APP_PARAM_CONTROL_MODE,                 ///< Internal use only
+    APP_PARAM_FOC_ANGLE,                    ///< Internal use only
+    APP_PARAM_FOC_IA,                       ///< Internal use only
+    APP_PARAM_FOC_IB,                       ///< Internal use only
+    APP_PARAM_FOC_IQ_SET,                   ///< Internal use only
+    APP_PARAM_FOC_ID_SET,                   ///< Internal use only
+    APP_PARAM_FOC_IQ,                       ///< Internal use only
+    APP_PARAM_FOC_ID,                       ///< Internal use only
+    APP_PARAM_FOC_IQ_ERROR,                 ///< Internal use only
+    APP_PARAM_FOC_ID_ERROR,                 ///< Internal use only
+    APP_PARAM_FOC_UQ,                       ///< Internal use only
+    APP_PARAM_FOC_UD,                       ///< Internal use only
+    APP_PARAM_FOC_UA,                       ///< Internal use only
+    APP_PARAM_FOC_UB,                       ///< Internal use only
+    APP_PARAM_FOC_U1,                       ///< Internal use only
+    APP_PARAM_FOC_U2,                       ///< Internal use only
+    APP_PARAM_FOC_U3,                       ///< Internal use only
+    APP_PARAM_FOC_PWM1,                     ///< Internal use only
+    APP_PARAM_FOC_PWM2,                     ///< Internal use only
+    APP_PARAM_FOC_PWM3,                     ///< Internal use only
+    APP_PARAM_FOC_TIMER_TOP,                ///< Internal use only
+    APP_PARAM_DUTY,                         ///< Internal use only
+    APP_PARAM_SIZE,                         ///< Use when you need to define the total param arrray size
 } rr_servo_param_t;
 
 /**
