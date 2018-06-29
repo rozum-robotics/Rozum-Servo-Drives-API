@@ -36,16 +36,17 @@
  */
 typedef enum
 {
-    RET_OK = 0,       ///< Status OK
-    RET_ERROR,        ///< Generic error
-    RET_BAD_INSTANCE, ///< Bad interface or servo instance (null)
-    RET_BUSY,         ///< Device is busy
-    RET_WRONG_TRAJ,   ///< Wrong trajectory
-    RET_LOCKED,       ///< Device is locked
-    RET_STOPPED,      ///< Device is in STOPPED state
-    RET_TIMEOUT,      ///< Communication timeout
-    RET_ZERO_SIZE,    ///< Zero size
-    RET_SIZE_MISMATCH ///< Received & target size mismatch
+    RET_OK = 0,        ///< Status OK
+    RET_ERROR,         ///< Generic error
+    RET_BAD_INSTANCE,  ///< Bad interface or servo instance (null)
+    RET_BUSY,          ///< Device is busy
+    RET_WRONG_TRAJ,    ///< Wrong trajectory
+    RET_LOCKED,        ///< Device is locked
+    RET_STOPPED,       ///< Device is in STOPPED state
+    RET_TIMEOUT,       ///< Communication timeout
+    RET_ZERO_SIZE,     ///< Zero size
+    RET_SIZE_MISMATCH, ///< Received & target size mismatch
+    RET_WRONG_ARG      ///< Wrong function argurent
 } rr_ret_status_t;
 
 /**
@@ -54,74 +55,74 @@ typedef enum
  */
 typedef enum
 {
-    APP_PARAM_NULL = 0,  ///< Not used
-    APP_PARAM_POSITION, ///< Actual multi-turn position of the output shaft (degrees)
-    APP_PARAM_VELOCITY, ///< Actual velocity of the output shaft (degrees per second)
-    APP_PARAM_POSITION_ROTOR, ///< Actual position of the motor shaft (degrees)
-    APP_PARAM_VELOCITY_ROTOR, ///< Actual velocity of the motor shaft (degrees per second)
-    APP_PARAM_POSITION_GEAR_360, ///< Actual single-turn position of the output shaft (from 0 to 360 degrees)
+    APP_PARAM_NULL = 0,               ///< Not used
+    APP_PARAM_POSITION,               ///< Actual multi-turn position of the output shaft (degrees)
+    APP_PARAM_VELOCITY,               ///< Actual velocity of the output shaft (degrees per second)
+    APP_PARAM_POSITION_ROTOR,         ///< Actual position of the motor shaft (degrees)
+    APP_PARAM_VELOCITY_ROTOR,         ///< Actual velocity of the motor shaft (degrees per second)
+    APP_PARAM_POSITION_GEAR_360,      ///< Actual single-turn position of the output shaft (from 0 to 360 degrees)
     APP_PARAM_POSITION_GEAR_EMULATED, ///< Actual multi-turn position of the motor shaft multiplied by gear ratio (degrees)
 
-    APP_PARAM_CURRENT_INPUT, ///< Actual DC current (amperes)
+    APP_PARAM_CURRENT_INPUT,  ///< Actual DC current (amperes)
     APP_PARAM_CURRENT_OUTPUT, ///< Not used
-    APP_PARAM_VOLTAGE_INPUT, ///< Actual DC voltage (volts)
-    APP_PARAM_VOLTAGE_OUTPUT,///< Not used
-    APP_PARAM_CURRENT_PHASE, ///< Actual magnitude of AC current (amperes)
+    APP_PARAM_VOLTAGE_INPUT,  ///< Actual DC voltage (volts)
+    APP_PARAM_VOLTAGE_OUTPUT, ///< Not used
+    APP_PARAM_CURRENT_PHASE,  ///< Actual magnitude of AC current (amperes)
 
-    APP_PARAM_TEMPERATURE_ACTUATOR, ///< Not used
+    APP_PARAM_TEMPERATURE_ACTUATOR,    ///< Not used
     APP_PARAM_TEMPERATURE_ELECTRONICS, ///< Actual temperature of the motor controller
-    APP_PARAM_TORQUE, ///< Not used
+    APP_PARAM_TORQUE,                  ///< Not used
 
-    APP_PARAM_ACCELERATION, ///< Not used
+    APP_PARAM_ACCELERATION,       ///< Not used
     APP_PARAM_ACCELERATION_ROTOR, ///< Not used
 
-    APP_PARAM_CURRENT_PHASE_1, ///< Actual phase 1 current
-    APP_PARAM_CURRENT_PHASE_2, ///< Actual phase 2 current
-    APP_PARAM_CURRENT_PHASE_3, ///< Actual phase 3 current
-    APP_PARAM_CURRENT_RAW, ///< Not used
-    APP_PARAM_CURRENT_RAW_2, ///< Not used
-    APP_PARAM_CURRENT_RAW_3, ///< Not used
-    APP_PARAM_ENCODER_MASTER_TRACK, ///< Internal use only
-    APP_PARAM_ENCODER_NONIUS_TRACK, ///< Internal use only
-    APP_PARAM_ENCODER_MOTOR_MASTER_TRACK, ///< Internal use only
-    APP_PARAM_ENCODER_MOTOR_NONIUS_TRACK, ///< Internal use only
-    APP_PARAM_TORQUE_ELECTRIC_CALC, ///< Internal use only
-    APP_PARAM_CONTROLLER_VELOCITY_ERROR, ///< Velocity following error
+    APP_PARAM_CURRENT_PHASE_1,              ///< Actual phase 1 current
+    APP_PARAM_CURRENT_PHASE_2,              ///< Actual phase 2 current
+    APP_PARAM_CURRENT_PHASE_3,              ///< Actual phase 3 current
+    APP_PARAM_CURRENT_RAW,                  ///< Not used
+    APP_PARAM_CURRENT_RAW_2,                ///< Not used
+    APP_PARAM_CURRENT_RAW_3,                ///< Not used
+    APP_PARAM_ENCODER_MASTER_TRACK,         ///< Internal use only
+    APP_PARAM_ENCODER_NONIUS_TRACK,         ///< Internal use only
+    APP_PARAM_ENCODER_MOTOR_MASTER_TRACK,   ///< Internal use only
+    APP_PARAM_ENCODER_MOTOR_NONIUS_TRACK,   ///< Internal use only
+    APP_PARAM_TORQUE_ELECTRIC_CALC,         ///< Internal use only
+    APP_PARAM_CONTROLLER_VELOCITY_ERROR,    ///< Velocity following error
     APP_PARAM_CONTROLLER_VELOCITY_SETPOINT, ///< Velocity target
     APP_PARAM_CONTROLLER_VELOCITY_FEEDBACK, ///< Actual velocity (degrees per second)
-    APP_PARAM_CONTROLLER_VELOCITY_OUTPUT, ///< Not used
-    APP_PARAM_CONTROLLER_POSITION_ERROR, ///< Position following error
+    APP_PARAM_CONTROLLER_VELOCITY_OUTPUT,   ///< Not used
+    APP_PARAM_CONTROLLER_POSITION_ERROR,    ///< Position following error
     APP_PARAM_CONTROLLER_POSITION_SETPOINT, ///< Position target
     APP_PARAM_CONTROLLER_POSITION_FEEDBACK, ///< Actual position (degrees)
-    APP_PARAM_CONTROLLER_POSITION_OUTPUT, ///< Not used
+    APP_PARAM_CONTROLLER_POSITION_OUTPUT,   ///< Not used
 
     APP_PARAM_CONTROL_MODE, ///< Internal use only
 
-    APP_PARAM_FOC_ANGLE, ///< Internal use only
-    APP_PARAM_FOC_IA, ///< Internal use only
-    APP_PARAM_FOC_IB, ///< Internal use only
-    APP_PARAM_FOC_IQ_SET, ///< Internal use only
-    APP_PARAM_FOC_ID_SET, ///< Internal use only
-    APP_PARAM_FOC_IQ, ///< Internal use only
-    APP_PARAM_FOC_ID, ///< Internal use only
-    APP_PARAM_FOC_IQ_ERROR, ///< Internal use only
-    APP_PARAM_FOC_ID_ERROR, ///< Internal use only
-    APP_PARAM_FOC_UQ, ///< Internal use only
-    APP_PARAM_FOC_UD, ///< Internal use only
-    APP_PARAM_FOC_UA, ///< Internal use only
-    APP_PARAM_FOC_UB, ///< Internal use only
-    APP_PARAM_FOC_U1, ///< Internal use only
-    APP_PARAM_FOC_U2, ///< Internal use only
-    APP_PARAM_FOC_U3, ///< Internal use only
-    APP_PARAM_FOC_PWM1, ///< Internal use only
-    APP_PARAM_FOC_PWM2, ///< Internal use only
-    APP_PARAM_FOC_PWM3, ///< Internal use only
+    APP_PARAM_FOC_ANGLE,     ///< Internal use only
+    APP_PARAM_FOC_IA,        ///< Internal use only
+    APP_PARAM_FOC_IB,        ///< Internal use only
+    APP_PARAM_FOC_IQ_SET,    ///< Internal use only
+    APP_PARAM_FOC_ID_SET,    ///< Internal use only
+    APP_PARAM_FOC_IQ,        ///< Internal use only
+    APP_PARAM_FOC_ID,        ///< Internal use only
+    APP_PARAM_FOC_IQ_ERROR,  ///< Internal use only
+    APP_PARAM_FOC_ID_ERROR,  ///< Internal use only
+    APP_PARAM_FOC_UQ,        ///< Internal use only
+    APP_PARAM_FOC_UD,        ///< Internal use only
+    APP_PARAM_FOC_UA,        ///< Internal use only
+    APP_PARAM_FOC_UB,        ///< Internal use only
+    APP_PARAM_FOC_U1,        ///< Internal use only
+    APP_PARAM_FOC_U2,        ///< Internal use only
+    APP_PARAM_FOC_U3,        ///< Internal use only
+    APP_PARAM_FOC_PWM1,      ///< Internal use only
+    APP_PARAM_FOC_PWM2,      ///< Internal use only
+    APP_PARAM_FOC_PWM3,      ///< Internal use only
     APP_PARAM_FOC_TIMER_TOP, ///< Internal use only
-    APP_PARAM_DUTY, ///< Internal use only
+    APP_PARAM_DUTY,          ///< Internal use only
 
     APP_PARAM_CURRENT_PHASE_ABS, ///< Internal use only
-    APP_PARAM_CURRENT_RMS_ABS, ///< Internal use only
-    APP_PARAM_QUALITY, ///< Internal use only
+    APP_PARAM_CURRENT_RMS_ABS,   ///< Internal use only
+    APP_PARAM_QUALITY,           ///< Internal use only
 
     APP_PARAM_SIZE, ///< Use when you need to define the total param arrray size
 } rr_servo_param_t;
@@ -239,7 +240,7 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent);
 rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms);
 rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
 
-rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t * const error_count, uint8_t * const error_array);
+rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, uint8_t *const error_array);
 
 rr_ret_status_t rr_param_cache_update(rr_servo_t *servo);
 rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
@@ -254,9 +255,9 @@ rr_ret_status_t rr_get_points_size(const rr_servo_t *servo, uint32_t *num);
 rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num);
 
 rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
-                               const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
-                               const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms);
-rr_ret_status_t rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms);
+                                           const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
+                                           const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms,
+                                           uint32_t *time_ms);
 
 rr_ret_status_t rr_set_zero_position(const rr_servo_t *servo, const float position_deg);
 rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg);

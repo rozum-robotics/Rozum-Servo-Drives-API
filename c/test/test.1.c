@@ -15,12 +15,11 @@ int main(int argc, char *argv[])
     rr_set_velocity(d, 10.0);
 
     /* rr_invokeTimeCalculation + rr_getTimeCalculationResult*/
+    uint32_t time;
     rr_invoke_time_calculation(d,
                              0.0, 0.0, 0.0, 0,
-                             100.0, 0.0, 0.0, 0);
-
-    uint32_t time;
-    rr_get_time_calculation_result(d, &time);
+                             100.0, 0.0, 0.0, 0,
+                             &time);
     API_DEBUG("Time is: %d\n", time);
 
     /* rr_readErrorStatus */

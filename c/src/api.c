@@ -1286,7 +1286,7 @@ rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
 
 /**
  * @brief The function enables calculating the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.g., velocity, acceleration).
- * To read the calculation result, use the the ::rr_get_time_calculation_result function. <b>Note:</b>The function is executed without the servo moving.<br>
+ * <b>Note:</b>The function is executed without the servo moving.<br>
  *<p>When the start time and the end time parameters are set to 0, the function returns the calculated time value. When the parameters are set to
  * values other than 0, the function will either return OK or an error. 'OK' means the motion at the specified function parameters is possible,
  * whereas an error indicates that the motion cannot be executed.</p>
@@ -1299,12 +1299,14 @@ rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
  * @param end_velocity_deg_per_sec Servo velocity (in degrees/sec) in the end of motion
  * @param end_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2) in the end of motion
  * @param end_time_ms Final time setting (in milliseconds)
+ * @param time_ms Pointer to the variable where the function will save the calculated time
  * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
-                               const float start_position_deg, const float start_velocity_deg_per_sec, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
-                               const float end_position_deg, const float end_velocity_deg_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)
+                                           const float start_position_deg, const float start_velocity_deg_per_sec, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
+                                           const float end_position_deg, const float end_velocity_deg_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms,
+                                           uint32_t *time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1325,6 +1327,23 @@ rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
 
     uint32_t sts = write_raw_sdo(dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
+    if(sts == CO_SDO_AB_NONE)
+    {
+        if(time_ms == 0)
+        {
+            return RET_WRONG_ARG;
+        }
+
+        uint8_t data[4];
+        int len = sizeof(data);
+        uint32_t sts = read_raw_sdo(dev, 0x2203, 0x02, data, &len, 1, 100);
+
+        if(sts == CO_SDO_AB_NONE && len == 4)
+        {
+            usb_can_get_uint32_t(data, 0, time_ms, 1);
+            return RET_OK;
+        }
+    }
     if(sts == CO_SDO_AB_GENERAL)
     {
         return RET_WRONG_TRAJ;
@@ -1333,35 +1352,6 @@ rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
     {
         return ret_sdo(sts);
     }
-}
-
-/**
- * @brief The function enables reading the result of the calculations made using the ::rr_invoke_time_calculation function.
- * It returns the calculated time (in milliseconds) it will take the servo with the specified descriptor to go from one position to another.
- * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param time_ms Pointer to the variable where the function will save the calculated time
- * @return Status code (::rr_ret_status_t)
- * @ingroup Trajectory
- */
-rr_ret_status_t rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
-{
-    IS_VALID_SERVO(servo);
-    CHECK_NMT_STATE(servo);
-
-    uint8_t data[4];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    int len = sizeof(data);
-    uint32_t sts = read_raw_sdo(dev, 0x2203, 0x02, data, &len, 1, 100);
-    uint32_t num;
-
-    if(sts == CO_SDO_AB_NONE && len == 4)
-    {
-        usb_can_get_uint32_t(data, 0, &num, 1);
-        *time_ms = num;
-        return RET_OK;
-    }
-
-    return ret_sdo(sts);
 }
 
 /**

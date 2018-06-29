@@ -108,5 +108,8 @@
  * |Component|Type|Comment|
  * |---------|-----|-------|
  * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V, ESR &le; 0.1 Ohm|Total capacitance should be &ge; 5 uF per 1 W of connected servo|
+ * 
+ * 
  * @ingroup hw_manual
+ */
  */

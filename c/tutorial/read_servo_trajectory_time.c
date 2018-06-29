@@ -22,25 +22,20 @@
  * 
  * <b> Calculating the time to reach the specified position </b>
  * 
- * 3. Calculate the time it will take the servo to reach the position of 100 degrees when the other parameters are set to 0.
- * The calculation result is the minumum time value.
- * \snippet read_servo_trajectory_time.c Time calculation
- * 
- * <b> Reading the calculation result </b>
- * 
- * 4. Create a variable where the function will return the calculation result.
+ * 3. Create a variable where the function will return the calculation result.
  * \snippet read_servo_trajectory_time.c Travel time variable
  * 
- * 5. Read the calculation result.
- * \snippet read_servo_trajectory_time.c Get calculation result
+ * 4. Calculate the time it will take the servo to reach the position of 100 degrees when the other parameters are set to 0.
+ * The calculation result is the minumum time value.
+ * \snippet read_servo_trajectory_time.c Time calculation
  * 
  * <b> Complete tutorial code: </b>
  * \snippet read_servo_trajectory_time.c cccode 1
  */
- 
+
 int main(int argc, char *argv[])
 {
-    //! [cccode 1] 
+    //! [cccode 1]
     //! [Adding interface 9]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding interface 9]
@@ -50,20 +45,19 @@ int main(int argc, char *argv[])
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "trajectory calculation");
 
+    //! [Travel time variable]
+    uint32_t travel_time;
+    //! [Travel time variable]
+
     //! [Time calculation]
-    int status = rr_invoke_time_calculation(servo, 0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0);
+    int status = rr_invoke_time_calculation(servo, 0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0, &travel_time);
     if(status != RET_OK)
     {
         API_DEBUG("Error in the trjectory point calculation\n");
         return 1;
     }
     //! [Time calculation]
-    //! [Travel time variable]
-    uint32_t travel_time;
-    //! [Travel time variable]
-    //! [Get calculation result]
-    rr_get_time_calculation_result(servo, &travel_time);
-    //! [Get calculation result]
+
     API_DEBUG("\tCalculated travel time: %d ms.\n", travel_time);
-     //! [cccode 1]
+    //! [cccode 1]
 }
