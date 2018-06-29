@@ -965,9 +965,9 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * PVT points define the following:<br>
  * <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
  * <li>how fast the servo should move to the specified position</li><br>
- * <li>what time the movement to the specified position should take</li></ul>.<br>
- * @image html "PVT.png" "Example of calculated trajectory using PVT points" width=400 
- * @image latex "PVT.png" "Example of calculated trajectory using PVT points" width=200pt
+ * <li>what time the movement to the specified position should take</li></ul>
+ * @image html "PVT.png" "Example of calculated trajectory using PVT points" width=600 
+ * @image latex "PVT.png" "Example of calculated trajectory using PVT points" width=300pt
  * Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, 
  * use the ::rr_start_motion function.<br>
  * When any of the parameter values (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications 
