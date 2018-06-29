@@ -39,11 +39,11 @@
  * 
  * The configuration of the servo box solution (e.g., how many eaters and capacitors it uses) and the electrical connection diagram depend on whether your intention is:
  * - to connect a single servo, in which case the configuration and the connection diagram are as below:
- * @image html "single_servo_conn.png" width=800
- * @image latex "single_servo_conn.png" "Connecting single RDrive servo to power supply" width=300pt
+ * @image html "single_servo_conn_1.png" width=800
+ * @image latex "single_servo_conn_1.png" "Connecting single RDrive servo to power supply" width=300pt
  * - to connect multiple servos, in which case the configuration and the connection diagram are as below:
- * @image html "multiple_servo_conn.png" width=800
- * @image latex "multiple_servo_conn.png" "Connecting multiple RDrive servos to power supply" width=300pt
+ * @image html "multiple_servo_conn_1.png" width=800
+ * @image latex "multiple_servo_conn_1.png" "Connecting multiple RDrive servos to power supply" width=300pt
  * 
  * In any case, make sure to meet the following electrical connection requirements:
  * - Typically, the total circuit length from the power supply to any servo motor must not exceed 10 meters.
@@ -91,8 +91,10 @@
  * |---------|-----|-----------|-------|
  * |D1 - Diode|APT30S20BG|Schottky diode, I<SUB>f</SUB> &ge; 20 A, V<SUB>r</SUB> &ge; 96 V|I<SUB>f</SUB> &ge; 1.5 × Total current of all connected servos|
  * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> &ge; 96V, I<SUB>c</SUB> &ge; 10 A| |
- * |R1 - Resistor 1|1K Ohm, 1 W| | |
- * |R2 - Resistor 1|4.7 Ohm, P<SUB>d</SUB> &ge; 25 W| | |
+ * |R1 - Resistor|1K Ohm, 1 W| | |
+ * |R2 - Resistor|4.7 Ohm, P<SUB>d</SUB> &ge; 25 W| | |
+ * |X1 - Connector| | |Input connector (power source - power supply) |
+ * |X2 - Connector| | |Output connector (power consumer - capacitor module & servo) |
  * 
  * <b>Note:</b> D1, Q1, and R2 should be connected to an appropriate heatsink. The maximum dissipated power of the heatsink should be equal to the maximum dynamic braking energy in your circuit.   
  * When the power to dissipate is too high (dynamic braking power is more than 50 W), it also is essential to provide active cooling, such as a fan.
@@ -107,6 +109,8 @@
  * <b>Requirements:</b>
  * |Component|Type|Comment|
  * |---------|-----|-------|
+ * |X1 - Connector| |Input connector (power source) |
+ * |X2 - Connector| |Output connector (power consumer - servo) |
  * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V, ESR &le; 0.1 Ohm|Total capacitance should be &ge; 5 uF per 1 W of connected servo|
  * 
  * 
