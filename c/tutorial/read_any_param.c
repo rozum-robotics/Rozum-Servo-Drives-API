@@ -17,10 +17,10 @@
  * In practice, however, if you need to read more than one parameter, refer to the tutorial <b>Setting up cache and reading cached parameters</b>.
  * 
  * 1. Initialize the interface.
- * \snippet read_any_param.c Adding the interface
+ * \snippet read_any_param.c Adding interface 4
  * 
  * 2. Initialize the servo.
- * \snippet read_any_param.c Adding the servo
+ * \snippet read_any_param.c Adding servo 4
  * 
  * <b> Reading current device parameters </b>
  * 
@@ -46,12 +46,12 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface]
+    //! [Adding interface 4]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface]
-    //! [Adding the servo]
+    //! [Adding interface 4]
+    //! [Adding servo 4]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding the servo]
+    //! [Adding servo 4]
 
     API_DEBUG("========== Tutorial of %s ==========\n", "reading any device parameter (single)");
 
