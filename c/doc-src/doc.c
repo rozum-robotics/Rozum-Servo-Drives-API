@@ -80,7 +80,7 @@
  * 
  * @section sect1 3. Servobox components
  * @subsection eater 3.1 Energy eater
- * An energy eater is used to dissipate the dynamic braking energy that can result from servos generating voltages in excess of the power supply voltage.
+ * An energy eater is used to dissipate dynamic braking energy.When not dissipated, dynamic braking energy can cause servos to generate voltages in excess of the power supply voltage, which can damage servos beyond repair.
  * Use the schematic below to assemble the device:  
  * @image html "eater.png" "Eater module schematic" width=400
  * @image latex "eater.png" "Eater module schematic" width=150pt
@@ -99,8 +99,9 @@
  * 
  * @subsection capacitor 3.2 Capacitor module
  * In the servobox solution, capacitors are intended to accumulate and supply electric energy to servos. The devices allow for compensating
- * short-duration power consumption peaks that are due to servos located at a distance (usually quite long) from the power supply unit.
- * For the same reason, make sure to place capacitors as close as possible to the servo.
+ * short-term power consumption peaks that are due to inductive resistance. Since servos are usually located at a long distance from the power supply unit,
+ * inductive resistance values can be rather high.
+ * For the same reason, make sure to place capac
  * To assemble the device, use the schematic below.
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * @image latex "capacitor.png" "Capacitor module schematic" width=200pt
