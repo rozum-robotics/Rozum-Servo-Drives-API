@@ -9,20 +9,20 @@
  * @page servo_box 
  * @section sect_descr 1. Product overview
  * 
- * <b>A servobox</b> is a solution designed to control motion of one or more RDrive servos. The solution comprises the following components:
+ * <b>A servobox</b> is a solution designed to ensure safe and correct operation of one or more RDrive servo motors and to control their motion. The solution comprises the following components:
  * - one or more energy eaters (see Section 3.1)
  * - one or more capacitor modules (see Section 3.2)
- * - a CAN-USB dongle to provide CANOpen communication between the servobox and the servos
+ * - a CAN-USB dongle to provide communication between the servobox and the servos
  * 
- * Additionally, to ensure operation of the servobox, the user has to provide a power supply and USB-A to Micro USB cable to connect the CAN-USB dongle to PC.
+ * It is the user's responsibility to additionally provide a power supply and USB-A to Micro USB cable for connecting the CAN-USB dongle to PC.
  * 
- * <b>Note:</b>The USB-A to Micro USB cable should not be longer than
+ * <b>Note:</b>The USB-A to Micro USB cable should not be longer than 5 meters.
  * 
  * The power supply should meet the following requirements:
  * - its supply voltage should be 48 V max
  * - its power should be equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3.
  * 
- * @section sect_conn 2. Integrating servos with a power supply and a servobox
+ * @section sect_conn 2. Connecting servos to a power supply and a servobox
  * 
  * To integrate a RDrive servo into one circuit with a power supply and a servobox, you need to provide the following connections:
  * 
