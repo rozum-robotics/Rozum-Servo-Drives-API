@@ -28,7 +28,7 @@ document:
  artifacts:
     paths:
      - c/html
-     - latex/refman.pdf
+     - c/latex/refman.pdf
     expire_in: 1 month
  only:
     - master
