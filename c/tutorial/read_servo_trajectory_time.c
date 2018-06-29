@@ -30,12 +30,12 @@
  * \snippet read_servo_trajectory_time.c Time calculation
  * 
  * <b> Complete tutorial code: </b>
- * \snippet read_servo_trajectory_time.c cccode 1
+ * \snippet read_servo_trajectory_time.c cccode 9
  */
 
 int main(int argc, char *argv[])
 {
-    //! [cccode 1]
+    //! [cccode 9]
     //! [Adding interface 9]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding interface 9]
@@ -59,5 +59,5 @@ int main(int argc, char *argv[])
     //! [Time calculation]
 
     API_DEBUG("\tCalculated travel time: %d ms.\n", travel_time);
-    //! [cccode 1]
+    //! [cccode 9]
 }

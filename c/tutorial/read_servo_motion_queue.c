@@ -50,12 +50,12 @@
  * \snippet read_servo_motion_queue.c  Points free2
  *
  * <b> Complete tutorial code: </b>
- * \snippet read_servo_motion_queue.c cccode 1
+ * \snippet read_servo_motion_queue.c cccode 8
  */ 
  
 int main(int argc, char *argv[])
 {
-    //! [cccode 1] 
+    //! [cccode 8] 
     //! [Adding interface 8]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding interface 8]
@@ -102,5 +102,5 @@ int main(int argc, char *argv[])
     rr_get_points_free_space(servo, &num);
     //! [Points free2]
     API_DEBUG("\tPoints queue free size after: %d\n", num);
-    //! [cccode 1]
+    //! [cccode 8]
 }
