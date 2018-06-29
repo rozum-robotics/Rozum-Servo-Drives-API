@@ -10,7 +10,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_servomove3 Setting PVT points for three servos
+ * \defgroup tutor_c_servomove3 PVT trajectory for three servos
  * The tutorial describes how to set up motion trajectories for three servos and to execute them simultaneously. In this example, each motion trajectory comprises two PVT (position-velocity-time) points:
  * <ul><li>one PVT commanding servos to move to the position of 100 degrees in 6,000 milliseconds</li>
  * <li>one PVT commanding servos to move to the position of -100 degrees in 6,000 milliseconds</li></ul>

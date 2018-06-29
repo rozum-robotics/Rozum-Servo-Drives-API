@@ -10,7 +10,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_calculate_point
+ * \defgroup tutor_c_calculate_point PVT point calculation
  * This tutorial describes how you can calculate and read the minimum time that it will take the servo to reach the position of 100 degrees.
  * <b>Note:</b> Following the instructions in the tutorial, you can get the said travel time value without actually moving the servo.
  * 

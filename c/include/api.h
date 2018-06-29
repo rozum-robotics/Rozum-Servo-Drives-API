@@ -29,6 +29,11 @@
 #define STRFY(x) #x
 
 /* Exported constants --------------------------------------------------------*/
+/**
+ * @brief Default size of the error bits array
+ * 
+ */
+#define ARRAY_ERROR_BITS_SIZE (64)
 
 /* Exported types ------------------------------------------------------------*/
 /**

@@ -9,7 +9,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_servomove1
+ * \defgroup tutor_c_servomove1 PVT trajectory for one servo
  * The tutorial describes how to set up and execute a motion trajectory for one servo. In this example, the motion trajectory comprises two PVT (position-velocity-time) points:
  * <ul><li>one PVT commanding the servo to move to the position of 100 degrees in 6,000 milliseconds</li>
  * <li>one PVT commanding the servo to move to the position of -100 degrees in 6,000 milliseconds</li></ul>

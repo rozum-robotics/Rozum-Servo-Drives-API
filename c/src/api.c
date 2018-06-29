@@ -54,9 +54,8 @@
  * \defgroup tutor_c_servomove3 PVT trajectory for three servos
  * \defgroup tutor_c_param_cache Setting up parameter cache and reading cached parameters
  * \defgroup tutor_c_param Reading device parameters
- * \defgroup tutor_c_calculate_point PVT point calculations
- * 
- * \defgroup tutor_c_get_max_velocity Reading the maximum velocity of the servo
+ * \defgroup tutor_c_calculate_point PVT point calculation
+ * \defgroup tutor_c_get_max_velocity Reading the maximum servo velocity
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
  */
 /* Includes ------------------------------------------------------------------*/
@@ -1030,7 +1029,8 @@ rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestam
  * Use the ::rr_read_error_status to determine the cause of the errors.</p>  
  * @param servo Servo Servo descriptor returned by the ::rr_init_servo function  
  * @param error_count Pointer to the variable where the function will save the current servo error count
- * @param error_array Pointer to the array where the function will save the codes of all errors. <b>Note:</b> Call the ::rr_describe_emcy_bit function, to get a detailed error code description.
+ * @param error_array Pointer to the array where the function will save the codes of all errors. Default array size is ::ARRAY_ERROR_BITS_SIZE
+ * <b>Note:</b> Call the ::rr_describe_emcy_bit function, to get a detailed error code description.
  * If the array is not used, set the parameter to 0.
  * @return Status code (::rr_ret_status_t)
  * @ingroup Err

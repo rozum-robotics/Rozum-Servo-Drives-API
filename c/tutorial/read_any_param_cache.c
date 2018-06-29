@@ -9,7 +9,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_param_cache
+ * \defgroup tutor_c_param_cache Setting up parameter cache and reading cached parameters
  * 
  * This tutorial describes how to set up an array of servo parameters, save them to the program cache in one operation,
  * and then read them one by one from the cache.

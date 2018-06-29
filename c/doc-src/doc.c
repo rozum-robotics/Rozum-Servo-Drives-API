@@ -84,8 +84,8 @@
  * @subsection eater 3.1 Energy eater
  * An energy eater is used to dissipate the dynamic braking energy that can result from servos generating voltages in excess of the power supply voltage.
  * Use the schematic below to assemble the device:  
- * @ieatersmage html "eater.png" "Eater module schematic" width=400
- * @ieatersmage latex "eater.png" "Eater module schematic" width=150pt
+ * @image html "eater.png" "Eater module schematic" width=400
+ * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
  * |Component|Type|Other options|Comment|
  * |---------|-----|-----------|-------|
