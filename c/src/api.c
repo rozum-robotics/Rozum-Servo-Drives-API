@@ -569,7 +569,7 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
  * clearing all data associated with the interface descriptor.
  * It is advisable to call the function every time before quitting the user program.
  * @param interface Interface descriptor (see ::rr_init_interface).
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Init
  */
 rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface)
@@ -653,7 +653,7 @@ rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo)
 /**
  * @brief The function resets communication with the servo specified in the 'servo' parameter without resetting the entire interface.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_servo_reset_communication(const rr_servo_t *servo)
@@ -669,7 +669,7 @@ rr_ret_status_t rr_servo_reset_communication(const rr_servo_t *servo)
  * <p>For instance, you may need to call the function to switch the servo from the pre-operational state to the operational one after an error (e.g., due to overcurrent).</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  *  If the parameter is set to 0, all servos connected to the interface will be set to the operational state.
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo)
@@ -684,7 +684,7 @@ rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo)
  * @brief The function sets the servo specified in the 'servo' parameter to the pre-operational state. In the state, the servo is available for communication, but cannot execute any commands.  
  * <p>For instance, you may need to call the function, if you want to force the servo to stop executing commands, e.g., in an emergency.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo)
@@ -699,7 +699,7 @@ rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo)
  * @brief The function sets the servo specified in the 'servo' parameter to the stopped state. In the state, only Heartbeats are available. You can neither communicate with the servo nor make it execute any commands.  
  * <p>For instance, you may need to call the fuction to reduce the workload of a CAN bus by disabling individual servos connected to it without deninitializing them.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function  
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
@@ -714,7 +714,7 @@ rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
  * @brief The function reboots all servos connected to the interface specified in the 'interface' parameter,
  * resetting them back to the power-on state.
  * @param interface Interface descriptor returned by the ::rr_init_interface function
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface)
@@ -729,7 +729,7 @@ rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface)
  * @brief The function resets communication via the interface specified in the 'interface' parameter.
  * For instance, you may need to use the function when changing settings that require a reset after modification.
  * @param interface Interface descriptor returned by the ::rr_init_interface function 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface)
@@ -746,7 +746,7 @@ rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface)
  *  <p>For instance, you may need to call the function to switch all servos on a specific bus from the
  *  pre-operational state to the operational one after an error (e.g., due to overcurrent).</p>
  * @param interface Interface descriptor returned by the ::rr_init_interface function  
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface)
@@ -762,7 +762,7 @@ rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface
  * In the state, the servos are available for communication, but cannot execute commands.
  * <p>For instance, you may need to call the function, if you want to force all servos on a specific bus to stop executing commands, e.g., in an emergency.</p>
  * @param interface Interface descriptor returned by the ::rr_init_interface function 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
@@ -778,7 +778,7 @@ rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *inter
  * In the state, the servos are neither available for communication nor can execute commands.
  * <p>For instance, you may need to call the fuction to stop all servos on a specific bus without deinitializing them.</p>
  * @param interface Interface descriptor returned by the ::rr_init_interface function. 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
@@ -793,7 +793,7 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
  * <p><b>Note:</b> When there is an external force affecting the servo (e.g., inertia, gravity), 
  * the servo may continue rotating or begin rotating in the opposite direction.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo)
@@ -811,7 +811,7 @@ rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo)
 /**
  * @brief The function sets the specified servo to the freeze state. The servo stops, retaining its last position.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo)
@@ -831,7 +831,7 @@ rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo)
  * Changing the 'current_a parameter' value, it is possible to adjust the servo's torque (Torque = stator current*Kt).
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param current_a Phase current of the stator in Amperes
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
@@ -853,7 +853,7 @@ rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
  * <p>When you need to set a lower current limit, use the ::rr_set_velocity_with_limits function.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param velocity_deg_per_sec Velocity (in degrees/sec) at the servo flange 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
@@ -876,7 +876,7 @@ rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_de
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg Position of the servo (in degrees) to be reached. The parameter is a multi-turn value (e.g., when set to 720, the servo will make two turns, 360 degrees each).
   When the parameter is set to a "-" sign value, the servo will rotate in the opposite direction. 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_deg)
@@ -898,7 +898,7 @@ rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_de
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param velocity_deg_per_sec Velocity (in degrees/sec) at the servo flange. The value can have a "-" sign, in which case the servo will rotate in the opposite direction.
  * @param current_a Maximum user-defined current limit in Amperes.
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a)
@@ -922,7 +922,7 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
  * @param position_deg Final position of the servo flange (in degrees) to be reached
  * @param velocity_deg_per_sec Velocity (in degrees/sec)at which the servo should move to the specified position
  * @param current_a Maximum user-defined current limit in Amperes
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
@@ -945,7 +945,7 @@ rr_ret_status_t rr_set_position_with_limits(const rr_servo_t *servo, const float
  * For instance, when the input voltage is 20V, setting the duty_percent parameter to 40% will result in 8V supplied to the servo.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param duty_percent User-defined percentage of the input voltage to be supplied to the servo
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
@@ -976,7 +976,7 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * @param velocity_deg_per_sec Velocity(in degrees/sec) at which the servo should move to reach the specified position
  * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one.
  * The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const uint32_t time_ms)
@@ -1011,7 +1011,7 @@ rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float positio
  * @param interface Interface descriptor returned by the ::rr_init_interface function
  * @param timestamp_ms Delay (in milliseconds) before the servos associated with the interface start to move. When the value is set to 0, the servos will start moving immediately.
  * The available value range is from 0 to 2^24-1.
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
@@ -1032,7 +1032,7 @@ rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestam
  * @param error_count Pointer to the variable where the function will save the current servo error count
  * @param error_array Pointer to the array where the function will save the codes of all errors. <b>Note:</b> Call the ::rr_describe_emcy_bit function, to get a detailed error code description.
  * If the array is not used, set the parameter to 0.
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Err
  */
 rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, uint8_t *const error_array)
@@ -1073,7 +1073,7 @@ rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const er
  * cache with the ::rr_read_cached_parameter function. For more information, see ::rr_param_cache_setup_entry.
  * <p><b>Note</b>: After you exit the program, the cache will be cleared.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
 rr_ret_status_t rr_param_cache_update(rr_servo_t *servo)
@@ -1123,7 +1123,7 @@ rr_ret_status_t rr_param_cache_update(rr_servo_t *servo)
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param param Index of the parameter to read as indicated in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
  * @param enabled Set True/False to enable/ disable the specified parameter for reading
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
 rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
@@ -1157,7 +1157,7 @@ rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_par
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param param Index of the parameter to read; you can find these indices in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR).
  * @param value Pointer to the variable where the function will save the reading
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
 rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
@@ -1189,7 +1189,7 @@ rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t para
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param param Index of the parameter to read; you can find these indices in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
  * @param value Pointer to the variable where the function will save the reading
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
 rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
@@ -1217,7 +1217,7 @@ rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo)
  * the funtion clears only the actual remaining number of PVT points.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param num_to_clear Number of PVT points to be removed from the motion queue of the specified servo
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
@@ -1235,7 +1235,7 @@ rr_ret_status_t rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_c
  * The return value indicates how many PVT points have already been added to the motion queue.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param num Pointer to the parameter where the function will save the reading
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
@@ -1262,7 +1262,7 @@ rr_ret_status_t rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
  * <p><b>Note:</b> Currently, the maximum motion queue size is 100 PVT.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param num Pointer to the variable where the function will save the reading
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
@@ -1299,7 +1299,7 @@ rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
  * @param end_velocity_deg_per_sec Servo velocity (in degrees/sec) in the end of motion
  * @param end_acceleration_deg_per_sec2 Servo acceleration (in degrees/sec^2) in the end of motion
  * @param end_time_ms Final time setting (in milliseconds)
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
@@ -1340,7 +1340,7 @@ rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
  * It returns the calculated time (in milliseconds) it will take the servo with the specified descriptor to go from one position to another.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param time_ms Pointer to the variable where the function will save the calculated time
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
@@ -1370,7 +1370,7 @@ rr_ret_status_t rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t
 * <p>The setting is volatile: after a reset or a power outage, it is no longer valid.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg User-defined position (in degrees) to replace the current position value
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Config
  */
 rr_ret_status_t rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
@@ -1392,7 +1392,7 @@ rr_ret_status_t rr_set_zero_position(const rr_servo_t *servo, const float positi
  * <p><b>Note:</b>The FLASH memory limit is 1,000 write cycles. Therefore, it is not advisable to use the function on a regular basis.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg User-defined position (in degrees) to replace the current position value
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Config
  */
 rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg)
@@ -1413,7 +1413,7 @@ rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const flo
  * the maximum velocity value based on the servo specifications, or the calculated maximum velocity based on the supply voltage.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param velocity_deg_per_sec Maximum servo velocity (in degrees/sec)
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Config
  */
 rr_ret_status_t rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
@@ -1439,7 +1439,7 @@ rr_ret_status_t rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg
  * The setting is volatile: after a reset or a power outage, it is no longer valid.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param max_velocity_deg_per_sec Velocity at the servo flange (in degrees/sec)
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Config
  */
 rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec)
