@@ -65,11 +65,11 @@
  * \snippet control_servo_traj_3.c Sleep3
  * 
  * <b> Complete tutorial code: </b>
- * \snippet control_servo_traj_3.c cccode 3
+ * \snippet control_servo_traj_3.c cccode 1
  */
 int main(int argc, char *argv[])
 {
-    //! [cccode 3] 
+    //! [cccode 1] 
     //! [Adding the interface3]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding the interface3]
@@ -149,5 +149,5 @@ int main(int argc, char *argv[])
     //! [Sleep3]
     rr_sleep_ms(14000); // wait till the movement ends
     //! [Sleep3]
-    //! [cccode 3]
+    //! [cccode 1]
 }

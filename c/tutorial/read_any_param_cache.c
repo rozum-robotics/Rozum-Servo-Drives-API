@@ -58,13 +58,13 @@
  * \snippet read_any_param_cache.c Read cached parameter 4
  * 
  * <b> Complete tutorial code: </b>
- * \snippet read_any_param_cache.c cccode 5
+ * \snippet read_any_param_cache.c cccode 1
  */
  
  
 int main(int argc, char *argv[])
 {
-    //! [cccode 5] 
+    //! [cccode 1] 
     //! [Adding interface 5]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding interface 5]
@@ -114,5 +114,5 @@ int main(int argc, char *argv[])
     rr_read_cached_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
     //! [Read cached parameter 4]
     API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
-    //! [cccode 5]
+    //! [cccode 1]
 }

@@ -42,12 +42,12 @@
  * \snippet read_errors.c Cyclic read
  * 
  * <b> Complete tutorial code: </b>
- * \snippet read_errors.c cccode 6
+ * \snippet read_errors.c cccode 1
  */
 
 int main(int argc, char *argv[])
 {
-    //! [cccode 6]
+    //! [cccode 1]
     //! [Adding interface 6]
     rr_can_interface_t *iface = rr_init_interface(/*TUTORIAL_DEVICE*/ "/dev/ttyS3");
     //! [Adding interface 6]
@@ -83,5 +83,5 @@ int main(int argc, char *argv[])
         API_DEBUG("\t\tError: %s\n", rr_describe_emcy_bit(array[i]));
     }
     //! [Cyclic read]
-    //! [cccode 6]
+    //! [cccode 1]
 }
