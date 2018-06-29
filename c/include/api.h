@@ -124,6 +124,9 @@ typedef enum
 /**
  * @brief Network management (NMT) states
  * 
+ * @image html "nmt_states.png" 
+ * @image latex "nmt_states.png" 
+ * 
  */
 typedef enum
 {

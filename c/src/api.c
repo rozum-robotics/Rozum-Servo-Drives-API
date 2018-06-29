@@ -962,14 +962,16 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
 
 /**
  * @brief The function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo specified in the 'servo' parameter.
- PVT points define the following:<br>
- <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
- <li>how fast the servo should move to the specified position</li><br>
- <li>what time the movement to the specified position should take</li></ul>.<br>
- *Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, 
- *use the ::rr_start_motion function.<br>
- *When any of the parameter values (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications 
- *(whichever is the smallest value), the function returns an error.
+ * PVT points define the following:<br>
+ * <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
+ * <li>how fast the servo should move to the specified position</li><br>
+ * <li>what time the movement to the specified position should take</li></ul>.<br>
+ * @image html "PVT.svg" "Connecting RDrive servos to USB-CAN" width=400 
+ * @image latex "PVT.svg" "Connecting RDrive servos to USB-CAN" width=200pt
+ * Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, 
+ * use the ::rr_start_motion function.<br>
+ * When any of the parameter values (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications 
+ * (whichever is the smallest value), the function returns an error.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
  * @param velocity_deg_per_sec Velocity(in degrees/sec) at which the servo should move to reach the specified position
