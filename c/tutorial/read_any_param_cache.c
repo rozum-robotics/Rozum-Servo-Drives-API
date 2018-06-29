@@ -58,7 +58,7 @@
  * \snippet read_any_param_cache.c Read cached parameter 4
  * 
  * <b> Complete tutorial code: </b>
- * \snippet read_errors.c cccode 1
+ * \snippet read_any_param_cache.c cccode 1
  */
  
  
