@@ -27,13 +27,13 @@
  * 4. Initialize servo 3.
  * \snippet control_servo_traj_3.c Adding servo three
  * 
- * 5. Clear points servo 1.
+ * 5. Clear points in the motion queue of servo 1.
  * \snippet control_servo_traj_3.c Clear points servo one
  * 
- * 6. Clear points servo 2.
+ * 6. Clear points in the motion queue of servo 2.
  * \snippet control_servo_traj_3.c Clear points servo two
  * 
- * 7. Clear points servo 3.
+ * 7. Clear points in the motion queue of servo 3.
  * \snippet control_servo_traj_3.c Clear points servo three
  * 
  * <b> Adding PVT ponts to form motion queues </b>
