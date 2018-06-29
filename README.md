@@ -8,7 +8,7 @@ For detailed technical specifications of RDrive servo motors, download the datas
 The `java`, `python`, and `ruby` folders are wrappers for the library in the corresponding languages.
 For details of implementation in the three languages, see the Readme files in the respective folders.
 
-Online ducumentation on the user API is available at:
+Online documentation on the user API is available at:
 https://rozum.com/support/docs/servo-api
 
 Also, you can download offline PDF documentation at:
