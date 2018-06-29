@@ -12,7 +12,7 @@
 /**
  * \defgroup tutor_c_param
  * 
- * The tutorial describes how to read a sequence of single variables representing current device parameters (e.g., position, voltage, etc.)
+ * The tutorial describes how to read a sequence of single variables representing actual servo parameters (e.g., position, voltage, etc.)
  * <b>Note</b>: For reference, the tutorial includes more than one parameter.
  * In practice, however, if you need to read more than one parameter, refer to the tutorial <b>Setting up parameter cache and reading cached parameters</b>.
  * 
