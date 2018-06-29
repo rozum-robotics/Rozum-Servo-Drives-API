@@ -48,6 +48,8 @@
  * In any case, make sure to meet the following electrical connection requirements:
  * - Typically, the total circuit length from the power supply to any servo motor must not exceed 10 meters.
  * - Length "L1" must not be longer than 10 meters.
+ *     - When the total connected motor power is <b>less than 250 W</b>,  the cable cross-section within the segment must be at least 1.00 mm2.
+ *     - When the total connected motor power is <b>less than 500 W</b>,  the cable cross-section within the segment must be at least 2.00 mm2.
  * - Length "L2" (from the eater to the capacitor) should not exceed the values from Table 1.
  * - Length "L3" (from the capacitor to any servo) should not exceed the values from Table 1.
  * 
@@ -59,15 +61,11 @@
  * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
  * |RD85	   |0,8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|0,04 m	 |0,05 m |0,08 m |0,13 m |0,21 m |0,32 m |
  * 
- * For length 1, make sure the cable cross-section is as specified below:
- * - When the total connected motor power is <b>less than 250 W</b>,  the cable cross-section within the segment must be at least 1.00 mm2.
- * - When the total connected motor power is <b>less than 500 W</b>,  the cable cross-section within the segment must be at least 2.00 mm2.
- * 
  * @subsection sect_22 2.2. CAN connection
  * The CAN connection of RDrive servos is a two-wire bus line transmitting differential signals: CAN_HIGH and CAN_LOW. 
  * The configuration of the bus line is as illustrated below:
- * @image html "servobox_CAN_new.png" "Connecting RDrive servos to USB-CAN" width=800 
- * @image latex "servobox_CAN_new.png" "Connecting RDrive servos to USB-CAN" width=300pt
+ * @image html "servobox_CAN_new_1.png" "Connecting RDrive servos to USB-CAN" width=800 
+ * @image latex "servobox_CAN_new_1.png" "Connecting RDrive servos to USB-CAN" width=300pt
  * 
  * Providing the CAN connection, make sure to comply with the following requirements:
  * - The CAN bus lines should be terminated with 120 Ohm resistors at both ends. You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
