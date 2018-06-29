@@ -66,8 +66,8 @@
  * @subsection sect_22 2.2. CAN connection
  * The CAN connection of RDrive servos is a two-wire bus line transmitting differential signals: CAN_HIGH and CAN_LOW. 
  * The configuration of the bus line is as illustrated below:
- * @image html "servobox_CAN_PC.png" "Connecting RDrive servos to USB-CAN" width=800 
- * @image latex "servobox_CAN_PC.png" "Connecting RDrive servos to USB-CAN" width=300pt
+ * @image html "servobox_CAN_new.png" "Connecting RDrive servos to USB-CAN" width=800 
+ * @image latex "servobox_CAN_new.png" "Connecting RDrive servos to USB-CAN" width=300pt
  * 
  * Providing the CAN connection, make sure to comply with the following requirements:
  * - The CAN bus lines should be terminated with 120 Ohm resistors at both ends. You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
