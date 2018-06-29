@@ -14,14 +14,14 @@
  * This tutorial describes how to set up an array of servo parameters, save them to the program cache in one operation,
  * and then read them one by one from the cache.
  * In this example, we will work with four parameters: rotor position, rotor velocity, input voltage, and input current.
- * <b> Note </b>: In general, it is advisable to use the function, when you need to read <b>more than one parameter</b> from the servo.
- * If you need to read a single parameter, use the ::rr_read_parameter function (refer to the Reading device parameters tutorial).
+ * <b>Note</b>: In general, it is advisable to use the function, when you need to read <b>more than one parameter</b> from the servo.
+ * If you need to read a single parameter, use the ::rr_read_parameter function (refer to the <b>Reading device parameters tutorial</b>).
  * 
  * 1. Initialize the interface.
- * \snippet read_any_param_cache.c Adding interface5
+ * \snippet read_any_param_cache.c Adding interface 5
  * 
  * 2. Initialize the servo.
- * \snippet read_any_param_cache.c Adding servo5
+ * \snippet read_any_param_cache.c Adding servo 5
  * 
  * <b> Setting up and saving an array of parameters to the program cache</b>
  * 
@@ -65,12 +65,12 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding interface5]
+    //! [Adding interface 5]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding interface5]
-    //! [Adding servo5]
+    //! [Adding interface 5]
+    //! [Adding servo 5]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding servo5]
+    //! [Adding servo 5]
 
     API_DEBUG("========== Tutorial of %s ==========\n", "programming and reading the device parameter cache");
 
@@ -114,6 +114,5 @@ int main(int argc, char *argv[])
     rr_read_cached_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
     //! [Read cached parameter 4]
     API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
-
     //! [cccode 1]
 }
