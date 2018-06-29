@@ -16,10 +16,10 @@
  *  or the calculated value based on the input voltage.
  * 
  * 1. Initialize the interface.
- * \snippet read_servo_max_velocity.c Adding the interface
+ * \snippet read_servo_max_velocity.c Adding interface7
  * 
  * 2. Initialize the servo.
- * \snippet read_servo_max_velocity.c Adding the servo
+ * \snippet read_servo_max_velocity.c Adding servo7
  * 
  * <b> Reading the maximum servo velocity </b>
  * 
@@ -35,12 +35,12 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface]
+    //! [Adding interface7]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface]
-    //! [Adding the servo]
+    //! [Adding interface7]
+    //! [Adding servo7]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding the servo]
+    //! [Adding servo7]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading servo max velocity");
    
