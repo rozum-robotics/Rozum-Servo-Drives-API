@@ -16,9 +16,11 @@
  * 
  * Additionally, to ensure operation of the servobox, the user has to provide a power supply and USB-A to Micro USB cable to connect the CAN-USB dongle to PC.
  * 
+ * <b>Note:</b>The USB-A to Micro USB cable should not be longer than
+ * 
  * The power supply should meet the following requirements:
- * - its supply voltage should be 48 V
- * - its power should be equal to the total peak power of all servo motors connected to it
+ * - its supply voltage should be 48 V max
+ * - its power should be equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3.
  * 
  * @section sect_conn 2. Integrating servos with a power supply and a servobox
  * 
