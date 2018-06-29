@@ -619,7 +619,7 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
 /**
  * @brief The function deinitializes the servo, clearing all data associated with the servo descriptor.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Init
  */
 rr_ret_status_t rr_deinit_servo(rr_servo_t **servo)
@@ -639,7 +639,7 @@ rr_ret_status_t rr_deinit_servo(rr_servo_t **servo)
 /**
  * @brief The function reboots the servo specified in the 'servo' parameter of the function, resetting it to the power-on state.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @return int Status code (::rr_ret_status_t)
+ * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
 rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo)
