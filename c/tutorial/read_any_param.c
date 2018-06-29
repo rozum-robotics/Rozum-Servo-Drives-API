@@ -40,7 +40,7 @@
  * \snippet read_any_param.c Read current
  * 
  * <b> Complete tutorial code: </b>
- * \snippet read_errors.c cccode 1
+ * \snippet read_any_param.c cccode 1
  */
  
 int main(int argc, char *argv[])
