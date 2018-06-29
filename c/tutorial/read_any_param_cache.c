@@ -18,10 +18,10 @@
  * If you need to read a single parameter, use the ::rr_read_parameter function (refer to the Reading device parameters tutorial).
  * 
  * 1. Initialize the interface.
- * \snippet read_any_param_cache.c Adding the interface
+ * \snippet read_any_param_cache.c Adding interface5
  * 
  * 2. Initialize the servo.
- * \snippet read_any_param_cache.c Adding the servo
+ * \snippet read_any_param_cache.c Adding servo5
  * 
  * <b> Setting up and saving an array of parameters to the program cache</b>
  * 
@@ -65,12 +65,12 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding the interface]
+    //! [Adding interface5]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding the interface]
-    //! [Adding the servo]
+    //! [Adding interface5]
+    //! [Adding servo5]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding the servo]
+    //! [Adding servo5]
 
     API_DEBUG("========== Tutorial of %s ==========\n", "programming and reading the device parameter cache");
 
