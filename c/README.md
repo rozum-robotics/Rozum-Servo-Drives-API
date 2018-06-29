@@ -8,9 +8,9 @@
     
     For detailed technical specifications of RDrive servo motors, download the datasheet for the series at: https://rozum.com/tpl/pdf/RD_50-85.pdf.
     
-    Online ducumentation: https://rozum.com/support/docs/servo-api
+    Online documentation on the user API: https://rozum.com/support/docs/servo-api
 
-    Offline PDF ducumentation: https://rozum.com/support/docs/servo-api/RR-UserAPI.pdf
+    Offline PDF ducumentation on the user API: https://rozum.com/support/docs/servo-api/RR-UserAPI.pdf
     
 2. System and software requirements
 
