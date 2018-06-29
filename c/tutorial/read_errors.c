@@ -14,12 +14,10 @@
  * and to display their description.
  * 
  * 1. Initialize the interface.
- * 
- * \snippet read_errors.c Adding interface6
- * 
- * 
+ * \snippet read_errors.c Adding interface 6
+ *  
  * 2. Initialize the servo.
- * \snippet read_errors.c Adding servo6
+ * \snippet read_errors.c Adding servo 6
  * 
  * <b> Reading the current error count</b>
  * 
@@ -50,13 +48,13 @@
 int main(int argc, char *argv[])
 {
     //! [cccode 1]
-    //! [Adding interface6]
+    //! [Adding interface 6]
     rr_can_interface_t *iface = rr_init_interface(/*TUTORIAL_DEVICE*/ "/dev/ttyS3");
-    //! [Adding interface6]
+    //! [Adding interface 6]
 
-    //! [Adding servo6]
+    //! [Adding servo 6]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding servo6]
+    //! [Adding servo 6]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading servo error count");
 
