@@ -35,7 +35,7 @@
  * \snippet read_servo_trajectory_time.c Get calculation result
  * 
  * <b> Complete tutorial code: </b>
- * \snippet control_servo_traj_2.c cccode 1
+ * \snippet read_servo_trajectory_time.c cccode 1
  */
  
 int main(int argc, char *argv[])
