@@ -30,11 +30,11 @@
  * \snippet read_servo_max_velocity.c Read max velocity
  * 
  * <b> Complete tutorial code: </b>
- * \snippet read_servo_max_velocity.c cccode 1
+ * \snippet read_servo_max_velocity.c cccode 7
  */
 int main(int argc, char *argv[])
 {
-    //! [cccode 1] 
+    //! [cccode 7] 
     //! [Adding interface 7]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding interface 7]
@@ -52,5 +52,5 @@ int main(int argc, char *argv[])
     //! [Read max velocity]
 
     API_DEBUG("\tMax velocity: %.3f Deg/sec\n", velocity);
-    //! [cccode 1]
+    //! [cccode 7]
 }

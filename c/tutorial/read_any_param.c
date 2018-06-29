@@ -40,12 +40,12 @@
  * \snippet read_any_param.c Read current
  * 
  * <b> Complete tutorial code: </b>
- * \snippet read_any_param.c cccode 1
+ * \snippet read_any_param.c cccode 4
  */
  
 int main(int argc, char *argv[])
 {
-    //! [cccode 1] 
+    //! [cccode 4] 
     //! [Adding interface 4]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding interface 4]
@@ -78,5 +78,5 @@ int main(int argc, char *argv[])
     rr_read_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
     //! [Read current]
     API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
-    //! [cccode 1]
+    //! [cccode 4]
 }
