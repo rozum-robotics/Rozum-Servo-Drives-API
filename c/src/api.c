@@ -139,7 +139,7 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
  * Until the period expires, the user program will not execute any further operations.
  * However, the network management, CAN communication, emergency, and Heartbeat functions remain available.
  * <p><b>Note:</b>The user can also call system-specific sleep functions directly. However, using this sleep function is preferable to ensure
- * compatibility with subsequent APi library versions.<p> 
+ * compatibility with subsequent API library versions.<p> 
  * @param ms Idle period (in milleseconds)
  * @return void
  * @ingroup Aux
@@ -965,8 +965,8 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * @brief The function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo specified in the 'servo' parameter.
  PVT points define the following:<br>
  <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
- <li>what time the movement to the specified position should take</li><br>
- <li>how fast the servo should move to the specified position</li></ul>.<br>
+ <li>how fast the servo should move to the specified position</li><br>
+ <li>what time the movement to the specified position should take</li></ul>.<br>
  *Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, 
  *use the ::rr_start_motion function.<br>
  *When any of the parameter values (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications 
@@ -1030,7 +1030,7 @@ rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestam
  * Use the ::rr_read_error_status to determine the cause of the errors.</p>  
  * @param servo Servo Servo descriptor returned by the ::rr_init_servo function  
  * @param error_count Pointer to the variable where the function will save the current servo error count
- * @param error_array Pointer to the array where the function will save the codes of all errors <b>Note:</b> Call the ::rr_describe_emcy_bit function, to get a detailed error code description.
+ * @param error_array Pointer to the array where the function will save the codes of all errors. <b>Note:</b> Call the ::rr_describe_emcy_bit function, to get a detailed error code description.
  * If the array is not used, set the parameter to 0.
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Err
