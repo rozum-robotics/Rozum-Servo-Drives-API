@@ -109,7 +109,8 @@
  * |---------|-----|-------|
  * |X1 - Connector| |Input connector (power source) |
  * |X2 - Connector| |Output connector (power consumer - servo) |
- * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V, ESR &le; 0.1 Ohm|Total capacitance should be &ge; 5 uF per 1 W of connected servo|
+ * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V|Total capacitance should be &ge; 5 uF per 1 W of connected servo|
+ * <b>Note:</b> Total capacitor ESR &le; 0.1 Ohm
  * 
  * 
  * @ingroup hw_manual
