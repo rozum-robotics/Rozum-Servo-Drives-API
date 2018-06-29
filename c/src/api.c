@@ -94,7 +94,7 @@
 /* Extern function prototypes ------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
-static int ret_sdo(int code)
+static rr_ret_status_t ret_sdo(int code)
 {
     switch(code)
     {
@@ -570,7 +570,7 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Init
  */
-int rr_deinit_interface(rr_can_interface_t **interface)
+rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface)
 {
     IS_VALID_INTERFACE(*interface);
 
@@ -620,7 +620,7 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Init
  */
-int rr_deinit_servo(rr_servo_t **servo)
+rr_ret_status_t rr_deinit_servo(rr_servo_t **servo)
 {
     IS_VALID_SERVO(*servo);
 
@@ -640,7 +640,7 @@ int rr_deinit_servo(rr_servo_t **servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_servo_reboot(const rr_servo_t *servo)
+rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
@@ -654,7 +654,7 @@ int rr_servo_reboot(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_servo_reset_communication(const rr_servo_t *servo)
+rr_ret_status_t rr_servo_reset_communication(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
@@ -670,7 +670,7 @@ int rr_servo_reset_communication(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_servo_set_state_operational(const rr_servo_t *servo)
+rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
@@ -685,7 +685,7 @@ int rr_servo_set_state_operational(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_servo_set_state_pre_operational(const rr_servo_t *servo)
+rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
@@ -700,7 +700,7 @@ int rr_servo_set_state_pre_operational(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_servo_set_state_stopped(const rr_servo_t *servo)
+rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
@@ -715,7 +715,7 @@ int rr_servo_set_state_stopped(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_net_reboot(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface)
 {
     IS_VALID_INTERFACE(interface);
     usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
@@ -730,7 +730,7 @@ int rr_net_reboot(const rr_can_interface_t *interface)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_net_reset_communication(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface)
 {
     IS_VALID_INTERFACE(interface);
     usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
@@ -747,7 +747,7 @@ int rr_net_reset_communication(const rr_can_interface_t *interface)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_net_set_state_operational(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface)
 {
     IS_VALID_INTERFACE(interface);
     usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
@@ -763,7 +763,7 @@ int rr_net_set_state_operational(const rr_can_interface_t *interface)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
 {
     IS_VALID_INTERFACE(interface);
     usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
@@ -779,7 +779,7 @@ int rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup State
  */
-int rr_net_set_state_stopped(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
 {
     IS_VALID_INTERFACE(interface);
     usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
@@ -794,7 +794,7 @@ int rr_net_set_state_stopped(const rr_can_interface_t *interface)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_stop_and_release(const rr_servo_t *servo)
+rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -812,7 +812,7 @@ int rr_stop_and_release(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_stop_and_freeze(const rr_servo_t *servo)
+rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -832,7 +832,7 @@ int rr_stop_and_freeze(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_set_current(const rr_servo_t *servo, const float current_a)
+rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -854,7 +854,7 @@ int rr_set_current(const rr_servo_t *servo, const float current_a)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
+rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -877,7 +877,7 @@ int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_set_position(const rr_servo_t *servo, const float position_deg)
+rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_deg)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -899,7 +899,7 @@ int rr_set_position(const rr_servo_t *servo, const float position_deg)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a)
+rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -923,7 +923,7 @@ int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_de
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
+rr_ret_status_t rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -946,7 +946,7 @@ int rr_set_position_with_limits(const rr_servo_t *servo, const float position_de
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-int rr_set_duty(const rr_servo_t *servo, float duty_percent)
+rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -977,7 +977,7 @@ int rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const uint32_t time_ms)
+rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const uint32_t time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1012,7 +1012,7 @@ int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
+rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
 {
     IS_VALID_INTERFACE(interface);
 
@@ -1030,7 +1030,7 @@ int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Err
  */
-int rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, uint8_t *const error_array)
+rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, uint8_t *const error_array)
 {
     IS_VALID_SERVO(servo);
 
@@ -1071,7 +1071,7 @@ int rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, u
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
-int rr_param_cache_update(rr_servo_t *servo)
+rr_ret_status_t rr_param_cache_update(rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1121,7 +1121,7 @@ int rr_param_cache_update(rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
-int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
+rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1155,7 +1155,7 @@ int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, 
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
-int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
+rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1187,7 +1187,7 @@ int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *va
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Realtime
  */
-int rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
+rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
     IS_VALID_SERVO(servo);
     *value = servo->pcache[param].value;
@@ -1201,7 +1201,7 @@ int rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, fl
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_clear_points_all(const rr_servo_t *servo)
+rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo)
 {
     return rr_clear_points(servo, 0);
 }
@@ -1215,7 +1215,7 @@ int rr_clear_points_all(const rr_servo_t *servo)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
+rr_ret_status_t rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1233,7 +1233,7 @@ int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
+rr_ret_status_t rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1260,7 +1260,7 @@ int rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
+rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1297,7 +1297,7 @@ int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_invoke_time_calculation(const rr_servo_t *servo,
+rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
                                const float start_position_deg, const float start_velocity_deg_per_sec, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
                                const float end_position_deg, const float end_velocity_deg_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms)
 {
@@ -1338,7 +1338,7 @@ int rr_invoke_time_calculation(const rr_servo_t *servo,
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
+rr_ret_status_t rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1368,7 +1368,7 @@ int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Config
  */
-int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
+rr_ret_status_t rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1390,7 +1390,7 @@ int rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Config
  */
-int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg)
+rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1411,7 +1411,7 @@ int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Config
  */
-int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
+rr_ret_status_t rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1437,7 +1437,7 @@ int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
  * @return int Status code (::rr_ret_status_t)
  * @ingroup Config
  */
-int rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec)
+rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);

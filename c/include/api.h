@@ -210,58 +210,58 @@ const char *rr_describe_emcy_code(uint16_t code);
 const char *rr_describe_emcy_bit(uint8_t bit);
 
 rr_can_interface_t *rr_init_interface(const char *interface_name);
-int rr_deinit_interface(rr_can_interface_t **interface);
+rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface);
 rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id);
-int rr_deinit_servo(rr_servo_t **servo);
+rr_ret_status_t rr_deinit_servo(rr_servo_t **servo);
 
-int rr_servo_reboot(const rr_servo_t *servo);
-int rr_servo_reset_communication(const rr_servo_t *servo);
-int rr_servo_set_state_operational(const rr_servo_t *servo);
-int rr_servo_set_state_pre_operational(const rr_servo_t *servo);
-int rr_servo_set_state_stopped(const rr_servo_t *servo);
+rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo);
+rr_ret_status_t rr_servo_reset_communication(const rr_servo_t *servo);
+rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo);
+rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo);
+rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo);
 
-int rr_net_reboot(const rr_can_interface_t *interface);
-int rr_net_reset_communication(const rr_can_interface_t *interface);
-int rr_net_set_state_operational(const rr_can_interface_t *interface);
-int rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
-int rr_net_set_state_stopped(const rr_can_interface_t *interface);
+rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface);
+rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface);
+rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface);
+rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
+rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface);
 
-int rr_stop_and_release(const rr_servo_t *servo);
-int rr_stop_and_freeze(const rr_servo_t *servo);
+rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo);
+rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo);
 
-int rr_set_current(const rr_servo_t *servo, const float current_a);
-int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec);
-int rr_set_position(const rr_servo_t *servo, const float position_deg);
-int rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a);
-int rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a);
-int rr_set_duty(const rr_servo_t *servo, float duty_percent);
+rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a);
+rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec);
+rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_deg);
+rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a);
+rr_ret_status_t rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a);
+rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent);
 
-int rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms);
-int rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
+rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms);
+rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
 
-int rr_read_error_status(const rr_servo_t *servo, uint32_t * const error_count, uint8_t * const error_array);
+rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t * const error_count, uint8_t * const error_array);
 
-int rr_param_cache_update(rr_servo_t *servo);
-int rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
+rr_ret_status_t rr_param_cache_update(rr_servo_t *servo);
+rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
 
-int rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
-int rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
+rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
+rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
 
-int rr_clear_points_all(const rr_servo_t *servo);
-int rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);
+rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo);
+rr_ret_status_t rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);
 
-int rr_get_points_size(const rr_servo_t *servo, uint32_t *num);
-int rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num);
+rr_ret_status_t rr_get_points_size(const rr_servo_t *servo, uint32_t *num);
+rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num);
 
-int rr_invoke_time_calculation(const rr_servo_t *servo,
+rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
                                const float start_position_deg, const float start_velocity_deg, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
                                const float end_position_deg, const float end_velocity_deg, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms);
-int rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms);
+rr_ret_status_t rr_get_time_calculation_result(const rr_servo_t *servo, uint32_t *time_ms);
 
-int rr_set_zero_position(const rr_servo_t *servo, const float position_deg);
-int rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg);
+rr_ret_status_t rr_set_zero_position(const rr_servo_t *servo, const float position_deg);
+rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg);
 
-int rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec);
-int rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec);
+rr_ret_status_t rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec);
+rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec);
 
 #endif /* _ROZUM_API_H */
