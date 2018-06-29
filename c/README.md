@@ -15,9 +15,9 @@
    For compiling, use the gcc compiler.
    
    Additionally, make sure to install the following software:
-   -`libpthread` library
-   -Doxygen (for generating the documentation)
-   -`make` utility
+   - `libpthread` library
+   - Doxygen (for generating the documentation)
+   - `make` utility
 
 3. File structure
 
