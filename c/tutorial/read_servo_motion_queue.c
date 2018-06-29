@@ -11,18 +11,18 @@
 
 /**
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
- * This tutorial describes how to determine the current size of a motion queue. In this example, we will read the number of free 
+ * This tutorial describes how to determine the actual size of a motion queue. In this example, we will read the number of free 
  * and occupied PVT points in a motion queue before and after adding PVT (position-velocity-time) points to the motion queue.
- * <b> Note:</b> Currently, the maximum motion queue size is 100 PVT.
+ * <b>Note:</b> Currently, the maximum motion queue size is 100 PVT.
  * 
  * 1. Initialize the interface.
- * \snippet read_servo_motion_queue.c Adding interface8
+ * \snippet read_servo_motion_queue.c Adding interface 8
  * 
  * 2. Initialize the servo.
- * \snippet read_servo_motion_queue.c Adding servo8
+ * \snippet read_servo_motion_queue.c Adding servo 8
  * 
  * 3. Clear the motion queue of the servo.
- * \snippet read_servo_motion_queue.c Clear points8
+ * \snippet read_servo_motion_queue.c Clear points 8
  * 
  * <b> Reading the initial motion queue size</b>
  * 
@@ -50,25 +50,25 @@
  * \snippet read_servo_motion_queue.c  Points free2
  *
  * <b> Complete tutorial code: </b>
- * \snippet read_errors.c cccode 1
+ * \snippet read_servo_motion_queue.c cccode 1
  */ 
  
 int main(int argc, char *argv[])
 {
     //! [cccode 1] 
-    //! [Adding interface8]
+    //! [Adding interface 8]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
-    //! [Adding interface8]
-    //! [Adding servo8]
+    //! [Adding interface 8]
+    //! [Adding servo 8]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
-    //! [Adding servo8]
+    //! [Adding servo 8]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
 
     API_DEBUG("Clearing points\n");
-    //! [Clear points8]
+    //! [Clear points 8]
     rr_clear_points_all(servo);
-    //! [Clear points8]
+    //! [Clear points 8]
     
 
     //! [Points size variable]
