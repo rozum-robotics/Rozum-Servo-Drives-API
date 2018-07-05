@@ -966,6 +966,9 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
  * <li>how fast the servo should move to the specified position</li><br>
  * <li>what time the movement to the specified position should take</li></ul>
+ * <p>The graphs below illustrate how a servo calculates a trajectory based on the preset PVT points.<br> 
+ * <b>Note</b>:In this case, the preset position values are 0, 45, 90, 45, and 0 degrees; the preset velocity values are 0, 30, 15, 30, 0;
+ * the time values are equal to delta time between two adjacent points on the Time axis (e.g., 2,000ms-3,000ms=1,000ms). 
  * @image html "PVT.png" "Example of calculated trajectory using PVT points" width=600 
  * @image latex "PVT.png" "Example of calculated trajectory using PVT points" width=300pt
  * Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, 
