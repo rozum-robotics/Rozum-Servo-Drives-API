@@ -42,7 +42,7 @@
  * \defgroup Motion Simple motion control (duty, current, velocity, position)
  * \defgroup Trajectory Trajectory motion control (PVT)
  * \defgroup Config Reading and writing servo configuration
- * \defgroup Realtime Reading realtime parameter
+ * \defgroup Realtime Reading realtime parameters
  * \defgroup Err Error handling
  * \defgroup Dbg Debugging
  * \defgroup Aux Auxiliary functions
@@ -965,7 +965,7 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * PVT points define the following:<br>
  * <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
  * <li>how fast the servo should move to the specified position</li><br>
- * <li>what time the movement to the specified position should take</li></ul>
+ * <li>how long the movement to the specified position should take</li></ul>
  * <p>The graphs below illustrate how a servo calculates a trajectory based on the preset PVT points.<br> 
  * <b>Note:</b> In this case, the preset position values are 0, 45, 90, 45, and 0 degrees; the preset velocity values are 0, 30, 15, 30, 0 degrees per second;
  * the time values are equal to delta time between two adjacent points on the Time axis (e.g., 2,000ms-3,000ms=1,000ms).</p> 
