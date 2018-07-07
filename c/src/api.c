@@ -966,7 +966,7 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
  * <li>how fast the servo should move to the specified position</li><br>
  * <li>how long the movement to the specified position should take</li></ul>
- * <p>The graphs below illustrate how a servo calculates a trajectory based on the preset PVT points.<br> 
+ * <p>The graphs below illustrate how a servo builds a trajectory based on the preset PVT points.<br> 
  * <b>Note:</b> In this case, the preset position values are 0, 45, 90, 45, and 0 degrees; the preset velocity values are 0, 30, 15, 30, 0 degrees per second;
  * the time values are equal to delta time between two adjacent points on the Time axis (e.g., 2,000ms-3,000ms=1,000ms).</p> 
  * @image html "PVT.png" "Example of calculated trajectory using PVT points" width=600 
@@ -1290,7 +1290,7 @@ rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
 }
 
 /**
- * @brief The function enables calculating the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.g., velocity, acceleration).
+ * @brief The function enables calculating and reading the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.g., velocity, acceleration).
  * <b>Note:</b>The function is executed without the servo moving.<br>
  *<p>When the start time and the end time parameters are set to 0, the function returns the calculated time value. When the parameters are set to
  * values other than 0, the function will either return OK or an error. 'OK' means the motion at the specified function parameters is possible,
