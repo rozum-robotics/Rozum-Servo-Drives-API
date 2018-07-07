@@ -1290,7 +1290,7 @@ rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
 }
 
 /**
- * @brief The function enables calculating and reading the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.g., velocity, acceleration).
+ * @brief The function enables calculating the time it will take for the specified servo to get from one position to another at the specified motion parameters (e.g., velocity, acceleration).
  * <b>Note:</b>The function is executed without the servo moving.<br>
  *<p>When the start time and the end time parameters are set to 0, the function returns the calculated time value. When the parameters are set to
  * values other than 0, the function will either return OK or an error. 'OK' means the motion at the specified function parameters is possible,
