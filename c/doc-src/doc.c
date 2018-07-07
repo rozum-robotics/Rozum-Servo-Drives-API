@@ -85,7 +85,7 @@
  * @image html "eater.png" "Eater module schematic" width=400
  * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
- * |Component|Type|Other options|Comment|
+ * |Component|Type|Other options|Comments|
  * |---------|-----|-----------|-------|
  * |D1 - Diode|APT30S20BG|Schottky diode, I<SUB>f</SUB> &ge; 20 A, V<SUB>r</SUB> &ge; 96 V|I<SUB>f</SUB> &ge; 1.5 × Total current of all connected servos|
  * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> &ge; 96V, I<SUB>c</SUB> &ge; 10 A| |
@@ -106,7 +106,7 @@
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * @image latex "capacitor.png" "Capacitor module schematic" width=200pt
  * <b>Requirements:</b>
- * |Component|Type|Comment|
+ * |Component|Type|Comments|
  * |---------|-----|-------|
  * |X1 - Connector| |Input connector (power source) |
  * |X2 - Connector| |Output connector (power consumer - servo) |
