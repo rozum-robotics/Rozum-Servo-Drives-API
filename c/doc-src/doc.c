@@ -94,7 +94,7 @@
  * |X1 - Connector| | |Input connector (power source - power supply) |
  * |X2 - Connector| | |Output connector (power consumer - capacitor module & servo) |
  * 
- * <b>Heatsink requirements</b>
+ * <b>Heatsink requirements</b><br>
  * D1, Q1, and R2 should be connected to an appropriate heatsink.<br>
  * The simple energy eater that you can assemble based on the schematic
  * above can dissipate 25 W of average power at the ambient temperature of 60 degrees C max.
