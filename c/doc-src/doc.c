@@ -94,21 +94,22 @@
  * |X1 - Connector| | |Input connector (power source - power supply) |
  * |X2 - Connector| | |Output connector (power consumer - capacitor module & servo) |
  * 
- * @subsection heatsink 3.2 Heatsink requirements
+ * <b>Heatsink requirements</b>
  * D1, Q1, and R2 should be connected to an appropriate heatsink.<br>
  * The simple energy eater that you can assemble based on the schematic
  * above can dissipate 25 W of average power at the ambient temperature of 60 degrees C max.
  * Therefore, you will need a heatsink with thermal resistance of at least 1W/deg C.
  * <p>For example, this can be a heatsink with the following characteritics:
- * <ul><li>forced convection with the flow rate of 15m3/h</li>
+ * <ul><li>forced air convection with the flow rate of 15m3/h</li>
  * <li>heat dissipating surface of 600 cm2</li></ul></p>
  * <p>Alternatively, you can select a heatsink based on the following requirements:
- * <ul><li>40 x 40 mm in size</li>
+ * <ul><li>heatsink size—100 x 100 mm</li>
+ * <li>fan size—40 x 40 mm</li>
  * <li>fin quantity—12</li>
  * <li>fin height—25 mm</li></ul></p>
  * 
  * 
- * @subsection capacitor 3.3 Capacitor module
+ * @subsection capacitor 3.2 Capacitor module
  * In the servobox solution, capacitors are intended to accumulate and supply electric energy to servos. The devices allow for compensating
  * short-term power consumption peaks that are due to inductive resistance. Since servos are usually located at a long distance from the power supply unit,
  * inductive resistance values can be rather high.
