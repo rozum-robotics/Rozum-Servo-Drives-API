@@ -1146,19 +1146,19 @@ int usbcan_device_deinit(usbcan_device_t **dev)
 		usbcan_device_t *prev_dev;
 
 		for(prev_dev = inst->device_list; prev_dev; prev_dev = prev_dev->next)
-		{
-			if(prev_dev->next == *dev)
-			{
-				break;
-			}
-		}
+		{            
+            if(prev_dev->next == *dev)
+            {
+                break;
+            }
+        }
 		if(prev_dev)
 		{
 			prev_dev->next = (*dev)->next;
 		}
 		else
 		{
-			LOG_WARN(debug_log, "%s: there is no such device in interface", __func__);
+            inst->device_list = (*dev)->next;			
 		}
 		free(*dev);
 		*dev = NULL;	

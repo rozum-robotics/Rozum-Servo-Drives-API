@@ -1449,3 +1449,72 @@ rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_vel
 
     return ret_sdo(sts);
 }
+
+//! @cond Doxygen_Suppress
+/**
+ * @brief The function changes device CAN ID, resets device CAN communication and check that heartbeat is present with the new CAN ID.
+ * Note: servo device cache will be erased (in the API)
+ * 
+ * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param servo Servo descriptor returned by the ::rr_init_servo function. Will be changed if the functon status is success
+ * @param new_can_id New CAN ID. Should be in range 1 ... 127
+ * @return Status code (::rr_ret_status_t)
+ */
+static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *servo, uint8_t new_can_id)
+{
+    if(new_can_id < 1 || new_can_id > 127) return RET_WRONG_ARG;
+
+    /* Check that new id is not the sane */
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    if(dev->id == new_can_id) return RET_OK;
+
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    /* Write new CAN ID to the dictionary */
+    uint8_t data[1];
+    usb_can_put_uint8_t(data, 0, &new_can_id, 1);
+    uint32_t node_id_sts = write_raw_sdo(dev, 0x2100, 0x00, data, sizeof(data), 1, 100);
+    if(node_id_sts) return ret_sdo(node_id_sts);
+
+    /* Reset communication, so the servo will update it's internal CAN ID with the ID in the dictionary */
+    rr_ret_status_t reset_comm_sts = rr_net_reset_communication(interface);
+    if(reset_comm_sts) return reset_comm_sts;
+
+    /* Deinit the servo */
+    rr_ret_status_t deinit_sts = rr_deinit_servo(&servo);
+    if(deinit_sts) return deinit_sts;
+
+    /* Initialize it with the new ID */
+    servo = rr_init_servo(interface, new_can_id);
+    if(servo == NULL) return RET_BAD_INSTANCE;
+
+    return RET_OK;
+}
+//! @w
+
+/**
+ * @brief The function changes device CAN ID, resets device CAN communication and check that heartbeat is present with the new CAN ID.
+ * Then it saves the new CAN ID to the device EEPROM memory.
+ * 
+ * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param servo Servo descriptor returned by the ::rr_init_servo function. Will be changed if the functon status is success
+ * @param new_can_id New CAN ID. Should be in range 1 ... 127
+ * @return Status code (::rr_ret_status_t)
+ */
+rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t *servo, uint8_t new_can_id)
+{
+    rr_ret_status_t sts = rr_change_id(interface, servo, new_can_id);
+    if(sts) return sts;
+
+#define PARAM_STORE_PASSWORD 0x73617665 // s a v e
+
+    uint32_t pass = PARAM_STORE_PASSWORD;
+    uint8_t data[4];
+    usb_can_put_uint32_t(data, 0, &pass, 1);
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint32_t save_conf_sts = write_raw_sdo(dev, 0x1010, 0x01, data, sizeof(data), 1, 4000);
+    if(save_conf_sts) return ret_sdo(save_conf_sts);
+
+    return RET_OK;
+}
