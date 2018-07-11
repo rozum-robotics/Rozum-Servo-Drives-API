@@ -32,6 +32,7 @@
  *    -# \ref tutor_c_calculate_point
  *    -# \ref tutor_c_read_motion_queue
  *    -# \ref tutor_c_get_max_velocity
+ *    -# \ref tutor_c_changeID1
  * - Java
  * - Python
  * - Ruby
@@ -57,6 +58,7 @@
  * \defgroup tutor_c_calculate_point PVT point calculation
  * \defgroup tutor_c_get_max_velocity Reading the maximum servo velocity
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
+  * \defgroup tutor_c_changeID1 Changing CAN ID of a single servo
  */
 /* Includes ------------------------------------------------------------------*/
 #include "api.h"
@@ -1452,12 +1454,12 @@ rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_vel
 
 //! @cond Doxygen_Suppress
 /**
- * @brief The function changes device CAN ID, resets device CAN communication and check that heartbeat is present with the new CAN ID.
+ * @brief The function enables changing the CAN ID of a servo, resets CAN communication for the device and checks availability of Heartbeats for the new CAN ID.
  * Note: servo device cache will be erased (in the API)
  * 
  * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param servo Servo descriptor returned by the ::rr_init_servo function. Will be changed if the functon status is success
- * @param new_can_id New CAN ID. Should be in range 1 ... 127
+ * @param new_can_id New CAN ID. It can be any value within the range from 1 to 127.
  * @return Status code (::rr_ret_status_t)
  */
 static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *servo, uint8_t new_can_id)
@@ -1498,7 +1500,7 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
  * Then it saves the new CAN ID to the device EEPROM memory.
  * 
  * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
- * @param servo Servo descriptor returned by the ::rr_init_servo function. Will be changed if the functon status is success
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param new_can_id New CAN ID. Should be in range 1 ... 127
  * @return Status code (::rr_ret_status_t)
  */
