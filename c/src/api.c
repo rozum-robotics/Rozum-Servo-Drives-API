@@ -1454,7 +1454,7 @@ rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_vel
 
 //! @cond Doxygen_Suppress
 /**
- * @brief The function enables changing the CAN ID of a servo, resets CAN communication for the device and checks availability of Heartbeats for the new CAN ID.
+ * @brief The function changes device CAN ID, resets device CAN communication and check that heartbeat is present with the new CAN ID.
  * Note: servo device cache will be erased (in the API)
  * 
  * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
@@ -1496,13 +1496,16 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
 //! @w
 
 /**
- * @brief The function changes device CAN ID, resets device CAN communication and check that heartbeat is present with the new CAN ID.
- * Then it saves the new CAN ID to the device EEPROM memory.
- * 
+ * @brief The function enables changing the CAN identifier (ID) of the specified servo to avoid collisions on a bus line.<br> 
+ * <b>Important!</b> Each servo connected to a CAN bus must have <b>a unique ID</b>.<br>
+ * When called, the function resets CAN communication for the specified servo, checks that Heartbeats are generated for the new ID, 
+ * and saves the new CAN ID to the EEPROM memory of the servo.<br> 
+ * <b>Note:</b> The EEPROM memory limit is 1,000 write cycles. Therefore, it is not advisable to use the function with discretion.
  * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @param new_can_id New CAN ID. Should be in range 1 ... 127
+ * @param new_can_id New CAN ID. You can set any value within the range from 1 to 127, only make sure <b>no other servo has the same ID</b>.
  * @return Status code (::rr_ret_status_t)
+ * @ingroup Aux
  */
 rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t *servo, uint8_t new_can_id)
 {
