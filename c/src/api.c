@@ -58,7 +58,7 @@
  * \defgroup tutor_c_calculate_point PVT point calculation
  * \defgroup tutor_c_get_max_velocity Reading the maximum servo velocity
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
-  * \defgroup tutor_c_changeID1 Changing CAN ID of a single servo
+ * \defgroup tutor_c_changeID1 Changing CAN ID of a single servo
  */
 /* Includes ------------------------------------------------------------------*/
 #include "api.h"
