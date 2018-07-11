@@ -1,5 +1,5 @@
 /**
- * @brief Changing CAN ID of one servo
+ * @brief Changing CAN ID of a single servo
  * @file change_servo_id.c
  * @author Rozum
  * @date 2018-07-11
@@ -10,7 +10,7 @@
 #include "tutorial.h"
 
 /**
- * \defgroup tutor_c_servomove1 PVT trajectory for one servo
+ * \defgroup tutor_c_changeID1 Changing CAN ID of a single servo
  * The tutorial describes how to ....
  *
  * 
@@ -21,8 +21,8 @@
 int main(int argc, char *argv[])
 {
     //! [change_id_code_full]
-    uint8_t id_old = TUTORIAL_SERVO_0_ID;
-    uint8_t id_new = TUTORIAL_SERVO_1_ID;
+    uint8_t id_old;
+    uint8_t id_new;
 
     if(argc == 3)
     {
