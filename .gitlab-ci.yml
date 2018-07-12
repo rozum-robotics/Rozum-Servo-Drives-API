@@ -16,7 +16,6 @@ document:
     - git config --global credential.helper store
     - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
     - git push -f "$GITHUB_URL" master
-    - 
     - cd c
     - ( cat Doxyfile ; echo "PROJECT_NUMBER=$(git tag)" ) | doxygen -  
     - cd latex
