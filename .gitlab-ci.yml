@@ -24,7 +24,7 @@ document:
     - cd ..
     - mkdir archive
     - cp latex/refman.pdf html/RR-UserAPI.pdf
-    - tar -czvf archive/rr-servoapi-doc-$(git tag --contains HEAD | tr -d '\n')).tar.gz html
+    - tar -czvf archive/rr-servoapi-doc-$(git tag --contains HEAD | tr -d '\n').tar.gz html
 #    - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
 #    - ssh "$COMPANY_SRV" "rm -fr $COMPANY_SRV_DOC_DIR"
     - scp -o StrictHostKeyChecking=no -r html/* "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR"
