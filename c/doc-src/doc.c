@@ -115,15 +115,17 @@
  * @image latex "servobox_CAN_new_1.png" "Connecting RDrive servos to USB-CAN" width=300pt
  * 
  * Providing the CAN connection, make sure to comply with the following requirements:
- * - The CAN bus lines should be terminated with 120 Ohm resistors at both ends. You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
+ * - CAN bus lines of less than 40 m long should be terminated with 120 Ohm resistors at both ends. For bus lines of over 40 m long, use 150-300 Ohm resistors.<br>
+ * <b>Note:</b> You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
  * - The bus line cable must be a twisted pair cable with the lay length of 2 to 4 cm.
  * - The cross section of the bus line cable must be between 0.12 mm2 to 0.3 mm2.
  * - To ensure the baud rate required for your application, L&Sigma; should meet the specific values as indicated in Table 2.
  * 
- * <b>Table 2: CAN line length vs. baud rate</b> 
+ * <b>Table 2: CAN line parameters</b> 
  * |Baud Rate|50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 Mbit/s|
  * |------------------------|---------|---------|---------|---------|---------|
  * |Total line length, L&Sigma;, m|< 1000 m|< 500 m|< 200 m|< 100 m|< 40 m|
+ * |Cross-section, L&Sigma;, mm2|0.75 to 0.8 mm2|0.5 to 0.6 mm2|0.34 to 0.6 mm2|0.34 to 0.6 mm2|0.25 to 0.34mm2|
  * 
  * @subsection sect_23 3.3.1 Connecting multiple servos to a CAN bus
  * 
