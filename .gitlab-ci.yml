@@ -18,7 +18,7 @@ document:
     - git push -f "$GITHUB_URL" master
     - git tag
     - cd c
-    - ( cat Doxyfile ; echo "PROJECT_NUMBER=$(git tag --contains HEAD)" ) ) | doxygen -  
+    - ( cat Doxyfile ; echo "PROJECT_NUMBER=$(git tag --contains HEAD)" ) | doxygen -  
     - cd latex
     - make
     - cd ..
