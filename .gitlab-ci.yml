@@ -23,7 +23,6 @@ document:
     - make
     - cd ..
     - mkdir archive
-    - cp doc-src/arch-list.php html
     - cp latex/refman.pdf html/RR-UserAPI.pdf
     - tar -czvf archive/rr-servoapi-doc-$(git tag --contains HEAD | tr -d '\n').tar.gz html
 #    - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
