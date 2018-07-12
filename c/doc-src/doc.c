@@ -125,7 +125,7 @@
  * |Baud Rate|50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 Mbit/s|
  * |------------------------|---------|---------|---------|---------|---------|
  * |Total line length, L&Sigma;, m|< 1000 m|< 500 m|< 200 m|< 100 m|< 40 m|
- * |Cross-section, L&Sigma;, mm2|0.75 to 0.8 mm2|0.5 to 0.6 mm2|0.34 to 0.6 mm2|0.34 to 0.6 mm2|0.25 to 0.34mm2|
+ * |Cross-section, mm2|0.75 to 0.8 mm2|0.5 to 0.6 mm2|0.34 to 0.6 mm2|0.34 to 0.6 mm2|0.25 to 0.34mm2|
  * 
  * @subsection sect_23 3.3.1 Connecting multiple servos to a CAN bus
  * 
