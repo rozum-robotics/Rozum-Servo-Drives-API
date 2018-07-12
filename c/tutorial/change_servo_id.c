@@ -17,7 +17,8 @@
  * 1. Create two variables for the current CAN ID and the new one.
  * \snippet change_servo_id.c Create 2 variables
  * 
- * 2. In the console, enter the current ID and the new one. Then, check the format of the console input.
+ * 2. Set the current ID (the default ID) and a new one to replace it.
+ * In the example below, we get the current and new ID values from the console return.
  * \snippet change_servo_id.c Check arguments
  * 
  * 3. Initialize the interface.
