@@ -122,10 +122,10 @@
  * - To ensure the baud rate required for your application, L&Sigma; should meet the specific values as indicated in Table 2.
  * 
  * <b>Table 2: CAN line parameters</b> 
- * |Baud Rate|50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 Mbit/s|
+ * |Baud Rate, kbit/s|50|100|250|500|1|
  * |------------------------|---------|---------|---------|---------|---------|
- * |Total line length, L&Sigma;, m|< 1000 m|< 500 m|< 200 m|< 100 m|< 40 m|
- * |Cross-section, mm2|0.75 to 0.8 mm2|0.5 to 0.6 mm2|0.34 to 0.6 mm2|0.34 to 0.6 mm2|0.25 to 0.34mm2|
+ * |Total line length, L&Sigma;, m|< 1000|< 500 |< 200|< 100|< 40|
+ * |Cross-section, mm2|0.75 to 0.8|0.5 to 0.6|0.34 to 0.6|0.34 to 0.6|0.25 to 0.34|
  * 
  * @subsection sect_23 3.2.1 Connecting multiple servos to a CAN bus
  * 
