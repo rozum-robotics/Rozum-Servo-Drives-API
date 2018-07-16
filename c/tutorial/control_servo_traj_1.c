@@ -14,6 +14,8 @@
  * <ul><li>one PVT commanding the servo to move to the position of 100 degrees in 6,000 milliseconds</li>
  * <li>one PVT commanding the servo to move to the position of -100 degrees in 6,000 milliseconds</li></ul>
  * 
+ *<p><b>Note: </b>Before setting up PVT points, make sure to change the default CAN ID (see the \ref tutor_c_changeID1 tutorial).</p>
+ * 
  * 1. Initialize the interface.
  * \snippet control_servo_traj_1.c Adding the interface1
  * 
