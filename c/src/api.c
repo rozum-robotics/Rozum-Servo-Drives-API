@@ -1493,7 +1493,8 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
 
     return RET_OK;
 }
-//! @w
+/// @endcond
+
 
 /**
  * @brief The function enables changing the CAN identifier (ID) of the specified servo to avoid collisions on a bus line.<br> 

@@ -136,7 +136,7 @@
  * <b>Caution!</b> Never connect or disconnect servos when power supply is on.<br>
  * 
  * 1. Take servo 1 and connect it to the CAN bus line as desribed in Section 3.2.<br>
- * 2. Run the <b>Changing CAN ID of a single servo</b> tutorial to change the servo's ID. Choose the new ID from the admissible address pool.<br>
+ * 2. Run the <b>Changing CAN ID of a single servo</b> tutorial \ref tutor_c_changeID1 to change the servo's ID. Choose the new ID from the admissible address pool.<br>
  * 3. Remember or write down the newly assigned CAN ID and disconnect the servo.<br>
  * 
  * Repeat the same sequence for all the servos you want to connect to the same CAN bus line.<br>
