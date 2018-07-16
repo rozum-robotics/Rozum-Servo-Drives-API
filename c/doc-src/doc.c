@@ -24,7 +24,7 @@
  * @section sect1 2. Servobox components
  * @subsection eater 2.1 Energy eater
  * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages in excess of the power supply voltage, which can damage servos beyond repair.
- * You can either buy the eater module from us or use the schematic below to assemble it on your own:  
+ * You can either buy the eater module from Rozum Robotics or use the schematic below to assemble it on your own:  
  * @image html "eater.png" "Eater module schematic" width=400
  * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
@@ -38,7 +38,7 @@
  * |X2 - Connector| | |Output connector (from the power consumer to the capacitor and servo) |
  * 
  * <b>Heatsink requirements</b><br>
- * As you can see in the <b>Eater module schematic</b>, D1, Q1, and R2 should be connected to an appropriate heatsink.
+ * <p>As you can see in the <b>Eater module schematic</b>, D1, Q1, and R2 should be connected to an appropriate heatsink.</p>
  * <p>The simple energy eater that you can assemble based on the schematic
  * can dissipate 25 W of average power at the ambient temperature of 60 degrees C max.
  * Therefore, you will need a heatsink with thermal resistance of at least 1W/deg C.</p>
