@@ -10,14 +10,14 @@
  * @section sect_descr 1. Product overview
  * 
  * <b>A servobox</b> is a solution designed to ensure safe and correct operation of one or more RDrive servo motors and to control their motion. The solution comprises the following components:
- * - one or more energy eaters (see Section 3.1)
- * - one or more capacitor modules (see Section 3.2)
+ * - one or more energy eaters (see Section 2.1)
+ * - one or more capacitor modules (see Section 2.2)
  * - a CAN-USB dongle to provide communication between the servobox and the servos
  * 
  * It is the user's responsibility to additionally provide a power supply and USB-A to Micro USB cable for connecting the CAN-USB dongle to PC.
  * 
  * The USB-A to Micro USB cable should not be longer than 5 meters.
- * The power supply should meet the following requirements:
+ * The power supply must meet the following requirements:
  * - its supply voltage should be 48 V max
  * - its power should be equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3.
  * 
@@ -38,11 +38,11 @@
  * |X2 - Connector| | |Output connector (from the power consumer to the capacitor and servo) |
  * 
  * <b>Heatsink requirements</b><br>
- * As you can see in the Eater module schematic, D1, Q1, and R2 should be connected to an appropriate heatsink.
- * <p>The simple energy eater that you can assemble based on this schematic
+ * As you can see in the <b>Eater module schematic</b>, D1, Q1, and R2 should be connected to an appropriate heatsink.
+ * <p>The simple energy eater that you can assemble based on the schematic
  * can dissipate 25 W of average power at the ambient temperature of 60 degrees C max.
  * Therefore, you will need a heatsink with thermal resistance of at least 1W/deg C.</p>
- * <p>this can be a heatsink with the following characteritics:
+ * <p>This can be a heatsink with the following characteritics:
  * <ul><li>forced air convection with the flow rate of 15m3/h</li>
  * <li>heat dissipating surface of 600 cm2</li></ul></p>
  * <p>Alternatively, you can select a heatsink based on the following requirements:
@@ -57,7 +57,7 @@
  * short-term power consumption peaks that are due to inductive resistance. Since servos are usually located at a long distance from the power supply unit,
  * inductive resistance values can be rather high.
  * For the same reason, make sure to place capacitors as close to servos as possible.
- * <p>To assemble a capacitor module, use the schematic below.</p>
+ * <p>To assemble a capacitor module, use the schematic below:</p>
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * @image latex "capacitor.png" "Capacitor module schematic" width=200pt
  * <b>Requirements:</b>
@@ -135,10 +135,11 @@
  * <b>Caution!</b> Never connect or disconnect servos when power supply is on.<br>
  * 
  * 1. Take servo 1 and connect it to the CAN bus line as desribed in Section 3.2.<br>
- * 2. Run the \ref tutor_c_changeID1 tutorial to change the servo's ID. Choose the new ID from the admissible address pool.<br>
- * 3. Remember or write down the newly assigned CAN ID and disconnect the servo.<br>
+ * 2. Run the \ref tutor_c_changeID1 tutorial to change the servo's ID.<br>
+ * 3. Remember or write down the newly assigned CAN ID and disconnect the servo.<br> 
+ * 4. Repeat Steps 1 to 3 for all the servos you want to connect to the same CAN bus line.<br>
  * 
- * Repeat the same sequence for all the servos you want to connect to the same CAN bus line.<br>
+ * Once you have changed all CAN IDs as appropriate, you can connect all the servos back to the CAN bus line and start working with them.
  * 
  * <b>Note</b>: In total, you can connect up to 127 devices to a single CAN bus.
  * 
