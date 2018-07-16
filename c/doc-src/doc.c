@@ -35,11 +35,11 @@
  * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> &ge; 96V, I<SUB>c</SUB> &ge; 10 A| |
  * |R1 - Resistor|1K Ohm, 1 W| | |
  * |R2 - Resistor|4.7 Ohm, P<SUB>d</SUB> &ge; 25 W| | |
- * |X1 - Connector| | |Input connector (power source - power supply) |
- * |X2 - Connector| | |Output connector (power consumer - capacitor module and servo) |
+ * |X1 - Connector| | |Input connector (from power source to power supply) |
+ * |X2 - Connector| | |Output connector (from power consumer to capacitor module and servo) |
  * 
  * <b>Heatsink requirements</b><br>
- * D1, Q1, and R2 should be connected to an appropriate heatsink.<br>
+ * D1, Q1, and R2 should be connected to an appropriate heatsink.
  * The simple energy eater that you can assemble based on the schematic
  * above can dissipate 25 W of average power at the ambient temperature of 60 degrees C max.
  * Therefore, you will need a heatsink with thermal resistance of at least 1W/deg C.
@@ -65,8 +65,8 @@
  * |Component|Type|Comments|
  * |---------|-----|-------|
  * |X1 - Connector| |Input connector (power source) |
- * |X2 - Connector| |Output connector (power consumer - servo) |
- * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V|Total capacitance should be &ge; 5 uF per 1 W of connected servo|
+ * |X2 - Connector| |Output connector (from power consumer to servo) |
+ * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V|Total capacitance should be &ge; 5 uF per 1 W of connected servo power|
  * <b>Note:</b> Total capacitor ESR &le; 0.1 Ohm
  *  
  * @section sect_conn 3. Connecting servos to a power supply and a servobox
