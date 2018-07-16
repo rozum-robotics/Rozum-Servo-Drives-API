@@ -1502,7 +1502,7 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
  * and saves the new CAN ID to the EEPROM memory of the servo.</p> 
  * <p><b>Note:</b> The EEPROM memory limit is 1,000 write cycles. Therefore, it is advisable to use the function with discretion.</p>
  * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
- * @param servo Servo descriptor returned by the ::rr_init_servo function. <b>Note</b>: All servos are supplied with <b>the same default CAN ID—32</b>.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function. <b>Note</b>: All RDrive servos are supplied with <b>the same default CAN ID—32</b>.
  * @param new_can_id New CAN ID. You can set any value within the range from 1 to 127, only make sure <b>no other servo has the same ID</b>.
  * @return Status code (::rr_ret_status_t)
  * @ingroup Aux
