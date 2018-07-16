@@ -24,7 +24,7 @@
  * @section sect1 2. Servobox components
  * @subsection eater 2.1 Energy eater
  * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages in excess of the power supply voltage, which can damage servos beyond repair.
- * Use the schematic below to assemble the device:  
+ * You can either buy the eater module from us or use the schematic below to assemble it on your own:  
  * @image html "eater.png" "Eater module schematic" width=400
  * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
@@ -42,10 +42,10 @@
  * <p>The simple energy eater that you can assemble based on the schematic
  * can dissipate 25 W of average power at the ambient temperature of 60 degrees C max.
  * Therefore, you will need a heatsink with thermal resistance of at least 1W/deg C.</p>
- * <p>This can be a heatsink with the following characteritics:
+ * <p>To comply with the requirement, meet the following characteristics:
  * <ul><li>forced air convection with the flow rate of 15m3/h</li>
  * <li>heat dissipating surface of 600 cm2</li></ul></p>
- * <p>Alternatively, you can select a heatsink based on the following requirements:
+ * <p>For example, this can be a heatsink as described below:
  * <ul><li>heatsink size—100 x 100 mm</li>
  * <li>fan size—40 x 40 mm</li>
  * <li>fin quantity—12</li>
@@ -128,20 +128,22 @@
  * 
  * <p><b>Connecting multiple servos to a CAN bus</b></p>
  * 
- * To avoid collisions, each servo connected to a CAN bus line must have a unique CAN identifier. Therefore, an important step of connecting multiple RDrive servos
- * to a single CAN bus line is to change their CAN IDs so that they do not duplicate each other.
+ * To avoid collisions, each servo connected to a CAN bus line must have a unique CAN identifier. However, RDrive servo motors are all 
+ * supplied with the same <b>default ID—32</b>. Therefore, an important step of connecting multiple RDrive servos
+ * to a single CAN bus line is to change their default IDs to unique ones.
+ * 
  * <p>Start with connecting each of your multiple servos, one by one, to a CAN bus line, following the sequence as described below:<br>
  * 
  * <b>Caution!</b> Never connect or disconnect servos when power supply is on.<br>
  * 
  * 1. Take servo 1 and connect it to the CAN bus line as desribed in this section above.<br>
- * 2. Run the \ref tutor_c_changeID1 tutorial to change the servo's ID.<br>
+ * 2. Run the \ref tutor_c_changeID1 tutorial to change the servo's default ID.<br>
  * 3. Remember or write down the newly assigned CAN ID and disconnect the servo.<br> 
  * 4. Repeat Steps 1 to 3 for all the servos you want to connect to the same CAN bus line.<br>
  * 
  * Once you have changed all CAN IDs as appropriate, you can connect all the servos back to the CAN bus line and start working with them.
  * 
- * <b>Note</b>: In total, you can connect up to 127 devices to a single CAN bus.
+ * <b>Note</b>: In total, you can connect up to 127 devices to a single CAN bus. So, the admissible CAN ID pool is from 1 to 127.
  * 
  * @ingroup hw_manual
  */
