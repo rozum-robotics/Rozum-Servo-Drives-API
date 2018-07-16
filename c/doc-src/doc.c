@@ -36,7 +36,7 @@
  * |R1 - Resistor|1K Ohm, 1 W| | |
  * |R2 - Resistor|4.7 Ohm, P<SUB>d</SUB> &ge; 25 W| | |
  * |X1 - Connector| | |Input connector (power source - power supply) |
- * |X2 - Connector| | |Output connector (power consumer - capacitor module & servo) |
+ * |X2 - Connector| | |Output connector (power consumer - capacitor module and servo) |
  * 
  * <b>Heatsink requirements</b><br>
  * D1, Q1, and R2 should be connected to an appropriate heatsink.<br>
@@ -127,7 +127,7 @@
  * |Total line length, L&Sigma;, m|< 1000 m|< 500 m|< 200 m|< 100 m|< 40 m|
  * |Cross-section, mm2|0.75 to 0.8 mm2|0.5 to 0.6 mm2|0.34 to 0.6 mm2|0.34 to 0.6 mm2|0.25 to 0.34mm2|
  * 
- * @subsection sect_23 3.3.1 Connecting multiple servos to a CAN bus
+ * @subsection sect_23 3.2.1 Connecting multiple servos to a CAN bus
  * 
  * To avoid collisions, each servo connected to a CAN bus line must have a unique CAN identifier. Therefore, an important step of connecting multiple RDrive servos
  * to a single CAN bus line is to change their CAN IDs so that they do not duplicate each other.
