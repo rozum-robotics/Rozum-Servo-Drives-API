@@ -9,22 +9,27 @@
  * @page servo_box 
  * @section sect_descr 1. Product overview
  * 
- * <b>A servobox</b> is a solution designed to ensure safe and correct operation of one or more RDrive servo motors and to control their motion. The solution comprises the following components:
- * - one or more energy eaters (see Section 2.1)
+ * A <b>servobox</b> is a set of deliverables enabling users to easily connect, control, and operate servo motors in the designed range of loads.
+ * The set comprises the following components:
+ * - an energy eater (see Section 2.1)
  * - one or more capacitor modules (see Section 2.2)
- * - a CAN-USB dongle to provide communication between the servobox and the servos
+ * - a CAN-USB dongle to provide communication with RDrive servos
+ * - a 120 Ohm terminating resistor (see Section 3.2)
+ * - a quick-start cable set comprising power supply and CAN cables (2 pcs each per servo)
  * 
  * It is the user's responsibility to additionally provide a power supply and USB-A to Micro USB cable for connecting the CAN-USB dongle to PC.
  * 
- * The USB-A to Micro USB cable should not be longer than 5 meters.
+ * The USB-A to Micro USB cable must not be longer than 5 meters.
  * The power supply must meet the following requirements:
- * - its supply voltage should be 48 V max
- * - its power should be equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3.
+ * - its supply voltage must be 48 V max
+ * - its power must be equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3.
  * 
  * @section sect1 2. Servobox components
  * @subsection eater 2.1 Energy eater
- * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages in excess of the power supply voltage, which can damage servos beyond repair.
- * You can either buy the eater module from Rozum Robotics or use the schematic below to assemble it on your own:  
+ * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages
+ * in excess of the power supply voltage, which can damage servos beyond repair.
+ * You can either buy the eater module from Rozum Robotics or use the schematic below to assemble it on your own.
+ * Mind that the simple energy eater can dissipate not more than 25 W of average power at the ambient temperature of 60 degrees C max.  
  * @image html "eater.png" "Eater module schematic" width=400
  * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
@@ -39,10 +44,9 @@
  * 
  * <b>Heatsink requirements</b><br>
  * <p>As you can see in the <b>Eater module schematic</b>, D1, Q1, and R2 should be connected to an appropriate heatsink.</p>
- * <p>The simple energy eater that you can assemble based on the schematic
- * can dissipate 25 W of average power at the ambient temperature of 60 degrees C max.
- * Therefore, you will need a heatsink with thermal resistance of at least 1W/deg C.</p>
- * <p>To comply with the requirement, meet the following characteristics:
+ * <p>Because the energy eater as shown in the schematic dissipates 25 W of average power at the ambient temperature of 60 degrees C max,
+ * you will need a heatsink with thermal resistance of at least 1W/deg C.</p>
+ * <p>To comply with the requirement, select a heatsink with the following characteristics:
  * <ul><li>forced air convection with the flow rate of 15m3/h</li>
  * <li>heat dissipating surface of 600 cm2</li></ul></p>
  * <p>For example, this can be a heatsink as described below:
@@ -54,10 +58,12 @@
  * 
  * @subsection capacitor 2.2 Capacitor module
  * In the servobox solution, capacitors are intended to accumulate and supply electric energy to servos. The devices allow for compensating
- * short-term power consumption peaks that are due to inductive resistance. Since servos are usually located at a long distance from the power supply unit,
- * inductive resistance values can be rather high.
- * For the same reason, make sure to place capacitors as close to servos as possible.
- * <p>To assemble a capacitor module, use the schematic below:</p>
+ * short-term power consumption peaks that are due to inductive resistance. This is important because inductive resistance values
+ * in the servo's power supply circuit can be rather high when the distance from a servo to the supply unit is long.
+ * Therefore, the general requirement is to place capacitors as close to servos as possible. For exact distances, refer to Section 3.1, Table 1 ("L3" column).
+ * Note: Capacitor modules included in the servobox solution are supplied attached to servo motors. 
+ * However, you can detach them from servos to subsequently mount the modules at admissible distances (see Section 3.1 (Table 1, "L3" column)).
+ * <p>To assemble a capacitor module on your own, use the schematic below:</p>
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * @image latex "capacitor.png" "Capacitor module schematic" width=200pt
  * <b>Requirements:</b>
