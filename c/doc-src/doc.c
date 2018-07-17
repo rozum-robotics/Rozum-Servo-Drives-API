@@ -61,7 +61,7 @@
  * short-term power consumption peaks that are due to inductive resistance. This is important because inductive resistance values
  * in the servo's power supply circuit can be rather high when the distance from a servo to the supply unit is long.
  * <p>Therefore, the general requirement is to place capacitors as close to servos as possible. For exact distances, refer to Section 3.1, Table 1 ("L3" column).</p>
- * <p>Note: Capacitor modules included in the servobox solution are supplied attached to servo motors. 
+ * <p><b>Note:</b> Capacitor modules included in the servobox solution are supplied attached to servo motors. 
  * However, you can detach them from servos to subsequently mount the modules at admissible distances (see Section 3.1 (Table 1, "L3" column)).</p>
  * <p>To assemble a capacitor module on your own, use the schematic below:</p>
  * @image html "capacitor.png" "Capacitor module schematic" width=400
