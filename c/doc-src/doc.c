@@ -17,7 +17,7 @@
  * - a 120 Ohm terminating resistor (see Section 3.2)
  * - a quick-start cable set comprising power supply and CAN cables (2 pcs each per servo)
  * 
- * It is the user's responsibility to additionally provide a power supply and USB-A to Micro USB cable for connecting the CAN-USB dongle to PC.
+ * It is the user's responsibility to additionally provide a power supply and a USB-A to Micro USB cable for connecting the CAN-USB dongle to PC.
  * 
  * The USB-A to Micro USB cable must not be longer than 5 meters.
  * The power supply must meet the following requirements:
@@ -28,8 +28,8 @@
  * @subsection eater 2.1 Energy eater
  * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages
  * in excess of the power supply voltage, which can damage servos beyond repair.
- * You can either buy the eater module from Rozum Robotics or use the schematic below to assemble it on your own.
- * Mind that the simple energy eater can dissipate not more than 25 W of average power at the ambient temperature of 60 degrees C max.  
+ * <p>You can either buy the eater module from Rozum Robotics or use the schematic below to assemble it on your own.
+ * Mind that the simple energy eater can dissipate not more than 25 W of average power at the ambient temperature of 60 degrees C max.</p>  
  * @image html "eater.png" "Eater module schematic" width=400
  * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
@@ -60,9 +60,9 @@
  * In the servobox solution, capacitors are intended to accumulate and supply electric energy to servos. The devices allow for compensating
  * short-term power consumption peaks that are due to inductive resistance. This is important because inductive resistance values
  * in the servo's power supply circuit can be rather high when the distance from a servo to the supply unit is long.
- * Therefore, the general requirement is to place capacitors as close to servos as possible. For exact distances, refer to Section 3.1, Table 1 ("L3" column).
- * Note: Capacitor modules included in the servobox solution are supplied attached to servo motors. 
- * However, you can detach them from servos to subsequently mount the modules at admissible distances (see Section 3.1 (Table 1, "L3" column)).
+ * <p>Therefore, the general requirement is to place capacitors as close to servos as possible. For exact distances, refer to Section 3.1, Table 1 ("L3" column).</p>
+ * <p>Note: Capacitor modules included in the servobox solution are supplied attached to servo motors. 
+ * However, you can detach them from servos to subsequently mount the modules at admissible distances (see Section 3.1 (Table 1, "L3" column)).</p>
  * <p>To assemble a capacitor module on your own, use the schematic below:</p>
  * @image html "capacitor.png" "Capacitor module schematic" width=400
  * @image latex "capacitor.png" "Capacitor module schematic" width=200pt
