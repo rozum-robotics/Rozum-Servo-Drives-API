@@ -28,7 +28,7 @@
  * @subsection eater 2.1 Energy eater
  * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages
  * in excess of the power supply voltage, which can damage servos beyond repair.
- * <p>Rozum Robotics offers two models of energy eaters:
+ * <p>The Rozum Robotics model ranges includes the following two models of energy eaters:
  * <ul><li><b>Model 1</b>—for applications with average dissipated power (at 60 degrees C max.) of <b>less than 25 W</b>
  * @image html "Servo_box_model_1.JPG" "Energy eater—Model 1" width=400
  * @image latex "Servo_box_model_1.JPG" "Energy eater—Model 1" width=150pt</li>
