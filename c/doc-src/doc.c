@@ -41,7 +41,7 @@
  * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
  * |Component|Type|Other options|Comments|
- * |---------|-----|-----------|-------|
+ * |---------|-----|-------------|----------|
  * |D1 - Diode|APT30S20BG|Schottky diode, I<SUB>f</SUB> &ge; 20 A, V<SUB>r</SUB> &ge; 96 V|I<SUB>f</SUB> &ge; 1.5 × Total current of all connected servos|
  * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> &ge; 96V, I<SUB>c</SUB> &ge; 10 A| |
  * |R1 - Resistor|1K Ohm, 1 W| | |
@@ -50,9 +50,9 @@
  * |X2 - Connector| | |Output connector (from the power consumer to the capacitor and servo) |
  * 
  * <b>Heatsink requirements</b><br>
- * <p>As you can see in the <b>Eater module schematic</b>, D1, Q1, and R2 should be connected to an appropriate heatsink.</p>
+ * <p>As you can see in the Eater module schematic, D1, Q1, and R2 should be connected to an appropriate heatsink.</p>
  * <p>Because the energy eater as shown in the schematic dissipates 25 W of average power at the ambient temperature of 60 degrees C max,
- * you will need a heatsink with thermal resistance of at least 1W/deg C.</p>
+ * the heatsink should have thermal resistance of at least 1W/deg C.</p>
  * <p>To comply with the requirement, select a heatsink with the following characteristics:
  * <ul><li>forced air convection with the flow rate of 15m3/h</li>
  * <li>heat dissipating surface of 600 cm2</li></ul></p>
@@ -85,7 +85,7 @@
  *  
  * @section sect_conn 3. Connecting servos to a power supply and a servobox
  * 
- * To integrate an RDrive servo into one circuit with a power supply and a servobox, you need to provide the following connections:
+ * To integrate an RDrive servo into one circuit with a power supply unit and a servobox, you need to provide the following connections:
  * 
  * - power supply connection (two wires on the servo housing)
  * - CAN communication connection (two wires on the servo housing)
@@ -95,8 +95,8 @@
  * 
  * @subsection sect_21 3.1. Power supply connection
  * 
- * <b>Note:</b> Never supply power before a servo (servos) is (are) fully integrated with a servo box and a power supply into one circuit.
- * Charging current of the capacitor(s) can damage the power supply or injure the user!
+ * <b>Note:</b> Never supply power before a servo (servos) is (are) fully integrated with a servo box and a power supply unit into one circuit.
+ * Charging current of the capacitor(s) can damage the power supply unit or injure the user!
  * 
  * The configuration of the servo box solution (e.g., how many eaters and capacitors it uses) and the electrical connection diagram depend on whether your intention is:
  * - to connect a single servo, in which case the configuration and the connection diagram are as below:
@@ -107,7 +107,7 @@
  * @image latex "multiple_servo_conn_1.png" "Connecting multiple RDrive servos to power supply" width=300pt
  * 
  * In any case, make sure to meet the following electrical connection requirements:
- * - The total circuit length from the power supply to any servo motor must not exceed 10 meters.
+ * - The total circuit length from the power supply unit to any servo motor must not exceed 10 meters.
  * - The L1 length must not be longer than 10 meters.
  *     - When the total connected motor power is <b>less than 250 W</b>,  the cable cross-section within the segment must be at least 1.00 mm2.
  *     - When the total connected motor power is <b>less than 500 W</b>,  the cable cross-section within the segment must be at least 2.00 mm2.
@@ -149,7 +149,7 @@
  * 
  * <p>Start with connecting each of your multiple servos, one by one, to a CAN bus line, following the sequence as described below:<br>
  * 
- * <b>Caution!</b> Never connect or disconnect servos when power supply is on.<br>
+ * <b>Caution!</b> Never connect or disconnect servos when power supply is on!<br>
  * 
  * 1. Take servo 1 and connect it to the CAN bus line as desribed in this section above.<br>
  * 2. Run the \ref tutor_c_changeID1 tutorial to change the servo's default ID.<br>
