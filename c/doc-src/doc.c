@@ -28,20 +28,20 @@
  * @subsection eater 2.1 Energy eater
  * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages
  * in excess of the power supply voltage, which can damage servos beyond repair.
- * <p>The Rozum Robotics model ranges includes the following two models of energy eaters:
+ * <p>The Rozum Robotics model range includes the following two models of energy eaters:</p>
  * <ul><li><b>Model 1</b>—for applications with average dissipated power (at 60 degrees C max.) of <b>less than 25 W</b>
- * @image html "Servo_box_model_1.JPG" "Energy eater—Model 1" width=400
- * @image latex "Servo_box_model_1.JPG" "Energy eater—Model 1" width=150pt</li>
- * <li>b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>exceeding 25 W</b>
+ * @image html "Servo_box_model_1.png" "Energy eater—Model 1" width=400
+ * @image latex "Servo_box_model_1.png" "Energy eater—Model 1" width=150pt</li>
+ * <li><b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>exceeding 25 W</b>
  * @image html "eater_isometric.PNG" "Energy eater—Model 2" width=400
- * @image latex "eater_isometric.PNG" "Energy eater—Model 2" width=150pt</li></ul></p>
+ * @image latex "eater_isometric.PNG" "Energy eater—Model 2" width=150pt</li></ul>
  * <p>When the average dissipated power of your application is less than 25 W (at 60 degrees C max.),
  * you can also assemble an energy eater on your own based on the schematic below.</p>
  * @image html "eater.png" "Eater module schematic" width=400
  * @image latex "eater.png" "Eater module schematic" width=150pt
  * <b>Required components:</b>
  * |Component|Type|Other options|Comments|
- * |---------|-----|-------------|----------|
+ * |---------|----|-------------|---------|
  * |D1 - Diode|APT30S20BG|Schottky diode, I<SUB>f</SUB> &ge; 20 A, V<SUB>r</SUB> &ge; 96 V|I<SUB>f</SUB> &ge; 1.5 × Total current of all connected servos|
  * |Q1 - Transistor|TIP147|PNP darlington transistor, V<SUB>ce</SUB> &ge; 96V, I<SUB>c</SUB> &ge; 10 A| |
  * |R1 - Resistor|1K Ohm, 1 W| | |
@@ -77,7 +77,7 @@
  * @image latex "capacitor.png" "Capacitor module schematic" width=200pt
  * <b>Requirements:</b>
  * |Component|Type|Comments|
- * |---------|-----|-------|
+ * |---------|-----|--------|
  * |X1 - Connector| |Input connector (power source) |
  * |X2 - Connector| |Output connector (from the power consumer to the servo) |
  * |C1...Cn|Aluminum electrolytic capacitor or tantalum/polymer capacitor, U &ge; 80 V|Total capacitance should be &ge; 5 uF per 1 W of connected servo power|
