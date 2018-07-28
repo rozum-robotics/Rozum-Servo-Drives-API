@@ -1,7 +1,7 @@
 from rozum.util import Singleton
 from ctypes import *
 import time
-
+import os, sys
 # TODO Switching servo working states: rr_setup_nmt_callback, rr_describe_nmt
 # TODO Check statuses and logging
 
@@ -44,13 +44,13 @@ class Servo(object):
         self._api.rr_servo_reset_communication(self._servo)
 
     def set_state_operational(self):
-        self._api.rr_set_state_operational(self._servo)
+        self._api.rr_servo_set_state_operational(self._servo)
 
     def set_state_pre_operational(self):
-        self._api.rr_set_state_pre_operational(self._servo)
+        self._api.rr_servo_set_state_pre_operational(self._servo)
 
     def set_state_stopped(self):
-        self._api.rr_set_state_stopped(self._servo)
+        self._api.rr_servo_set_state_stopped(self._servo)
 
     def __del__(self):
         self._api.rr_deinit_servo(byref(c_void_p(self._servo)))
@@ -134,5 +134,3 @@ class ServoApi(object, metaclass=Singleton):
     def __del__(self):
         if self._interface is not None:
             del self._interface
-
-
