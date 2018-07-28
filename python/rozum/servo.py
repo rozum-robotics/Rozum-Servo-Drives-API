@@ -13,6 +13,20 @@ class Servo(object):
         self._servo = servo_interface
         self._identifier = identifier
 
+    def set_zero_position(self, position_deg: float):
+        self._api.rr_set_zero_position(self._api, c_float(position_deg))
+
+    def set_zero_position_and_save(self, position_deg: float):
+        self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
+
+    def get_max_velocity(self):
+        velocity = c_float()
+        self._api.rr_get_max_velocity(self._servo, byref(velocity))
+        return velocity
+
+    def set_max_velocity(self, max_velocity_deg_per_sec: float):
+        self._api.rr_set_max_velocity(self._servo, c_float(max_velocity_deg_per_sec))
+
     def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int):
         self._api.rr_add_motion_point(self._servo,
                                       c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms))
@@ -166,9 +180,7 @@ if __name__ == '__main__':
     api.load_library(os.path.join(os.path.dirname(__file__), "libservo_api.so"))
     api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00")
     t_servo = api.init_servo(64)
-    t_servo.set_state_operational()
     time.sleep(1)
-    t_servo.set_velocity(20)
-    time.sleep(10)
-    t_servo.set_velocity(0)
+    print(t_servo.get_points_size())
+    print(t_servo.get_points_free_space())
     time.sleep(1)
