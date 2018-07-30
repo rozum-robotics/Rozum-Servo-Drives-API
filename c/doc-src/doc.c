@@ -29,12 +29,18 @@
  * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages
  * in excess of the power supply voltage, which can damage servos beyond repair.
  * <p>The Rozum Robotics model range includes the following two models of energy eaters:</p>
- * <ul><li><b>Model 1</b>—for applications with average dissipated power (at 60 degrees C max.) of <b>less than 25 W</b>
+ * <ul>
+ * <li>
+ * <b>Model 1</b>—for applications with average dissipated power (at 60 degrees C max.) of <b>less than 25 W</b>
  * @image html "Servo_box_model_1.png" "Energy eater—Model 1" width=400
- * @image latex "Servo_box_model_1.png" "Energy eater—Model 1" width=150pt</li>
- * <li><b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>exceeding 25 W</b>
+ * @image latex "Servo_box_model_1.png" "Energy eater—Model 1" width=150pt
+ * </li>
+ * <li>
+ * <b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>exceeding 25 W</b>
  * @image html "eater_isometric.PNG" "Energy eater—Model 2" width=400
- * @image latex "eater_isometric.PNG" "Energy eater—Model 2" width=150pt</li></ul>
+ * @image latex "eater_isometric.PNG" "Energy eater—Model 2" width=150pt
+ * </li>
+ * </ul>
  * <p>When the average dissipated power of your application is less than 25 W (at 60 degrees C max.),
  * you can also assemble an energy eater on your own based on the schematic below.</p>
  * @image html "eater.png" "Eater module schematic" width=400

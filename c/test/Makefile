@@ -6,4 +6,4 @@ all:
 clean:
 	rm -fr build
 run:
-	./build/test.shared
+	./build/pvt1
