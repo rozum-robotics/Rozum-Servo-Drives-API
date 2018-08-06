@@ -9,7 +9,7 @@ from rozum.constants import *
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 # TODO Switching servo working states: rr_setup_nmt_callback, rr_describe_nmt
-# TODO add invoke_time_calculation
+# TODO normal logging
 # TODO write doc strings
 # TODO tests
 # TODO constants as enums and modify _api functions so that they return enums
