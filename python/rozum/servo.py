@@ -22,8 +22,8 @@ class CtypesEnum(IntEnum):  # for future use
 
 
 def _log_func_status(func, status):
-    message = "Call {} returned {}".format(func.__name__, RET_STATUS_MESSAGE[status.value])
-    if status.value == RET_OK.value:
+    message = "Call {} returned {}".format(func.__name__, RET_STATUS_MESSAGE[status])
+    if status == RET_OK.value:
         log.info(message)
     else:
         log.error(message)
@@ -32,7 +32,7 @@ def _log_func_status(func, status):
 def ret_status_t(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        status = func(args, kwargs)
+        status = func(*args, **kwargs)
         _log_func_status(func, status)
     return wrapper
 
@@ -246,11 +246,14 @@ class ServoApi(object, metaclass=Singleton):
         self._check_interface_initialized()
         return self._interface
 
-    def load_library(self, library_path: str):
-        if ServoApi.__LIBRARY_NAME not in library_path:
-            raise ArgumentError("Expected that path to library contains " + ServoApi.__LIBRARY_NAME)
-        if self._api is None:
-            self._api = CDLL(library_path)
+    def load_library(self, library_path: str = None):
+        if library_path is None:
+            self._api = CDLL(os.path.join(os.path.dirname(__file__), "libservo_api.so"))
+        else:
+            if ServoApi.__LIBRARY_NAME not in library_path:
+                raise ArgumentError("Expected that path to library contains " + ServoApi.__LIBRARY_NAME)
+            if self._api is None:
+                self._api = CDLL(library_path)
 
     def init_interface(self, interface_name: str):
         if self._interface is None:
