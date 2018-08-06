@@ -43,6 +43,10 @@ class Servo(object):
         self._servo = servo_interface
         self._identifier = identifier
 
+    @property
+    def interface(self):
+        return self._servo
+
     @ret_status_t
     def param_cache_update(self):
         return self._api.rr_param_cache_update(self._servo)
@@ -84,7 +88,7 @@ class Servo(object):
     @ret_status_t
     def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int):
         return self._api.rr_add_motion_point(self._servo,
-                                      c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms))
+                                             c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms))
 
     @ret_status_t
     def clear_points_all(self):
@@ -162,7 +166,7 @@ class Servo(object):
         return self._api.rr_servo_set_state_stopped(self._servo)
 
     @ret_status_t
-    def __del__(self):
+    def deinit_servo(self):
         return self._api.rr_deinit_servo(byref(c_void_p(self._servo)))
 
 
@@ -192,6 +196,13 @@ class Interface(object):
             self._servos[identifier] = Servo(self._api, servo_interface, identifier)
         return self._servos[identifier]
 
+    def change_id_and_save(self, old_id: int, new_can_id: int):
+        servo_interface = self.init_servo(old_id).interface
+        status = self._api.rr_change_id_and_save(self._interface, servo_interface, c_uint8(new_can_id))
+        _log_func_status(self.change_id_and_save, status)
+        self._servos[new_can_id] = Servo(self._api, servo_interface, new_can_id)
+        del self._servos[old_id]
+
     @ret_status_t
     def net_reboot(self):
         return self._api.rr_net_reboot(self._interface)
@@ -213,9 +224,10 @@ class Interface(object):
         return self._api.rr_net_set_state_stopped(self._interface)
 
     @ret_status_t
-    def __del__(self):
+    def deinit_interface(self):
         for servo in self._servos.values():
-            del servo
+            if servo is not None:
+                servo.deinit_servo()
         return self._api.rr_deinit_interface(byref(c_void_p(self._interface)))
 
 
@@ -223,7 +235,6 @@ class ServoApi(object, metaclass=Singleton):
     __LIBRARY_NAME = "libservo_api.so"
 
     def __init__(self):
-        print(str(self.__class__) + " Initialized")
         self._api = None
         self._interface = None
 
@@ -256,15 +267,19 @@ class ServoApi(object, metaclass=Singleton):
                 self._api = CDLL(library_path)
 
     def init_interface(self, interface_name: str):
+        self._check_library_loaded()
         if self._interface is None:
             self._interface = Interface(self._api, interface_name)
+        return self._interface
 
     def init_servo(self, identifier: int) -> Servo:
         return self.interface.init_servo(identifier)
 
+    def sleep_ms(self, ms: int):
+        self._api.rr_sleep_ms(c_int(ms))
+
     def __del__(self):
-        if self._interface is not None:
-            del self._interface
+        self.interface.deinit_interface()
 
 
 if __name__ == '__main__':
@@ -274,7 +289,7 @@ if __name__ == '__main__':
     api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00")
     t_servo = api.init_servo(64)
     time.sleep(1)
-    t_servo.set_current(1)
+    t_servo.set_current(20)
     time.sleep(2)
     print(t_servo.read_parameter(APP_PARAM_DUTY))
     print(t_servo.get_points_free_space())
