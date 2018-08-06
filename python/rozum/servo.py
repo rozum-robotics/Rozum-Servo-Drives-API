@@ -280,19 +280,3 @@ class ServoApi(object, metaclass=Singleton):
 
     def __del__(self):
         self.interface.deinit_interface()
-
-
-if __name__ == '__main__':
-    #  "../../c/build/libservo_api.so"
-    api = ServoApi()
-    api.load_library(os.path.join(os.path.dirname(__file__), "libservo_api.so"))
-    api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00")
-    t_servo = api.init_servo(64)
-    time.sleep(1)
-    t_servo.set_current(20)
-    time.sleep(2)
-    print(t_servo.read_parameter(APP_PARAM_DUTY))
-    print(t_servo.get_points_free_space())
-    time.sleep(2)
-    t_servo.set_current(0)
-    time.sleep(1)
