@@ -179,6 +179,12 @@ class Servo(object):
     def set_state_stopped(self):
         return self._api.rr_servo_set_state_stopped(self._servo)
 
+    def read_error_status(self, array_size: int):
+        error_count = c_uint32(0)
+        error_array = ARRAY(c_uint8, array_size)
+        status = self._api.rr_read_error_status(self._servo, byref(error_count), error_array)
+        return error_count, error_array
+
     @ret_status_t
     def deinit_servo(self):
         return self._api.rr_deinit_servo(byref(c_void_p(self._servo)))
