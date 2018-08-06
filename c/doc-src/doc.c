@@ -11,16 +11,13 @@
  * 
  * A <b>servobox</b> is a set of deliverables enabling users to easily connect, control, and operate RDrive servo motors in the designed range of loads.
  * The set comprises the following components:
- * - an energy eater (see Section 2.1)
- * - one or more capacitor modules (see Section 2.2)
- * - a CAN-USB dongle to provide communication with RDrive servos
+ * - an energy eater complete with a power supply connector (see Section 2.1)
+ * - a capacitor module incorporating one or more capacitors (see Section 2.2)
+ * - a CAN-USB dongle and a 1 m long USB-A to Micro USB cable to provide communication with RDrive servos
  * - a 120 Ohm terminating resistor (see Section 3.2)
- * - a quick-start cable set comprising power supply and CAN cables (2 pcs each per servo)
+ * - a quick-start cable set comprising power supply (1 m) and CAN (0.5 m) cables (1 pcs of each type per servo)
  * 
- * It is the user's responsibility to additionally provide <b>a power supply</b> and a <b>USB-A to Micro USB cable</b> for connecting the CAN-USB dongle to PC.
- * 
- * The USB-A to Micro USB cable must not be longer than 5 meters.
- * The power supply must meet the following requirements:
+ * It is the user's responsibility to additionally provide <b>a power supply</b>. The power supply must meet the following requirements:
  * - Supply voltage—48 V max
  * - Power equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3
  * 
