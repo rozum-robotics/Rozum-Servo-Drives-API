@@ -121,8 +121,8 @@
  * - The L3 length (from the capacitor to any servo) must not exceed the values from Table 1.
  * 
  * <b>Table 1: Line segment lengths vs. cross-sections</b> 
- * |Servo model|L2||||||L3||||||
- * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|
+ * |Servo model|L2||||||L3|||||||
+ * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|-|
  * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>0.25 mm<SUP>2</SUP>||0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
  * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0,1 m	 |0,2 m	 |0,2 m	 |0,4 m	 |0,7 m	 |1,0 m	 |1,0 m  |
  * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
@@ -138,7 +138,7 @@
  * - CAN bus lines of less than 40 m long should be terminated with 120 Ohm resistors at both ends. For bus lines of over 40 m long, use 150-300 Ohm resistors.<br>
  * <b>Note:</b> You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
  * - The bus line cable must be a twisted pair cable with the lay length of 2 to 4 cm.
- * - The cross section of the bus line cable must be between 0.12 mm2 to 0.3 mm2.
+ * - For the cross section of the bus line, see Table 2.
  * - To ensure the baud rate required for your application, L&Sigma; should meet the specific values as indicated in Table 2.
  * 
  * <b>Table 2: CAN line parameters</b> 
