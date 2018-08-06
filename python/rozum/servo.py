@@ -181,9 +181,9 @@ class Servo(object):
 
     def read_error_status(self, array_size: int):
         error_count = c_uint32(0)
-        error_array = ARRAY(c_uint8, array_size)
-        status = self._api.rr_read_error_status(self._servo, byref(error_count), error_array)
-        return error_count, error_array
+        error_array = (c_uint8 * array_size)()
+        status = self._api.rr_read_error_status(self._servo, byref(error_count), byref(error_array))
+        return error_count.value, error_array
 
     @ret_status_t
     def deinit_servo(self):
