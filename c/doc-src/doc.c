@@ -121,8 +121,8 @@
  * - The L3 length (from the capacitor to any servo) must not exceed the values from Table 1.
  * 
  * <b>Table 1: Line segment lengths vs. cross-sections</b> 
- * |Servo model|L2||||||L3|||||||
- * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|-|
+ * |Servo model|L2||||||L3||||||||
+ * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
  * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|0.25 mm<SUP>2</SUP>|0.5 mm<SUP>2</SUP>|0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
  * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0,1 m	 |0,1 m	 |0,2 m	 |0,2 m	 |0,4 m	 |0,7 m	 |1,0 m	 |1,0 m  |
  * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |- 	 |0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
