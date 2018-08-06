@@ -6,8 +6,8 @@ from enum import IntEnum
 from rozum.util import Singleton
 from rozum.constants import *
 
-log = logging.getLogger(__name__)
-log.addHandler(logging.NullHandler())
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.NullHandler())
 # TODO Switching servo working states: rr_setup_nmt_callback, rr_describe_nmt
 # TODO add invoke_time_calculation
 # TODO write doc strings
@@ -24,9 +24,9 @@ class CtypesEnum(IntEnum):  # for future use
 def _log_func_status(func, status):
     message = "Call {} returned {}".format(func.__name__, RET_STATUS_MESSAGE[status])
     if status == RET_OK.value:
-        log.info(message)
+        logger.info(message)
     else:
-        log.error(message)
+        logger.error(message)
 
 
 def ret_status_t(func):
@@ -177,7 +177,7 @@ class Interface(object):
         self._interface = self._api.rr_init_interface(bytes(interface_name, encoding="utf-8"))
         if self._interface is None:
             message = "Failed to initialize interface by name: {}".format(interface_name)
-            log.error(message)
+            logger.error(message)
             raise AttributeError(message)
         self._servos = {}
         time.sleep(0.5)  # for interface initialization
@@ -191,7 +191,7 @@ class Interface(object):
             servo_interface = self._api.rr_init_servo(self._interface, c_uint8(identifier))
             if servo_interface is None:
                 message = "Failed to initialize servo by id: {}".format(identifier)
-                log.error(message)
+                logger.error(message)
                 raise AttributeError(message)
             self._servos[identifier] = Servo(self._api, servo_interface, identifier)
         return self._servos[identifier]
