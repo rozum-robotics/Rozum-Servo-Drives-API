@@ -1,8 +1,8 @@
-from rozum.util import Singleton
 from ctypes import *
 import time
 import os
 from enum import IntEnum
+from rozum.util import Singleton
 # TODO Switching servo working states: rr_setup_nmt_callback, rr_describe_nmt
 # TODO Check statuses and logging
 # TODO add invoke_time_calculation
