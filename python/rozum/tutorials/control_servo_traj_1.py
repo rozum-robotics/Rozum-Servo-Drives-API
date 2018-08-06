@@ -1,7 +1,7 @@
 import logging
 import os
 from rozum.servo import ServoApi
-from rozum.tutorials import INTERFACE_NAME, SERVO_ID_1
+from rozum.tutorials import INTERFACE_NAME, SERVO_1_ID
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
@@ -17,8 +17,8 @@ if __name__ == '__main__':
     logger.info("Initializing interface {}".format(INTERFACE_NAME))
     interface = api.init_interface(INTERFACE_NAME)
 
-    logger.info("Initializing servo id {}".format(SERVO_ID_1))
-    servo = api.init_servo(SERVO_ID_1)
+    logger.info("Initializing servo id {}".format(SERVO_1_ID))
+    servo = api.init_servo(SERVO_1_ID)
 
     logger.info("Appending points")
     servo.add_motion_point(100., 0., 6000)

@@ -17,11 +17,11 @@ if __name__ == '__main__':
     logger.info("Initializing interface {}".format(INTERFACE_NAME))
     interface = api.init_interface(INTERFACE_NAME)
 
-    logger.info("Initializing servo id {}".format(SERVO_ID_1))
-    servo1 = api.init_servo(SERVO_ID_1)
+    logger.info("Initializing servo id {}".format(SERVO_1_ID))
+    servo1 = api.init_servo(SERVO_1_ID)
 
-    logger.info("Initializing servo id {}".format(SERVO_ID_2))
-    servo2 = api.init_servo(SERVO_ID_2)
+    logger.info("Initializing servo id {}".format(SERVO_2_ID))
+    servo2 = api.init_servo(SERVO_2_ID)
 
     logger.info("Appending points")
     servo1.add_motion_point(100., 0., 6000)
