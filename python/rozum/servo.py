@@ -1,94 +1,40 @@
-from ctypes import *
 import time
 import os
+import logging
+from functools import wraps
 from enum import IntEnum
 from rozum.util import Singleton
+from rozum.constants import *
+
+log = logging.getLogger(__name__)
+log.addHandler(logging.NullHandler())
 # TODO Switching servo working states: rr_setup_nmt_callback, rr_describe_nmt
-# TODO Check statuses and logging
 # TODO add invoke_time_calculation
 # TODO write doc strings
 # TODO tests
 # TODO constants as enums and modify _api functions so that they return enums
 
-(RET_OK,                                    # < Status OK
- RET_ERROR,                                 # < Generic error
- RET_BAD_INSTANCE,                          # < Bad interface or servo instance (null)
- RET_BUSY,                                  # < Device is busy
- RET_WRONG_TRAJ,                            # < Wrong trajectory
- RET_LOCKED,                                # < Device is locked
- RET_STOPPED,                               # < Device is in STOPPED state
- RET_TIMEOUT,                               # < Communication timeout
- RET_ZERO_SIZE,                             # < Zero size
- RET_SIZE_MISMATCH,                         # < Received & target size mismatch
- RET_WRONG_ARG                              # < Wrong function argurent
- ) = map(c_int, range(11))
 
-(APP_PARAM_NULL,                            # < Not used
- APP_PARAM_POSITION,                        # < Actual multi-turn position of the output shaft (degrees)
- APP_PARAM_VELOCITY,                        # < Actual velocity of the output shaft (degrees per second)
- APP_PARAM_POSITION_ROTOR,                  # < Actual position of the motor shaft (degrees)
- APP_PARAM_VELOCITY_ROTOR,                  # < Actual velocity of the motor shaft (degrees per second)
- APP_PARAM_POSITION_GEAR_360,               # < Actual single-turn position of the output shaft (from 0 to 360 degrees)
- APP_PARAM_POSITION_GEAR_EMULATED,          # < Actual multi-turn position of the motor shaft multiplied by gear ratio (degrees)
- APP_PARAM_CURRENT_INPUT,                   # < Actual DC current (amperes)
- APP_PARAM_CURRENT_OUTPUT,                  # < Not used
- APP_PARAM_VOLTAGE_INPUT,                   # < Actual DC voltage (volts)
- APP_PARAM_VOLTAGE_OUTPUT,                  # < Not used
- APP_PARAM_CURRENT_PHASE,                   # < Actual magnitude of AC current (amperes)
- APP_PARAM_TEMPERATURE_ACTUATOR,            # < Not used
- APP_PARAM_TEMPERATURE_ELECTRONICS,         # < Actual temperature of the motor controller
- APP_PARAM_TORQUE,                          # < Not used
- APP_PARAM_ACCELERATION,                    # < Not used
- APP_PARAM_ACCELERATION_ROTOR,              # < Not used
- APP_PARAM_CURRENT_PHASE_1,                 # < Actual phase 1 current
- APP_PARAM_CURRENT_PHASE_2,                 # < Actual phase 2 current
- APP_PARAM_CURRENT_PHASE_3,                 # < Actual phase 3 current
- APP_PARAM_CURRENT_RAW,                     # < Not used
- APP_PARAM_CURRENT_RAW_2,                   # < Not used
- APP_PARAM_CURRENT_RAW_3,                   # < Not used
- APP_PARAM_ENCODER_MASTER_TRACK,            # < Internal use only
- APP_PARAM_ENCODER_NONIUS_TRACK,            # < Internal use only
- APP_PARAM_ENCODER_MOTOR_MASTER_TRACK,      # < Internal use only
- APP_PARAM_ENCODER_MOTOR_NONIUS_TRACK,      # < Internal use only
- APP_PARAM_TORQUE_ELECTRIC_CALC,            # < Internal use only
- APP_PARAM_CONTROLLER_VELOCITY_ERROR,       # < Velocity following error
- APP_PARAM_CONTROLLER_VELOCITY_SETPOINT,    # < Velocity target
- APP_PARAM_CONTROLLER_VELOCITY_FEEDBACK,    # < Actual velocity (degrees per second)
- APP_PARAM_CONTROLLER_VELOCITY_OUTPUT,      # < Not used
- APP_PARAM_CONTROLLER_POSITION_ERROR,       # < Position following error
- APP_PARAM_CONTROLLER_POSITION_SETPOINT,    # < Position target
- APP_PARAM_CONTROLLER_POSITION_FEEDBACK,    # < Actual position (degrees)
- APP_PARAM_CONTROLLER_POSITION_OUTPUT,      # < Not used
- APP_PARAM_CONTROL_MODE,                    # < Internal use only
- APP_PARAM_FOC_ANGLE,                       # < Internal use only
- APP_PARAM_FOC_IA,                          # < Internal use only
- APP_PARAM_FOC_IB,                          # < Internal use only
- APP_PARAM_FOC_IQ_SET,                      # < Internal use only
- APP_PARAM_FOC_ID_SET,                      # < Internal use only
- APP_PARAM_FOC_IQ,                          # < Internal use only
- APP_PARAM_FOC_ID,                          # < Internal use only
- APP_PARAM_FOC_IQ_ERROR,                    # < Internal use only
- APP_PARAM_FOC_ID_ERROR,                    # < Internal use only
- APP_PARAM_FOC_UQ,                          # < Internal use only
- APP_PARAM_FOC_UD,                          # < Internal use only
- APP_PARAM_FOC_UA,                          # < Internal use only
- APP_PARAM_FOC_UB,                          # < Internal use only
- APP_PARAM_FOC_U1,                          # < Internal use only
- APP_PARAM_FOC_U2,                          # < Internal use only
- APP_PARAM_FOC_U3,                          # < Internal use only
- APP_PARAM_FOC_PWM1,                        # < Internal use only
- APP_PARAM_FOC_PWM2,                        # < Internal use only
- APP_PARAM_FOC_PWM3,                        # < Internal use only
- APP_PARAM_FOC_TIMER_TOP,                   # < Internal use only
- APP_PARAM_DUTY,                            # < Internal use only
- APP_PARAM_SIZE                             # < Use when you need to define the total param arrray size
- ) = map(c_int, range(59))
-
-
-class CtypesEnum(IntEnum):
+class CtypesEnum(IntEnum):  # for future use
     @classmethod
     def from_param(cls, obj):
         return int(obj)
+
+
+def _log_func_status(func, status):
+    message = "Call {} returned {}".format(func.__name__, RET_STATUS_MESSAGE[status.value])
+    if status.value == RET_OK.value:
+        log.info(message)
+    else:
+        log.error(message)
+
+
+def ret_status_t(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        status = func(args, kwargs)
+        _log_func_status(func, status)
+    return wrapper
 
 
 class Servo(object):
@@ -97,98 +43,127 @@ class Servo(object):
         self._servo = servo_interface
         self._identifier = identifier
 
+    @ret_status_t
     def param_cache_update(self):
-        self._api.rr_param_cache_update(self._servo)
+        return self._api.rr_param_cache_update(self._servo)
 
+    @ret_status_t
     def param_cache_setup_entry(self, param: c_int, enabled: bool):
-        self._api.rr_param_cache_setup_entry(self._servo, param, c_bool(enabled))
+        return self._api.rr_param_cache_setup_entry(self._servo, param, c_bool(enabled))
 
     def read_parameter(self, param: c_int):
         value = c_float()
-        self._api.rr_read_parameter(self._servo, param, byref(value))
+        status = self._api.rr_read_parameter(self._servo, param, byref(value))
+        _log_func_status(self.read_parameter, status)
         return value.value
 
     def read_cached_parameter(self, param: c_int):
         value = c_float()
-        self._api.rr_read_cached_parameter(self._servo, param, byref(value))
+        status = self._api.rr_read_cached_parameter(self._servo, param, byref(value))
+        _log_func_status(self.read_cached_parameter, status)
         return value.value
 
+    @ret_status_t
     def set_zero_position(self, position_deg: float):
-        self._api.rr_set_zero_position(self._api, c_float(position_deg))
+        return self._api.rr_set_zero_position(self._api, c_float(position_deg))
 
+    @ret_status_t
     def set_zero_position_and_save(self, position_deg: float):
-        self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
+        return self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
 
     def get_max_velocity(self):
         velocity = c_float()
-        self._api.rr_get_max_velocity(self._servo, byref(velocity))
+        status = self._api.rr_get_max_velocity(self._servo, byref(velocity))
+        _log_func_status(self.get_max_velocity, status)
         return velocity.value
 
+    @ret_status_t
     def set_max_velocity(self, max_velocity_deg_per_sec: float):
-        self._api.rr_set_max_velocity(self._servo, c_float(max_velocity_deg_per_sec))
+        return self._api.rr_set_max_velocity(self._servo, c_float(max_velocity_deg_per_sec))
 
+    @ret_status_t
     def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int):
-        self._api.rr_add_motion_point(self._servo,
+        return self._api.rr_add_motion_point(self._servo,
                                       c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms))
 
+    @ret_status_t
     def clear_points_all(self):
-        self._api.rr_clear_points_all(self._servo)
+        return self._api.rr_clear_points_all(self._servo)
 
+    @ret_status_t
     def clear_points(self, num_to_clear: int):
-        self._api.rr_clear_points(self._servo, c_uint32(num_to_clear))
+        return self._api.rr_clear_points(self._servo, c_uint32(num_to_clear))
 
     def get_points_size(self):
         size = c_uint32(0)
-        self._api.rr_get_points_size(self._servo, byref(size))
+        status = self._api.rr_get_points_size(self._servo, byref(size))
+        _log_func_status(self.get_points_size, status)
         return size.value
 
     def get_points_free_space(self):
         size = c_uint32(0)
-        self._api.rr_get_points_free_space(self._servo, byref(size))
+        status = self._api.rr_get_points_free_space(self._servo, byref(size))
+        _log_func_status(self.get_points_free_space, status)
         return size.value
 
+    @ret_status_t
     def stop_and_release(self):
-        self._api.rr_stop_and_release(self._servo)
+        return self._api.rr_stop_and_release(self._servo)
 
+    @ret_status_t
     def stop_and_freeze(self):
-        self._api.rr_stop_and_freeze(self._servo)
+        return self._api.rr_stop_and_freeze(self._servo)
 
+    @ret_status_t
     def set_current(self, current_a: float):
-        self._api.rr_set_current(self._servo, c_float(current_a))
+        return self._api.rr_set_current(self._servo, c_float(current_a))
 
+    @ret_status_t
     def set_velocity(self, velocity_deg_per_sec: float):
-        self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
+        return self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
 
+    @ret_status_t
     def set_position(self, position_deg: float):
-        self._api.rr_set_position(self._servo, c_float(position_deg))
+        return self._api.rr_set_position(self._servo, c_float(position_deg))
 
+    @ret_status_t
     def set_velocity_with_limits(self, velocity_deg_per_sec: float, current_a: float):
-        self._api.rr_set_velocity_with_limits(self._servo, c_float(velocity_deg_per_sec), c_float(current_a))
+        return self._api.rr_set_velocity_with_limits(self._servo, c_float(velocity_deg_per_sec), c_float(current_a))
 
+    @ret_status_t
     def set_position_with_limits(self, position_deg: float, velocity_deg_per_sec: float, current_a: float):
-        self._api.rr_set_position_with_limits(self._servo,
-                                              c_float(position_deg), c_float(velocity_deg_per_sec), c_float(current_a))
+        return self._api.rr_set_position_with_limits(self._servo,
+                                                     c_float(position_deg),
+                                                     c_float(velocity_deg_per_sec),
+                                                     c_float(current_a))
 
+    @ret_status_t
     def set_duty(self, duty_percent: float):
-        self._api.rr_set_duty(self._servo, c_float(duty_percent))
+        return self._api.rr_set_duty(self._servo, c_float(duty_percent))
 
+    @ret_status_t
     def reboot(self):
-        self._api.rr_servo_reboot(self._servo)
+        return self._api.rr_servo_reboot(self._servo)
 
+    @ret_status_t
     def reset_communication(self):
-        self._api.rr_servo_reset_communication(self._servo)
+        return self._api.rr_servo_reset_communication(self._servo)
 
+    @ret_status_t
     def set_state_operational(self):
-        self._api.rr_servo_set_state_operational(self._servo)
+        return self._api.rr_servo_set_state_operational(self._servo)
 
+    @ret_status_t
     def set_state_pre_operational(self):
-        self._api.rr_servo_set_state_pre_operational(self._servo)
+        return self._api.rr_servo_set_state_pre_operational(self._servo)
 
+    @ret_status_t
     def set_state_stopped(self):
-        self._api.rr_servo_set_state_stopped(self._servo)
+        return self._api.rr_servo_set_state_stopped(self._servo)
 
+    @ret_status_t
     def __del__(self):
-        self._api.rr_deinit_servo(byref(c_void_p(self._servo)))
+        return self._api.rr_deinit_servo(byref(c_void_p(self._servo)))
 
 
 class Interface(object):
@@ -196,37 +171,52 @@ class Interface(object):
     def __init__(self, library_api, interface_name):
         self._api = library_api
         self._interface = self._api.rr_init_interface(bytes(interface_name, encoding="utf-8"))
+        if self._interface is None:
+            message = "Failed to initialize interface by name: {}".format(interface_name)
+            log.error(message)
+            raise AttributeError(message)
         self._servos = {}
         time.sleep(0.5)  # for interface initialization
 
+    @ret_status_t
     def start_motion(self, timestamp_ms: int):
-        self._api.rr_start_motion(self._interface, c_uint32(timestamp_ms))
+        return self._api.rr_start_motion(self._interface, c_uint32(timestamp_ms))
 
     def init_servo(self, identifier) -> Servo:
         if identifier not in self._servos:
             servo_interface = self._api.rr_init_servo(self._interface, c_uint8(identifier))
+            if servo_interface is None:
+                message = "Failed to initialize servo by id: {}".format(identifier)
+                log.error(message)
+                raise AttributeError(message)
             self._servos[identifier] = Servo(self._api, servo_interface, identifier)
         return self._servos[identifier]
 
+    @ret_status_t
     def net_reboot(self):
-        self._api.rr_net_reboot(self._interface)
+        return self._api.rr_net_reboot(self._interface)
 
+    @ret_status_t
     def net_reset_communication(self):
-        self._api.rr_net_reset_communication(self._interface)
+        return self._api.rr_net_reset_communication(self._interface)
 
+    @ret_status_t
     def net_set_state_operational(self):
-        self._api.rr_net_set_state_operational(self._interface)
+        return self._api.rr_net_set_state_operational(self._interface)
 
+    @ret_status_t
     def net_set_state_pre_operational(self):
-        self._api.rr_net_set_state_pre_operational(self._interface)
+        return self._api.rr_net_set_state_pre_operational(self._interface)
 
+    @ret_status_t
     def net_set_state_stopped(self):
-        self._api.rr_net_set_state_stopped(self._interface)
+        return self._api.rr_net_set_state_stopped(self._interface)
 
+    @ret_status_t
     def __del__(self):
         for servo in self._servos.values():
             del servo
-        self._api.rr_deinit_interface(byref(c_void_p(self._interface)))
+        return self._api.rr_deinit_interface(byref(c_void_p(self._interface)))
 
 
 class ServoApi(object, metaclass=Singleton):
