@@ -298,5 +298,11 @@ class ServoApi(object, metaclass=Singleton):
     def sleep_ms(self, ms: int):
         self._api.rr_sleep_ms(c_int(ms))
 
+    def describe_emcy_bit(self, bit: c_uint8):
+        return self._api.rr_describe_emcy_bit(bit)
+
+    def describe_emcy_code(self, code: c_uint16):
+        return self._api.rr_describe_emcy_code(code)
+
     def __del__(self):
         self.interface.deinit_interface()
