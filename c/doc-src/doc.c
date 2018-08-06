@@ -123,10 +123,10 @@
  * <b>Table 1: Line segment lengths vs. cross-sections</b> 
  * |Servo model|L2||||||L3||||||
  * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|
- * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
- * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0,2 m	 |0,2 m	 |0,4 m	 |0,7 m	 |1,0 m	 |1,0 m  |
- * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
- * |RD85	   |0,8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|0,04 m	 |0,05 m |0,08 m |0,13 m |0,21 m |0,32 m |
+ * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>0.25 mm<SUP>2</SUP>||0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
+ * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0,1 m	 |0,2 m	 |0,2 m	 |0,4 m	 |0,7 m	 |1,0 m	 |1,0 m  |
+ * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
+ * |RD85	   |0,8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|-  	 |-   	 |-      |0,08 m |0,13 m |0,21 m |0,32 m |
  * 
  * @subsection sect_22 3.2. CAN connection
  * The CAN connection of RDrive servos is a two-wire bus line transmitting differential signals: CAN_HIGH and CAN_LOW. 
@@ -142,7 +142,7 @@
  * - To ensure the baud rate required for your application, L&Sigma; should meet the specific values as indicated in Table 2.
  * 
  * <b>Table 2: CAN line parameters</b> 
- * |Baud Rate |50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 kbit/s|
+ * |Baud Rate |50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 Mbit/s|
  * |------------------------|---------|---------|---------|---------|---------|
  * |Total line length, L&Sigma;, m|< 1000|< 500 |< 200|< 100|< 40|
  * |Cross-section, mm2|0.75 to 0.8|0.5 to 0.6|0.34 to 0.6|0.34 to 0.6|0.25 to 0.34|
