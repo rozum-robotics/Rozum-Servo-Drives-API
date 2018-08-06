@@ -125,7 +125,7 @@
  * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
  * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|0.25 mm<SUP>2</SUP>|0.5 mm<SUP>2</SUP>|0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
  * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0,1 m	 |0,1 m	 |0,2 m	 |0,2 m	 |0,4 m	 |0,7 m	 |1,0 m	 |1,0 m  |
- * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |- 	 |0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
+ * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |0,1 m	 |0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
  * |RD85	   |0,8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|-  	 |-  	 |-   	 |-      |0,08 m |0,13 m |0,21 m |0,32 m |
  * 
  * @subsection sect_22 3.2. CAN connection
