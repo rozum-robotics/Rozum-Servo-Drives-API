@@ -13,11 +13,11 @@
  * The set comprises the following components:
  * - an energy eater complete with a power supply connector (see Section 2.1)
  * - a capacitor module incorporating one or more capacitors (see Section 2.2)
- * - a CAN-USB dongle and a 1 m long USB-A to Micro USB cable to provide communication with RDrive servos
+ * - a CAN-USB dongle and a USB-A to Micro USB cable (1 m long) to provide communication with RDrive servos
  * - a 120 Ohm terminating resistor (see Section 3.2)
- * - a quick-start cable set comprising power supply (1 m) and CAN (0.5 m) cables (1 pcs of each type per servo)
+ * - a quick-start cable set comprising power supply (1 m long) and CAN (0.5 m long) cables (1 pcs of each type per servo)
  * 
- * It is the user's responsibility to additionally provide <b>a power supply</b>. The power supply must meet the following requirements:
+ * It is the user's responsibility to additionally provide <b>a power supply unit</b>. The power supply unit must meet the following requirements:
  * - Supply voltage—48 V max
  * - Power equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3
  * 
@@ -33,7 +33,7 @@
  * @image latex "Servo_box_model_1.png" "Energy eater—Model 1" width=150pt
  * </li>
  * <li>
- * <b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>exceeding 25 W</b>
+ * <b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>from 25 W to 120 W (1,000 W peak)</b>
  * @image html "eater_isometric.PNG" "Energy eater—Model 2" width=400
  * @image latex "eater_isometric.PNG" "Energy eater—Model 2" width=150pt
  * </li>
@@ -121,9 +121,9 @@
  * |Servo model|L2||||||L3||||||||
  * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
  * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|0.25 mm<SUP>2</SUP>|0.5 mm<SUP>2</SUP>|0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
- * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0,1 m	 |0,1 m	 |0,2 m	 |0,2 m	 |0,4 m	 |0,7 m	 |1,0 m	 |1,0 m  |
- * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |0,1 m	 |0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
- * |RD85	   |0,8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|-  	 |-  	 |-   	 |-      |0,08 m |0,13 m |0,21 m |0,32 m |
+ * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0.1 m	 |0.1 m	 |0.2 m	 |0.2 m	 |0.4 m	 |0.7 m	 |1.0 m	 |1.0 m  |
+ * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |0.1 m	 |0.1 m	 |0.1 m	 |0.2 m	 |0.4 m	 |1.0 m	 |1.0 m  |
+ * |RD85	   |0.8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|-  	 |-  	 |-   	 |-      |0.08 m |0.13 m |0.21 m |0.32 m |
  * 
  * @subsection sect_22 3.2. CAN connection
  * The CAN connection of RDrive servos is a two-wire bus line transmitting differential signals: CAN_HIGH and CAN_LOW. 
