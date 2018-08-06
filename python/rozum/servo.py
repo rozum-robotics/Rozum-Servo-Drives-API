@@ -110,6 +110,20 @@ class Servo(object):
         _log_func_status(self.get_points_free_space, status)
         return size.value
 
+    def invoke_time_calculation(self,
+                                start_position: float, start_velocity_deg_per_sec: float,
+                                start_acceleration_deg_per_sec2: float, start_time_ms: int,
+                                end_position: float, end_velocity_deg_per_sec: float,
+                                end_acceleration_deg_per_sec2: float, end_time_ms: int):
+        calculated_time = c_uint32(0)
+        status = self._api.rr_invoke_time_calculation(self._servo,
+                                                      c_float(start_position), c_float(start_velocity_deg_per_sec),
+                                                      c_float(start_acceleration_deg_per_sec2), c_uint32(start_time_ms),
+                                                      c_float(end_position), c_float(end_velocity_deg_per_sec),
+                                                      c_float(end_acceleration_deg_per_sec2), c_uint32(end_time_ms),
+                                                      byref(calculated_time))
+        return calculated_time.value
+
     @ret_status_t
     def stop_and_release(self):
         return self._api.rr_stop_and_release(self._servo)
