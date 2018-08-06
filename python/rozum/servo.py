@@ -258,7 +258,7 @@ class ServoApi(object, metaclass=Singleton):
         return self._interface
 
     def load_library(self, library_path: str = None):
-        if library_path is None:
+        if library_path is None and self._api is None:
             self._api = CDLL(os.path.join(os.path.dirname(__file__), "libservo_api.so"))
         else:
             if ServoApi.__LIBRARY_NAME not in library_path:
