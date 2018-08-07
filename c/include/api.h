@@ -17,13 +17,13 @@
 
 /* Exported macro ------------------------------------------------------------*/
 /**
- * @brief Standart debug 
+ * @brief Standard debug 
  * 
  */
 #define API_DEBUG(...) fprintf(stderr, __VA_ARGS__)
 
 /**
- * @brief Make string from the variable 
+ * @brief Make a string from the variable 
  * 
  */
 #define STRFY(x) #x
@@ -47,15 +47,15 @@ typedef enum
     RET_BUSY,          ///< Device is busy
     RET_WRONG_TRAJ,    ///< Wrong trajectory
     RET_LOCKED,        ///< Device is locked
-    RET_STOPPED,       ///< Device is in STOPPED state
+    RET_STOPPED,       ///< Device is in the STOPPED state
     RET_TIMEOUT,       ///< Communication timeout
     RET_ZERO_SIZE,     ///< Zero size
-    RET_SIZE_MISMATCH, ///< Received & target size mismatch
-    RET_WRONG_ARG      ///< Wrong function argurent
+    RET_SIZE_MISMATCH, ///< Received and target size mismatch
+    RET_WRONG_ARG      ///< Wrong function argument
 } rr_ret_status_t;
 
 /**
- * @brief Device parameter & source indexes
+ * @brief Device parameter and source indices
  * 
  */
 typedef enum
@@ -67,11 +67,11 @@ typedef enum
     APP_PARAM_VELOCITY_ROTOR,               ///< Actual velocity of the motor shaft (degrees per second)
     APP_PARAM_POSITION_GEAR_360,            ///< Actual single-turn position of the output shaft (from 0 to 360 degrees)
     APP_PARAM_POSITION_GEAR_EMULATED,       ///< Actual multi-turn position of the motor shaft multiplied by gear ratio (degrees)
-    APP_PARAM_CURRENT_INPUT,                ///< Actual DC current (amperes)
+    APP_PARAM_CURRENT_INPUT,                ///< Actual DC current (Amperes)
     APP_PARAM_CURRENT_OUTPUT,               ///< Not used
-    APP_PARAM_VOLTAGE_INPUT,                ///< Actual DC voltage (volts)
+    APP_PARAM_VOLTAGE_INPUT,                ///< Actual DC voltage (Volts)
     APP_PARAM_VOLTAGE_OUTPUT,               ///< Not used
-    APP_PARAM_CURRENT_PHASE,                ///< Actual magnitude of AC current (amperes)
+    APP_PARAM_CURRENT_PHASE,                ///< Actual magnitude of AC current (Amperes)
     APP_PARAM_TEMPERATURE_ACTUATOR,         ///< Not used
     APP_PARAM_TEMPERATURE_ELECTRONICS,      ///< Actual temperature of the motor controller
     APP_PARAM_TORQUE,                       ///< Not used
@@ -118,7 +118,7 @@ typedef enum
     APP_PARAM_FOC_PWM3,                     ///< Internal use only
     APP_PARAM_FOC_TIMER_TOP,                ///< Internal use only
     APP_PARAM_DUTY,                         ///< Internal use only
-    APP_PARAM_SIZE,                         ///< Use when you need to define the total param arrray size
+    APP_PARAM_SIZE,                         ///< Use when you need to define the total parameter array size
 } rr_servo_param_t;
 
 /**
@@ -131,11 +131,11 @@ typedef enum
 typedef enum
 {
     RR_NMT_INITIALIZING = 0,      /**< Device is initializing */
-    RR_NMT_BOOT = 2,              /**< Device executing bootloader application */
-    RR_NMT_PRE_OPERATIONAL = 127, /**< Device is in pre-operational state */
-    RR_NMT_OPERATIONAL = 5,       /**< Device is in operational state */
+    RR_NMT_BOOT = 2,              /**< Device is executing a bootloader application */
+    RR_NMT_PRE_OPERATIONAL = 127, /**< Device is in the pre-operational state */
+    RR_NMT_OPERATIONAL = 5,       /**< Device is in the operational state */
     RR_NMT_STOPPED = 4,           /**< Device is stopped */
-    RR_NMT_HB_TIMEOUT = -1,       /**< Device heartbeat timeout (device disappeared from bus)*/
+    RR_NMT_HB_TIMEOUT = -1,       /**< Device heartbeat timeout (device disappeared from the bus)*/
 } rr_nmt_state_t;
 
 /**
@@ -155,7 +155,7 @@ typedef struct
 typedef struct
 {
     void *dev;                                  ///< Device internals
-    param_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device sources cells
+    param_cache_entry_t pcache[APP_PARAM_SIZE]; ///< Device source cells
 } rr_servo_t;
 
 /**

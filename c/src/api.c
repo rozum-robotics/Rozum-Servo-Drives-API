@@ -1466,7 +1466,7 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
 {
     if(new_can_id < 1 || new_can_id > 127) return RET_WRONG_ARG;
 
-    /* Check that new id is not the sane */
+    /* Check that new id is not the same */
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     if(dev->id == new_can_id) return RET_OK;
 

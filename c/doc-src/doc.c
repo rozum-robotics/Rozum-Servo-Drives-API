@@ -11,16 +11,13 @@
  * 
  * A <b>servobox</b> is a set of deliverables enabling users to easily connect, control, and operate RDrive servo motors in the designed range of loads.
  * The set comprises the following components:
- * - an energy eater (see Section 2.1)
- * - one or more capacitor modules (see Section 2.2)
- * - a CAN-USB dongle to provide communication with RDrive servos
+ * - an energy eater complete with a power supply connector (see Section 2.1)
+ * - a capacitor module incorporating one or more capacitors (see Section 2.2)
+ * - a CAN-USB dongle and a USB-A to Micro USB cable (1 m long) to provide communication with RDrive servos
  * - a 120 Ohm terminating resistor (see Section 3.2)
- * - a quick-start cable set comprising power supply and CAN cables (2 pcs each per servo)
+ * - a quick-start cable set comprising power supply (1 m long) and CAN (0.5 m long) cables (1 pcs of each type per servo)
  * 
- * It is the user's responsibility to additionally provide <b>a power supply</b> and a <b>USB-A to Micro USB cable</b> for connecting the CAN-USB dongle to PC.
- * 
- * The USB-A to Micro USB cable must not be longer than 5 meters.
- * The power supply must meet the following requirements:
+ * It is the user's responsibility to additionally provide <b>a power supply unit</b>. The power supply unit must meet the following requirements:
  * - Supply voltage—48 V max
  * - Power equal to the total nominal power of all servo motors connected to it multiplied by a factor of 2.5 to 3
  * 
@@ -29,12 +26,18 @@
  * An energy eater is used to dissipate dynamic braking energy. When not dissipated, this energy can cause servos to generate voltages
  * in excess of the power supply voltage, which can damage servos beyond repair.
  * <p>The Rozum Robotics model range includes the following two models of energy eaters:</p>
- * <ul><li><b>Model 1</b>—for applications with average dissipated power (at 60 degrees C max.) of <b>less than 25 W</b>
+ * <ul>
+ * <li>
+ * <b>Model 1</b>—for applications with average dissipated power (at 60 degrees C max.) of <b>less than 25 W</b>
  * @image html "Servo_box_model_1.png" "Energy eater—Model 1" width=400
- * @image latex "Servo_box_model_1.png" "Energy eater—Model 1" width=150pt</li>
- * <li><b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>exceeding 25 W</b>
+ * @image latex "Servo_box_model_1.png" "Energy eater—Model 1" width=150pt
+ * </li>
+ * <li>
+ * <b>Model 2</b>—for applications with average dissipated power (at 60 degrees C max.) <b>from 25 W to 120 W (1,000 W peak)</b>
  * @image html "eater_isometric.PNG" "Energy eater—Model 2" width=400
- * @image latex "eater_isometric.PNG" "Energy eater—Model 2" width=150pt</li></ul>
+ * @image latex "eater_isometric.PNG" "Energy eater—Model 2" width=150pt
+ * </li>
+ * </ul>
  * <p>When the average dissipated power of your application is less than 25 W (at 60 degrees C max.),
  * you can also assemble an energy eater on your own based on the schematic below.</p>
  * @image html "eater.png" "Eater module schematic" width=400
@@ -115,12 +118,12 @@
  * - The L3 length (from the capacitor to any servo) must not exceed the values from Table 1.
  * 
  * <b>Table 1: Line segment lengths vs. cross-sections</b> 
- * |Servo model|L2||||||L3||||||
- * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|
- * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
- * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0,2 m	 |0,2 m	 |0,4 m	 |0,7 m	 |1,0 m	 |1,0 m  |
- * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|0,1 m	 |0,1 m	 |0,2 m	 |0,4 m	 |1,0 m	 |1,0 m  |
- * |RD85	   |0,8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|0,04 m	 |0,05 m |0,08 m |0,13 m |0,21 m |0,32 m |
+ * |Servo model|L2||||||L3||||||||
+ * |-----------|-|-|-|-|-|-|-|-|-|-|-|-|-|-|
+ * |           |0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|0.25 mm<SUP>2</SUP>|0.5 mm<SUP>2</SUP>|0.75 mm<SUP>2</SUP>|1.0 mm<SUP>2</SUP>|1.5 mm<SUP>2</SUP>|2.5 mm<SUP>2</SUP>|4.0 mm<SUP>2</SUP>|6.0 mm<SUP>2</SUP>|
+ * |RD50	   |4 m	    |5 m	|8 m	|10 m	|10 m	|10 m	|0.1 m	 |0.1 m	 |0.2 m	 |0.2 m	 |0.4 m	 |0.7 m	 |1.0 m	 |1.0 m  |
+ * |RD60	   |2 m	    |3 m	|5 m	|9 m	|10 m	|10 m	|-  	 |0.1 m	 |0.1 m	 |0.1 m	 |0.2 m	 |0.4 m	 |1.0 m	 |1.0 m  |
+ * |RD85	   |0.8 m	|1 m	|1 m	|2 m	|4 m	|6 m	|-  	 |-  	 |-   	 |-      |0.08 m |0.13 m |0.21 m |0.32 m |
  * 
  * @subsection sect_22 3.2. CAN connection
  * The CAN connection of RDrive servos is a two-wire bus line transmitting differential signals: CAN_HIGH and CAN_LOW. 
@@ -132,11 +135,11 @@
  * - CAN bus lines of less than 40 m long should be terminated with 120 Ohm resistors at both ends. For bus lines of over 40 m long, use 150-300 Ohm resistors.<br>
  * <b>Note:</b> You have to provide only one resistor because one is already integrated into the CAN-USB dongle supplied as part of the servobox solution.
  * - The bus line cable must be a twisted pair cable with the lay length of 2 to 4 cm.
- * - The cross section of the bus line cable must be between 0.12 mm2 to 0.3 mm2.
+ * - For the cross section of the bus line, see Table 2.
  * - To ensure the baud rate required for your application, L&Sigma; should meet the specific values as indicated in Table 2.
  * 
  * <b>Table 2: CAN line parameters</b> 
- * |Baud Rate |50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 kbit/s|
+ * |Baud Rate |50 kbit/s|100 kbit/s|250 kbit/s|500 kbit/s|1 Mbit/s|
  * |------------------------|---------|---------|---------|---------|---------|
  * |Total line length, L&Sigma;, m|< 1000|< 500 |< 200|< 100|< 40|
  * |Cross-section, mm2|0.75 to 0.8|0.5 to 0.6|0.34 to 0.6|0.34 to 0.6|0.25 to 0.34|

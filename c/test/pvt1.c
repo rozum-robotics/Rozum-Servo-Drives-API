@@ -2,7 +2,7 @@
 #include <sys/time.h>
 #include <math.h>
 
-#define SERVO_ID 36
+#define SERVO_ID 37
 
 //#define M() printf("%d\n", __LINE__)
 #define M()
@@ -26,14 +26,41 @@ typedef struct
 	float t;
 } task_entry_t;
 
+
 task_entry_t task[] = 
 {
-	{0.0, 0.0, 0.0},
-	{45.0, 30.0, 1000.0},
-	{90.0, 15.0, 1000.0},
-	{45.0, 30.0, 1000.0},
-	{0.0, 0.0, 1000.0},
+	{ 0.0,   0.0,  0.0},
+	{ 5.0, 100.0, 120.0},
+	{10.0, 100.0, 50.0},
+	{15.0, 100.0, 50.0},
+	{20.0, 100.0, 50.0},
+	{25.0, 100.0, 50.0},
+	{30.0, 100.0, 50.0},
+	{35.0, 100.0, 50.0},
+	{40.0, 100.0, 50.0},
+	{45.0, 100.0, 50.0},
+	{50.0, 130.0, 50.0},
+	{55.0, 100.0, 50.0},
+	{60.0, 100.0, 50.0},
+	{65.0, 100.0, 50.0},
+	{70.0, 100.0, 50.0},
+	{75.0, 100.0, 50.0},
+	{80.0, 100.0, 50.0},
+	{85.0, 100.0, 50.0},
+	{90.0, 0.0, 120.0},
 };
+
+/*
+task_entry_t task[] = 
+{
+	{ 0.0,   0.0,  0.0},
+	{ 45, 30.0, 2000.0},
+	{ 90, 0.0, 2000.0},
+	{ 45, -30.0, 2000.0},
+	{0.0, 0.0, 2000.0},
+};
+*/
+
 
 #define GO_HOME_SPD	30.0
 
@@ -52,7 +79,7 @@ int main(int argc, char *argv[])
 
     rr_set_debug_log_stream(stderr);
 
-    rr_can_interface_t *iface = rr_init_interface("192.168.0.124");
+    rr_can_interface_t *iface = rr_init_interface("192.168.0.126");
 	rr_setup_nmt_callback(iface, nmt_cb);
 	rr_setup_emcy_callback(iface, emcy_cb);
 

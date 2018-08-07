@@ -22,4 +22,4 @@ legend('Calculated velocity', 'PVT velocity');
 xlabel('Time, ms');
 ylabel('Velocity, deg/s');
 
-print ('PVT', '-dpng');
+%print ('PVT', '-dpng');
