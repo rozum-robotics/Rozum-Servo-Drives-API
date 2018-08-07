@@ -30,7 +30,7 @@ _Hint_: For Linux, type in `ls /dev/serial/by-id/` in the terminal to find out t
 3. Navigate to the `tutorials` folder and replace the constants in `__init__.py` with your relevant values. The constants are as follows:
   * `LIBRARY_PATH` - full path to the library (string)
   * `INTERFACE_NAME` - name of the interface (response from Step 2), e.g., "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00" 
-_Note:_ You can leave `LIBRARY_PATH = None` if you copied library into `rozum` folder in Step 1.
+  _Note:_ You can leave `LIBRARY_PATH = None` if you copied library into `rozum` folder in Step 1.
 4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the terminal.
 
 ### Usage
