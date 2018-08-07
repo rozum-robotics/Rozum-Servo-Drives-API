@@ -198,6 +198,7 @@ typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16
 /* Ref: http://dev.rozum.com/rozum-java/leonardo/blob/develop/devices/motor/cyber-api/src/main/java/com/rozum/cyber/api/protocol/prt3/CyberProtocol3.java */
 
 void rr_sleep_ms(int ms);
+rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int sz, int retry, int tout);
 
 void rr_set_debug_log_stream(FILE *f);
 void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f);
