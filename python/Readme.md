@@ -1,12 +1,12 @@
 # Python-API
 This folder contains `Python 3` wrapper for the `C` library. 
-`ctypes` module was used for implementation.
+Implementation is based on the `ctypes` module.
 
 ### Requirements
 1. Operating systems: Linux, Mac OS, Windows (Cygwin)
 2. Python version 3.5 or later.
-3. No extra python packages required.
-4. libservo_api shared library. For building instructions refer [here](../c/README.md).
+3. No extra Python packages required.
+4. libservo_api shared library. For building instructions, refer [here](../c/README.md).
 
 ### File structure
    `rozum` - package root
@@ -20,22 +20,21 @@ This folder contains `Python 3` wrapper for the `C` library.
    `util.py` - utility functions
    
 ### Installation
-For now installation via **pip** is not supported. 
-So you should insert this module into your project manually.
-Consider copying `rozum` module into your project root.
+Currently, installation via **pip** is not supported. 
+So, copy the `rozum` module into your project root manually.
 
 ### Getting started
-1. Build libservo_api shared library and it is highly recommended to copy it into `rozum` folder.
-2. Discover **_can_** interface name. 
-_Hint_: For linux users it could be found via `ls /dev/serial/by-id/` in terminal and it would look like `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
-Now you can try executing tutorials.
-3. Navigate to `tutorials` folder and change constants in `__init__.py` with your relevant values.
-`LIBRARY_PATH` - full path to library (string). `INTERFACE_NAME` - e.g. "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00" 
-_Note:_ you can leave `LIBRARY_PATH = None` if you copied library into rozum folder in step one.
-4. Try to run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in terminal.
+1. Build the libservo_api shared library. Make sure to copy it into the `rozum` folder.
+2. Find out **_can_** interface name. 
+_Hint_: For Linux, type in `ls /dev/serial/by-id/` in the terminal to find out the interface name. The response should be something like `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
+3. Navigate to the `tutorials` folder and replace the constants in `__init__.py` with your relevant values. The constants are as follows:
++`LIBRARY_PATH` - full path to the library (string)
++`INTERFACE_NAME` - name of the interface (response from Step 2), e.g., "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00" 
+_Note:_ You can leave `LIBRARY_PATH = None` if you copied library into `rozum` folder in Step 1.
+4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the terminal.
 
 ### Usage
-You may like to refer to `tutorials` for information of intrest.
+Below is the usual sequence of working with servos. For detailed instructions, refer to `tutorials`.
 ```python
 # importing modules
 from rozum.constants import *
@@ -54,7 +53,7 @@ interface = api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Int
 servo = api.init_servo(64)
 
 # servo usage
-# preparing some realtime parameters for extraction
+# preparing specific realtime parameters for extraction
 servo.param_cache_setup_entry(APP_PARAM_CURRENT_INPUT, True)
 servo.param_cache_setup_entry(APP_PARAM_VOLTAGE_INPUT, True)
 
@@ -66,7 +65,7 @@ servo.add_motion_point(0, 0, 6000)
 # starting motion
 interface.start_motion(0)
 
-# reading realtime parameters via cache
+# reading realtime parameters from cache
 servo.param_cache_update()
 current_input = servo.read_cached_parameter(APP_PARAM_CURRENT_INPUT)
 voltage_input = servo.read_cached_parameter(APP_PARAM_VOLTAGE_INPUT)
