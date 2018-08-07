@@ -25,11 +25,11 @@ So, copy the `rozum` module into your project root manually.
 
 ### Getting started
 1. Build the libservo_api shared library. Make sure to copy it into the `rozum` folder.
-2. Find out **_can_** interface name. 
+2. Find out the **_can_** interface name. 
 _Hint_: For Linux, type in `ls /dev/serial/by-id/` in the terminal. The response should be something like `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
 3. Navigate to the `tutorials` folder and replace the constants in `__init__.py` with your relevant values. The constants are as follows:
   * `LIBRARY_PATH` - full path to the library (string)
-  * `INTERFACE_NAME` - name of the interface (response from Step 2), e.g., "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00" 
+  * `INTERFACE_NAME` - name of the interface (response from Step 2), e.g., "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00"   
    _Note:_ You can leave `LIBRARY_PATH = None` if you copied library into `rozum` folder in Step 1.
 4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the terminal.
 
