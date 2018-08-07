@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from rozum.servo import ServoApi
-from rozum.tutorials import INTERFACE_NAME, SERVO_1_ID
+from rozum.tutorial import *
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     api = ServoApi()
 
     logger.info("Loading library")
-    api.load_library()
+    api.load_library(LIBRARY_PATH)
 
     logger.info("Initializing interface {}".format(INTERFACE_NAME))
     interface = api.init_interface(INTERFACE_NAME)
@@ -24,5 +24,14 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = api.init_servo(SERVO_1_ID)
 
-    max_velocity = servo.get_max_velocity()
-    logger.info("Max velocity {}".format(max_velocity))
+    logger.info("Appending points")
+    servo.add_motion_point(100., 0., 6000)
+    servo.add_motion_point(-100., 0., 6000)
+    servo.add_motion_point(0, 0, 6000)
+    logger.info("Starting motion")
+    interface.start_motion(0)
+
+    logger.info("Waiting till motion ends")
+    api.sleep_ms(20000)
+
+

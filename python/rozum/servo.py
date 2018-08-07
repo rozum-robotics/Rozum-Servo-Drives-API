@@ -193,7 +193,7 @@ class Interface(object):
 
 
 class ServoApi(object, metaclass=Singleton):
-    __LIBRARY_NAME = "libservo_api.so"
+    __LIBRARY_NAME = "libservo_api"
 
     def __init__(self):
         self._api = None

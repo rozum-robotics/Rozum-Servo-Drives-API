@@ -7,7 +7,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from rozum.servo import ServoApi
-from rozum.tutorials import INTERFACE_NAME
+from rozum.tutorial import *
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     api = ServoApi()
 
     logger.info("Loading library")
-    api.load_library()
+    api.load_library(LIBRARY_PATH)
 
     logger.info("Initializing interface")
     interface = api.init_interface(INTERFACE_NAME)
