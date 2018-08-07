@@ -87,14 +87,17 @@ class Servo(object):
                                                       byref(calculated_time))
         return calculated_time.value
 
-    def stop_and_release(self):
+    def release(self):
         return self._api.rr_release(self._servo)
 
-    def stop_and_freeze(self):
+    def freeze(self):
         return self._api.rr_freeze(self._servo)
 
     def set_current(self, current_a: float):
         return self._api.rr_set_current(self._servo, c_float(current_a))
+
+    def brake_engage(self, en: bool):
+        return self._api.rr_brake_engage(self._servo, c_bool(en))
 
     def set_velocity(self, velocity_deg_per_sec: float):
         return self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
