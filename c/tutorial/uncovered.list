@@ -13,8 +13,8 @@
     int rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
     int rr_net_set_state_stopped(const rr_can_interface_t *interface);
 
-    int rr_stop_and_release(const rr_servo_t *servo);
-    int rr_stop_and_freeze(const rr_servo_t *servo);
+    int rr_release(const rr_servo_t *servo);
+    int rr_freeze(const rr_servo_t *servo);
 
     int rr_set_current(const rr_servo_t *servo, const float current_a);
     int rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec);

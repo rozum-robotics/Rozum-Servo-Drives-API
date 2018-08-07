@@ -225,8 +225,8 @@ rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface
 rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface);
 
-rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo);
-rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo);
+rr_ret_status_t rr_release(const rr_servo_t *servo);
+rr_ret_status_t rr_freeze(const rr_servo_t *servo);
 
 
 rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en);

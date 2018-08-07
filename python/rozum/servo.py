@@ -88,10 +88,10 @@ class Servo(object):
         return calculated_time.value
 
     def stop_and_release(self):
-        return self._api.rr_stop_and_release(self._servo)
+        return self._api.rr_release(self._servo)
 
     def stop_and_freeze(self):
-        return self._api.rr_stop_and_freeze(self._servo)
+        return self._api.rr_freeze(self._servo)
 
     def set_current(self, current_a: float):
         return self._api.rr_set_current(self._servo, c_float(current_a))

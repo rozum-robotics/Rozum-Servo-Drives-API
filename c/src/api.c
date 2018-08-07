@@ -819,7 +819,7 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo)
+rr_ret_status_t rr_release(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -837,7 +837,7 @@ rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo)
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo)
+rr_ret_status_t rr_freeze(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
