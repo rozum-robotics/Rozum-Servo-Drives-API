@@ -871,6 +871,26 @@ rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
 }
 
 /**
+ * @brief The function applies or releases servo's built-in brake (if installed).
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param en Desired action: true - engage brake, false - disengage
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Motion
+ */
+rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data = en ? 1 : 0;
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+   
+    uint32_t sts = write_raw_sdo(dev, 0x2010, 0x03, &data, sizeof(data), 1, 100);
+
+    return ret_sdo(sts);
+}
+
+/**
  * @brief The function sets the velocity at which the specified servo should move at its maximum current.
  * The maximum current is in accordance with the servo motor specification.
  * <p>When you need to set a lower current limit, use the ::rr_set_velocity_with_limits function.</p>
