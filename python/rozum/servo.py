@@ -141,6 +141,10 @@ class Servo(object):
     def deinit_servo(self):
         return self._api.rr_deinit_servo(byref(self._servo))
 
+    def _write_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
+        """Use on your own risk"""
+        return self._api.rr_write_raw_sdo(self._servo, idx, sidx, data, sz, retry, tout)
+
 
 class Interface(object):
 
