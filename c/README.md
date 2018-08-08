@@ -14,7 +14,7 @@
     
 2. System and software requirements
 
-   Operating systems: Linux, Mac OS, Cygwin
+   Operating systems: Linux, Mac OS, Windows (Cygwin)
    
    For compiling, use the gcc compiler.
    

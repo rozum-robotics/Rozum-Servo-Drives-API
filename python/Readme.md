@@ -21,16 +21,25 @@ This folder contains `Python 3` wrapper for the `C` library.
    
 ### Installation
 For now installation via **pip** is not supported. 
-So you should insert this module into your project manually.
-Consider copying `rozum` module into your project root.
+So you should copy `rozum` module into your project manually.
+
+##### For windows:
+1. Install cygwin.
+2. Install `make`, `gcc`, `python3` packages in cygwin.
+3. Follow [the building guide](../c/README.md) using cygwin console.
+4. Use cygwin's `python3` interpreter to run your programs.
+
 
 ### Getting started
 1. Build libservo_api shared library and it is highly recommended to copy it into `rozum` folder.
 2. Discover **_can_** interface name. 
-_Hint_: For linux users it could be found via `ls /dev/serial/by-id/` in terminal and it would look like `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
+_Hint:_ For linux it could be found by `ls /dev/serial/by-id/` command execution in console 
+and the output should contain something like `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
+Or you can execute `ls /dev/` and find something like `ttyACM1` (`ttyS1` in cygwin). _Note:_ last number may differ on your machine.
 Now you can try executing tutorials.
 3. Navigate to `tutorials` folder and change constants in `__init__.py` with your relevant values.
-`LIBRARY_PATH` - full path to library (string). `INTERFACE_NAME` - e.g. "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00" 
+`LIBRARY_PATH` - full path to library (string). `INTERFACE_NAME` - e.g. "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00",
+ "/dev/ttyACM1", "/dev/ttyS1"
 _Note:_ you can leave `LIBRARY_PATH = None` if you copied library into rozum folder in step one.
 4. Try to run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in terminal.
 
