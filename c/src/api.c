@@ -151,6 +151,28 @@ void rr_sleep_ms(int ms)
 }
 
 /**
+ * @brief The function performs an arbitrary SDO write request to specified servo.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param idx Index of SDO object
+ * @param sidx Subindex
+ * @param data Data to write to
+ * @param sz Size of `data` in bytes
+ * @param retry Number of reties (if communication error occured during request)
+ * @param tout Request timeout in milliseconds
+ * @return void
+ * @ingroup Aux
+ */
+rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int sz, int retry, int tout)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint32_t sts = write_raw_sdo((usbcan_device_t *)servo->dev, idx, sidx, data, sz, retry, tout);
+
+    return ret_sdo(sts);
+}
+
+/**
  * @brief The function sets a stream for saving CAN communication dump from the specified interface.
  * Subsequently, the user can look through the logs saved to the stream to identify causes of CAN communication failures.
  * @param interface Descriptor of the interface where the logged CAN communication occurs (returned by the ::rr_init_interface function) 
@@ -797,7 +819,7 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo)
+rr_ret_status_t rr_release(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -815,7 +837,7 @@ rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo)
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo)
+rr_ret_status_t rr_freeze(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -844,6 +866,26 @@ rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &current_a, 1);
     uint32_t sts = write_raw_sdo(dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
+
+    return ret_sdo(sts);
+}
+
+/**
+ * @brief The function applies or releases servo's built-in brake (if installed).
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param en Desired action: true - engage brake, false - disengage
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Motion
+ */
+rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data = en ? 1 : 0;
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+   
+    uint32_t sts = write_raw_sdo(dev, 0x2010, 0x03, &data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
 }

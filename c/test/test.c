@@ -68,7 +68,7 @@ int main(int argc, char *argv[])
     }
 
     rr_sleep_ms(3000);
-    rr_stop_and_release(servo);
+    rr_release(servo);
     rr_deinit_interface(&iface);
 
     fclose(log);

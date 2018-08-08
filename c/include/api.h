@@ -198,6 +198,7 @@ typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16
 /* Ref: http://dev.rozum.com/rozum-java/leonardo/blob/develop/devices/motor/cyber-api/src/main/java/com/rozum/cyber/api/protocol/prt3/CyberProtocol3.java */
 
 void rr_sleep_ms(int ms);
+rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int sz, int retry, int tout);
 
 void rr_set_debug_log_stream(FILE *f);
 void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f);
@@ -224,9 +225,11 @@ rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface
 rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface);
 
-rr_ret_status_t rr_stop_and_release(const rr_servo_t *servo);
-rr_ret_status_t rr_stop_and_freeze(const rr_servo_t *servo);
+rr_ret_status_t rr_release(const rr_servo_t *servo);
+rr_ret_status_t rr_freeze(const rr_servo_t *servo);
 
+
+rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en);
 rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a);
 rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec);
 rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_deg);

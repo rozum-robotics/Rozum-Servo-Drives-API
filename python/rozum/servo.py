@@ -87,14 +87,17 @@ class Servo(object):
                                                       byref(calculated_time))
         return calculated_time.value
 
-    def stop_and_release(self):
-        return self._api.rr_stop_and_release(self._servo)
+    def release(self):
+        return self._api.rr_release(self._servo)
 
-    def stop_and_freeze(self):
-        return self._api.rr_stop_and_freeze(self._servo)
+    def freeze(self):
+        return self._api.rr_freeze(self._servo)
 
     def set_current(self, current_a: float):
         return self._api.rr_set_current(self._servo, c_float(current_a))
+
+    def brake_engage(self, en: bool):
+        return self._api.rr_brake_engage(self._servo, c_bool(en))
 
     def set_velocity(self, velocity_deg_per_sec: float):
         return self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
@@ -136,14 +139,16 @@ class Servo(object):
         return error_count.value, error_array
 
     def deinit_servo(self):
-        return self._api.rr_deinit_servo(byref(c_void_p(self._servo)))
+        return self._api.rr_deinit_servo(byref(self._servo))
 
 
 class Interface(object):
 
     def __init__(self, library_api, interface_name):
         self._api = library_api
-        self._interface = self._api.rr_init_interface(bytes(interface_name, encoding="utf-8"))
+        self._api.rr_init_interface.restype = c_void_p
+        self._api.rr_init_servo.restype = c_void_p
+        self._interface = c_void_p(self._api.rr_init_interface(bytes(interface_name, encoding="utf-8")))
         if self._interface is None:
             message = "Failed to initialize interface by name: {}".format(interface_name)
             logger.error(message)
@@ -156,7 +161,7 @@ class Interface(object):
 
     def init_servo(self, identifier) -> Servo:
         if identifier not in self._servos:
-            servo_interface = self._api.rr_init_servo(self._interface, c_uint8(identifier))
+            servo_interface = c_void_p(self._api.rr_init_servo(self._interface, c_byte(identifier)))
             if servo_interface is None:
                 message = "Failed to initialize servo by id: {}".format(identifier)
                 logger.error(message)
@@ -189,7 +194,7 @@ class Interface(object):
         for servo in self._servos.values():
             if servo is not None:
                 servo.deinit_servo()
-        return self._api.rr_deinit_interface(byref(c_void_p(self._interface)))
+        return self._api.rr_deinit_interface(byref(self._interface))
 
 
 class ServoApi(object, metaclass=Singleton):

@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     API_DEBUG("Velocity: %.3f\n", value);
 
     /* rr_stopAndFreeze */
-    rr_stop_and_release(d);
+    rr_release(d);
     rr_sleep_ms(600);
 
     /* rr_setDuty */
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     API_DEBUG("Position: %.3f\n", value);
 
     /* rr_stopAndRelease */
-    rr_stop_and_freeze(d);
+    rr_freeze(d);
 
     /* rr_setVelocityWithLimits */
     rr_set_velocity_with_limits(d, 30.0, 2.0);
