@@ -23,26 +23,26 @@ Implementation is based on the `ctypes` module.
 Currently, installation via **pip** is not supported. 
 So, copy the `rozum` module into your project root manually.
 
-##### For windows:
-1. Install cygwin.
-2. Install `make`, `gcc`, `python3` packages in cygwin.
-3. Follow [the building guide](../c/README.md) using cygwin console.
-4. Use cygwin's `python3` interpreter to run your programs.
+##### For Windows OS:
+1. Install Cygwin.
+2. Install `make`, `gcc`, `python3` packages in Cygwin.
+3. Follow [the building guide](../c/README.md) using the Cygwin console.
+4. Use the `python3` interpreter in Cygwin to run your programs.
 
 
 ### Getting started
 1. Build the libservo_api shared library. Make sure to copy it into the `rozum` folder.
 2. Find out the **_can_** interface name. 
-_Hint:_ For Linux, it could be found by `ls /dev/serial/by-id/` command execution in console.
-The output should contain something like `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
-Or you can execute `ls /dev/` in console and find something like `ttyACM1` (`ttyS1` in cygwin). 
-_Note:_ last number may differ on your machine.
-3. Navigate to the `tutorials` folder and replace the constants in `__init__.py` with your relevant values. The constants are as follows:
+_Hint:_ For Linux, you can find it out by executing `ls /dev/serial/by-id/` command in the console.
+The output should contain something like: `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
+Alternatively, you can execute `ls /dev/` in the console. In this case, the output should be of the following type: `ttyACM1` (`ttyS1` in Cygwin). 
+_Note:_ The last number may differ on your machine.
+3. Navigate to the `tutorials` folder and replace the constants in `__init__.py` with relevant values. The constants are as follows:
   * `LIBRARY_PATH` - full path to the library (string)
   * `INTERFACE_NAME` - name of the interface (output from Step 2), e.g., "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00"
-  * `SERVO_N_ID` - your servo id's
-_Note:_ You can leave `LIBRARY_PATH = None` if you copied library into `rozum` folder in step one.
-4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the terminal.
+  * `SERVO_N_ID` - your servo ID  
+_Note:_ You can leave `LIBRARY_PATH = None` if you copied the library into the `rozum` folder in Step 1.
+4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the console.
 
 ### Usage
 Below is the usual sequence of working with servos. For detailed instructions, refer to `tutorials`.
