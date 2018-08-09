@@ -236,12 +236,35 @@ class Interface(object):
         return self._api.rr_net_reset_communication(self._interface)
 
     def net_set_state_operational(self):
+        """The function sets all servos connected to the current interface (CAN bus) to
+        the operational state. In the state, the servos can both communicate with the user program and execute commands.
+
+        For instance, you may need to call the function to switch all servos on a specific bus from the pre-operational
+        state to the operational one after an error (e.g., due to overcurrent).
+
+        :return: Status code: int
+        """
         return self._api.rr_net_set_state_operational(self._interface)
 
     def net_set_state_pre_operational(self):
+        """The function sets all servos connected to the current interface to the pre-operational state.
+        In the state, the servos are available for communication, but cannot execute commands.
+
+        For instance, you may need to call the function, if you want to force all servos on a specific bus to stop
+        executing commands, e.g., in an emergency.
+
+        :return: Status code: int
+        """
         return self._api.rr_net_set_state_pre_operational(self._interface)
 
     def net_set_state_stopped(self):
+        """The function sets all servos connected to the interface specified in the 'interface' parameter to the stopped state.
+        In the state, the servos are neither available for communication nor can execute commands.
+
+        For instance, you may need to call the fuction to stop all servos on a specific bus without deinitializing them.
+
+        :return: Status code: int
+        """
         return self._api.rr_net_set_state_stopped(self._interface)
 
     def deinit_interface(self):
