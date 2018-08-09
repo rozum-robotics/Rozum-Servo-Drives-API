@@ -54,23 +54,67 @@ class Servo(object):
         return self._api.rr_set_max_velocity(self._servo, c_float(max_velocity_deg_per_sec))
 
     def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int):
+        """The function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo.
+
+        PVT points define the following:
+            * what position the servo specified in the 'servo' parameter should reach
+            * how fast the servo should move to the specified position
+            * how long the movement to the specified position should take
+
+        Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo.
+        To execute the motion queue, use the Interface.start_motion() function.
+
+        :param position_deg: float:
+            Position that the servo flange (in degrees) should reach as a result of executing the command
+        :param velocity_deg_per_sec: float:
+            Velocity(in degrees/sec) at which the servo should move to reach the specified position
+        :param time_ms: int:
+            Time (in milliseconds) it should take the servo to move from the previous position
+            (PVT point in a motion trajectory or an initial point) to the commanded one.
+            The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days).
+        :return: Status code: int
+        """
         return self._api.rr_add_motion_point(self._servo,
                                              c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms))
 
-    def clear_points_all(self):
-        return self._api.rr_clear_points_all(self._servo)
-
     def clear_points(self, num_to_clear: int):
+        """The function removes the number of PVT points indicated in the 'num_to_clear' parameter from the tail of the
+        motion queue preset for the servo. When the indicated number of PVT points to be removed exceeds the actual
+        remaining number of PVT points in the queue, the funtion clears only the actual remaining number of PVT points.
+
+        :param num_to_clear: int:
+            Number of PVT points to be removed from the motion queue of the specified servo
+        :return: Status code: int
+        """
         return self._api.rr_clear_points(self._servo, c_uint32(num_to_clear))
 
-    def get_points_size(self):
-        size = c_uint32(0)
-        status = self._api.rr_get_points_size(self._servo, byref(size))
-        return size.value
+    def clear_points_all(self):
+        """The function clears the entire motion queue of the servo. The servo completes the move it started before the
+        function call and then clears all the remaining PVT points in the queue.
+
+        :return: Status code: int
+        """
+        return self._api.rr_clear_points_all(self._servo)
 
     def get_points_free_space(self):
+        """The function returns how many more PVT points the user can add to the motion queue of the servo.
+
+        **Note:** Currently, the maximum motion queue size is 100 PVT.
+
+        :return: Number of free points: int
+        """
         size = c_uint32(0)
         status = self._api.rr_get_points_free_space(self._servo, byref(size))
+        return size.value
+
+    def get_points_size(self):
+        """The function returns the actual motion queue size of the specified servo.
+        The return value indicates how many PVT points have already been added to the motion queue.
+
+        :return: Number of points in motion queue: int
+        """
+        size = c_uint32(0)
+        status = self._api.rr_get_points_size(self._servo, byref(size))
         return size.value
 
     def invoke_time_calculation(self,
@@ -78,6 +122,29 @@ class Servo(object):
                                 start_acceleration_deg_per_sec2: float, start_time_ms: int,
                                 end_position: float, end_velocity_deg_per_sec: float,
                                 end_acceleration_deg_per_sec2: float, end_time_ms: int):
+        """The function enables calculating the time it will take for the servo to get from one position to another at
+        the specified motion parameters (e.g., velocity, acceleration).
+
+        **Note:** The function is executed without the servo moving.
+
+        :param start_position: float:
+            Position (in degrees) from where the specified servo should start moving
+        :param start_velocity_deg_per_sec: float:
+            Servo velocity (in degrees/sec) at the start of motion
+        :param start_acceleration_deg_per_sec2: float:
+            Servo acceleration (in degrees/sec^2) at the start of motion
+        :param start_time_ms: int:
+            Initial time setting (in milliseconds)
+        :param end_position: float:
+            Position (in degrees) where the servo should arrive
+        :param end_velocity_deg_per_sec: float:
+            Servo velocity (in degrees/sec) in the end of motion
+        :param end_acceleration_deg_per_sec2: float:
+            Servo acceleration (in degrees/sec^2) in the end of motion
+        :param end_time_ms: int
+            Final time setting (in milliseconds)
+        :return: Calculated time in ms: int
+        """
         calculated_time = c_uint32(0)
         status = self._api.rr_invoke_time_calculation(self._servo,
                                                       c_float(start_position), c_float(start_velocity_deg_per_sec),
@@ -292,6 +359,22 @@ class Interface(object):
         self._api.rr_sleep_ms(c_int(500))  # for interface initialization
 
     def start_motion(self, timestamp_ms: int):
+        """The function commands all servos connected to the specified interface (CAN bus) to move simultaneously
+        through a number of preset PVT points.
+
+        **Note:** When any of the servos fails to reach any of the PVT points due to an error, it will broadcast a
+        "Go to Stopped State" command to all the other servos on the same bus. The servos will stop executing the preset
+        PVT points and go to the stopped state. In the state, only Heartbeats are available. You can neither communicate
+        with servos nor command them to execute any operations.
+
+        **Note:** Once servos execute the last PVT in their preset motion queue, the queue is cleared automatically.
+
+        :param timestamp_ms: int
+            Delay (in milliseconds) before the servos associated with the interface start to move.
+            When the value is set to 0, the servos will start moving immediately.
+            The available value range is from 0 to 2^24-1.
+        :return: Status code: int
+        """
         return self._api.rr_start_motion(self._interface, c_uint32(timestamp_ms))
 
     def init_servo(self, identifier) -> Servo:
