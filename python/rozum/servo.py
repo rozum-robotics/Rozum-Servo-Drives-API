@@ -7,7 +7,7 @@ from rozum.constants import *
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-# TODO Switching servo working states: rr_setup_nmt_callback, rr_describe_nmt
+# TODO rr_setup_nmt_callback, rr_describe_nmt, rr_setup_emcy_callback
 # TODO normal logging
 # TODO write doc strings with references
 # TODO tests
@@ -393,6 +393,20 @@ class Servo(object):
         return self._api.rr_servo_set_state_stopped(self._servo)
 
     def read_error_status(self, array_size: int):
+        """The functions enables reading the total actual count of servo hardware errors
+        (e.g., no Heartbeats/overcurrent, etc.). In addition, the function returns the codes of all the detected errors
+        as a single array.
+
+        **Note:** The rr_ret_status_t codes returned by API functions only indicate that an error occured during
+        communication between the user program and a servo. If it is a hardware error, the rr_ret_status_t code will be
+        RET_ERROR. Use read_error_status to determine the cause of the error.
+
+        :param array_size:
+            Array size where the function will save the codes of all errors.
+            Default array size is ARRAY_ERROR_BITS_SIZE **Note:** Call the describe_emcy_bit function, to get a detailed
+            error code description. If the array is not used, set the parameter to 0.
+        :return: (Error count, Error array): (int, list)
+        """
         error_count = c_uint32(0)
         error_array = (c_uint8 * array_size)()
         status = self._api.rr_read_error_status(self._servo, byref(error_count), byref(error_array))
@@ -649,9 +663,25 @@ class ServoApi(object, metaclass=Singleton):
         self._api.rr_sleep_ms(c_int(ms))
 
     def describe_emcy_bit(self, bit: c_uint8):
+        """The function returns a string describing in detail a specific EMCY event based on the code in the 'bit'
+        parameter (e.g., "CAN bus warning limit reached"). The function can be used in combination with describe_emcy_
+        code. The latter provides a more generic description of an EMCY event.
+
+        :param bit: c_uint8:
+            Error bit field of the corresponding EMCY message (according to the CanOpen standard)
+        :return: Description: str
+        """
         return self._api.rr_describe_emcy_bit(bit)
 
     def describe_emcy_code(self, code: c_uint16):
+        """The function returns a string descibing a specific EMCY event based on the error code in the 'code'
+        parameter. The description in the string is a generic type of the occured emergency event (e.g., "Temperature").
+        For a more detailed description, use the function together with the describe_emcy_bit one.
+
+        :param code: c_uint_16
+            Error code from the corresponding EMCY message (according to the CanOpen standard)
+        :return: Description: str
+        """
         return self._api.rr_describe_emcy_code(code)
 
     def __del__(self):
