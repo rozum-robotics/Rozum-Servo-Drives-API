@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
 # TODO Switching servo working states: rr_setup_nmt_callback, rr_describe_nmt
 # TODO normal logging
-# TODO write doc strings
+# TODO write doc strings with references
 # TODO tests
 
 
@@ -87,48 +87,128 @@ class Servo(object):
                                                       byref(calculated_time))
         return calculated_time.value
 
+    def brake_engage(self, en: bool):
+        """The function applies or releases servo's built-in brake (if installed).
+
+        :param en: bool: Desired action: True - engage brake, False - disengage
+        :return: Status code: int
+        """
+        return self._api.rr_brake_engage(self._servo, c_bool(en))
+
     def release(self):
+        """The function sets the specified servo to the released state. The servo is de-energized and stops without
+        retaining its position.
+
+        **Note:** When there is an external force affecting the servo (e.g., inertia, gravity), the servo may continue
+        rotating or begin rotating in the opposite direction.
+
+        :return: Status code: int
+        """
         return self._api.rr_release(self._servo)
 
     def freeze(self):
+        """The function sets the specified servo to the freeze state. The servo stops, retaining its last position.
+
+        :return: Status code: int
+        """
         return self._api.rr_freeze(self._servo)
 
     def set_current(self, current_a: float):
+        """The function sets the current supplied to the stator of the servo specified in the 'servo' parameter.
+        Changing the 'current_a parameter' value, it is possible to adjust the servo's torque.
+
+        Torque = stator current*Kt.
+
+        :param current_a: float:
+            Phase current of the stator in Amperes
+        :return: Status code: int
+        """
         return self._api.rr_set_current(self._servo, c_float(current_a))
 
-    def brake_engage(self, en: bool):
-        return self._api.rr_brake_engage(self._servo, c_bool(en))
+    def set_duty(self, duty_percent: float):
+        """The function limits the input voltage supplied to the servo, enabling to adjust its motion velocity.
 
-    def set_velocity(self, velocity_deg_per_sec: float):
-        return self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
+        For instance, when the input voltage is 20V, setting the duty_percent parameter to 40% will result in 8V
+        supplied to the servo.
+
+        :param duty_percent: float:
+            User-defined percentage of the input voltage to be supplied to the servo
+        :return: Status code: int
+        """
+        return self._api.rr_set_duty(self._servo, c_float(duty_percent))
 
     def set_position(self, position_deg: float):
+        """The function sets the position that the servo should reach as a result of executing the command.
+
+        The velocity and current are maximum values in accordance with the servo motor specifications.
+        For setting lower velocity and current limits, use the set_position_with_limits function.
+
+        :param position_deg: float:
+            Position of the servo (in degrees) to be reached.
+            The parameter is a multi-turn value (e.g., when set to 720, the servo will make two turns, 360 degrees each).
+            When the parameter is set to a "-" sign value, the servo will rotate in the opposite direction.
+        :return: Status code: int
+        """
         return self._api.rr_set_position(self._servo, c_float(position_deg))
 
-    def set_velocity_with_limits(self, velocity_deg_per_sec: float, current_a: float):
-        return self._api.rr_set_velocity_with_limits(self._servo, c_float(velocity_deg_per_sec), c_float(current_a))
-
     def set_position_with_limits(self, position_deg: float, velocity_deg_per_sec: float, current_a: float):
+        """The function sets the position that the servo should reach at user-defined velocity and current as
+        a result of executing the command.
+
+        :param position_deg: float:
+            Final position of the servo flange (in degrees) to be reached
+        :param velocity_deg_per_sec: float:
+            Velocity (in degrees/sec)at which the servo should move to the specified position
+        :param current_a: float:
+            Maximum user-defined current limit in Amperes
+        :return: Status code: int
+        """
         return self._api.rr_set_position_with_limits(self._servo,
                                                      c_float(position_deg),
                                                      c_float(velocity_deg_per_sec),
                                                      c_float(current_a))
 
-    def set_duty(self, duty_percent: float):
-        return self._api.rr_set_duty(self._servo, c_float(duty_percent))
+    def set_velocity(self, velocity_deg_per_sec: float):
+        """The function sets the velocity at which the servo should move at its maximum current.
+        The maximum current is in accordance with the servo motor specification.
+
+        When you need to set a lower current limit, use the set_velocity_with_limits function.
+
+        :param velocity_deg_per_sec: float:
+            Velocity (in degrees/sec) at the servo flange
+        :return: Status code: int
+        """
+        return self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
+
+    def set_velocity_with_limits(self, velocity_deg_per_sec: float, current_a: float):
+        """The function commands the servo to rotate at the specified velocity, while setting the maximum
+        limit for the servo current (below the servo motor specifications).
+
+        :param velocity_deg_per_sec: float:
+            Velocity (in degrees/sec) at the servo flange. The value can have a "-" sign, in which case the servo will
+            rotate in the opposite direction
+        :param current_a: float:
+            Maximum user-defined current limit in Amperes.
+        :return: Status code: int
+        """
+        return self._api.rr_set_velocity_with_limits(self._servo, c_float(velocity_deg_per_sec), c_float(current_a))
 
     def reboot(self):
+        """The function reboots the servo, resetting it to the power-on state.
+
+        :return: Status code: int
+        """
         return self._api.rr_servo_reboot(self._servo)
 
     def reset_communication(self):
-        """The function resets communication on current servo without resetting the entire interface.
+        """The function resets communication on the servo without resetting the entire interface.
 
         :return: Status code: int
         """
         return self._api.rr_servo_reset_communication(self._servo)
 
     def set_state_operational(self):
-        """The function sets the current servo to the operational state. In the state, the servo is both available
+        """The function sets the servo to the operational state. In the state, the servo is both available
         for communication and can execute commands.
 
         For instance, you may need to call the function to switch the servo from the pre-operational state to the
@@ -139,7 +219,7 @@ class Servo(object):
         return self._api.rr_servo_set_state_operational(self._servo)
 
     def set_state_pre_operational(self):
-        """The function sets the current servo to the pre-operational state. In the state, the servo is available for
+        """The function sets the servo to the pre-operational state. In the state, the servo is available for
         communication, but cannot execute any commands.
 
         For instance, you may need to call the function, if you want to force the servo to stop executing commands,
@@ -150,7 +230,7 @@ class Servo(object):
         return self._api.rr_servo_set_state_pre_operational(self._servo)
 
     def set_state_stopped(self):
-        """The function sets the current servo to the stopped state. In the state, only Heartbeats are available.
+        """The function sets the servo to the stopped state. In the state, only Heartbeats are available.
         You can neither communicate with the servo nor make it execute any commands.
 
         For instance, you may need to call the fuction to reduce the workload of a CAN bus by disabling individual
@@ -209,7 +289,7 @@ class Interface(object):
             logger.error(message)
             raise AttributeError(message)
         self._servos = {}
-        time.sleep(0.5)  # for interface initialization
+        self._api.rr_sleep_ms(c_int(500))  # for interface initialization
 
     def start_motion(self, timestamp_ms: int):
         return self._api.rr_start_motion(self._interface, c_uint32(timestamp_ms))
