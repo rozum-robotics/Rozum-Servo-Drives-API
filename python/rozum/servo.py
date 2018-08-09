@@ -227,6 +227,12 @@ class Interface(object):
         return self._api.rr_net_reboot(self._interface)
 
     def net_reset_communication(self):
+        """The function resets communication on current interface.
+
+        For instance, you may need to use the function when changing settings that require a reset after modification.
+
+        :return: Status code: int
+        """
         return self._api.rr_net_reset_communication(self._interface)
 
     def net_set_state_operational(self):
