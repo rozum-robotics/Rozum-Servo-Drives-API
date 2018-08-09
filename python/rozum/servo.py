@@ -23,35 +23,120 @@ class Servo(object):
     def interface(self):
         return self._servo
 
-    def param_cache_update(self):
-        return self._api.rr_param_cache_update(self._servo)
-
     def param_cache_setup_entry(self, param: c_int, enabled: bool):
+        """The function is the fist one in the API call sequence that enables reading multiple servo paramaters
+        (e.g., velocity, voltage, and position) as a data array.
+
+        Using the sequence is advisable when you need to read more than one parameter at a time.
+        The user can set up the array to include up to 50 parameters.
+        In all, the sequence comprises the following functions:
+            * param_cache_setup_entry for setting up an array of servo parameters to read
+            * param_cache_update for retreiving the parameters from the servo and saving them to the program cache
+            * read_cached_parameter for reading parameters from the program cache
+
+        Using the sequence of API calls allows for speeding up data acquisition by nearly two times.
+        Let's assume you need to read 49 parameters. At a bit rate of 1 MBit/s, reading them one by one will take about
+        35 ms, whereas reading them as an array will only take 10 ms.
+
+        :param param: c_int
+            Index of the parameter to read as indicated in the rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR) TODO refactor parameters
+        :param enabled: bool
+            Set True/False to enable/ disable the specified parameter for reading
+        :return: Status code: int
+        """
         return self._api.rr_param_cache_setup_entry(self._servo, param, c_bool(enabled))
 
-    def read_parameter(self, param: c_int):
-        value = c_float()
-        status = self._api.rr_read_parameter(self._servo, param, byref(value))
-        return value.value
+    def param_cache_update(self):
+        """The function is always used in combination with the param_cache_setup_entry function.
+        It retreives from the servo the array of parameters set up using param_cache_setup_entry function and saves the
+        array to the program cache. You can subsequently read the parameters from the program cache with the
+        read_cached_parameter function. For more information, see param_cache_setup_entry.
+
+        **Note:** After you exit the program, the cache will be cleared.
+
+        :return: Status code: int
+        """
+        return self._api.rr_param_cache_update(self._servo)
 
     def read_cached_parameter(self, param: c_int):
+        """The function is always used in combination with the param_cache_setup_entry and the param_cache_update
+        functions. For more information, see rr_param_cache_setup_entry.
+
+        The function enables reading parameters from the program cache. If you want to read more than one parameter,
+        you will need to make a separate API call for each of them.
+
+        **Note:** Prior to reading a parameter, make sure to update the program cache using the param_cache_update
+        function.
+
+        :param param: c_int
+            Index of the parameter to read; you can find these indices in the rr_servo_param_t list
+            (e.g., APP_PARAM_POSITION_ROTOR)
+        :return: Requested value: float
+        """
         value = c_float()
         status = self._api.rr_read_cached_parameter(self._servo, param, byref(value))
         return value.value
 
-    def set_zero_position(self, position_deg: float):
-        return self._api.rr_set_zero_position(self._api, c_float(position_deg))
+    def read_parameter(self, param: c_int):
+        """The function enables reading a single parameter directly from the servo. The function returns the current
+        value of the parameter. Additionally, the parameter is saved to the program cache, irrespective of whether it
+        was enabled/ disabled with the param_cache_setup_entry function.
 
-    def set_zero_position_and_save(self, position_deg: float):
-        return self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
+        :param param: c_int:
+            Index of the parameter to read; you can find these indices in the rr_servo_param_t list
+            (e.g., APP_PARAM_POSITION_ROTOR)
+        :return: Requested value: float
+        """
+        value = c_float()
+        status = self._api.rr_read_parameter(self._servo, param, byref(value))
+        return value.value
 
     def get_max_velocity(self):
+        """The function reads the maximum velocity of the servo at the current moment. It returns the smallest of the
+        three values—the user-defined maximum velocity limit (set_max_velocity), the maximum velocity value based on
+        the servo specifications, or the calculated maximum velocity based on the supply voltage.
+
+        :return: Maximum servo velocity (in degrees/sec): float
+        """
         velocity = c_float()
         status = self._api.rr_get_max_velocity(self._servo, byref(velocity))
         return velocity.value
 
     def set_max_velocity(self, max_velocity_deg_per_sec: float):
+        """The function sets the maximum velocity limit for the servo.
+        The setting is volatile: after a reset or a power outage, it is no longer valid.
+
+        :param max_velocity_deg_per_sec: float:
+            Velocity at the servo flange (in degrees/sec)
+        :return: Status code: int
+        """
         return self._api.rr_set_max_velocity(self._servo, c_float(max_velocity_deg_per_sec))
+
+    def set_zero_position(self, position_deg: float):
+        """The function enables setting the current position (in degrees) of the servo to any value defined by the user.
+
+        For instance, when the current servo position is 101 degrees and the 'position_deg' parameter is set to
+        25 degrees, the servo is assumed to be positioned at 25 degrees.
+
+        :param position_deg: float:
+            User-defined position (in degrees) to replace the current position value
+        :return: Status code: int
+        """
+        return self._api.rr_set_zero_position(self._api, c_float(position_deg))
+
+    def set_zero_position_and_save(self, position_deg: float):
+        """The function enables setting the current position (in degrees) of the servo to any value defined by the user
+        and saving it to the FLASH memory. If you don't want to save the newly set position, use the set_zero_position
+        function.
+
+        **Note:The FLASH memory limit is 1,000 write cycles.
+        Therefore, it is not advisable to use the function on a regular basis.**
+
+        :param position_deg: float:
+            User-defined position (in degrees) to replace the current position value
+        :return: Status code: int
+        """
+        return self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
 
     def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int):
         """The function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo.
