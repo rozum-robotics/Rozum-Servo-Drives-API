@@ -220,6 +220,10 @@ class Interface(object):
         return status
 
     def net_reboot(self):
+        """The function reboots all servos connected to the current interface, resetting them back to the power-on state.
+
+        :return: Status code: int
+        """
         return self._api.rr_net_reboot(self._interface)
 
     def net_reset_communication(self):
