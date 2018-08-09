@@ -121,15 +121,43 @@ class Servo(object):
         return self._api.rr_servo_reboot(self._servo)
 
     def reset_communication(self):
+        """The function resets communication on current servo without resetting the entire interface.
+
+        :return: Status code: int
+        """
         return self._api.rr_servo_reset_communication(self._servo)
 
     def set_state_operational(self):
+        """The function sets the current servo to the operational state. In the state, the servo is both available
+        for communication and can execute commands.
+
+        For instance, you may need to call the function to switch the servo from the pre-operational state to the
+        operational one after an error (e.g., due to overcurrent).
+
+        :return: Status code: int
+        """
         return self._api.rr_servo_set_state_operational(self._servo)
 
     def set_state_pre_operational(self):
+        """The function sets the current servo to the pre-operational state. In the state, the servo is available for
+        communication, but cannot execute any commands.
+
+        For instance, you may need to call the function, if you want to force the servo to stop executing commands,
+        e.g., in an emergency.
+
+        :return: Status code: int
+        """
         return self._api.rr_servo_set_state_pre_operational(self._servo)
 
     def set_state_stopped(self):
+        """The function sets the current servo to the stopped state. In the state, only Heartbeats are available.
+        You can neither communicate with the servo nor make it execute any commands.
+
+        For instance, you may need to call the fuction to reduce the workload of a CAN bus by disabling individual
+        servos connected to it without deninitializing them.
+
+        :return: Status code: int
+        """
         return self._api.rr_servo_set_state_stopped(self._servo)
 
     def read_error_status(self, array_size: int):
@@ -204,8 +232,8 @@ class Interface(object):
         When called, the function resets CAN communication for the specified servo, checks that Heartbeats are generated
         for the new ID, and saves the new CAN ID to the EEPROM memory of the servo.
 
-        **Note:** The EEPROM memory limit is 1,000 write cycles. Therefore, it is advisable to use the function with
-        discretion.
+        **Note: The EEPROM memory limit is 1,000 write cycles. Therefore, it is advisable to use the function with
+        discretion.**
 
         :param old_id: int:
             Old CAN ID.
