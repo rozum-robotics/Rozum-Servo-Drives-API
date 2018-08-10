@@ -1,9 +1,8 @@
 import time
 import os
 import logging
-from functools import wraps
+from ctypes import *
 from rozum.util import Singleton
-from rozum.constants import *
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -23,7 +22,7 @@ class Servo(object):
     def interface(self):
         return self._servo
 
-    def param_cache_setup_entry(self, param: c_int, enabled: bool):
+    def param_cache_setup_entry(self, param: int, enabled: bool):
         """The function is the fist one in the API call sequence that enables reading multiple servo paramaters
         (e.g., velocity, voltage, and position) as a data array.
 
@@ -44,7 +43,7 @@ class Servo(object):
             Set True/False to enable/ disable the specified parameter for reading
         :return: Status code: int
         """
-        return self._api.rr_param_cache_setup_entry(self._servo, param, c_bool(enabled))
+        return self._api.rr_param_cache_setup_entry(self._servo, c_int(param), c_bool(enabled))
 
     def param_cache_update(self):
         """The function is always used in combination with the param_cache_setup_entry function.
@@ -58,7 +57,7 @@ class Servo(object):
         """
         return self._api.rr_param_cache_update(self._servo)
 
-    def read_cached_parameter(self, param: c_int):
+    def read_cached_parameter(self, param: int):
         """The function is always used in combination with the param_cache_setup_entry and the param_cache_update
         functions. For more information, see rr_param_cache_setup_entry.
 
@@ -68,27 +67,27 @@ class Servo(object):
         **Note:** Prior to reading a parameter, make sure to update the program cache using the param_cache_update
         function.
 
-        :param param: c_int
+        :param param: int
             Index of the parameter to read; you can find these indices in the rr_servo_param_t list
             (e.g., APP_PARAM_POSITION_ROTOR)
         :return: Requested value: float
         """
         value = c_float()
-        status = self._api.rr_read_cached_parameter(self._servo, param, byref(value))
+        status = self._api.rr_read_cached_parameter(self._servo, c_int(param), byref(value))
         return value.value
 
-    def read_parameter(self, param: c_int):
+    def read_parameter(self, param: int):
         """The function enables reading a single parameter directly from the servo. The function returns the current
         value of the parameter. Additionally, the parameter is saved to the program cache, irrespective of whether it
         was enabled/ disabled with the param_cache_setup_entry function.
 
-        :param param: c_int:
+        :param param: int:
             Index of the parameter to read; you can find these indices in the rr_servo_param_t list
             (e.g., APP_PARAM_POSITION_ROTOR)
         :return: Requested value: float
         """
         value = c_float()
-        status = self._api.rr_read_parameter(self._servo, param, byref(value))
+        status = self._api.rr_read_parameter(self._servo, c_int(param), byref(value))
         return value.value
 
     def get_max_velocity(self):
