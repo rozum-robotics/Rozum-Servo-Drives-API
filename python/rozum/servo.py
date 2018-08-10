@@ -579,12 +579,22 @@ class ServoApi(object, metaclass=_Singleton):
     __LIBRARY_NAME = "libservo_api"
 
     def __init__(self):
-        self._api = None
+        """The function is the first to call to be able to work with the user API.
+
+        It loads libservo_api.so library using the specified path. If the path is not specified, it searches for the library in the
+        rozum directory.
+
+        :return: None
+        """
+        self._api = CDLL(os.path.join(os.path.dirname(__file__), ServoApi.__LIBRARY_NAME))
+        self._check_library_loaded()
+        self._api.rr_init_interface.restype = c_void_p
+        self._api.rr_init_servo.restype = c_void_p
         self._interface = None
 
     def _check_library_loaded(self):
         if self._api is None:
-            raise AttributeError("Library not loaded. Call api.load_library(path_to_library) first.")
+            raise AttributeError("Library not loaded. Follow building instructions and execute `make python` first.")
 
     def _check_interface_initialized(self):
         if self._interface is None:
@@ -600,26 +610,6 @@ class ServoApi(object, metaclass=_Singleton):
         self._check_library_loaded()
         self._check_interface_initialized()
         return self._interface
-
-    def load_library(self, library_path: str = None):
-        """The function is the first to call to be able to work with the user API.
-
-        It loads libservo_api.so library using the specified path. If the path is not specified, it searches for the library in the
-        rozum directory.
-
-        :param library_path: str or None
-            The path to the library.
-        :return: None
-        """
-        if library_path is None and self._api is None:
-            self._api = CDLL(os.path.join(os.path.dirname(__file__), "libservo_api.so"))
-        else:
-            if ServoApi.__LIBRARY_NAME not in library_path:
-                raise ArgumentError("Expected that path to library contains " + ServoApi.__LIBRARY_NAME)
-            if self._api is None:
-                self._api = CDLL(library_path)
-            self._api.rr_init_interface.restype = c_void_p
-            self._api.rr_init_servo.restype = c_void_p
 
     def init_interface(self, interface_name: str) -> Interface:
         """The function is the second to call to be able to work with the user API.
