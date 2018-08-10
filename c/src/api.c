@@ -150,6 +150,7 @@ void rr_sleep_ms(int ms)
     msleep(ms);
 }
 
+//! @cond Doxygen_Suppress
 /**
  * @brief The function performs an arbitrary SDO write request to specified servo.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
@@ -171,6 +172,7 @@ rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t 
 
     return ret_sdo(sts);
 }
+/// @endcond
 
 /**
  * @brief The function sets a stream for saving CAN communication dump from the specified interface.
