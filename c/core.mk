@@ -122,6 +122,9 @@ $(BUILDDIR)/%.o: %.cpp
 clean:
 	rm -fr $(BUILDDIR)
 
+python:
+	cp -i $(SHARED_LIB) $(PYTHONDIR)
+
 -include $(C_OBJECTS:.o=.d)
 -include $(CPP_OBJECTS:.o=.d)
 

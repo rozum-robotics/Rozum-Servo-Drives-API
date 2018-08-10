@@ -12,7 +12,7 @@ COLORIZE=no
 #Build directory
 #
 BUILDDIR = build
-
+PYTHONDIR = ../python/rozum
 #
 #Executable name
 #
