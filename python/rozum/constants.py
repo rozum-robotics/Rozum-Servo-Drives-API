@@ -1,5 +1,3 @@
-from ctypes import *
-
 RET_STATUS_T = (RET_OK,                                    # < Status OK
                 RET_ERROR,                                 # < Generic error
                 RET_BAD_INSTANCE,                          # < Bad interface or servo instance (null)
@@ -11,7 +9,7 @@ RET_STATUS_T = (RET_OK,                                    # < Status OK
                 RET_ZERO_SIZE,                             # < Zero size
                 RET_SIZE_MISMATCH,                         # < Received & target size mismatch
                 RET_WRONG_ARG                              # < Wrong function argument
-                ) = list(map(c_int, range(11)))
+                ) = list(range(11))
 
 RET_MESSAGES = (
                 "Status OK",
@@ -27,7 +25,7 @@ RET_MESSAGES = (
                 "Wrong function argument",
 )
 
-RET_STATUS_MESSAGE = {x[0].value: x[1] for x in zip(RET_STATUS_T, RET_MESSAGES)}
+RET_STATUS_MESSAGE = {x[0]: x[1] for x in zip(RET_STATUS_T, RET_MESSAGES)}
 
 SERVO_PARAM_T = (
     APP_PARAM_NULL,                            # < Not used
@@ -89,4 +87,4 @@ SERVO_PARAM_T = (
     APP_PARAM_FOC_TIMER_TOP,                   # < Internal use only
     APP_PARAM_DUTY,                            # < Internal use only
     APP_PARAM_SIZE                             # < Use when you need to define the total param arrray size
- ) = list(map(c_int, range(59)))
+ ) = list(range(59))
