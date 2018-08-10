@@ -424,8 +424,6 @@ class Servo(object):
     def _write_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
         """The function performs an arbitrary SDO write request to servo.
 
-        Use on your own risk.
-
         :param idx: c_uint16:
             Index of SDO object
         :param sidx: c_uint8:
@@ -601,10 +599,11 @@ class ServoApi(object, metaclass=Singleton):
     def load_library(self, library_path: str = None):
         """The function is the first to call to be able to work with the user API.
 
-        It tries to load library with respect to given path. If path is not provided, it tries to find library in
-        current directory.
+        It loads libservo_api.so library using the specified path. If the path is not specified, it searches for the library in the
+        rozum directory.
 
         :param library_path: str or None
+            The path to the library.
         :return: None
         """
         if library_path is None and self._api is None:
