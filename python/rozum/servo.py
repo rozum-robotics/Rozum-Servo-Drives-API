@@ -2,7 +2,6 @@ import time
 import os
 import logging
 from ctypes import *
-from rozum.util import Singleton
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -10,6 +9,15 @@ logger.addHandler(logging.NullHandler())
 # TODO normal logging
 # TODO write doc strings with references
 # TODO tests
+
+
+class _Singleton(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(_Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
 
 
 class Servo(object):
@@ -444,8 +452,6 @@ class Interface(object):
 
     def __init__(self, library_api, interface_name):
         self._api = library_api
-        self._api.rr_init_interface.restype = c_void_p
-        self._api.rr_init_servo.restype = c_void_p
         self._interface = c_void_p(self._api.rr_init_interface(bytes(interface_name, encoding="utf-8")))
         if self._interface is None:
             message = "Failed to initialize interface by name: {}".format(interface_name)
@@ -569,7 +575,7 @@ class Interface(object):
         return self._api.rr_deinit_interface(byref(self._interface))
 
 
-class ServoApi(object, metaclass=Singleton):
+class ServoApi(object, metaclass=_Singleton):
     __LIBRARY_NAME = "libservo_api"
 
     def __init__(self):
@@ -612,6 +618,8 @@ class ServoApi(object, metaclass=Singleton):
                 raise ArgumentError("Expected that path to library contains " + ServoApi.__LIBRARY_NAME)
             if self._api is None:
                 self._api = CDLL(library_path)
+            self._api.rr_init_interface.restype = c_void_p
+            self._api.rr_init_servo.restype = c_void_p
 
     def init_interface(self, interface_name: str) -> Interface:
         """The function is the second to call to be able to work with the user API.
