@@ -172,7 +172,7 @@ rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t 
 
     return ret_sdo(sts);
 }
-//! @w
+/// @endcond
 
 /**
  * @brief The function sets a stream for saving CAN communication dump from the specified interface.
