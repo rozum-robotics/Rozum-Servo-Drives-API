@@ -419,15 +419,6 @@ class Servo(object):
         status = self._api.rr_read_error_status(self._servo, byref(error_count), byref(error_array))
         return error_count.value, error_array
 
-    def deinit_servo(self):
-        """The function deinitializes the servo, clearing all data associated with the servo descriptor.
-
-        Automatically called on interface deinitialization.
-
-        :return: Status code: int
-        """
-        return self._api.rr_deinit_servo(byref(self._servo))
-
     def _write_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
         """The function performs an arbitrary SDO write request to servo.
 
@@ -458,7 +449,6 @@ class Interface(object):
             logger.error(message)
             raise AttributeError(message)
         self._servos = {}
-        self._api.rr_sleep_ms(c_int(500))  # for interface initialization
 
     def start_motion(self, timestamp_ms: int):
         """The function commands all servos connected to the specified interface (CAN bus) to move simultaneously
@@ -480,7 +470,15 @@ class Interface(object):
         return self._api.rr_start_motion(self._interface, c_uint32(timestamp_ms))
 
     def init_servo(self, identifier) -> Servo:
-        """See docstring of ServoApi.init_servo()"""
+        """The function determines whether the servo motor with the specified ID is connected to the specified interface.
+
+         It waits for 2 seconds to receive a Heartbeat message from the servo. When the message arrives within the
+         interval, the servo is identified as successfully connected.
+
+        :param identifier: int:
+            Unique identifier of the servo in the specified interface. The available value range is from 0 to 127.
+        :return: Servo instance
+        """
         if identifier not in self._servos:
             servo_interface = c_void_p(self._api.rr_init_servo(self._interface, c_byte(identifier)))
             if servo_interface is None:
@@ -576,7 +574,7 @@ class Interface(object):
 
 
 class ServoApi(object, metaclass=_Singleton):
-    __LIBRARY_NAME = "libservo_api"
+    __LIBRARY_NAME = "libservo_api.so"
 
     def __init__(self):
         """The function is the first to call to be able to work with the user API.
@@ -588,28 +586,20 @@ class ServoApi(object, metaclass=_Singleton):
         """
         self._api = CDLL(os.path.join(os.path.dirname(__file__), ServoApi.__LIBRARY_NAME))
         self._check_library_loaded()
+        self.sleep_ms(100)  # for proper initialization
+        self._interfaces = {}
+        # windows specific stuff
         self._api.rr_init_interface.restype = c_void_p
         self._api.rr_init_servo.restype = c_void_p
-        self._interface = None
 
     def _check_library_loaded(self):
         if self._api is None:
             raise AttributeError("Library not loaded. Follow building instructions and execute `make python` first.")
 
-    def _check_interface_initialized(self):
-        if self._interface is None:
-            raise AttributeError("Interface not initialized. Call api.init_interface(interface_name) first.")
-
     @property
     def api(self):
         self._check_library_loaded()
         return self._api
-
-    @property
-    def interface(self) -> Interface:
-        self._check_library_loaded()
-        self._check_interface_initialized()
-        return self._interface
 
     def init_interface(self, interface_name: str) -> Interface:
         """The function is the second to call to be able to work with the user API.
@@ -627,22 +617,12 @@ class ServoApi(object, metaclass=_Singleton):
         :return: Interface instance
         """
         self._check_library_loaded()
-        if self._interface is None:
-            self._interface = Interface(self._api, interface_name)
-        return self._interface
-
-    def init_servo(self, identifier: int) -> Servo:
-        """_init_servo_label:
-        The function determines whether the servo motor with the specified ID is connected to the specified interface.
-
-         It waits for 2 seconds to receive a Heartbeat message from the servo. When the message arrives within the
-         interval, the servo is identified as successfully connected.
-
-        :param identifier: int:
-            Unique identifier of the servo in the specified interface. The available value range is from 0 to 127.
-        :return: Servo instance
-        """
-        return self.interface.init_servo(identifier)
+        if interface_name not in self._interfaces:
+            interface = Interface(self._api, interface_name)
+            if interface is None:
+                raise AttributeError("Failed to initialize interface named: {}.".format(interface_name))
+            self._interfaces[interface_name] = interface
+        return self._interfaces[interface_name]
 
     def sleep_ms(self, ms: int):
         """The function sets an idle period for the user program (e.g., to wait till a servo executes a motion trajectory).
@@ -681,4 +661,5 @@ class ServoApi(object, metaclass=_Singleton):
         return self._api.rr_describe_emcy_code(code)
 
     def __del__(self):
-        self.interface.deinit_interface()
+        for interface in self._interfaces.values():
+            interface.deinit_interface()
