@@ -4,7 +4,7 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
-from rozum.servo import ServoApi
+import rozum as rr
 from rozum.tutorial import *
 
 logging.basicConfig()
@@ -13,16 +13,13 @@ logger.setLevel(logging.INFO)
 
 if __name__ == '__main__':
     logger.info("Initializing ServoApi")
-    api = ServoApi()
-
-    logger.info("Loading library")
-    api.load_library(LIBRARY_PATH)
+    api = rr.ServoApi()
 
     logger.info("Initializing interface {}".format(INTERFACE_NAME))
     interface = api.init_interface(INTERFACE_NAME)
 
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
-    servo = api.init_servo(SERVO_1_ID)
+    servo = interface.init_servo(SERVO_1_ID)
 
     logger.info("Appending points")
     servo.add_motion_point(100., 0., 6000)
