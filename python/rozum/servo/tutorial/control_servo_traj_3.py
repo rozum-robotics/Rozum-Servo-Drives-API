@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 import rozum as rr
-from rozum.tutorial import *
+from rozum.servo.tutorial import *
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
@@ -24,6 +24,9 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_2_ID))
     servo2 = interface.init_servo(SERVO_2_ID)
 
+    logger.info("Initializing servo id {}".format(SERVO_3_ID))
+    servo3 = interface.init_servo(SERVO_3_ID)
+
     logger.info("Appending points")
     servo1.add_motion_point(100., 0., 6000)
     servo1.add_motion_point(-100., 0., 6000)
@@ -31,6 +34,9 @@ if __name__ == '__main__':
     servo2.add_motion_point(100., 0., 6000)
     servo2.add_motion_point(-100., 0., 6000)
     servo2.add_motion_point(0, 0, 6000)
+    servo3.add_motion_point(100., 0., 6000)
+    servo3.add_motion_point(-100., 0., 6000)
+    servo3.add_motion_point(0, 0, 6000)
     logger.info("Starting motion")
     interface.start_motion(0)
 

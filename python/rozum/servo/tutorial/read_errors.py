@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 import rozum as rr
-from rozum.tutorial import *
+from rozum.servo.tutorial import *
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
@@ -21,14 +21,9 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = interface.init_servo(SERVO_1_ID)
 
-    position_rotor = servo.read_parameter(rr.APP_PARAM_POSITION_ROTOR)
-    logger.info("Position rotor {}".format(position_rotor))
-
-    velocity_rotor = servo.read_parameter(rr.APP_PARAM_VELOCITY_ROTOR)
-    logger.info("Velocity rotor {}".format(velocity_rotor))
-
-    voltage_input = servo.read_parameter(rr.APP_PARAM_VOLTAGE_INPUT)
-    logger.info("Voltage input {}".format(voltage_input))
-
-    current_input = servo.read_parameter(rr.APP_PARAM_CURRENT_INPUT)
-    logger.info("Current input {}".format(current_input))
+    logger.info("Reading error status")
+    num, arr = servo.read_error_status(100)
+    logger.info("Got {} errors".format(num))
+    logger.info("Describing errors")
+    for i in range(num):
+        api.describe_emcy_bit(arr[i])

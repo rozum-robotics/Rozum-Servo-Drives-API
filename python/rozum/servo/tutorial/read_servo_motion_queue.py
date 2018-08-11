@@ -5,7 +5,7 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 import rozum as rr
-from rozum.tutorial import *
+from rozum.servo.tutorial import *
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
