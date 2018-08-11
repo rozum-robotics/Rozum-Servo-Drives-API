@@ -567,9 +567,6 @@ class Interface(object):
 
         :return: None
         """
-        for servo in self._servos.values():
-            if servo is not None:
-                servo.deinit_servo()
         return self._api.rr_deinit_interface(byref(self._interface))
 
 
