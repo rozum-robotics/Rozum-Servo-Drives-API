@@ -1,7 +1,8 @@
-import time
 import os
 import logging
 from ctypes import *
+
+__all__ = ["ServoApi", "logger"]
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
