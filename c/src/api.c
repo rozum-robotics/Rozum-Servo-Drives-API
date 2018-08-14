@@ -915,6 +915,27 @@ rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_de
 }
 
 /**
+ * @brief The function sets the velocity at which the motor of specified servo should move at its maximum current.
+ * The maximum current is in accordance with the servo motor specification.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
+ * @param velocity_rpm Velocity of motor (in revolutions per minute)
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Motion
+ */
+rr_ret_status_t rr_set_velocity_motor(const rr_servo_t *servo, const float velocity_rpm)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data[3];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float24(data, 0, &velocity_rpm, 1);
+    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
+
+    return ret_sdo(sts);
+}
+
+/**
  * @brief The function sets the position that the specified servo should reach as a result of executing the command.
  * The velocity and current are maximum values in accordance with the servo motor specifications.
  * For setting lower velocity and current limits, use the ::rr_set_position_with_limits function.

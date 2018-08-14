@@ -232,6 +232,7 @@ rr_ret_status_t rr_freeze(const rr_servo_t *servo);
 rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en);
 rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a);
 rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec);
+rr_ret_status_t rr_set_velocity_motor(const rr_servo_t *servo, const float velocity_rpm);
 rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_deg);
 rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a);
 rr_ret_status_t rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a);
