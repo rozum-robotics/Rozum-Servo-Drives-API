@@ -328,6 +328,9 @@ class Servo(object):
                                                      c_float(velocity_deg_per_sec),
                                                      c_float(current_a))
 
+    def set_velocity_motor(self, velocity_rpm: float):
+        self._api.rr_set_velocity_motor(self._servo, c_float(velocity_rpm))
+
     def set_velocity(self, velocity_deg_per_sec: float):
         """The function sets the velocity at which the servo should move at its maximum current.
         The maximum current is in accordance with the servo motor specification.
