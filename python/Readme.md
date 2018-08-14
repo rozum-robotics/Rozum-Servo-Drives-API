@@ -11,15 +11,14 @@ Implementation is based on the `ctypes` module.
 ### File structure
    `rozum` - package root
    
-   `tutorial` - examples for quick start
+   `rozum/servo` - package containing api
    
-   `contants.py` - useful and utility constants
-   
-   `servo.py` - wrapper for the `C` library
-
-   `util.py` - utility functions
+   `rozum/servo/tutorial` - examples for quick start
    
 ### Installation
+After building the library, copy `libservo_api.so` file into `rozum/servo` directory. 
+Optionally you can run `make python` in console after building. It will perform copying operation.
+
 Currently, installation via **pip** is not supported. 
 So, copy the `rozum` module into your project root manually.
 
@@ -48,25 +47,21 @@ _Note:_ You can leave `LIBRARY_PATH = None` if you copied the library into the `
 Below is the usual sequence of working with servos. For detailed instructions, refer to `tutorials`.
 ```python
 # importing modules
-from rozum.constants import *
-from rozum.servo import ServoApi
+import rozum as rr
 
-# api initialization
-api = ServoApi()
-
-# library loading
-api.load_library()  # or api.load_library("path_to_library") if library file is not in rozum folder
+# api initialization and library loading
+api = rr.ServoApi()
 
 # interface initialization
 interface = api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00")
 
 # servo initialization
-servo = api.init_servo(64)
+servo = interface.init_servo(64)
 
 # servo usage
 # preparing specific realtime parameters for extraction
-servo.param_cache_setup_entry(APP_PARAM_CURRENT_INPUT, True)
-servo.param_cache_setup_entry(APP_PARAM_VOLTAGE_INPUT, True)
+servo.param_cache_setup_entry(rr.APP_PARAM_CURRENT_INPUT, True)
+servo.param_cache_setup_entry(rr.APP_PARAM_VOLTAGE_INPUT, True)
 
 # adding motion points
 servo.add_motion_point(100., 0., 6000)
@@ -78,12 +73,12 @@ interface.start_motion(0)
 
 # reading realtime parameters from cache
 servo.param_cache_update()
-current_input = servo.read_cached_parameter(APP_PARAM_CURRENT_INPUT)
-voltage_input = servo.read_cached_parameter(APP_PARAM_VOLTAGE_INPUT)
+current_input = servo.read_cached_parameter(rr.APP_PARAM_CURRENT_INPUT)
+voltage_input = servo.read_cached_parameter(rr.APP_PARAM_VOLTAGE_INPUT)
 print("current_input = {}, voltage_input = {}".format(current_input, voltage_input)) # printing them
 
 # direct reading of realtime parameters
-velocity_rotor = servo.read_parameter(APP_PARAM_VELOCITY_ROTOR)
+velocity_rotor = servo.read_parameter(rr.APP_PARAM_VELOCITY_ROTOR)
 print("velocity_rotor = {}".format(velocity_rotor))
 
 # awaiting motion
