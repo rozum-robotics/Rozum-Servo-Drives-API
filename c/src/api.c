@@ -152,13 +152,13 @@ void rr_sleep_ms(int ms)
 
 //! @cond Doxygen_Suppress
 /**
- * @brief The function performs an arbitrary SDO write request to specified servo.
+ * @brief The function sends an arbitrary SDO write request to the specified servo.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param idx Index of SDO object
+ * @param idx Index of the SDO object to which the request refers
  * @param sidx Subindex
  * @param data Data to write to
- * @param sz Size of `data` in bytes
- * @param retry Number of reties (if communication error occured during request)
+ * @param sz Size of the `data` in bytes
+ * @param retry Number of retries (if a communication error occured during the request)
  * @param tout Request timeout in milliseconds
  * @return void
  * @ingroup Aux
@@ -611,7 +611,7 @@ rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface)
 }
 
 /**
- * @brief The function determines whether the servo motor with the speficied ID is connected to the specified interface. It waits for 2 seconds to receive a Heartbeat message from the servo.
+ * @brief The function determines whether the servo motor with the specified ID is connected to the specified interface. It waits for 2 seconds to receive a Heartbeat message from the servo.
  * When the message arrives within the interval, the servo is identified as successfully connected.<br>
  * <p>The function returns the servo descriptor that you will need for subsequent API calls to the servo.</p> 
  * @param interface Descriptor of the interface (returned by the ::rr_init_interface function) where the servo is connected
@@ -915,7 +915,7 @@ rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_de
 }
 
 /**
- * @brief The function sets the velocity at which the motor of specified servo should move at its maximum current.
+ * @brief The function sets the velocity at which the motor of the specified servo should move at its maximum current.
  * The maximum current is in accordance with the servo motor specification.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param velocity_rpm Velocity of motor (in revolutions per minute)
@@ -1141,7 +1141,7 @@ rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const er
 
 /**
  * @brief The function is always used in combination with the ::rr_param_cache_setup_entry function. It retreives from the servo the array of parameters
- * set up using ::rr_param_cache_setup_entry function and saves the array to the program cache. You can subsequently read the parameters from the program
+ * that was set up using ::rr_param_cache_setup_entry function and saves the array to the program cache. You can subsequently read the parameters from the program
  * cache with the ::rr_read_cached_parameter function. For more information, see ::rr_param_cache_setup_entry.
  * <p><b>Note</b>: After you exit the program, the cache will be cleared.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
@@ -1253,7 +1253,7 @@ rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t para
 }
 
 /**
- * @brief The function is always used in combination with the ::rr_param_cache_setup_entry and the::rr_param_cache_update functions.
+ * @brief The function is always used in combination with the ::rr_param_cache_setup_entry and the ::rr_param_cache_update functions.
  * For more information, see ::rr_param_cache_setup_entry.
  * <p>The function enables reading parameters from the program cache. If you want to read more than one parameter,
  * you will need to make a separate API call for each of them.</p>
