@@ -48,9 +48,9 @@ typedef enum
     RET_WRONG_TRAJ,    ///< Wrong trajectory
     RET_LOCKED,        ///< Device is locked
     RET_STOPPED,       ///< Device is in the STOPPED state
-    RET_TIMEOUT,       ///< Communication timeout
-    RET_ZERO_SIZE,     ///< Zero size
-    RET_SIZE_MISMATCH, ///< Received and target size mismatch
+    RET_TIMEOUT,       ///< CAN communication timeout
+    RET_ZERO_SIZE,     ///< Zero data size
+    RET_SIZE_MISMATCH, ///< Mismatch of received and target data size
     RET_WRONG_ARG      ///< Wrong function argument
 } rr_ret_status_t;
 
@@ -67,19 +67,19 @@ typedef enum
     APP_PARAM_VELOCITY_ROTOR,               ///< Actual velocity of the motor shaft (degrees per second)
     APP_PARAM_POSITION_GEAR_360,            ///< Actual single-turn position of the output shaft (from 0 to 360 degrees)
     APP_PARAM_POSITION_GEAR_EMULATED,       ///< Actual multi-turn position of the motor shaft multiplied by gear ratio (degrees)
-    APP_PARAM_CURRENT_INPUT,                ///< Actual DC current (Amperes)
+    APP_PARAM_CURRENT_INPUT,                ///< Actual DC current (Amperes) in the servo's supply circuit
     APP_PARAM_CURRENT_OUTPUT,               ///< Not used
-    APP_PARAM_VOLTAGE_INPUT,                ///< Actual DC voltage (Volts)
+    APP_PARAM_VOLTAGE_INPUT,                ///< Actual DC voltage (Volts) supplied to the servo
     APP_PARAM_VOLTAGE_OUTPUT,               ///< Not used
-    APP_PARAM_CURRENT_PHASE,                ///< Actual magnitude of AC current (Amperes)
+    APP_PARAM_CURRENT_PHASE,                ///< Actual magnitude of AC current (Amperes) on the motor
     APP_PARAM_TEMPERATURE_ACTUATOR,         ///< Not used
     APP_PARAM_TEMPERATURE_ELECTRONICS,      ///< Actual temperature of the motor controller
     APP_PARAM_TORQUE,                       ///< Not used
     APP_PARAM_ACCELERATION,                 ///< Not used
     APP_PARAM_ACCELERATION_ROTOR,           ///< Not used
-    APP_PARAM_CURRENT_PHASE_1,              ///< Actual phase 1 current
-    APP_PARAM_CURRENT_PHASE_2,              ///< Actual phase 2 current
-    APP_PARAM_CURRENT_PHASE_3,              ///< Actual phase 3 current
+    APP_PARAM_CURRENT_PHASE_1,              ///< Actual phase 1 current to the motor
+    APP_PARAM_CURRENT_PHASE_2,              ///< Actual phase 2 current to the motor
+    APP_PARAM_CURRENT_PHASE_3,              ///< Actual phase 3 current to the motor
     APP_PARAM_CURRENT_RAW,                  ///< Not used
     APP_PARAM_CURRENT_RAW_2,                ///< Not used
     APP_PARAM_CURRENT_RAW_3,                ///< Not used
@@ -88,12 +88,12 @@ typedef enum
     APP_PARAM_ENCODER_MOTOR_MASTER_TRACK,   ///< Internal use only
     APP_PARAM_ENCODER_MOTOR_NONIUS_TRACK,   ///< Internal use only
     APP_PARAM_TORQUE_ELECTRIC_CALC,         ///< Internal use only
-    APP_PARAM_CONTROLLER_VELOCITY_ERROR,    ///< Velocity following error
-    APP_PARAM_CONTROLLER_VELOCITY_SETPOINT, ///< Velocity target
+    APP_PARAM_CONTROLLER_VELOCITY_ERROR,    ///< Velocity following error (difference in degrees per second between the setpoint and feedback velocities)
+    APP_PARAM_CONTROLLER_VELOCITY_SETPOINT, ///< Velocity target (degrees per second)
     APP_PARAM_CONTROLLER_VELOCITY_FEEDBACK, ///< Actual velocity (degrees per second)
     APP_PARAM_CONTROLLER_VELOCITY_OUTPUT,   ///< Not used
-    APP_PARAM_CONTROLLER_POSITION_ERROR,    ///< Position following error
-    APP_PARAM_CONTROLLER_POSITION_SETPOINT, ///< Position target
+    APP_PARAM_CONTROLLER_POSITION_ERROR,    ///< Position following error (difference in degrees per second between the setpoint and feedback velocities)
+    APP_PARAM_CONTROLLER_POSITION_SETPOINT, ///< Position target (degrees)
     APP_PARAM_CONTROLLER_POSITION_FEEDBACK, ///< Actual position (degrees)
     APP_PARAM_CONTROLLER_POSITION_OUTPUT,   ///< Not used
     APP_PARAM_CONTROL_MODE,                 ///< Internal use only
@@ -118,7 +118,7 @@ typedef enum
     APP_PARAM_FOC_PWM3,                     ///< Internal use only
     APP_PARAM_FOC_TIMER_TOP,                ///< Internal use only
     APP_PARAM_DUTY,                         ///< Internal use only
-    APP_PARAM_SIZE,                         ///< Use when you need to define the total parameter array size
+    APP_PARAM_SIZE,                         ///< Use to define the total parameter array size
 } rr_servo_param_t;
 
 /**
@@ -134,8 +134,8 @@ typedef enum
     RR_NMT_BOOT = 2,              /**< Device is executing a bootloader application */
     RR_NMT_PRE_OPERATIONAL = 127, /**< Device is in the pre-operational state */
     RR_NMT_OPERATIONAL = 5,       /**< Device is in the operational state */
-    RR_NMT_STOPPED = 4,           /**< Device is stopped */
-    RR_NMT_HB_TIMEOUT = -1,       /**< Device heartbeat timeout (device disappeared from the bus)*/
+    RR_NMT_STOPPED = 4,           /**< Device is in the stopped state */
+    RR_NMT_HB_TIMEOUT = -1,       /**< Device Heartbeat timeout (device disappeared from the bus)*/
 } rr_nmt_state_t;
 
 /**
