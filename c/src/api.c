@@ -814,9 +814,9 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
 }
 
 /**
- * @brief The function sets the specified servo to the released state. The servo is de-energized and stops without retaining its position.
- * <p><b>Note:</b> When there is an external force affecting the servo (e.g., inertia, gravity), 
- * the servo may continue rotating or begin rotating in the opposite direction.</p>
+ * @brief The function sets the specified servo to the released state. The servo is de-energized 
+ * and continues rotating for as long as it is affected by external forces (e.g., inertia, gravity).
+ * <p><b>Note:</b> Affected by external force, the servo may also begin rotating in the opposite direction.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
@@ -873,7 +873,9 @@ rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
 }
 
 /**
- * @brief The function applies or releases servo's built-in brake (if installed).
+ * @brief The function applies or releases the servo's built-in brake.
+ * If a servo is supplied without a brake, the function will not work.
+ * In this case, to stop a servo, use either the ::rr_freeze() or ::rr_release() function.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param en Desired action: true - engage brake, false - disengage
  * @return Status code (::rr_ret_status_t)
@@ -893,9 +895,9 @@ rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en)
 }
 
 /**
- * @brief The function sets the velocity at which the specified servo should move at its maximum current.
- * The maximum current is in accordance with the servo motor specification.
- * <p>When you need to set a lower current limit, use the ::rr_set_velocity_with_limits function.</p>
+ * @brief The function sets the output shaft velocity with which the specified servo should move at its maximum current.
+ * The maximum current is in accordance with the servo motor specification. When you need to set a lower current limit, use the ::rr_set_velocity_with_limits function.
+ * <p>The rr_set_velocity() function works with geared servos only. When a servo includes no gearhead, use the ::rr_set_velocity_motor() for setting servo velocity.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param velocity_deg_per_sec Velocity (in degrees/sec) at the servo flange 
  * @return Status code (::rr_ret_status_t)
@@ -915,10 +917,12 @@ rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_de
 }
 
 /**
- * @brief The function sets the velocity at which the motor of the specified servo should move at its maximum current.
+ * @brief The function sets the velocity with which the motor of the specified servo should move at its maximum current.
  * The maximum current is in accordance with the servo motor specification.
+ * <p>You can use the function for both geared servos and servos without a gearhead.
+ * When a servo is geared, the velocity at the output flange will depend on the applied gear ratio (refer to the servo motor specification).</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
- * @param velocity_rpm Velocity of motor (in revolutions per minute)
+ * @param velocity_rpm Velocity of the motor (in revolutions per minute)
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
@@ -961,6 +965,8 @@ rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_de
 /**
  * @brief The function commands the specified servo to rotate at the specified velocity,
  * while setting the maximum limit for the servo current (below the servo motor specifications).
+ * The velocity value is the velocity of the servo’s output shaft.
+ * <p>Similarly to ::rr_set_velocity(), this function can be used for geared servos only.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param velocity_deg_per_sec Velocity (in degrees/sec) at the servo flange. The value can have a "-" sign, in which case the servo will rotate in the opposite direction.
  * @param current_a Maximum user-defined current limit in Amperes.
