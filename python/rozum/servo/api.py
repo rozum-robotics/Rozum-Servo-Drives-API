@@ -146,7 +146,8 @@ class Servo(object):
         """
         return self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
 
-    def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int):
+    def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int,
+                         accel_deg_per_sec2: float = None):
         """The function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo.
 
         PVT points define the following:
@@ -165,10 +166,22 @@ class Servo(object):
             Time (in milliseconds) it should take the servo to move from the previous position
             (PVT point in a motion trajectory or an initial point) to the commanded one.
             The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days).
+        :param accel_deg_per_sec2: float
+            Acceleration (in degrees/sec**2) which the servo should have in reached position.
         :return: Status code: int
         """
-        return self._api.rr_add_motion_point(self._servo,
-                                             c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms))
+        if accel_deg_per_sec2 is not None:
+            return self._api.rr_add_motion_point_pvat(
+                self._servo,
+                c_float(position_deg),
+                c_float(velocity_deg_per_sec),
+                c_float(accel_deg_per_sec2),
+                c_uint32(time_ms)
+            )
+        else:
+            return self._api.rr_add_motion_point(
+                self._servo, c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms)
+            )
 
     def clear_points(self, num_to_clear: int):
         """The function removes the number of PVT points indicated in the 'num_to_clear' parameter from the tail of the
