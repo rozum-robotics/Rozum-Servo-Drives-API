@@ -24,7 +24,8 @@ if __name__ == '__main__':
     logger.info("Appending points")
     servo.add_motion_point(100., 0., 6000)
     servo.add_motion_point(-100., 0., 6000)
-    servo.add_motion_point(0, 0, 6000)
+    logger.info("Appending point with acceleration")
+    servo.add_motion_point(0, 0, 6000, accel_deg_per_sec2=0)
     logger.info("Starting motion")
     interface.start_motion(0)
 
