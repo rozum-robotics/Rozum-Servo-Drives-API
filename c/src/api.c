@@ -1079,6 +1079,49 @@ rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float positio
 }
 
 /**
+ * @brief The function enables creating PVAT (position-velocity-acceleration-time) points to set the motion trajectory of the servo specified in the 'servo' parameter.
+ * PVAT points define the following:<br>
+ * <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
+ * <li>how fast the servo should move to the specified position</li><br>
+ * <li>how long the movement to the specified position should take</li></ul>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
+ * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
+ * @param velocity_deg_per_sec Velocity (in degrees/sec) at which the servo should move to reach the specified position
+ * @param accel_deg_per_sec2 Acceleration (in degrees/sec^2) at the end of the motion point
+ * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one.
+ * The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Trajectory
+ */
+rr_ret_status_t rr_add_motion_point_pvat(
+    const rr_servo_t *servo, 
+    const float position_deg, 
+    const float velocity_deg_per_sec, 
+    const float accel_deg_per_sec2, 
+    const uint32_t time_ms)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data[16];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
+    usb_can_put_float(data + 4, 0, &velocity_deg_per_sec, 1);
+    usb_can_put_float(data + 8, 0, &accel_deg_per_sec2, 1);
+    usb_can_put_uint32_t(data + 12, 0, &time_ms, 1);
+
+    uint32_t sts = write_raw_sdo(dev, 0x2200, 3, data, sizeof(data), 1, 200);
+    if(sts == CO_SDO_AB_PRAM_INCOMPAT)
+    {
+        return RET_WRONG_TRAJ;
+    }
+    else
+    {
+        return ret_sdo(sts);
+    }
+}
+
+/**
  * @brief The function commands all servos connected to the specified interface (CAN bus) 
  * to move simultaneously through a number of preset PVT points (see ::rr_add_motion_point).<br> 
  * <p><b>Note:</b> When any of the servos fails to reach any of the PVT points due to an error, it will broadcast
