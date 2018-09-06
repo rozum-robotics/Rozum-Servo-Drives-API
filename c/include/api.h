@@ -275,4 +275,7 @@ rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_vel
 
 rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t *servo, uint8_t new_can_id);
 
+rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_string, int *version_string_size);
+rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_string, int *version_string_size);
+
 #endif /* _ROZUM_API_H */

@@ -888,7 +888,7 @@ rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en)
 
     uint8_t data = en ? 1 : 0;
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-   
+
     uint32_t sts = write_raw_sdo(dev, 0x2010, 0x03, &data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
@@ -1094,10 +1094,10 @@ rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float positio
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_add_motion_point_pvat(
-    const rr_servo_t *servo, 
-    const float position_deg, 
-    const float velocity_deg_per_sec, 
-    const float accel_deg_per_sec2, 
+    const rr_servo_t *servo,
+    const float position_deg,
+    const float velocity_deg_per_sec,
+    const float accel_deg_per_sec2,
     const uint32_t time_ms)
 {
     IS_VALID_SERVO(servo);
@@ -1609,7 +1609,6 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
 }
 /// @endcond
 
-
 /**
  * @brief The function enables changing the default CAN identifier (ID) of the specified servo to avoid collisions on a bus line. <b>Important!</b> Each servo connected to a CAN bus must have <b>a unique ID</b>.<br>
  * <p>When called, the function resets CAN communication for the specified servo, checks that Heartbeats are generated for the new ID, 
@@ -1636,4 +1635,44 @@ rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t 
     if(save_conf_sts) return ret_sdo(save_conf_sts);
 
     return RET_OK;
+}
+
+/**
+ * @brief The function reads hardware version of the device (unique ID of the MCU + hardware type + hardware revision)
+ * 
+ * @param servo Servo descriptor returned by the ::rr_init_servo function. <b>Note</b>: All RDrive servos are supplied with <b>the same default CAN ID—32</b>.
+ * @param version_string Pointer to the ASCII string that will be read
+ * @param version_string_size Input: size of the ::version_string, Output: size of the readed string
+ * @return Status code (::rr_ret_status_t)
+ */
+rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
+{
+    // Note: see http://wiki.rozum.com/display/EMB/Versioning
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint32_t sts = read_raw_sdo(dev, 0x1009, 0x00, (uint8_t *)version_string, version_string_size, 1, 100);
+
+    return ret_sdo(sts);
+}
+
+/**
+ * @brief The function reads software version of the device (minor + major + firmware build date)
+ * 
+ * @param servo Servo descriptor returned by the ::rr_init_servo function. <b>Note</b>: All RDrive servos are supplied with <b>the same default CAN ID—32</b>.
+ * @param version_string Pointer to the ASCII string that will be read
+ * @param version_string_size Input: size of the ::version_string, Output: size of the readed string
+ * @return Status code (::rr_ret_status_t)
+ */
+rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
+{
+    // Note: see http://wiki.rozum.com/display/EMB/Versioning
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint32_t sts = read_raw_sdo(dev, 0x100A, 0x00, (uint8_t *)version_string, version_string_size, 1, 100);
+
+    return ret_sdo(sts);
 }
