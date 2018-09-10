@@ -168,3 +168,4 @@ fabric.properties
 /python/venv/
 /python/.idea/
 .idea
+.vscode
