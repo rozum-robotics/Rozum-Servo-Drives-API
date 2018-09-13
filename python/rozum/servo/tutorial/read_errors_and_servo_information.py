@@ -21,6 +21,10 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = interface.init_servo(SERVO_1_ID)
 
+    logger.info("Reading hardware and software info.")
+    version = servo.get_version()
+    logger.info("Got info: {}".format(version))
+
     logger.info("Reading error status")
     num, arr = servo.read_error_status(100)
     logger.info("Got {} errors".format(num))
