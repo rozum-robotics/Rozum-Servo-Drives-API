@@ -31,6 +31,10 @@ class Servo(object):
     def interface(self):
         return self._servo
 
+    @property
+    def identifier(self):
+        return self._identifier
+
     def param_cache_setup_entry(self, param: int, enabled: bool):
         """The function is the fist one in the API call sequence that enables reading multiple servo paramaters
         (e.g., velocity, voltage, and position) as a data array.
@@ -433,8 +437,46 @@ class Servo(object):
         """
         error_count = c_uint32(0)
         error_array = (c_uint8 * array_size)()
-        status = self._api.rr_read_error_status(self._servo, byref(error_count), byref(error_array))
+        self._api.rr_read_error_status(self._servo, byref(error_count), byref(error_array))
         return error_count.value, error_array
+
+    def get_version(self):
+        """The function returns hardware and software version of the device.
+
+        Example: {
+            "hardware": {
+                "serial": "590370f_51363432_363130",
+                "type": "52",
+                "rev": "36",
+            },
+            "software": {
+                "major": "10",
+                "minor": "36",
+                "timestamp": "20180329_120556",
+            }
+        }
+
+        :return: dict with data like in example: dict
+        """
+        buffer_size = 100
+        hardware_version = create_string_buffer(buffer_size)
+        soft_version = create_string_buffer(buffer_size)
+        self._api.rr_get_hardware_version(self._servo, hardware_version, byref(c_int(buffer_size)))
+        self._api.rr_get_software_version(self._servo, soft_version, byref(c_int(buffer_size)))
+        hardware_data = hardware_version.value.decode("utf-8").split(".")
+        software_data = soft_version.value.decode("utf-8").split(".")
+        return {
+            "hardware": {
+                "serial": hardware_data[0],
+                "type": hardware_data[1],
+                "rev": hardware_data[2],
+            },
+            "software": {
+                "major": software_data[0],
+                "minor": software_data[1],
+                "timestamp": software_data[2],
+            }
+        }
 
     def _write_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
         """The function performs an arbitrary SDO write request to servo.
