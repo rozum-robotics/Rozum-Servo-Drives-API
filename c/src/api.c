@@ -160,7 +160,7 @@ void rr_sleep_ms(int ms)
  * @param sz Size of the `data` in bytes
  * @param retry Number of retries (if a communication error occured during the request)
  * @param tout Request timeout in milliseconds
- * @return void
+ * @return Status code (::rr_ret_status_t)
  * @ingroup Aux
  */
 rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int sz, int retry, int tout)
@@ -169,6 +169,28 @@ rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t 
     CHECK_NMT_STATE(servo);
 
     uint32_t sts = write_raw_sdo((usbcan_device_t *)servo->dev, idx, sidx, data, sz, retry, tout);
+
+    return ret_sdo(sts);
+}
+
+/**
+ * @brief The function sends an arbitrary SDO read request to the specified servo.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param idx Index of the SDO object to which the request refers
+ * @param sidx Subindex
+ * @param data Data to read to
+ * @param sz Size of the `data` in bytes, is writed with the number of readed bytes
+ * @param retry Number of retries (if a communication error occured during the request)
+ * @param tout Request timeout in milliseconds
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Aux
+ */
+rr_ret_status_t rr_read_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int *sz, int retry, int tout)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint32_t sts = read_raw_sdo((usbcan_device_t *)servo->dev, idx, sidx, data, sz, retry, tout);
 
     return ret_sdo(sts);
 }
