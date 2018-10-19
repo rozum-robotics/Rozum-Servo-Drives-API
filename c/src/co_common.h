@@ -1,6 +1,11 @@
 #ifndef __CO_COMMON_DOT_H__
 #define __CO_COMMON_DOT_H__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdint.h>
 
 
@@ -231,5 +236,8 @@ const char *sdo_describe_error(uint32_t err);
 
 extern const char *CAN_OPEN_CMD[];
 
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -1,6 +1,11 @@
 #ifndef __USBCAN_UTIL_H__
 #define __USBCAN_UTIL_H__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdint.h>
 #include <unistd.h>
 #include <stddef.h>
@@ -52,5 +57,9 @@ uint64_t get_ix_(uint8_t *d, int *p, int x);
 void set_ux_(uint8_t *d, int *p, int x, uint64_t v);
 
 void msleep(uint32_t ms);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

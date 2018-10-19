@@ -336,7 +336,7 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 static void usbcan_wait_sdo(usbcan_instance_t *inst, usbcan_sdo_t *sdo, sdo_resp_cb_t cb)
 {
 	inst->wait_sdo.sdo = *sdo;
-	inst->wait_sdo.cb = cb;
+    inst->wait_sdo.cb = (void*)cb;
 }
 
 /*
@@ -627,7 +627,7 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 				LOG_DUMP(inst->comm_log, "SERIAL RX(HB)", data, len);
 				int p = 0;
 				uint8_t id = get_ux_(data, &p, 1) & 0x7f;
-				usbcan_nmt_state_t state = get_ux_(data, &p, 1);
+                usbcan_nmt_state_t state = (usbcan_nmt_state_t)get_ux_(data, &p, 1);
 
 				if((inst->dev_state[id] != state) || (inst->dev_alive[id] == -1))
 				{
@@ -758,8 +758,8 @@ static int usbcan_rx(usbcan_instance_t *inst)
  */
 static void emcy_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info)
 {
-	LOG_WARN(debug_log, "Emergency frame received: id(%"PRId8") code(0x%"PRIX16") reg(0x%"PRIX8") bits(0x%"PRIX8") info(0x%"PRIX32")",
-			id, code, reg, bits, info);
+    LOG_WARN(debug_log, "Emergency frame received: id(%" PRId8 ") code(0x%" PRIX16 ") reg(0x%" PRIX8 ") bits(0x%" PRIX8 ") info(0x%" PRIX32 ")",
+        id, code, reg, bits, info);
 }
 
 /*
@@ -989,27 +989,27 @@ static void *usbcan_process(void *udata)
 void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to)
 {
 	inst->master_hb_ival = to;
-	inst->usbcan_hb_tx_cb = cb;
+    inst->usbcan_hb_tx_cb = (void*)cb;
 }
 
 void usbcan_setup_hb_rx_cb(usbcan_instance_t *inst, usbcan_hb_rx_cb_t cb)
 {
-	inst->usbcan_hb_rx_cb = cb;
+    inst->usbcan_hb_rx_cb = (void*)cb;
 }
 
 void usbcan_setup_emcy_cb(usbcan_instance_t *inst, usbcan_emcy_cb_t cb)
 {
-	inst->usbcan_emcy_cb = cb;
+    inst->usbcan_emcy_cb = (void*)cb;
 }
 
 void usbcan_setup_nmt_state_cb(usbcan_instance_t *inst, usbcan_nmt_state_cb_t cb)
 {
-	inst->usbcan_nmt_state_cb = cb;
+    inst->usbcan_nmt_state_cb = (void*)cb;
 }
 
 void usbcan_setup_com_frame_cb(usbcan_instance_t *inst, usbcan_com_frame_cb_t cb)
 {
-	inst->usbcan_com_frame_cb = cb;
+    inst->usbcan_com_frame_cb = (void*)cb;
 }
 
 int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id)
@@ -1050,7 +1050,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 {
 	int i;
 
-	usbcan_instance_t *inst = malloc(sizeof(usbcan_instance_t));
+    usbcan_instance_t *inst = (usbcan_instance_t *)malloc(sizeof(usbcan_instance_t));
 	if(!inst)
 	{
 		LOG_WARN(debug_log, "%s: can't allocate interface instance", __func__);
@@ -1113,7 +1113,7 @@ usbcan_device_t *usbcan_device_init(usbcan_instance_t *inst, int id)
 		LOG_WARN(debug_log, "%s: can't init device with 'null' interface", __func__);
 		return 0;
 	}
-	usbcan_device_t *dev = malloc(sizeof(usbcan_device_t));
+    usbcan_device_t *dev = (usbcan_device_t *)malloc(sizeof(usbcan_device_t));
 	if(!dev)
 	{
 		LOG_WARN(debug_log, "%s: can't allocate device instance", __func__);

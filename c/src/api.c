@@ -235,7 +235,7 @@ void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb)
 {
     if(interface)
     {
-        interface->nmt_cb = cb;
+        interface->nmt_cb = (void*)cb;
     }
 }
 
@@ -251,7 +251,7 @@ void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb)
 {
     if(interface)
     {
-        interface->emcy_cb = cb;
+        interface->emcy_cb = (void*)cb;
     }
 }
 
@@ -586,7 +586,7 @@ const char *rr_describe_emcy_code(uint16_t code)
  */
 rr_can_interface_t *rr_init_interface(const char *interface_name)
 {
-    rr_can_interface_t *i = calloc(1, sizeof(rr_can_interface_t));
+    rr_can_interface_t *i = (rr_can_interface_t *)calloc(1, sizeof(rr_can_interface_t));
 
     if(!i)
     {
@@ -643,7 +643,7 @@ rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface)
  */
 rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
 {
-    rr_servo_t *s = calloc(1, sizeof(rr_servo_t));
+    rr_servo_t *s = (rr_servo_t *)calloc(1, sizeof(rr_servo_t));
 
     if(!s)
     {

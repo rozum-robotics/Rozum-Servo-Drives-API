@@ -1,6 +1,10 @@
 #ifndef __USB_CAN_TYPES_H__
 #define __USB_CAN_TYPES_H__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -58,7 +62,9 @@ USB_CAN_PUT_UX_DECL(b, bp, d, n_memb, uint64_t);
 int usb_can_get_float24(uint8_t *b, int bp, float24 *d, int n_memb);
 int usb_can_put_float24(uint8_t *b, int bp, const float24 *d, int n_memb);
 
-
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

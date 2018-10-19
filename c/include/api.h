@@ -10,6 +10,11 @@
 #ifndef _ROZUM_API_H
 #define _ROZUM_API_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* Includes ------------------------------------------------------------------*/
 #include <stdbool.h>
 #include <stdint.h>
@@ -278,5 +283,9 @@ rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t 
 
 rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_string, int *version_string_size);
 rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_string, int *version_string_size);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _ROZUM_API_H */

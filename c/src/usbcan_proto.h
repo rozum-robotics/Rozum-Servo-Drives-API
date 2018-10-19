@@ -1,6 +1,11 @@
 #ifndef __USBCAN_PROTO_H__
 #define __USBCAN_PROTO_H__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -184,6 +189,10 @@ uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, ui
 int write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg);
 int write_timestamp(const usbcan_instance_t *inst, uint32_t ts);
 int write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
 

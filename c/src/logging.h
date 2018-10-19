@@ -1,6 +1,11 @@
 #ifndef __LOGGER_H__
 #define __LOGGER_H__
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 #include <inttypes.h>
 #include <stdint.h>
 #include <stdbool.h>
@@ -33,5 +38,9 @@ void _LOG_ASSERT_(FILE *STREAM, bool cond, bool persist, const char *x, const ch
 
 #define __STRFY__(a) #a
 #define LOG_ASSERT(s, x, c, y, persist) _LOG_ASSERT_(s, x c y, persist, __STRFY__(x), __STRFY__(c), __STRFY__(y), x, y)
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
