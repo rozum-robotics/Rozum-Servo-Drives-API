@@ -112,7 +112,7 @@ void rr_nmt_state_master_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t 
 {
     rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
 
-    LOG_INFO(debug_log, "Device %d state changed to %d:\n    '%s'", id, state, rr_describe_nmt((rr_nmt_state_t)state));
+    LOG_INFO(debug_log, "ID: %d %s", id, rr_describe_nmt((rr_nmt_state_t)state));
 
     if(i->nmt_cb)
     {

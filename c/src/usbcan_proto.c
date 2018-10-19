@@ -7,8 +7,6 @@
 #include "crc16-ccitt.h"
 #include "logging.h"
 
-#define TIME_DELTA_MS(x, y) ((x.tv_sec - y.tv_sec) * 1000 + (x.tv_usec - y.tv_usec) / 1000)
-
 
 FILE *debug_log = NULL;
 

@@ -1,13 +1,21 @@
 #include "logging.h"
 #include "usbcan_util.h"
 
+static int begin_length = 0;
 
+/**
+ * @brief LOG_INFO
+ * 
+ * @param stream 
+ * @param fmt 
+ * @param ... 
+ */
 void LOG_INFO(FILE *stream, const char *fmt, ...)
 {
-	if(!stream)
-	{
-		return;
-	}
+    if(!stream)
+    {
+        return;
+    }
     va_list ap;
     fprintf(stream, CLBLU FMTBLD "INFO:\t" FMTRST CLBLU);
 
@@ -17,12 +25,19 @@ void LOG_INFO(FILE *stream, const char *fmt, ...)
     fprintf(stream, CLRST "\n");
 }
 
+/**
+ * @brief LOG_WARN
+ * 
+ * @param stream 
+ * @param fmt 
+ * @param ... 
+ */
 void LOG_WARN(FILE *stream, const char *fmt, ...)
 {
-	if(!stream)
-	{
-		return;
-	}
+    if(!stream)
+    {
+        return;
+    }
     va_list ap;
     fprintf(stream, CLYEL FMTBLD "WARN:\t" FMTRST CLYEL);
 
@@ -32,31 +47,50 @@ void LOG_WARN(FILE *stream, const char *fmt, ...)
     fprintf(stream, CLRST "\n");
 }
 
+/**
+ * @brief LOG_ERROR
+ * 
+ * @param stream 
+ * @param fmt 
+ * @param ... 
+ */
 void LOG_ERROR(FILE *stream, const char *fmt, ...)
 {
-	if(!stream)
-	{
-		return;
-	}
+    if(!stream)
+    {
+        return;
+    }
     va_list ap;
     fprintf(stream, CLRED FMTBLD "ERROR:\t" FMTRST CLRED);
 
     va_start(ap, fmt);
     vfprintf(stream, fmt, ap);
     va_end(ap);
-    fprintf(stream, CLRST"\n");
+    fprintf(stream, CLRST "\n");
 }
 
+/**
+ * @brief _LOG_ASSERT_
+ * 
+ * @param stream 
+ * @param cond 
+ * @param persist 
+ * @param x 
+ * @param c 
+ * @param y 
+ * @param fx 
+ * @param fy 
+ */
 void _LOG_ASSERT_(FILE *stream, bool cond, bool persist, const char *x, const char *c, const char *y, float fx, float fy)
 {
-	if(!stream)
-	{
-		return;
-	}
+    if(!stream)
+    {
+        return;
+    }
     if(!cond || persist)
     {
         fprintf(stream, CLCYA FMTBLD "ASSERT:\t" CLRST "%s[%f] %s %s[%f] -> %s%s",
-                        x, fx, c, y, fy, cond ? CLGRN : CLRED, cond ? LOG_PASS : LOG_FAIL);
+                x, fx, c, y, fy, cond ? CLGRN : CLRED, cond ? LOG_PASS : LOG_FAIL);
 
         fprintf(stream, CLRST "\n");
     }
@@ -67,12 +101,48 @@ void _LOG_ASSERT_(FILE *stream, bool cond, bool persist, const char *x, const ch
     }
 }
 
+/**
+ * @brief LOG_BEGIN
+ * 
+ * @param fmt 
+ * @param ... 
+ */
+void LOG_BEGIN(FILE *stream, const char *fmt, ...)
+{
+    va_list ap;
+    va_start(ap, fmt);
+
+    fputs(FMTBLD CLYEL "TEST: " CLRST FMTBLD, stream);
+    begin_length = vfprintf(stream, fmt, ap);
+
+    va_end(ap);
+    fprintf(stream, CLRST "\n");
+    fflush(stream);
+}
+
+/**
+ * @brief LOG_END
+ * 
+ */
+void LOG_END()
+{
+    begin_length = 0;
+}
+
+/**
+ * @brief LOG_DUMP
+ * 
+ * @param stream 
+ * @param label 
+ * @param b 
+ * @param l 
+ */
 void LOG_DUMP(FILE *stream, const char *label, uint8_t *b, int l)
 {
-	if(!stream)
-	{
-		return;
-	}
+    if(!stream)
+    {
+        return;
+    }
     static int nz = 0;
     static struct timeval tv_z;
     static struct timeval tv_p;
@@ -103,4 +173,3 @@ void LOG_DUMP(FILE *stream, const char *label, uint8_t *b, int l)
     }
     fprintf(stream, "\n");
 }
-
