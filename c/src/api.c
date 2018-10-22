@@ -593,7 +593,14 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
         return NULL;
     }
 
+    rr_set_debug_log_stream(stderr);
+
     usbcan_instance_t *usbcan = usbcan_instance_init(interface_name);
+	if(!usbcan)
+	{
+		free(i);
+		return NULL;
+	}
     usbcan->udata = i;
     i->iface = usbcan;
 
@@ -606,8 +613,6 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
         return NULL;
     }
 
-    //rr_set_comm_log_stream(i, stderr);
-    rr_set_debug_log_stream(stderr);
     return i;
 }
 
@@ -643,6 +648,10 @@ rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface)
  */
 rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
 {
+	if(!interface)
+	{
+		return NULL;
+	}
     rr_servo_t *s = (rr_servo_t *)calloc(1, sizeof(rr_servo_t));
 
     if(!s)
@@ -833,6 +842,43 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
     IS_VALID_INTERFACE(interface);
     usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;
+}
+
+/**
+ * @brief The function retrieves actual state of arbitrary device connected to CAN network.  
+ * <p></p>
+ * @param interface Interface descriptor returned by the ::rr_init_interface function. 
+ * @param id Identificator of the device of interest. 
+ * @param state Pointer to the variable to put state in. 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup State
+ */
+rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, usbcan_nmt_state_t *state)
+{
+    IS_VALID_INTERFACE(interface);
+    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+
+	*state = usbcan_get_device_state(inst, id);
+
+    return RET_OK;
+}
+
+/**
+ * @brief The function retrieves actual state of specified servo.  
+ * <p></p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param state Pointer to the variable to put state in. 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup State
+ */
+rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, usbcan_nmt_state_t *state)
+{
+    IS_VALID_SERVO(servo);
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+
+	*state = usbcan_get_device_state(dev->inst, dev->id);
+
+    return RET_OK;
 }
 
 /**

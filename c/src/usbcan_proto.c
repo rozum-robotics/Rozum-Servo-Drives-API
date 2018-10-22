@@ -921,15 +921,8 @@ static void *usbcan_process(void *udata)
 
 	usbcan_instance_t *inst = (usbcan_instance_t *)udata;
 
-
 	do
 	{
-		usbcan_open_device(inst);
-		if(inst->fd < 0)
-		{
-			LOG_ERROR(debug_log, "%s: open device '%s' failed", __func__, inst->device);
-			break;
-		}
 
 		pfds[0].fd = inst->to_child_pipe[0];
 		pfds[0].events = POLLIN;
@@ -1067,6 +1060,11 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	}
 
 	ipc_create_link(inst);
+	usbcan_open_device(inst);
+	if(inst->fd < 0)
+	{
+		return NULL;
+	}
 
 	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
 	{
@@ -1074,6 +1072,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 		free(inst);
 		return NULL;
 	}
+	
 
 	usbcan_setup_hb_tx_cb(inst, hb_tx_cb, 250);
 	usbcan_setup_hb_rx_cb(inst, hb_rx_cb);
