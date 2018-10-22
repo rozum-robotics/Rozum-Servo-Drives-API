@@ -1,8 +1,6 @@
 #include "logging.h"
 #include "usbcan_util.h"
 
-static int begin_length = 0;
-
 /**
  * @brief LOG_INFO
  * 
@@ -67,66 +65,6 @@ void LOG_ERROR(FILE *stream, const char *fmt, ...)
     vfprintf(stream, fmt, ap);
     va_end(ap);
     fprintf(stream, CLRST "\n");
-}
-
-/**
- * @brief _LOG_ASSERT_
- * 
- * @param stream 
- * @param cond 
- * @param persist 
- * @param x 
- * @param c 
- * @param y 
- * @param fx 
- * @param fy 
- */
-void _LOG_ASSERT_(FILE *stream, bool cond, bool persist, const char *x, const char *c, const char *y, float fx, float fy)
-{
-    if(!stream)
-    {
-        return;
-    }
-    if(!cond || persist)
-    {
-        fprintf(stream, CLCYA FMTBLD "ASSERT:\t" CLRST "%s[%f] %s %s[%f] -> %s%s",
-                x, fx, c, y, fy, cond ? CLGRN : CLRED, cond ? LOG_PASS : LOG_FAIL);
-
-        fprintf(stream, CLRST "\n");
-    }
-
-    if(!cond)
-    {
-        exit(1);
-    }
-}
-
-/**
- * @brief LOG_BEGIN
- * 
- * @param fmt 
- * @param ... 
- */
-void LOG_BEGIN(FILE *stream, const char *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-
-    fputs(FMTBLD CLYEL "TEST: " CLRST FMTBLD, stream);
-    begin_length = vfprintf(stream, fmt, ap);
-
-    va_end(ap);
-    fprintf(stream, CLRST "\n");
-    fflush(stream);
-}
-
-/**
- * @brief LOG_END
- * 
- */
-void LOG_END()
-{
-    begin_length = 0;
 }
 
 /**

@@ -25,25 +25,11 @@ extern "C"
 #define FMTBLD "\033[1m"
 #define FMTRST "\033[0m"
 
-#define LOG_PASS (FMTBLD "PASS" FMTRST)
-#define LOG_FAIL (FMTBLD "FAIL" FMTRST)
+void LOG_DUMP(FILE *stream, const char *label, uint8_t *b, int l);
 
-    void LOG_DUMP(FILE *stream, const char *label, uint8_t *b, int l);
-
-    void LOG_INFO(FILE *stream, const char *fmt, ...);
-    void LOG_WARN(FILE *stream, const char *fmt, ...);
-    void LOG_ERROR(FILE *stream, const char *fmt, ...);
-    void _LOG_ASSERT_(FILE *STREAM, bool cond, bool persist, const char *x, const char *c, const char *y, float fx, float fy);
-
-    void LOG_BEGIN(FILE *stream, const char *fmt, ...);
-    void LOG_END(void);
-
-#define __STRFY__(a) #a
-#define LOG_ASSERT(s, x, c, y, persist)                                                      \
-    {                                                                                        \
-        float xx = x, yy = y;                                                                \
-        _LOG_ASSERT_(s, xx c yy, persist, __STRFY__(x), __STRFY__(c), __STRFY__(y), xx, yy); \
-    }
+void LOG_INFO(FILE *stream, const char *fmt, ...);
+void LOG_WARN(FILE *stream, const char *fmt, ...);
+void LOG_ERROR(FILE *stream, const char *fmt, ...);
 
 #ifdef __cplusplus
 }
