@@ -230,8 +230,8 @@ rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface);
-rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, usbcan_nmt_state_t *state);
-rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, usbcan_nmt_state_t *state);
+rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, rr_nmt_state_t *state);
+rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *state);
 
 rr_ret_status_t rr_release(const rr_servo_t *servo);
 rr_ret_status_t rr_freeze(const rr_servo_t *servo);

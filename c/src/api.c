@@ -853,12 +853,12 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, usbcan_nmt_state_t *state)
+rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, rr_nmt_state_t *state)
 {
     IS_VALID_INTERFACE(interface);
     usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
 
-	*state = usbcan_get_device_state(inst, id);
+	*state = (rr_nmt_state_t)usbcan_get_device_state(inst, id);
 
     return RET_OK;
 }
@@ -871,12 +871,12 @@ rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, us
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, usbcan_nmt_state_t *state)
+rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *state)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
-	*state = usbcan_get_device_state(dev->inst, dev->id);
+	*state = (rr_nmt_state_t)usbcan_get_device_state(dev->inst, dev->id);
 
     return RET_OK;
 }
