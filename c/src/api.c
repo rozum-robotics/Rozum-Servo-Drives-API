@@ -845,11 +845,12 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
 }
 
 /**
- * @brief The function retrieves actual state of arbitrary device connected to CAN network.  
+ * @brief The function retrieves the actual NMT state of any device (a servo motor or any other) connected to the specified CAN network.
+ * The state is described as a status code (:: rr_nmt_state_t). 
  * <p></p>
- * @param interface Interface descriptor returned by the ::rr_init_interface function. 
- * @param id Identificator of the device of interest. 
- * @param state Pointer to the variable to put state in. 
+ * @param interface Interface descriptor returned by the ::rr_init_interface function 
+ * @param id Identificator of the addressed device 
+ * @param state Pointer to the variable where the state of the device is returned 
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
@@ -864,10 +865,10 @@ rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, rr
 }
 
 /**
- * @brief The function retrieves actual state of specified servo.  
+ * @brief The function retrieves the actual NMT state of a specified servo. The state is described as a status code (:: rr_nmt_state_t).  
  * <p></p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param state Pointer to the variable to put state in. 
+ * @param state Pointer to the variable where the state of the servo is returned 
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
