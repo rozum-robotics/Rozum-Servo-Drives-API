@@ -31,6 +31,7 @@ typedef enum
 	CO_NMT_PRE_OPERATIONAL = 127, /**< Device is in pre-operational state */
 	CO_NMT_OPERATIONAL = 5,       /**< Device is in operational state */
 	CO_NMT_STOPPED = 4,           /**< Device is stopped */
+    CO_NMT_BOOT = 2,              /**< Device is in bootloader */
 	CO_NMT_HB_TIMEOUT = -1,        
 } usbcan_nmt_state_t;
 
