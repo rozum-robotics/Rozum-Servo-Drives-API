@@ -479,7 +479,7 @@ class Servo(object):
         }
 
     def _write_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
-        """The function performs an arbitrary SDO write request to servo.
+        """The function performs an arbitrary SDO write request.
 
         :param idx: c_uint16:
             Index of SDO object
@@ -496,6 +496,26 @@ class Servo(object):
         :return: status: int
         """
         return self._api.rr_write_raw_sdo(self._servo, idx, sidx, data, sz, retry, tout)
+
+
+    def _read_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
+        """The function performs an arbitrary SDO read request.
+
+        :param idx: c_uint16:
+            Index of SDO object
+        :param sidx: c_uint8:
+            Subindex
+        :param data: c_void_p:
+            array for read to
+        :param sz: c_int:
+            Size of data in bytes
+        :param retry: c_int:
+            Number of reties (if communication error occured during request)
+        :param tout: c_int:
+            Request timeout in milliseconds
+        :return: status: int
+        """
+        return self._api.rr_read_raw_sdo(self._servo, idx, sidx, data, byref(sz), retry, tout)
 
 
 class Interface(object):
