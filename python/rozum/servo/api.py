@@ -36,14 +36,14 @@ class Servo(object):
         return self._identifier
 
     def param_cache_setup_entry(self, param: int, enabled: bool):
-        """The function is the fist one in the API call sequence that enables reading multiple servo paramaters
+        """The function is the fist one in the API call sequence that enables reading multiple servo parameters
         (e.g., velocity, voltage, and position) as a data array.
 
         Using the sequence is advisable when you need to read more than one parameter at a time.
         The user can set up the array to include up to 50 parameters.
         In all, the sequence comprises the following functions:
             * param_cache_setup_entry for setting up an array of servo parameters to read
-            * param_cache_update for retreiving the parameters from the servo and saving them to the program cache
+            * param_cache_update for retrieving the parameters from the servo and saving them to the program cache
             * read_cached_parameter for reading parameters from the program cache
 
         Using the sequence of API calls allows for speeding up data acquisition by nearly two times.
@@ -60,11 +60,11 @@ class Servo(object):
 
     def param_cache_update(self):
         """The function is always used in combination with the param_cache_setup_entry function.
-        It retreives from the servo the array of parameters set up using param_cache_setup_entry function and saves the
-        array to the program cache. You can subsequently read the parameters from the program cache with the
+        It retrieves from the servo the array of parameters set up using the param_cache_setup_entry function and saves
+        the array to the program cache. You can subsequently read the parameters from the program cache with the
         read_cached_parameter function. For more information, see param_cache_setup_entry.
 
-        **Note:** After you exit the program, the cache will be cleared.
+        **Note:** After you exit the program, the cache is cleared.
 
         :return: Status code: int
         """
@@ -152,7 +152,7 @@ class Servo(object):
 
     def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int,
                          accel_deg_per_sec2: float = None):
-        """The function enables creating PVT (position-velocity-time) points to set the motion trajectory of the servo.
+        """The function enables creating PVT (position-velocity-time) points to set a motion trajectory of the servo.
 
         PVT points define the following:
             * what position the servo specified in the 'servo' parameter should reach
@@ -171,7 +171,7 @@ class Servo(object):
             (PVT point in a motion trajectory or an initial point) to the commanded one.
             The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days).
         :param accel_deg_per_sec2: float
-            Acceleration (in degrees/sec**2) which the servo should have in reached position.
+            Acceleration (in degrees/sec**2) which the servo should have in the position where it comes.
         :return: Status code: int
         """
         if accel_deg_per_sec2 is not None:
@@ -323,7 +323,7 @@ class Servo(object):
         :param position_deg: float:
             Position of the servo (in degrees) to be reached.
             The parameter is a multi-turn value (e.g., when set to 720, the servo will make two turns, 360 degrees each).
-            When the parameter is set to a "-" sign value, the servo will rotate in the opposite direction.
+            When the parameter is set to a "-" sign value, the servo rotates in the opposite direction.
         :return: Status code: int
         """
         return self._api.rr_set_position(self._servo, c_float(position_deg))
@@ -422,7 +422,7 @@ class Servo(object):
 
     def read_error_status(self, array_size: int):
         """The functions enables reading the total actual count of servo hardware errors
-        (e.g., no Heartbeats/overcurrent, etc.). In addition, the function returns the codes of all the detected errors
+        (e.g., no Heartbeats/overcurrent, etc.). In addition, the function returns the codes of all detected errors
         as a single array.
 
         **Note:** The rr_ret_status_t codes returned by API functions only indicate that an error occured during
@@ -490,7 +490,7 @@ class Servo(object):
         :param sz: c_int:
             Size of data in bytes
         :param retry: c_int:
-            Number of reties (if communication error occured during request)
+            Number of retries (if communication error occurred during request)
         :param tout: c_int:
             Request timeout in milliseconds
         :return: status: int
@@ -506,7 +506,7 @@ class Servo(object):
         :param sidx: c_uint8:
             Subindex
         :param data: c_void_p:
-            array for read to
+            Array where data is saved
         :param sz: c_int:
             Size of data in bytes
         :param retry: c_int:
@@ -533,8 +533,8 @@ class Interface(object):
         """The function commands all servos connected to the specified interface (CAN bus) to move simultaneously
         through a number of preset PVT points.
 
-        **Note:** When any of the servos fails to reach any of the PVT points due to an error, it will broadcast a
-        "Go to Stopped State" command to all the other servos on the same bus. The servos will stop executing the preset
+        **Note:** When any servo fails to reach any PVT point due to an error, it broadcasts a
+        "Go to Stopped State" command to all the other servos on the same bus. The servos stop executing preset
         PVT points and go to the stopped state. In the state, only Heartbeats are available. You can neither communicate
         with servos nor command them to execute any operations.
 
@@ -542,7 +542,7 @@ class Interface(object):
 
         :param timestamp_ms: int
             Delay (in milliseconds) before the servos associated with the interface start to move.
-            When the value is set to 0, the servos will start moving immediately.
+            When the value is set to 0, the servos start moving immediately.
             The available value range is from 0 to 2^24-1.
         :return: Status code: int
         """
@@ -597,7 +597,7 @@ class Interface(object):
         return self._api.rr_net_reboot(self._interface)
 
     def net_reset_communication(self):
-        """The function resets communication on current interface.
+        """The function resets communication on the current interface.
 
         For instance, you may need to use the function when changing settings that require a reset after modification.
 
@@ -607,7 +607,7 @@ class Interface(object):
 
     def net_set_state_operational(self):
         """The function sets all servos connected to the current interface (CAN bus) to
-        the operational state. In the state, the servos can both communicate with the user program and execute commands.
+        the operational state. In the state, servos can both communicate with the user program and execute commands.
 
         For instance, you may need to call the function to switch all servos on a specific bus from the pre-operational
         state to the operational one after an error (e.g., due to overcurrent).
@@ -618,7 +618,7 @@ class Interface(object):
 
     def net_set_state_pre_operational(self):
         """The function sets all servos connected to the current interface to the pre-operational state.
-        In the state, the servos are available for communication, but cannot execute commands.
+        In the state, servos are available for communication, but cannot execute commands.
 
         For instance, you may need to call the function, if you want to force all servos on a specific bus to stop
         executing commands, e.g., in an emergency.
@@ -641,8 +641,8 @@ class Interface(object):
         """The function closes the COM port where the corresponding CAN-USB dongle is connected, clearing all data
         associated with the interface descriptor.
 
-        Automatically called when ServoApi is deinitializing. In addition performs deinitialization on all registered
-        servos.
+        The function is called automatically when Servo API is deinitializing. In addition, it deinitializes all servos
+        on the interface
 
         :return: None
         """
@@ -655,22 +655,19 @@ class ServoApi(object, metaclass=_Singleton):
     def __init__(self):
         """The function is the first to call to be able to work with the user API.
 
-        It loads libservo_api.so library using the specified path. If the path is not specified, it searches for the library in the
-        rozum directory.
-
-        :return: None
+        Searches for the libservo_api.so library in the rozum/servo directory and loads it.
         """
         self._api = CDLL(os.path.join(os.path.dirname(__file__), ServoApi.__LIBRARY_NAME))
         self._check_library_loaded()
-        self.sleep_ms(100)  # for proper initialization
         self._interfaces = {}
-        # windows specific stuff
+        # change the restype due to windows specific behavior
         self._api.rr_init_interface.restype = c_void_p
         self._api.rr_init_servo.restype = c_void_p
 
     def _check_library_loaded(self):
         if self._api is None:
-            raise AttributeError("Library not loaded. Follow building instructions and execute `make python` first.")
+            raise AttributeError("Impossible to load the library. "
+                                 "Go back to the building instructions and execute `make python` first.")
 
     @property
     def api(self):
@@ -678,12 +675,12 @@ class ServoApi(object, metaclass=_Singleton):
         return self._api
 
     def init_interface(self, interface_name: str) -> Interface:
-        """The function is the second to call to be able to work with the user API.
+        """The function is the second to call (after api initialization) to be able to work with the user API.
 
         It opens the COM port where the corresponding CAN-USB dongle is connected, enabling communication between the
         user program and the servo motors on the respective CAN bus.
 
-        Interface name string examples:
+        Examples of an interface name string:
             * Linux: "/dev/ttyACM0" **or** "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00"
             * MacOS: "/dev/cu.modem301"
             * Windows (Cygwin): "/dev/ttyS0"
@@ -716,8 +713,8 @@ class ServoApi(object, metaclass=_Singleton):
 
     def describe_emcy_bit(self, bit: c_uint8):
         """The function returns a string describing in detail a specific EMCY event based on the code in the 'bit'
-        parameter (e.g., "CAN bus warning limit reached"). The function can be used in combination with describe_emcy_
-        code. The latter provides a more generic description of an EMCY event.
+        parameter (e.g., "CAN bus warning limit reached"). The function can be used in combination with the
+        describe_emcy_code. The latter provides a more generic description of an EMCY event.
 
         :param bit: c_uint8:
             Error bit field of the corresponding EMCY message (according to the CanOpen standard)
