@@ -16,8 +16,8 @@ Implementation is based on the `ctypes` module.
    `rozum/servo/tutorial` - examples for quick start
    
 ### Installation
-After building the library, copy `libservo_api.so` file into `rozum/servo` directory. 
-Optionally you can run `make python` in console after building. It will perform copying operation.
+After you have built the library, copy the `libservo_api.so` file into the `rozum/servo` directory. 
+Alternatively, you can run `make python` in the console after building to perform the copying operation.
 
 Currently, installation via **pip** is not supported. 
 So, copy the `rozum` module into your project root manually.
@@ -31,8 +31,8 @@ So, copy the `rozum` module into your project root manually.
 
 ### Getting started
 1. Build the libservo_api shared library. Make sure to copy it into the `rozum` folder.
-2. Find out the **_can_** interface name. 
-_Hint:_ For Linux, you can find it out by executing `ls /dev/serial/by-id/` command in the console.
+2. Find out the **_CAN_** interface name. 
+_Hint:_ For Linux, you can find it out by executing the `ls /dev/serial/by-id/` command in the console.
 The output should contain something like: `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
 Alternatively, you can execute `ls /dev/` in the console. In this case, the output should be of the following type: `ttyACM1` (`ttyS1` in Cygwin). 
 _Note:_ The last number may differ on your machine.
@@ -43,7 +43,25 @@ _Note:_ The last number may differ on your machine.
 _Note:_ You can leave `LIBRARY_PATH = None` if you copied the library into the `rozum` folder in Step 1.
 4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the console.
 
-### Usage
+### Basic usage
+```python
+
+import rozum as rr
+
+api = rr.ServoApi() # api initialization and library loading
+interface = api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00") # interface initialization
+servo = interface.init_servo(64) # servo initialization
+
+# go to specific position(degrees)
+servo.set_position(100.)
+
+# set specific velocity(degrees/sec)
+servo.set_velocity(204.5)
+
+
+```
+
+### Advanced usage
 Below is the usual sequence of working with servos. For detailed instructions, refer to `tutorials`.
 ```python
 # importing modules
@@ -63,19 +81,19 @@ servo = interface.init_servo(64)
 servo.param_cache_setup_entry(rr.APP_PARAM_CURRENT_INPUT, True)
 servo.param_cache_setup_entry(rr.APP_PARAM_VOLTAGE_INPUT, True)
 
-# adding motion points
+# set motor trajectory (adding motion points - position(deg), velocity(deg/sec), time(ms))
 servo.add_motion_point(100., 0., 6000)
 servo.add_motion_point(-100., 0., 6000)
 servo.add_motion_point(0, 0, 6000)
 
-# starting motion
+# start motion with delay(ms)
 interface.start_motion(0)
 
 # reading realtime parameters from cache
 servo.param_cache_update()
 current_input = servo.read_cached_parameter(rr.APP_PARAM_CURRENT_INPUT)
 voltage_input = servo.read_cached_parameter(rr.APP_PARAM_VOLTAGE_INPUT)
-print("current_input = {}, voltage_input = {}".format(current_input, voltage_input)) # printing them
+print("current_input = {}, voltage_input = {}".format(current_input, voltage_input)) # printing parameters
 
 # direct reading of realtime parameters
 velocity_rotor = servo.read_parameter(rr.APP_PARAM_VELOCITY_ROTOR)
