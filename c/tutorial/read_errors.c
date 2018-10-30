@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 {
     //! [cccode 6]
     //! [Adding interface 6]
-    rr_can_interface_t *iface = rr_init_interface(/*TUTORIAL_DEVICE*/ "/dev/ttyS3");
+    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
     //! [Adding interface 6]
 
     //! [Adding servo 6]

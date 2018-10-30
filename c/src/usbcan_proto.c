@@ -18,15 +18,20 @@ static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts);
 static int usbcan_build_hb(uint8_t *dst, int id, usbcan_nmt_state_t state);
 static int usbcan_build_nmt(uint8_t *dst, int id, usbcan_nmt_cmd_t cmd);
 static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m);
-static int usbcan_build_sdo_req(uint8_t *dst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb);
-static int usbcan_rx(usbcan_instance_t *inst);
+static int usbcan_build_sdo_req(uint8_t *dst, bool write, uint8_t id, 
+		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
+		void *data, uint16_t len);
 
-static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb);
+static int usbcan_send_sdo_req(usbcan_instance_t *inst, bool write, uint8_t id, 
+		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
+		void *data, uint16_t len);
 static void usbcan_send_master_hb(usbcan_instance_t *inst);
 static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m);
 static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
 static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state) __attribute__((unused));
 static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
+
+static int usbcan_rx(usbcan_instance_t *inst);
 
 /*
  * Check interface instance for consistency.
@@ -95,155 +100,18 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 }
 
 /*
- * Creates a couple of pipes for inter thread communication.
- */
-static void ipc_create_link(usbcan_instance_t *inst)
-{
-    if(pipe(inst->to_master_pipe))
-    {
-        LOG_ERROR(debug_log, "%s: can't create master pipe", __func__);
-        return;
-    }
-
-    if(pipe(inst->to_child_pipe))
-    {
-        LOG_ERROR(debug_log, "%s: can't create child pipe", __func__);
-        return;
-    }
-}
-
-/*
- * Read protaected against interrupts caused by signal reception.
- */
-static size_t read_sig_safe(int fd, void *data, size_t sz)
-{
-    ssize_t l, bytes = 0;
-
-    while(sz)
-    {
-        l = read(fd, ((uint8_t *)data) + bytes, sz);
-        if(l >= 0)
-        {
-            sz -= l;
-            bytes += l;
-        }
-        else
-        {
-            if(errno == EINTR)
-            {
-                continue;
-            }
-            return -1;
-        }
-    }
-    return bytes;
-}
-
-/*
- * Write protaected against interrupts caused by signal reception.
- */
-static size_t write_sig_safe(int fd, void *data, size_t sz)
-{
-    ssize_t l, bytes = 0;
-
-    while(sz)
-    {
-        l = write(fd, ((uint8_t *)data) + bytes, sz);
-        if(l >= 0)
-        {
-            sz -= l;
-            bytes += l;
-        }
-        else
-        {
-            if(errno == EINTR)
-            {
-                continue;
-            }
-            return -1;
-        }
-    }
-    return bytes;
-}
-
-/*
  * Callback for handling SDO response.
  */
 static void sdo_resp_cb(usbcan_instance_t *inst, uint32_t abt, uint8_t *data, int len)
 {
-    ipc_sdo_resp_t r;
-
-    r.sdo = inst->wait_sdo.sdo;
-    r.abt = abt;
-    r.data_len = len;
-    write_sig_safe(inst->to_master_pipe[1], &r, sizeof(r));
-    if(data && len)
-    {
-        write_sig_safe(inst->to_master_pipe[1], data, len);
-    }
-}
-
-/*
- * Receives requests from user thread.
- */
-static void ipc_process(usbcan_instance_t *inst)
-{
-    ipc_opcode_t opcode;
-
-    read_sig_safe(inst->to_child_pipe[0], &opcode, sizeof(opcode));
-
-    switch(opcode)
-    {
-    case IPC_SDO:
-    {
-        ipc_sdo_req_t r;
-
-        read_sig_safe(inst->to_child_pipe[0], &r, sizeof(r));
-        uint8_t data[r.data_len];
-        read_sig_safe(inst->to_child_pipe[0], data, r.data_len);
-        usbcan_send_sdo_req(inst, &r.sdo, data, r.data_len, sdo_resp_cb);
-        break;
-    }
-    case IPC_COM_FRAME:
-    {
-        can_msg_t msg;
-
-        read_sig_safe(inst->to_child_pipe[0], &msg, sizeof(msg));
-
-        usbcan_send_com_frame(inst, &msg);
-        break;
-    }
-    case IPC_TIMESTAMP:
-    {
-        uint32_t ts;
-
-        read_sig_safe(inst->to_child_pipe[0], &ts, sizeof(ts));
-
-        usbcan_send_timestamp(inst, ts);
-        break;
-    }
-    case IPC_NMT:
-    {
-        ipc_nmt_t nmt;
-
-        read_sig_safe(inst->to_child_pipe[0], &nmt, sizeof(nmt));
-
-        usbcan_send_nmt(inst, nmt.id, nmt.cmd);
-        break;
-    }
-	case IPC_WAIT_DEVICE:
+	inst->op.abt = abt;
+	if(!inst->op.write)
 	{
-		ipc_wait_device_t wd;
-
-		read_sig_safe(inst->to_child_pipe[0], &wd, sizeof(wd));
-		inst->wait_device.id = wd.id;
-		inst->wait_device.timer = wd.timeout_ms;
-
-		break;
+		memcpy(inst->op.data, data, len);
 	}
-    default:
-        break;
-    }
+	inst->op.len = len;
+
+	pthread_cond_signal(&inst->cond);
 }
 
 /*
@@ -296,45 +164,34 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 	}
 
 	/*Wait for SDO response*/
-	if(inst->wait_sdo.cb)
+	if(inst->op.code == OP_SDO)
 	{
-		inst->wait_sdo.sdo.ttl = CLIPL(inst->wait_sdo.sdo.ttl - delta_ms, 0);
-		if(!inst->wait_sdo.sdo.ttl)
+		inst->op.ttl = CLIPL(inst->op.ttl - delta_ms, 0);
+		if(!inst->op.ttl)
 		{
-			((sdo_resp_cb_t)inst->wait_sdo.cb)(inst, -1, NULL, 0);
-			inst->wait_sdo.cb = NULL;
+			sdo_resp_cb(inst, -1u, NULL, 0);
+			inst->op.code = OP_NONE;
 		}
 	}
 
 	/*Wait for device apeared on bus*/
-	if(inst->wait_device.id > 0)
+	if(inst->op.code == OP_WAIT_DEV)
 	{
-		if(inst->dev_alive[inst->wait_device.id] > 0)
+		if(inst->dev_alive[inst->op.id] > 0)
 		{
-			int resp = 1;
-	    	write_sig_safe(inst->to_master_pipe[1], &resp, sizeof(resp));
-			inst->wait_device.id = 0;
+			pthread_cond_signal(&inst->cond);
+			inst->op.abt = 0;
+			inst->op.code = OP_NONE;
 		}
-		else if(inst->wait_device.timer <= 0)
+		else if(inst->op.ttl <= 0)
 		{
-			int resp = 0;
-	    	write_sig_safe(inst->to_master_pipe[1], &resp, sizeof(resp));
-			inst->wait_device.id = 0;
+			pthread_cond_signal(&inst->cond);
+			inst->op.abt = -1u;
+			inst->op.code = OP_NONE;
 		}
 
-		inst->wait_device.timer -= delta_ms;
+		inst->op.ttl -= delta_ms;
 	}
-}
-
-/*
- * Configures receive stack for waiting specifig SDO response.
- * Callback cb will be called if SDO response received or timeout occured.
- * Notice: timeout is part of usbcan_sdo_t structure.
- */
-static void usbcan_wait_sdo(usbcan_instance_t *inst, usbcan_sdo_t *sdo, sdo_resp_cb_t cb)
-{
-	inst->wait_sdo.sdo = *sdo;
-    inst->wait_sdo.cb = (void*)cb;
 }
 
 /*
@@ -402,21 +259,19 @@ static int usbcan_build_timestamp(uint8_t *dst, uint32_t ts)
 /*
  * Builds request for sending SDO request frame in USB<->CAN format.
  */
-static int usbcan_build_sdo_req(uint8_t *dst,
-		usbcan_sdo_t *sdo,
-		void *data, 
-		uint16_t len,
-		sdo_resp_cb_t cb)
+static int usbcan_build_sdo_req(uint8_t *dst, bool write, uint8_t id, 
+		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
+		void *data,	uint16_t len)
 {
 	int p = 0;
 	uint8_t *msg = dst + USB_CAN_HEAD_SZ;
 
-	set_ux_(msg, &p, 1, sdo->write ? COM_SDO_TX_REQ : COM_SDO_RX_REQ);
-	set_ux_(msg, &p, 1, sdo->id);
-	set_ux_(msg, &p, 2, sdo->idx);
-	set_ux_(msg, &p, 1, sdo->sidx);
-	set_ux_(msg, &p, 2, (sdo->tout & 0x1FFFU) |(sdo->re_txn & 0x7U) << 13);
-	if(sdo->write)
+	set_ux_(msg, &p, 1, write ? COM_SDO_TX_REQ : COM_SDO_RX_REQ);
+	set_ux_(msg, &p, 1, id);
+	set_ux_(msg, &p, 2, idx);
+	set_ux_(msg, &p, 1, sidx);
+	set_ux_(msg, &p, 2, (tout & 0x1FFFU) |(re_txn & 0x7U) << 13);
+	if(write)
 	{
 		memcpy(msg + p, data, len);
 		p += len;
@@ -478,12 +333,13 @@ static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 /*
  * Sends SDO request.
  */
-static int usbcan_send_sdo_req(usbcan_instance_t *inst, usbcan_sdo_t *sdo, void *data, uint16_t len, sdo_resp_cb_t cb)
+static int usbcan_send_sdo_req(usbcan_instance_t *inst, bool write, uint8_t id, 
+		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
+		void *data, uint16_t len)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
-	int l = usbcan_build_sdo_req(dst, sdo, data, len, cb);
+	int l = usbcan_build_sdo_req(dst, write, id, idx, sidx, tout, re_txn, data, len);
 	LOG_DUMP(inst->comm_log, "SERIAL TX(SDO)", dst, l);
-	usbcan_wait_sdo(inst, sdo, cb);
 	return usbcan_write_fd(inst, dst, l);
 }
 
@@ -573,15 +429,15 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 				uint8_t sidx = get_ux_(data, &p, 1);
 				uint32_t abt = get_ux_(data, &p, 4);
 
-				if(inst->wait_sdo.cb)
+				if(inst->op.code == OP_SDO)
 				{
-					if((inst->wait_sdo.sdo.id == id) &&
-							(inst->wait_sdo.sdo.idx == idx) &&
-							(inst->wait_sdo.sdo.sidx == sidx) &&
-							(inst->wait_sdo.sdo.write == true))
+					inst->op.code = OP_NONE;
+					if((inst->op.id == id) &&
+							(inst->op.idx == idx) &&
+							(inst->op.sidx == sidx) &&
+							(inst->op.write == true))
 					{
-						((sdo_resp_cb_t)inst->wait_sdo.cb)(inst, abt, NULL, 0);
-						inst->wait_sdo.cb = NULL;
+						sdo_resp_cb(inst, abt, NULL, 0);
 					}
 				}
 			}
@@ -600,16 +456,16 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 				uint32_t abt = get_ux_(data, &p, 4);
 
 				LOG_DUMP(inst->comm_log, "SDO read data", data + p, len - p);
-
-				if(inst->wait_sdo.cb)
+			
+				if(inst->op.code == OP_SDO)
 				{
-					if((inst->wait_sdo.sdo.id == id) &&
-							(inst->wait_sdo.sdo.idx == idx) &&
-							(inst->wait_sdo.sdo.sidx == sidx) &&
-							(inst->wait_sdo.sdo.write == false))
+					inst->op.code = OP_NONE;
+					if((inst->op.id == id) &&
+							(inst->op.idx == idx) &&
+							(inst->op.sidx == sidx) &&
+							(inst->op.write == false))
 					{
-						((sdo_resp_cb_t)inst->wait_sdo.cb)(inst, abt, data + p, len - p);
-						inst->wait_sdo.cb = NULL;
+						sdo_resp_cb(inst, abt, data + p, len - p);
 					}
 				}
 			}
@@ -917,18 +773,14 @@ static void *usbcan_process(void *udata)
 {
 	struct timeval tprev, tnow;
 	int n = 0;
-	struct pollfd pfds[2];
+	struct pollfd pfds[1];
 
 	usbcan_instance_t *inst = (usbcan_instance_t *)udata;
 
 	do
 	{
-
-		pfds[0].fd = inst->to_child_pipe[0];
-		pfds[0].events = POLLIN;
-
-		pfds[1].fd = inst->fd;
-		pfds[1].events = POLLIN | POLLERR;
+		pfds[0].fd = inst->fd;
+		pfds[0].events = POLLIN | POLLERR;
 
 		gettimeofday(&tnow, NULL);
 		tprev = tnow;
@@ -937,22 +789,17 @@ static void *usbcan_process(void *udata)
 
 		while(1)
 		{
-			n = poll(pfds, 2, USB_CAN_POLL_GRANULARITY_MS);
+			n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
 			gettimeofday(&tnow, NULL);
 			usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
 			if(n > 0)
 			{
-				if(pfds[0].revents & POLLIN)
-				{
-					ipc_process(inst);
-				}
-
-				if(pfds[1].revents & POLLERR)
+				if(pfds[0].revents & POLLERR)
 				{
 					LOG_ERROR(debug_log, "%s: poll failed", __func__);
 					break;
 				}
-				if(pfds[1].revents & POLLIN)
+				if(pfds[0].revents & POLLIN)
 				{
 					if(usbcan_rx(inst) < 0)
 					{
@@ -1059,7 +906,6 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 		inst->dev_state[i] = CO_NMT_HB_TIMEOUT;
 	}
 
-	ipc_create_link(inst);
 	usbcan_open_device(inst);
 	if(inst->fd < 0)
 	{
@@ -1169,7 +1015,7 @@ int usbcan_device_deinit(usbcan_device_t **dev)
  * User thread functions
  */
 
-int wait_device(const usbcan_instance_t *inst, int id, int timeout_ms)
+int wait_device(usbcan_instance_t *inst, int id, int timeout_ms)
 {
 	if(!inst)
 	{
@@ -1186,151 +1032,140 @@ int wait_device(const usbcan_instance_t *inst, int id, int timeout_ms)
 		return 1;
 	}
 
-    ipc_opcode_t opcode = IPC_WAIT_DEVICE;
-    ipc_wait_device_t wd = {.id = id, .timeout_ms = timeout_ms};
-	int resp;
+	pthread_mutex_lock(&inst->mutex);
 
-    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
-    write_sig_safe(inst->to_child_pipe[1], &wd, sizeof(wd));
+	inst->op.code = OP_WAIT_DEV;
+	inst->op.ttl = timeout_ms;
+	inst->op.id = id;
 
-    read_sig_safe(inst->to_master_pipe[0], &resp, sizeof(resp));
+	pthread_cond_wait(&inst->cond, &inst->mutex);
 
-	if(!resp)
+	pthread_mutex_unlock(&inst->mutex);
+
+	if(inst->op.abt)
 	{
 		LOG_WARN(debug_log, "%s: device sent no heart beats during tmeout (%d) period", __func__, timeout_ms);
 	}
 
-	return resp ;
+	return !inst->op.abt;
 }
 
-int write_nmt(const usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
+int write_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 {
 	if(!is_valid_instance(inst))
 	{
 		return 0;
 	}
 
-    ipc_opcode_t opcode = IPC_NMT;
-    ipc_nmt_t nmt = {.id = id, .cmd = cmd};
-
-    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
-    write_sig_safe(inst->to_child_pipe[1], &nmt, sizeof(nmt));
+	usbcan_send_nmt(inst, id, cmd);
 
 	return 1;
 }
 
-int write_timestamp(const usbcan_instance_t *inst, uint32_t ts)
+int write_timestamp(usbcan_instance_t *inst, uint32_t ts)
 {
 	if(!is_valid_instance(inst))
 	{
 		return 0;
 	}
 
-    ipc_opcode_t opcode = IPC_TIMESTAMP;
-
-    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
-    write_sig_safe(inst->to_child_pipe[1], &ts, sizeof(ts));
+	usbcan_send_timestamp(inst, ts);
 
 	return 1;
 }
 
-int write_com_frame(const usbcan_instance_t *inst, can_msg_t *msg)
+int write_com_frame(usbcan_instance_t *inst, can_msg_t *msg)
 {
 	if(!is_valid_instance(inst))
 	{
 		return 0;
 	}
 
-    ipc_opcode_t opcode = IPC_COM_FRAME;
-
-    write_sig_safe(inst->to_child_pipe[1], &opcode, sizeof(opcode));
-    write_sig_safe(inst->to_child_pipe[1], msg, sizeof(can_msg_t));
+	usbcan_send_com_frame(inst, msg);
 
 	return 1;
 }
 
-uint32_t write_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout_ms)
+uint32_t write_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout_ms)
 {
 	if(!is_valid_device(dev))
 	{
 		return -1;
 	}
 
-    ipc_sdo_req_t req;
-    ipc_sdo_resp_t resp;
-    ipc_opcode_t opcode = IPC_SDO;
+	usbcan_instance_t *inst = dev->inst;
 
-    req.sdo.write = true;
-    req.sdo.id = dev->id;
-    req.sdo.idx = idx;
-    req.sdo.sidx = sidx;
-    req.sdo.tout = timeout_ms ? timeout_ms : dev->timeout;
-    req.sdo.re_txn = retry ? retry : dev->retry;
-    req.sdo.ttl = req.sdo.tout * 2; //????????????????
-    req.data_len = len;
+	pthread_mutex_lock(&inst->mutex);
 
-    write_sig_safe(dev->inst->to_child_pipe[1], &opcode, sizeof(opcode));
-    write_sig_safe(dev->inst->to_child_pipe[1], &req, sizeof(req));
-    
-    if(data && len)
-    {
-        write_sig_safe(dev->inst->to_child_pipe[1], data, len);
-    }
-    
-    read_sig_safe(dev->inst->to_master_pipe[0], &resp, sizeof(resp));
-    if(resp.abt)
+	inst->op.code = OP_SDO;
+	inst->op.write = true;
+	inst->op.id = dev->id;
+	inst->op.idx = idx;
+	inst->op.sidx = sidx;
+	inst->op.tout = timeout_ms ? timeout_ms : dev->timeout;
+	inst->op.re_txn = retry ? retry : dev->retry;
+	inst->op.ttl = inst->op.tout * 2;
+	inst->op.len = len;
+
+	usbcan_send_sdo_req(inst, true, dev->id, idx, sidx, timeout_ms, retry, data, len);
+
+	pthread_cond_wait(&inst->cond, &inst->mutex);
+	pthread_mutex_unlock(&inst->mutex);
+
+    if(inst->op.abt)
     {
         LOG_ERROR(debug_log, "%s: SDO failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", __func__,
-                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
+                  (unsigned int)idx, (int)sidx, len, inst->op.re_txn, inst->op.tout, (unsigned int)inst->op.abt, sdo_describe_error(inst->op.abt));
     }
 
-    return resp.abt;
+    return inst->op.abt;
 }
 
-uint32_t read_raw_sdo(const usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout_ms)
+uint32_t read_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout_ms)
 {
 	if(!is_valid_device(dev))
 	{
 		return -1;
 	}
 
-    ipc_sdo_req_t req;
-    ipc_sdo_resp_t resp;
-    ipc_opcode_t opcode = IPC_SDO;
+	usbcan_instance_t *inst = dev->inst;
 
-    req.sdo.write = false;
-    req.sdo.id = dev->id;
-    req.sdo.idx = idx;
-    req.sdo.sidx = sidx;
-    req.sdo.tout = timeout_ms ? timeout_ms : dev->timeout;
-    req.sdo.re_txn = retry ? retry : dev->retry;
-    req.sdo.ttl = req.sdo.tout * 2; //????????????????
-    req.data_len = 0;
+	pthread_mutex_lock(&inst->mutex);
 
-    write_sig_safe(dev->inst->to_child_pipe[1], &opcode, sizeof(opcode));
-    write_sig_safe(dev->inst->to_child_pipe[1], &req, sizeof(req));
+	inst->op.code = OP_SDO;
+	inst->op.write = false;
+	inst->op.id = dev->id;
+	inst->op.idx = idx;
+	inst->op.sidx = sidx;
+	inst->op.tout = timeout_ms ? timeout_ms : dev->timeout;
+	inst->op.re_txn = retry ? retry : dev->retry;
+	inst->op.ttl = inst->op.tout * 2;
+	inst->op.len = *len;
 
-    read_sig_safe(dev->inst->to_master_pipe[0], &resp, sizeof(resp));
+	usbcan_send_sdo_req(inst, false, dev->id, idx, sidx, timeout_ms, retry,	data, *len);
 
-    if(!resp.abt)
+	pthread_cond_wait(&inst->cond, &inst->mutex);
+	pthread_mutex_unlock(&inst->mutex);
+
+    if(!inst->op.abt)
     {
-        if(resp.data_len > *len)
+        if(inst->op.len > *len)
         {
-            LOG_WARN(debug_log, "%s: supplied buffer of %d bytes to small, %d bytes required", __func__, *len, resp.data_len);
+            LOG_WARN(debug_log, "%s: supplied buffer of %d bytes to small, %d bytes required", __func__, *len, inst->op.len);
         }
         else
         {
-            *len = resp.data_len;
+            *len = inst->op.len;
         }
-        read_sig_safe(dev->inst->to_master_pipe[0], data, *len);
+		memcpy(data, inst->op.data, *len);
     }
     else
     {
         LOG_ERROR(debug_log, "%s: SDO failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", __func__,
-                  (unsigned int)idx, (int)sidx, len, req.sdo.re_txn, req.sdo.tout, (unsigned int)resp.abt, sdo_describe_error(resp.abt));
+                  (unsigned int)idx, (int)sidx, len, inst->op.re_txn, inst->op.tout, (unsigned int)inst->op.abt, sdo_describe_error(inst->op.abt));
     }
 
-    return resp.abt;
+    return inst->op.abt;
 }
 
 
