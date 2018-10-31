@@ -1097,19 +1097,12 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	pthread_mutex_init(&inst->mutex, NULL);
 	pthread_cond_init(&inst->cond, NULL);
 	
-	while(1)
-	{
-		usbcan_rx(inst);		
-	}
-	
 	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
 	{
 		LOG_WARN(debug_log, "%s: can't run thread", __func__);
 		free(inst);
 		return NULL;
 	}
-	
-	//Sleep(1000);
 	
 	return inst;
 }
