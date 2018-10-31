@@ -147,7 +147,11 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
  */
 void rr_sleep_ms(int ms)
 {
+	#ifdef _WIN32
+	Sleep(ms);
+	#else
     msleep(ms);
+	#endif
 }
 
 //! @cond Doxygen_Suppress

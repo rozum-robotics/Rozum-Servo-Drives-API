@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
     //! [cccode 4] 
     //! [Adding interface 4]
     rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+	
     //! [Adding interface 4]
     //! [Adding servo 4]
     rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);

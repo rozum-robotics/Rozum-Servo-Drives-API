@@ -68,17 +68,31 @@ typedef struct
 		uint32_t abt;
 } usbcan_op_t;
 
+typedef struct
+{
+	int h;
+	int t;
+	uint8_t *b;
+	uint8_t *rb;
+	#ifdef _WIN32
+	DWORD l;
+	#else
+	int l;
+	#endif
+} usbcan_rx_data_t;
+
 struct usbcan_instance_t
 {
 	void *udata;
 	const char *device;
 	#ifdef _WIN32
 	HANDLE fd;
-	OVERLAPPED fd_overlap;
-	HANDLE timer;
+	OVERLAPPED fd_overlap_read, fd_overlap_write;
 	#else
 	int fd;
 	#endif
+	
+	usbcan_rx_data_t rx_data;
 
 	usbcan_device_t *device_list;
 
