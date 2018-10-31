@@ -636,13 +636,13 @@ static int usbcan_rx(usbcan_instance_t *inst)
 	if(inst->rx_data.l < 0)
 	{
 		LOG_ERROR(debug_log, "%s: usbcan read failed", __func__);
-		return l;
+		return inst->rx_data.l;
 	}
 	
 	if(inst->usbcan_udp)
 	{
-		usbcan_frame_receive_cb(inst, inst->rx_datab, inst->rx_data.l);
-		return l;
+		usbcan_frame_receive_cb(inst, inst->rx_data.b, inst->rx_data.l);
+		return inst->rx_data.l;
 	}
 #endif
 
