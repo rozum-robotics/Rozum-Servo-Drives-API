@@ -199,14 +199,14 @@ rr_ret_status_t rr_read_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t s
 /**
  * @brief The function sets a stream for saving CAN communication dump from the specified interface.
  * Subsequently, the user can look through the logs saved to the stream to identify causes of CAN communication failures.
- * @param interface Descriptor of the interface where the logged CAN communication occurs (returned by the ::rr_init_interface function) 
+ * @param iface Descriptor of the interface where the logged CAN communication occurs (returned by the ::rr_init_interface function) 
  * @param f stdio stream for saving the communication log. When the parameter is set to "NULL," logging of CAN communication events in the interface is disabled.
  * @return void
  * @ingroup Dbg
  */
-void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f)
+void rr_set_comm_log_stream(const rr_can_interface_t *iface, FILE *f)
 {
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     usbcan_set_comm_log_stream(inst, f);
 }
 
@@ -226,32 +226,32 @@ void rr_set_debug_log_stream(FILE *f)
  * @brief The function sets a user callback to be intiated in connection with  with changes of network management (NMT) states
  * (e.g., a servo connected to/ disconnected from the CAN bus, the interface/ a servo going to the operational state, etc.).
  * User callbacks are functions to execute specific user-defined operations, e.g., to  display a warning about an NMT state change or stop the program.
- * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param cb (::rr_nmt_cb_t) Type of the callback to be initiated when an NMT event occurs. When the parameter is set to "NULL," the function is disabled.
  * @return void
  * @ingroup State
  */
-void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb)
+void rr_setup_nmt_callback(rr_can_interface_t *iface, rr_nmt_cb_t cb)
 {
-    if(interface)
+    if(iface)
     {
-        interface->nmt_cb = (void*)cb;
+        iface->nmt_cb = (void*)cb;
     }
 }
 
 /**
  * @brief The function sets a user callback to be intiated in connection with emergency (EMCY) events (e.g., overcurrent, power outage, etc.).
  * User callbacks are functions to execute specific user-defined operations, e.g., to  display a warning about an EMCY event or stop the program.
- * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param cb (::rr_emcy_cb_t) Type of the callback to be initiated when an NMT event occurs. When the parameter is set to "NULL," the function is disabled.
  * @return void
  * @ingroup Err
  */
-void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb)
+void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
 {
-    if(interface)
+    if(iface)
     {
-        interface->emcy_cb = (void*)cb;
+        iface->emcy_cb = (void*)cb;
     }
 }
 
@@ -572,8 +572,8 @@ const char *rr_describe_emcy_code(uint16_t code)
  * @brief The function is the first to call to be able to work with the user API. It opens the COM port where the corresponding CAN-USB dongle
  * is connected, enabling communication between the user program and the servo motors on the respective CAN bus.
  <p><b>Example:</b></p>
- * <p>rr_can_interface_t *interface =  rr_init_interface	("/dev/ttyACM0");</p>
- * <p><code>if(!interface)<br>
+ * <p>rr_can_interface_t *iface =  rr_init_interface	("/dev/ttyACM0");</p>
+ * <p><code>if(!iface)<br>
  *{<br>
  *	... handle errors ...<br>
  *}</code></p>
@@ -620,18 +620,18 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
  * @brief The function closes the COM port where the corresponding CAN-USB dongle is connected,
  * clearing all data associated with the interface descriptor.
  * It is advisable to call the function every time before quitting the user program.
- * @param interface Interface descriptor (see ::rr_init_interface).
+ * @param iface Interface descriptor (see ::rr_init_interface).
  * @return Status code (::rr_ret_status_t)
  * @ingroup Init
  */
-rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface)
+rr_ret_status_t rr_deinit_interface(rr_can_interface_t **iface)
 {
-    IS_VALID_INTERFACE(*interface);
+    IS_VALID_INTERFACE(*iface);
 
-    if(usbcan_instance_deinit((usbcan_instance_t **)&((*interface)->iface)))
+    if(usbcan_instance_deinit((usbcan_instance_t **)&((*iface)->iface)))
     {
-        free(*interface);
-        *interface = NULL;
+        free(*iface);
+        *iface = NULL;
         return RET_OK;
     }
     return RET_ERROR;
@@ -641,14 +641,14 @@ rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface)
  * @brief The function determines whether the servo motor with the specified ID is connected to the specified interface. It waits for 2 seconds to receive a Heartbeat message from the servo.
  * When the message arrives within the interval, the servo is identified as successfully connected.<br>
  * <p>The function returns the servo descriptor that you will need for subsequent API calls to the servo.</p> 
- * @param interface Descriptor of the interface (returned by the ::rr_init_interface function) where the servo is connected
+ * @param iface Descriptor of the interface (returned by the ::rr_init_interface function) where the servo is connected
  * @param id Unique identifier of the servo in the specified interface. The available value range is from 0 to 127.
  * @return Servo descriptor (::rr_servo_t) <br> or NULL when no Heartbeat message is received within the specified interval
  * @ingroup Init
  */
-rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
+rr_servo_t *rr_init_servo(rr_can_interface_t *iface, const uint8_t id)
 {
-	if(!interface)
+	if(!iface)
 	{
 		return NULL;
 	}
@@ -659,7 +659,7 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
         return NULL;
     }
 
-    s->dev = usbcan_device_init((usbcan_instance_t *)interface->iface, id);
+    s->dev = usbcan_device_init((usbcan_instance_t *)iface->iface, id);
 
     if(!s->dev)
     {
@@ -667,7 +667,7 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id)
         return NULL;
     }
 
-    wait_device((usbcan_instance_t *)interface->iface, id, RR_API_WAIT_DEVICE_TIMEOUT_MS);
+    wait_device((usbcan_instance_t *)iface->iface, id, RR_API_WAIT_DEVICE_TIMEOUT_MS);
 
     return s;
 }
@@ -769,14 +769,14 @@ rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
 /**
  * @brief The function reboots all servos connected to the interface specified in the 'interface' parameter,
  * resetting them back to the power-on state.
- * @param interface Interface descriptor returned by the ::rr_init_interface function
+ * @param iface Interface descriptor returned by the ::rr_init_interface function
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_reboot(const rr_can_interface_t *iface)
 {
-    IS_VALID_INTERFACE(interface);
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    IS_VALID_INTERFACE(iface);
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;
     ;
 }
@@ -784,14 +784,14 @@ rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface)
 /**
  * @brief The function resets communication via the interface specified in the 'interface' parameter.
  * For instance, you may need to use the function when changing settings that require a reset after modification.
- * @param interface Interface descriptor returned by the ::rr_init_interface function 
+ * @param iface Interface descriptor returned by the ::rr_init_interface function 
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *iface)
 {
-    IS_VALID_INTERFACE(interface);
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    IS_VALID_INTERFACE(iface);
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;
     ;
 }
@@ -801,14 +801,14 @@ rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface)
  *  In the state, the servos can both communicate with the user program and execute commands.
  *  <p>For instance, you may need to call the function to switch all servos on a specific bus from the
  *  pre-operational state to the operational one after an error (e.g., due to overcurrent).</p>
- * @param interface Interface descriptor returned by the ::rr_init_interface function  
+ * @param iface Interface descriptor returned by the ::rr_init_interface function  
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *iface)
 {
-    IS_VALID_INTERFACE(interface);
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    IS_VALID_INTERFACE(iface);
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;
     ;
 }
@@ -817,14 +817,14 @@ rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface
  * @brief The function sets all servos connected to the interface specified in the 'interface' parameter to the pre-operational state.  
  * In the state, the servos are available for communication, but cannot execute commands.
  * <p>For instance, you may need to call the function, if you want to force all servos on a specific bus to stop executing commands, e.g., in an emergency.</p>
- * @param interface Interface descriptor returned by the ::rr_init_interface function 
+ * @param iface Interface descriptor returned by the ::rr_init_interface function 
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *iface)
 {
-    IS_VALID_INTERFACE(interface);
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    IS_VALID_INTERFACE(iface);
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;
     ;
 }
@@ -833,14 +833,14 @@ rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *inter
  * @brief The function sets all servos connected to the interface specified in the 'interface' parameter to the stopped state.  
  * In the state, the servos are neither available for communication nor can execute commands.
  * <p>For instance, you may need to call the fuction to stop all servos on a specific bus without deinitializing them.</p>
- * @param interface Interface descriptor returned by the ::rr_init_interface function. 
+ * @param iface Interface descriptor returned by the ::rr_init_interface function. 
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
+rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *iface)
 {
-    IS_VALID_INTERFACE(interface);
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    IS_VALID_INTERFACE(iface);
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;
 }
 
@@ -848,16 +848,16 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface)
  * @brief The function retrieves the actual NMT state of any device (a servo motor or any other) connected to the specified CAN network.
  * The state is described as a status code (:: rr_nmt_state_t). 
  * <p></p>
- * @param interface Interface descriptor returned by the ::rr_init_interface function 
+ * @param iface Interface descriptor returned by the ::rr_init_interface function 
  * @param id Identificator of the addressed device 
  * @param state Pointer to the variable where the state of the device is returned 
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
  */
-rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, rr_nmt_state_t *state)
+rr_ret_status_t rr_net_get_state(const rr_can_interface_t *iface, int id, rr_nmt_state_t *state)
 {
-    IS_VALID_INTERFACE(interface);
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    IS_VALID_INTERFACE(iface);
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
 
 	*state = (rr_nmt_state_t)usbcan_get_device_state(inst, id);
 
@@ -1197,17 +1197,17 @@ rr_ret_status_t rr_add_motion_point_pvat(
  * a "Go to Stopped State" command to all the other servos on the same bus. The servos will stop executing the preset PVT points and go to the stopped state.
  * In the state, only Heartbeats are available. You can neither communicate with servos nor command them to execute any operations.</p>
  * <p><b>Note:</b> Once servos execute the last PVT in their preset motion queue, the queue is cleared automatically.</p>
- * @param interface Interface descriptor returned by the ::rr_init_interface function
+ * @param iface Interface descriptor returned by the ::rr_init_interface function
  * @param timestamp_ms Delay (in milliseconds) before the servos associated with the interface start to move. When the value is set to 0, the servos will start moving immediately.
  * The available value range is from 0 to 2^24-1.
  * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
-rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms)
+rr_ret_status_t rr_start_motion(rr_can_interface_t *iface, uint32_t timestamp_ms)
 {
-    IS_VALID_INTERFACE(interface);
+    IS_VALID_INTERFACE(iface);
 
-    usbcan_instance_t *inst = (usbcan_instance_t *)interface->iface;
+    usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     write_timestamp(inst, timestamp_ms);
     return RET_OK;
 }
@@ -1640,12 +1640,12 @@ rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_vel
  * @brief The function changes device CAN ID, resets device CAN communication and check that heartbeat is present with the new CAN ID.
  * Note: servo device cache will be erased (in the API)
  * 
- * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param servo Servo descriptor returned by the ::rr_init_servo function. Will be changed if the functon status is success
  * @param new_can_id New CAN ID. It can be any value within the range from 1 to 127.
  * @return Status code (::rr_ret_status_t)
  */
-static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *servo, uint8_t new_can_id)
+static rr_ret_status_t rr_change_id(rr_can_interface_t *iface, rr_servo_t *servo, uint8_t new_can_id)
 {
     if(new_can_id < 1 || new_can_id > 127) return RET_WRONG_ARG;
 
@@ -1663,7 +1663,7 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
     if(node_id_sts) return ret_sdo(node_id_sts);
 
     /* Reset communication, so the servo will update it's internal CAN ID with the ID in the dictionary */
-    rr_ret_status_t reset_comm_sts = rr_net_reset_communication(interface);
+    rr_ret_status_t reset_comm_sts = rr_net_reset_communication(iface);
     if(reset_comm_sts) return reset_comm_sts;
 
     /* Deinit the servo */
@@ -1671,7 +1671,7 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
     if(deinit_sts) return deinit_sts;
 
     /* Initialize it with the new ID */
-    servo = rr_init_servo(interface, new_can_id);
+    servo = rr_init_servo(iface, new_can_id);
     if(servo == NULL) return RET_BAD_INSTANCE;
 
     return RET_OK;
@@ -1683,15 +1683,15 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *interface, rr_servo_t *s
  * <p>When called, the function resets CAN communication for the specified servo, checks that Heartbeats are generated for the new ID, 
  * and saves the new CAN ID to the EEPROM memory of the servo.</p> 
  * <p><b>Note:</b> The EEPROM memory limit is 1,000 write cycles. Therefore, it is advisable to use the function with discretion.</p>
- * @param interface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param servo Servo descriptor returned by the ::rr_init_servo function. <b>Note</b>: All RDrive servos are supplied with <b>the same default CAN ID—32</b>.
  * @param new_can_id New CAN ID. You can set any value within the range from 1 to 127, only make sure <b>no other servo has the same ID</b>.
  * @return Status code (::rr_ret_status_t)
  * @ingroup Aux
  */
-rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t *servo, uint8_t new_can_id)
+rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *iface, rr_servo_t *servo, uint8_t new_can_id)
 {
-    rr_ret_status_t sts = rr_change_id(interface, servo, new_can_id);
+    rr_ret_status_t sts = rr_change_id(iface, servo, new_can_id);
     if(sts) return sts;
 
 #define PARAM_STORE_PASSWORD 0x73617665 // s a v e

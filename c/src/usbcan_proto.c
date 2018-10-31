@@ -80,8 +80,10 @@ static bool is_valid_device(const usbcan_device_t *dev)
  */
 static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 {
-	int ret;
+	int ret = 0;
 
+	#ifdef _WIN32
+	#else
 	if(!inst->usbcan_udp)
 	{
 		ret = write(inst->fd, b, l);
@@ -95,6 +97,7 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 	{
 		LOG_ERROR(debug_log, "%s: usbcan write failed", __func__);
 	}
+	#endif
 
 	return ret;
 }
@@ -510,6 +513,7 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 
 		case COM_SYNC:
 			break;
+
 		case COM_EMCY:
 			{
 				len--;
@@ -541,6 +545,11 @@ static int usbcan_rx(usbcan_instance_t *inst)
 	static int h = 0, t = 0;
 
 	uint8_t b[USB_CAN_MAX_PAYLOAD];
+
+#ifdef _WIN32
+	int l = 0;
+#else
+
 	int l = read(inst->fd, b, sizeof(b));
 	if(l < 0)
 	{
@@ -553,6 +562,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 		usbcan_frame_receive_cb(inst, b, l);
 		return l;
 	}
+#endif
 
 	h = rb_to_rb(rb, h, sizeof(rb), b, 0, l, l);
 
@@ -650,6 +660,8 @@ static void nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t sta
  */
 static void usbcan_flush_device(usbcan_instance_t *inst)
 {
+#ifdef _WIN32
+#else
 	if(inst->fd < 0)
 	{
 		return;
@@ -696,6 +708,7 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 		t -= TIME_DELTA_MS(tnow, tprev);
 		tprev = tnow;
 	}
+#endif	
 }
 
 /*
@@ -703,6 +716,22 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
  */
 static void usbcan_open_device(usbcan_instance_t *inst)
 {
+	#ifdef _WIN32
+	inst->fd = CreateFile(inst->device,                
+						GENERIC_READ | GENERIC_WRITE, 
+						0,                            
+						NULL,                         
+						OPEN_EXISTING,
+						FILE_FLAG_OVERLAPPED,    
+						&inst->fd_overlap);  
+
+	if(inst->fd == INVALID_HANDLE_VALUE)
+	{
+		LOG_ERROR(debug_log, "%s: can't open serial device %s", __func__, inst->device);
+		return;
+	}
+
+	#else
 	struct termios term;
 	int flags;
 	struct sockaddr_in host_addr;
@@ -761,6 +790,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 		inst->fd = -1;
 		return;
 	}
+	#endif
 
 	usbcan_flush_device(inst);
 }
@@ -771,6 +801,8 @@ static void usbcan_open_device(usbcan_instance_t *inst)
  */
 static void *usbcan_process(void *udata)
 {
+	#ifdef _WIN32
+	#else
 	struct timeval tprev, tnow;
 	int n = 0;
 	struct pollfd pfds[1];
@@ -816,6 +848,7 @@ static void *usbcan_process(void *udata)
 
 	inst->running = false;
 	LOG_ERROR(debug_log, "%s: thread finished", __func__);
+	#endif
 
 	return 0;
 }
@@ -911,6 +944,17 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	{
 		return NULL;
 	}
+
+	#ifdef _WIN32
+	inst->timer = CreateWaitableTimerA(NULL, false, "poll timer");
+	if(inst->timer == NULL)
+	{
+		LOG_WARN(debug_log, "%s: can't create polling timer", __func__);
+		free(inst);
+		return NULL;
+	}
+
+	#endif
 
 	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
 	{

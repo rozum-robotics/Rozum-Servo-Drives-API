@@ -18,12 +18,16 @@ extern "C"
 #include <getopt.h>
 #include <sys/time.h>
 #include <sys/types.h>
+#ifdef _WIN32
+#include "windows.h"
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <termios.h>
 #include <signal.h>
 #include <poll.h>
+#endif
 #include <pthread.h>
 #include "usbcan_config.h"
 #include "co_common.h"
@@ -68,7 +72,13 @@ struct usbcan_instance_t
 {
 	void *udata;
 	const char *device;
+	#ifdef _WIN32
+	HANDLE fd;
+	OVERLAPPED fd_overlap;
+	HANDLE timer;
+	#else
 	int fd;
+	#endif
 
 	usbcan_device_t *device_list;
 
