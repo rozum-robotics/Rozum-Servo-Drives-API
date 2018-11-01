@@ -119,9 +119,9 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 		{
 			case WAIT_OBJECT_0:
 				GetOverlappedResult(inst->fd, &inst->fd_overlap_write, &written, FALSE);
-				ResetEvent(&inst->fd_overlap_write);
-				LOG_INFO(debug_log, " %s %d bytes written", __func__, written);
-				LOG_DUMP(debug_log, "write data bytes: ", b, l);
+				ResetEvent(&inst->fd_overlap_write.hEvent);
+				//LOG_INFO(debug_log, " %s %d bytes written", __func__, written);
+				//LOG_DUMP(debug_log, "write data bytes: ", b, l);
 				break;
 				
 			case WAIT_TIMEOUT:
@@ -609,15 +609,13 @@ static int usbcan_rx(usbcan_instance_t *inst)
 #ifdef _WIN32
 	
 	ReadFile(inst->fd, inst->rx_data.b, USB_CAN_MAX_PAYLOAD, &inst->rx_data.l, &inst->fd_overlap_read);
-	//_win_print_last_error();
-	GetLastError();
-	switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, USB_CAN_POLL_GRANULARITY_MS))
+	switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, INFINITE))
 	{
 		case WAIT_OBJECT_0:
-			GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, FALSE);
-			ResetEvent(&inst->fd_overlap_read);
-			LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
-			LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
+			GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, false);
+			ResetEvent(inst->fd_overlap_read.hEvent);
+			//LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
+			//LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
 			break;
 			
 		case WAIT_TIMEOUT:
@@ -628,7 +626,13 @@ static int usbcan_rx(usbcan_instance_t *inst)
 			LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
 			return 0;		
 	}
-	CancelIo(inst->fd);
+	//CancelIo(inst->fd);
+	
+	if(!inst->rx_data.l)
+	{
+		return 0;
+	}
+
 
 #else
 
@@ -808,26 +812,22 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 static void usbcan_open_device(usbcan_instance_t *inst)
 {
 	#ifdef _WIN32
-	
-	memset(&inst->fd_overlap_read, 0, sizeof(OVERLAPPED));
-	memset(&inst->fd_overlap_write, 0, sizeof(OVERLAPPED));
-	inst->fd_overlap_read.hEvent = CreateEvent(NULL, true, false, NULL);
-	inst->fd_overlap_write.hEvent = CreateEvent(NULL, true, false, NULL);
+		
 	inst->fd = CreateFile(inst->device,                
-						GENERIC_READ | GENERIC_WRITE, 
-						0,                            
-						NULL,                         
-						OPEN_EXISTING,
-						FILE_FLAG_OVERLAPPED,    
-						NULL);
+					GENERIC_READ | GENERIC_WRITE, 
+					0,                            
+					NULL,                         
+					OPEN_EXISTING,
+					FILE_FLAG_OVERLAPPED,    
+					NULL);
 						
 	if(inst->fd == INVALID_HANDLE_VALUE)
 	{
-		LOG_ERROR(debug_log, "%s: can't open serial device %s", __func__, inst->device);
-		inst->fd = 0;
+		printf("%s: can't open serial device %s", __func__, inst->device);
 		return;
 	}
-						
+	
+	
 	DCB dcbSerialParams = { 0 }; 
 	dcbSerialParams.DCBlength = sizeof(dcbSerialParams);
 	GetCommState(inst->fd, &dcbSerialParams);
@@ -841,18 +841,21 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	
 	COMMTIMEOUTS timeouts = { 0 };
 	timeouts.ReadIntervalTimeout         = 1;
-	timeouts.ReadTotalTimeoutConstant    = 1;
-	timeouts.ReadTotalTimeoutMultiplier  = 1;
-	timeouts.WriteTotalTimeoutConstant   = 1;
-	timeouts.WriteTotalTimeoutMultiplier = 1;
+	timeouts.ReadTotalTimeoutConstant    = 0;
+	timeouts.ReadTotalTimeoutMultiplier  = 0;
+	timeouts.WriteTotalTimeoutConstant   = 0;
+	timeouts.WriteTotalTimeoutMultiplier = 0;
 	
 	SetCommTimeouts(inst->fd, &timeouts);
-	
     SetCommMask(inst->fd, EV_RXCHAR);
+	
+	memset(&inst->fd_overlap_read, 0, sizeof(OVERLAPPED));
+	memset(&inst->fd_overlap_write, 0, sizeof(OVERLAPPED));
+	inst->fd_overlap_read.hEvent = CreateEvent(NULL, false, true, NULL);
+	inst->fd_overlap_write.hEvent = CreateEvent(NULL, false, true, NULL);	
 	
 	usbcan_enable_udp(inst, false);
 	
-
 	#else
 	struct termios term;
 	int flags;
@@ -940,7 +943,7 @@ static void *usbcan_process(void *udata)
 		tprev = tnow;
 		gettimeofday(&tnow, NULL);
 		//fprintf(stderr, "%ld\n", TIME_DELTA_MS(tnow, tprev));
-		//usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
+		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
 	}
 	
 	#else
@@ -1225,7 +1228,7 @@ int wait_device(usbcan_instance_t *inst, int id, int timeout_ms)
 
 	if(inst->op.abt)
 	{
-		LOG_WARN(debug_log, "%s: device sent no heart beats during tmeout (%d) period", __func__, timeout_ms);
+		LOG_WARN(debug_log, "%s: device sent no heart beats during timeout (%d) period", __func__, timeout_ms);
 	}
 
 	return !inst->op.abt;
