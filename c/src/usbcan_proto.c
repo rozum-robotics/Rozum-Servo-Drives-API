@@ -133,9 +133,7 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 				//LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
 				written = 0;
 				break;		
-		}
-		
-		
+		}	
 		ret = written;
 	}
 	#else
@@ -607,26 +605,56 @@ static int usbcan_rx(usbcan_instance_t *inst)
 	//LOG_INFO(debug_log, " entering %s", __func__);
 
 #ifdef _WIN32
+
+	struct timeval tprev, tnow;
 	
-	ReadFile(inst->fd, inst->rx_data.b, USB_CAN_MAX_PAYLOAD, &inst->rx_data.l, &inst->fd_overlap_read);
-	switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, INFINITE))
+	static BOOL fWaitingOnRead = FALSE;
+	
+	
+	gettimeofday(&tprev, NULL);	
+	
+	if (!fWaitingOnRead) 
 	{
-		case WAIT_OBJECT_0:
-			GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, false);
-			ResetEvent(inst->fd_overlap_read.hEvent);
-			//LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
-			//LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
-			break;
-			
-		case WAIT_TIMEOUT:
-			//LOG_INFO(debug_log, " %s read timeout", __func__);
-			return 0;
-			
-		default:
-			LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
-			return 0;		
+	   if (!ReadFile(inst->fd, inst->rx_data.b, USB_CAN_MAX_PAYLOAD, &inst->rx_data.l, &inst->fd_overlap_read)) 
+	   {
+		  if (GetLastError() != ERROR_IO_PENDING) 
+		  {
+			  	LOG_INFO(debug_log, " %s ReadFile failed", __func__);
+				return 0;
+		  }
+		  else
+		  {
+			 fWaitingOnRead = TRUE;
+		  }
+	   }
+    }
+
+
+	if (fWaitingOnRead) 
+	{
+		switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, USB_CAN_POLL_GRANULARITY_MS))
+		{
+			case WAIT_OBJECT_0:
+				GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, false);
+				//ResetEvent(inst->fd_overlap_read.hEvent);
+				fWaitingOnRead = FALSE;
+				//LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
+				//LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
+				break;
+				
+			case WAIT_TIMEOUT:
+				//LOG_INFO(debug_log, " %s read timeout", __func__);
+				return 0;
+				
+			default:
+				LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
+				return 0;		
+		}
 	}
-	//CancelIo(inst->fd);
+
+	
+	gettimeofday(&tnow, NULL);
+	fprintf(stderr, "%s: time_us %ld\n", __func__, TIME_DELTA_US(tnow, tprev));
 	
 	if(!inst->rx_data.l)
 	{
@@ -839,9 +867,11 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	
 	SetCommState(inst->fd, &dcbSerialParams);
 	
+	//TODO: https://msdn.microsoft.com/en-us/library/ff802693.aspx
+	
 	COMMTIMEOUTS timeouts = { 0 };
 	timeouts.ReadIntervalTimeout         = 1;
-	timeouts.ReadTotalTimeoutConstant    = 0;
+	timeouts.ReadTotalTimeoutConstant    = 1;
 	timeouts.ReadTotalTimeoutMultiplier  = 0;
 	timeouts.WriteTotalTimeoutConstant   = 0;
 	timeouts.WriteTotalTimeoutMultiplier = 0;
@@ -851,8 +881,8 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	
 	memset(&inst->fd_overlap_read, 0, sizeof(OVERLAPPED));
 	memset(&inst->fd_overlap_write, 0, sizeof(OVERLAPPED));
-	inst->fd_overlap_read.hEvent = CreateEvent(NULL, false, true, NULL);
-	inst->fd_overlap_write.hEvent = CreateEvent(NULL, false, true, NULL);	
+	inst->fd_overlap_read.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	inst->fd_overlap_write.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);	
 	
 	usbcan_enable_udp(inst, false);
 	

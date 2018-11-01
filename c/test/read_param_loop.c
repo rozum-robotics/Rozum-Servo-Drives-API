@@ -23,10 +23,9 @@ int main(int argc, char *argv[])
 
 	for(int i = 0; i < 1000; i++)
 	{
-		gettimeofday(&tprev, NULL);
+		//gettimeofday(&tprev, NULL);
 		rr_read_parameter(servo, APP_PARAM_POSITION_ROTOR, &value);
-		gettimeofday(&tnow, NULL);
-		fprintf(stderr, "%d: time_ms %ld, value %f\n", i, TIME_DELTA_US(tnow, tprev), value);
+		//gettimeofday(&tnow, NULL);
+		//fprintf(stderr, "%d: time_us %ld, value %f\n", i, TIME_DELTA_US(tnow, tprev), value);
 	}
-
 }
