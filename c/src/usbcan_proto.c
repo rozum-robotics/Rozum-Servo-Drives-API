@@ -114,28 +114,33 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 	if(!inst->usbcan_udp)
 	{
 		DWORD written;
-		WriteFile(inst->fd, b, l, &written, &inst->fd_overlap_write);
-		
-		switch(WaitForSingleObject(inst->fd_overlap_write.hEvent, INFINITE))
-		{
-			case WAIT_OBJECT_0:
-				GetOverlappedResult(inst->fd, &inst->fd_overlap_write, &written, FALSE);
-				ResetEvent(&inst->fd_overlap_write.hEvent);
-				//LOG_INFO(debug_log, " %s %d bytes written", __func__, written);
-				//LOG_DUMP(debug_log, "write data bytes: ", b, l);
-				break;
-				
-			case WAIT_TIMEOUT:
-				//LOG_INFO(debug_log, " %s read timeout", __func__);
-				written = 0;
-				break;
-				
-			default:
-				//LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
-				written = 0;
-				break;		
-		}	
+		if(!WriteFile(inst->fd, b, l, &written, &inst->fd_overlap_write))
+		{	
+			switch(WaitForSingleObject(inst->fd_overlap_write.hEvent, INFINITE))
+			{
+				case WAIT_OBJECT_0:
+					GetOverlappedResult(inst->fd, &inst->fd_overlap_write, &written, FALSE);
+					ResetEvent(&inst->fd_overlap_write.hEvent);
+					//LOG_INFO(debug_log, " %s %d bytes written", __func__, written);
+					//LOG_DUMP(debug_log, "write data bytes: ", b, l);
+					break;
+					
+				case WAIT_TIMEOUT:
+					//LOG_INFO(debug_log, " %s read timeout", __func__);
+					written = 0;
+					break;
+					
+				default:
+					//LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
+					written = 0;
+					break;		
+			}
+		}		
 		ret = written;
+		if(ret != l)
+		{
+			LOG_ERROR(debug_log, " %s %d bytes of %d written", __func__, ret, l);
+		}
 	}
 	#else
 	if(!inst->usbcan_udp)
@@ -647,41 +652,46 @@ static int usbcan_rx(usbcan_instance_t *inst)
 	}
 	*/
 	
-		static BOOL read_waiting = FALSE;
+	static BOOL evt_waiting = FALSE;
+	static DWORD mask, mask_len;
+	DWORD bytes_to_read = 0;
+	DWORD err;
+	COMSTAT stat;
 	
-	if(!read_waiting) 
+	if(!evt_waiting) 
 	{
-	   if(!WaitCommEvent(inst->fd, EV_RXCHAR, &inst->fd_overlap_evt)) 
-	   {
-		  if(GetLastError() != ERROR_IO_PENDING) 
-		  {
-			  	LOG_INFO(debug_log, " %s ReadFile failed", __func__);
+		mask = EV_RXCHAR;
+		if(!WaitCommEvent(inst->fd, &mask, &inst->fd_overlap_evt)) 
+		{
+			if(GetLastError() != ERROR_IO_PENDING) 
+			{
+				LOG_INFO(debug_log, " %s WaitCommEvent failed", __func__);
 				return 0;
-		  }
-		  else
-		  {
-			 read_waiting = TRUE;
-		  }
-	   }
+			}
+			else
+			{
+				evt_waiting = TRUE;
+			}
+		}
+		else
+		{
+			ClearCommError(inst->fd, &err, &stat);
+			bytes_to_read = stat.cbInQue;
+			evt_waiting = FALSE;
+		}
     }
 
-	if(read_waiting) 
+	if(evt_waiting) 
 	{
-		switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, USB_CAN_POLL_GRANULARITY_MS))
+		switch(WaitForSingleObject(inst->fd_overlap_evt.hEvent, USB_CAN_POLL_GRANULARITY_MS))
 		{
 			case WAIT_OBJECT_0:
-				{
-					DWORD err;
-					COMSTAT stat;
-					ClearCommError(inst->fd, &err, &stat);
-					
-					//GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, false);
-					ReadFile(inst->fd, inst->rx_data.b, stat.cbInQue, &inst->rx_data.l, &inst->fd_overlap_read);
-					ResetEvent(inst->fd_overlap_read.hEvent);
+				{				
+					GetOverlappedResult(inst->fd, &inst->fd_overlap_evt, &mask_len, false);
 					ResetEvent(inst->fd_overlap_evt.hEvent);
-					read_waiting = FALSE;
-					//LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
-					//LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
+					ClearCommError(inst->fd, &err, &stat);
+					bytes_to_read = stat.cbInQue;
+					evt_waiting = FALSE;
 				}
 				break;
 				
@@ -691,19 +701,27 @@ static int usbcan_rx(usbcan_instance_t *inst)
 				
 			default:
 				LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
+				evt_waiting = FALSE;
 				return 0;		
 		}
 	}
 	
-		
-	if(!inst->rx_data.l)
+	if(bytes_to_read)
+	{
+		if(!ReadFile(inst->fd, inst->rx_data.b, bytes_to_read, &inst->rx_data.l, &inst->fd_overlap_read))
+		{
+			LOG_ERROR(debug_log, " %s ReadFile failed to read buffered data", __func__);
+		}
+	}
+	else
 	{
 		return 0;
 	}
+
 #else
 
 	inst->rx_data.l = read(inst->fd, inst->rx_data.b, USB_CAN_MAX_PAYLOAD);
-	if(inst->rx_data.l < 0)
+	if(inst->rx_data.l <= 0)
 	{
 		LOG_ERROR(debug_log, "%s: usbcan read failed", __func__);
 		return inst->rx_data.l;
@@ -907,10 +925,10 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	SetCommState(inst->fd, &dcbSerialParams);
 	
 	COMMTIMEOUTS timeouts = { 0 };
-	timeouts.ReadIntervalTimeout         = 1;
-	timeouts.ReadTotalTimeoutConstant    = 1;
+	timeouts.ReadIntervalTimeout         = 0;
+	timeouts.ReadTotalTimeoutConstant    = 0;
 	timeouts.ReadTotalTimeoutMultiplier  = 0;
-	timeouts.WriteTotalTimeoutConstant   = 1;
+	timeouts.WriteTotalTimeoutConstant   = 0;
 	timeouts.WriteTotalTimeoutMultiplier = 0;
 	
 	SetCommTimeouts(inst->fd, &timeouts);
@@ -1010,7 +1028,7 @@ static void *usbcan_process(void *udata)
 		
 		tprev = tnow;
 		gettimeofday(&tnow, NULL);
-		//fprintf(stderr, "%ld\n", TIME_DELTA_MS(tnow, tprev));
+		//fprintf(stderr, "%ld\n", (long int)TIME_DELTA_MS(tnow, tprev));
 		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
 	}
 	

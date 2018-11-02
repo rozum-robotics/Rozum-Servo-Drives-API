@@ -32,8 +32,8 @@ extern "C"
 #include "usbcan_config.h"
 #include "co_common.h"
 
-#define TIME_DELTA_MS(x, y) ((x.tv_sec - y.tv_sec) * 1000 + (x.tv_usec - y.tv_usec) / 1000)
-#define TIME_DELTA_US(x, y) ((x.tv_sec - y.tv_sec) * 1000000 + (x.tv_usec - y.tv_usec) )
+#define TIME_DELTA_MS(x, y) ((x.tv_sec - y.tv_sec) * 1000LL + (x.tv_usec - y.tv_usec) / 1000LL)
+#define TIME_DELTA_US(x, y) ((x.tv_sec - y.tv_sec) * 1000000LL + (x.tv_usec - y.tv_usec) )
 
 typedef struct
 {
