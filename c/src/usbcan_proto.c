@@ -108,13 +108,14 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 {
 	int ret = 0;
 	
-	//pthread_mutex_lock(&inst->mutex);
+	pthread_mutex_lock(&inst->mutex_write);
 
 	#ifdef _WIN32
 	if(!inst->usbcan_udp)
 	{
 		DWORD written;
 		WriteFile(inst->fd, b, l, &written, &inst->fd_overlap_write);
+		
 		switch(WaitForSingleObject(inst->fd_overlap_write.hEvent, INFINITE))
 		{
 			case WAIT_OBJECT_0:
@@ -152,7 +153,7 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 	}
 	#endif
 
-	//pthread_mutex_unlock(&inst->mutex);
+	pthread_mutex_unlock(&inst->mutex_write);
 	
 	return ret;
 }
@@ -602,18 +603,11 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
  */
 static int usbcan_rx(usbcan_instance_t *inst)
 {
-	//LOG_INFO(debug_log, " entering %s", __func__);
-
 #ifdef _WIN32
 
-	struct timeval tprev, tnow;
+	static BOOL read_waiting = FALSE;
 	
-	static BOOL fWaitingOnRead = FALSE;
-	
-	
-	gettimeofday(&tprev, NULL);	
-	
-	if (!fWaitingOnRead) 
+	if (!read_waiting) 
 	{
 	   if (!ReadFile(inst->fd, inst->rx_data.b, USB_CAN_MAX_PAYLOAD, &inst->rx_data.l, &inst->fd_overlap_read)) 
 	   {
@@ -624,20 +618,19 @@ static int usbcan_rx(usbcan_instance_t *inst)
 		  }
 		  else
 		  {
-			 fWaitingOnRead = TRUE;
+			 read_waiting = TRUE;
 		  }
 	   }
     }
 
-
-	if (fWaitingOnRead) 
+	if(read_waiting) 
 	{
 		switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, USB_CAN_POLL_GRANULARITY_MS))
 		{
 			case WAIT_OBJECT_0:
 				GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, false);
 				//ResetEvent(inst->fd_overlap_read.hEvent);
-				fWaitingOnRead = FALSE;
+				read_waiting = FALSE;
 				//LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
 				//LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
 				break;
@@ -651,17 +644,11 @@ static int usbcan_rx(usbcan_instance_t *inst)
 				return 0;		
 		}
 	}
-
-	
-	gettimeofday(&tnow, NULL);
-	fprintf(stderr, "%s: time_us %ld\n", __func__, TIME_DELTA_US(tnow, tprev));
-	
+		
 	if(!inst->rx_data.l)
 	{
 		return 0;
 	}
-
-
 #else
 
 	inst->rx_data.l = read(inst->fd, inst->rx_data.b, USB_CAN_MAX_PAYLOAD);
@@ -852,6 +839,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	if(inst->fd == INVALID_HANDLE_VALUE)
 	{
 		printf("%s: can't open serial device %s", __func__, inst->device);
+		inst->fd = 0;
 		return;
 	}
 	
@@ -867,13 +855,11 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	
 	SetCommState(inst->fd, &dcbSerialParams);
 	
-	//TODO: https://msdn.microsoft.com/en-us/library/ff802693.aspx
-	
 	COMMTIMEOUTS timeouts = { 0 };
 	timeouts.ReadIntervalTimeout         = 1;
 	timeouts.ReadTotalTimeoutConstant    = 1;
 	timeouts.ReadTotalTimeoutMultiplier  = 0;
-	timeouts.WriteTotalTimeoutConstant   = 0;
+	timeouts.WriteTotalTimeoutConstant   = 1;
 	timeouts.WriteTotalTimeoutMultiplier = 0;
 	
 	SetCommTimeouts(inst->fd, &timeouts);
@@ -964,12 +950,11 @@ static void *usbcan_process(void *udata)
 	inst->running = true;
 
 	gettimeofday(&tnow, NULL);
-	tprev = tnow;
 	
 	while(1)
 	{
 		usbcan_rx(inst);
-
+		
 		tprev = tnow;
 		gettimeofday(&tnow, NULL);
 		//fprintf(stderr, "%ld\n", TIME_DELTA_MS(tnow, tprev));
@@ -1128,6 +1113,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	usbcan_setup_nmt_state_cb(inst, nmt_state_cb);
 	
 	pthread_mutex_init(&inst->mutex, NULL);
+	pthread_mutex_init(&inst->mutex_write, NULL);
 	pthread_cond_init(&inst->cond, NULL);
 	
 	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
@@ -1136,7 +1122,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 		free(inst);
 		return NULL;
 	}
-	
+		
 	return inst;
 }
 

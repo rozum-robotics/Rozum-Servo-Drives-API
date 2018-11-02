@@ -97,7 +97,7 @@ struct usbcan_instance_t
 	usbcan_device_t *device_list;
 
 	pthread_t usbcan_thread;
-	pthread_mutex_t mutex;
+	pthread_mutex_t mutex, mutex_write;
 	pthread_cond_t cond;
 
 	usbcan_op_t op;
