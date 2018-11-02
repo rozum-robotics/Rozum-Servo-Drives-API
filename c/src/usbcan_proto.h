@@ -87,7 +87,7 @@ struct usbcan_instance_t
 	const char *device;
 	#ifdef _WIN32
 	HANDLE fd;
-	OVERLAPPED fd_overlap_read, fd_overlap_write;
+	OVERLAPPED fd_overlap_read, fd_overlap_write, fd_overlap_evt;
 	#else
 	int fd;
 	#endif

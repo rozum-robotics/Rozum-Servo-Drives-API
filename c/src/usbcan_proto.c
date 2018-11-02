@@ -605,6 +605,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 {
 #ifdef _WIN32
 
+	/*
 	static BOOL read_waiting = FALSE;
 	
 	if (!read_waiting) 
@@ -644,6 +645,56 @@ static int usbcan_rx(usbcan_instance_t *inst)
 				return 0;		
 		}
 	}
+	*/
+	
+		static BOOL read_waiting = FALSE;
+	
+	if(!read_waiting) 
+	{
+	   if(!WaitCommEvent(inst->fd, EV_RXCHAR, &inst->fd_overlap_evt)) 
+	   {
+		  if(GetLastError() != ERROR_IO_PENDING) 
+		  {
+			  	LOG_INFO(debug_log, " %s ReadFile failed", __func__);
+				return 0;
+		  }
+		  else
+		  {
+			 read_waiting = TRUE;
+		  }
+	   }
+    }
+
+	if(read_waiting) 
+	{
+		switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, USB_CAN_POLL_GRANULARITY_MS))
+		{
+			case WAIT_OBJECT_0:
+				{
+					DWORD err;
+					COMSTAT stat;
+					ClearCommError(inst->fd, &err, &stat);
+					
+					//GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, false);
+					ReadFile(inst->fd, inst->rx_data.b, stat.cbInQue, &inst->rx_data.l, &inst->fd_overlap_read);
+					ResetEvent(inst->fd_overlap_read.hEvent);
+					ResetEvent(inst->fd_overlap_evt.hEvent);
+					read_waiting = FALSE;
+					//LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
+					//LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
+				}
+				break;
+				
+			case WAIT_TIMEOUT:
+				//LOG_INFO(debug_log, " %s read timeout", __func__);
+				return 0;
+				
+			default:
+				LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
+				return 0;		
+		}
+	}
+	
 		
 	if(!inst->rx_data.l)
 	{
@@ -867,8 +918,10 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	
 	memset(&inst->fd_overlap_read, 0, sizeof(OVERLAPPED));
 	memset(&inst->fd_overlap_write, 0, sizeof(OVERLAPPED));
+	memset(&inst->fd_overlap_evt, 0, sizeof(OVERLAPPED));
 	inst->fd_overlap_read.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	inst->fd_overlap_write.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);	
+	inst->fd_overlap_evt.hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);	
 	
 	usbcan_enable_udp(inst, false);
 	
