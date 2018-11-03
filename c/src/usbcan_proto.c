@@ -22,15 +22,6 @@ static int usbcan_build_sdo_req(uint8_t *dst, bool write, uint8_t id,
 		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
 		void *data, uint16_t len);
 
-static int usbcan_send_sdo_req(usbcan_instance_t *inst, bool write, uint8_t id, 
-		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
-		void *data, uint16_t len);
-static void usbcan_send_master_hb(usbcan_instance_t *inst);
-static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m);
-static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
-static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state) __attribute__((unused));
-static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
-
 static int usbcan_rx(usbcan_instance_t *inst);
 
 #ifdef _WIN32
@@ -55,8 +46,6 @@ void _win_print_last_error()
 		LocalFree(messageBuffer);
 	}
 }
-
-
 #endif
 
 /*
@@ -371,7 +360,7 @@ static int usbcan_build_com_frame(uint8_t *dst,  can_msg_t *m)
 /*
  * Sends NMT frame.
  */
-static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
+int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_nmt(dst, id, cmd);
@@ -382,7 +371,7 @@ static int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd
 /*
  * Sends heart beat.
  */
-static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
+int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_hb(dst, id, state);
@@ -393,7 +382,7 @@ static int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t st
 /*
  * Sends timestamp (SYNC) frame.
  */
-static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
+int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_timestamp(dst, ts);
@@ -403,7 +392,7 @@ static int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 /*
  * Sends SDO request.
  */
-static int usbcan_send_sdo_req(usbcan_instance_t *inst, bool write, uint8_t id, 
+int usbcan_send_sdo_req(usbcan_instance_t *inst, bool write, uint8_t id, 
 		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
 		void *data, uint16_t len)
 {
@@ -416,7 +405,7 @@ static int usbcan_send_sdo_req(usbcan_instance_t *inst, bool write, uint8_t id,
 /*
  * Sends non-CanOpen genaric CAN frame.
  */
-static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
+int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_com_frame(dst, m);
@@ -427,7 +416,7 @@ static int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
  * Sends master heart beat. 
  * Notice: emulataed using generic CAN frame.
  */
-static void usbcan_send_master_hb(usbcan_instance_t *inst)
+void usbcan_send_master_hb(usbcan_instance_t *inst)
 {
 	can_msg_t msg = {USB_CAN_MASTER_HB_COM_FRAME_ID, 1, {CO_NMT_OPERATIONAL}};
 
@@ -610,58 +599,14 @@ static int usbcan_rx(usbcan_instance_t *inst)
 {
 #ifdef _WIN32
 
-	/*
-	static BOOL read_waiting = FALSE;
-	
-	if (!read_waiting) 
-	{
-	   if (!ReadFile(inst->fd, inst->rx_data.b, USB_CAN_MAX_PAYLOAD, &inst->rx_data.l, &inst->fd_overlap_read)) 
-	   {
-		  if (GetLastError() != ERROR_IO_PENDING) 
-		  {
-			  	LOG_INFO(debug_log, " %s ReadFile failed", __func__);
-				return 0;
-		  }
-		  else
-		  {
-			 read_waiting = TRUE;
-		  }
-	   }
-    }
-
-	if(read_waiting) 
-	{
-		switch(WaitForSingleObject(inst->fd_overlap_read.hEvent, USB_CAN_POLL_GRANULARITY_MS))
-		{
-			case WAIT_OBJECT_0:
-				GetOverlappedResult(inst->fd, &inst->fd_overlap_read, &inst->rx_data.l, false);
-				//ResetEvent(inst->fd_overlap_read.hEvent);
-				read_waiting = FALSE;
-				//LOG_INFO(debug_log, " %s %d bytes read", __func__, inst->rx_data.l);
-				//LOG_DUMP(debug_log, "read data bytes: ", inst->rx_data.b, inst->rx_data.l);
-				break;
-				
-			case WAIT_TIMEOUT:
-				//LOG_INFO(debug_log, " %s read timeout", __func__);
-				return 0;
-				
-			default:
-				LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
-				return 0;		
-		}
-	}
-	*/
-	
-	static BOOL evt_waiting = FALSE;
-	static DWORD mask, mask_len;
 	DWORD bytes_to_read = 0;
 	DWORD err;
 	COMSTAT stat;
 	
-	if(!evt_waiting) 
+	if(!inst->evt_waiting) 
 	{
-		mask = EV_RXCHAR;
-		if(!WaitCommEvent(inst->fd, &mask, &inst->fd_overlap_evt)) 
+		inst->evt_mask = EV_RXCHAR;
+		if(!WaitCommEvent(inst->fd, &inst->evt_mask, &inst->fd_overlap_evt)) 
 		{
 			if(GetLastError() != ERROR_IO_PENDING) 
 			{
@@ -670,28 +615,28 @@ static int usbcan_rx(usbcan_instance_t *inst)
 			}
 			else
 			{
-				evt_waiting = TRUE;
+				inst->evt_waiting = TRUE;
 			}
 		}
 		else
 		{
 			ClearCommError(inst->fd, &err, &stat);
 			bytes_to_read = stat.cbInQue;
-			evt_waiting = FALSE;
+			inst->evt_waiting = FALSE;
 		}
     }
 
-	if(evt_waiting) 
+	if(inst->evt_waiting) 
 	{
 		switch(WaitForSingleObject(inst->fd_overlap_evt.hEvent, USB_CAN_POLL_GRANULARITY_MS))
 		{
 			case WAIT_OBJECT_0:
 				{				
-					GetOverlappedResult(inst->fd, &inst->fd_overlap_evt, &mask_len, false);
+					GetOverlappedResult(inst->fd, &inst->fd_overlap_evt, &inst->evt_mask_len, false);
 					ResetEvent(inst->fd_overlap_evt.hEvent);
 					ClearCommError(inst->fd, &err, &stat);
 					bytes_to_read = stat.cbInQue;
-					evt_waiting = FALSE;
+					inst->evt_waiting = FALSE;
 				}
 				break;
 				
@@ -701,7 +646,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 				
 			default:
 				LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
-				evt_waiting = FALSE;
+				inst->evt_waiting = FALSE;
 				return 0;		
 		}
 	}

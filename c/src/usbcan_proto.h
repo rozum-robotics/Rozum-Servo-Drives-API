@@ -88,6 +88,8 @@ struct usbcan_instance_t
 	#ifdef _WIN32
 	HANDLE fd;
 	OVERLAPPED fd_overlap_read, fd_overlap_write, fd_overlap_evt;
+	BOOL evt_waiting;
+	DWORD evt_mask, evt_mask_len;
 	#else
 	int fd;
 	#endif
@@ -168,6 +170,18 @@ uint32_t read_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t 
 int write_com_frame(usbcan_instance_t *inst, can_msg_t *msg);
 int write_timestamp(usbcan_instance_t *inst, uint32_t ts);
 int write_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
+
+/*
+ * Low level user thread functions
+ */
+int usbcan_send_sdo_req(usbcan_instance_t *inst, bool write, uint8_t id, 
+		uint16_t idx, uint8_t sidx, uint32_t tout, uint8_t re_txn,
+		void *data, uint16_t len);
+void usbcan_send_master_hb(usbcan_instance_t *inst);
+int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m);
+int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
+int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state) __attribute__((unused));
+int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
 
 #ifdef __cplusplus
 }
