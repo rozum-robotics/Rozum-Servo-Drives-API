@@ -17,4 +17,4 @@ clean:
 
 prepare:
 	mkdir -p $(BUILDDIR)
-
+	make -C ..
