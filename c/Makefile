@@ -88,8 +88,7 @@ OPT_LVL = 2
 #
 #Additional static libraries
 #
-#EXT_LIBS += c_nano
-#EXT_LIBS += c
+EXT_LIBS += pthread
 
 #
 #Additional non-project object files

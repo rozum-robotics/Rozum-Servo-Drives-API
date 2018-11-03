@@ -1,13 +1,16 @@
 FILES = $(wildcard *.c)
 BUILDDIR=build
 
-%.static: %.c 
-	$(TCHAIN)gcc $< -g2 -I../include -o $(BUILDDIR)/$@ ../build/libservo_api.a -static -lpthread
+ifeq (,$(findstring, $(TCHAIN),mingw))
+	EXT=.exe
+endif
 
-%.run: %.static 
-	./$(BUILDDIR)/$<
+API_LIB=../build/libservo_api.a
 
-all: prepare $(FILES:.c=.static)
+$(BUILDDIR)/%$(EXT): %.c $(API_LIB)
+	$(TCHAIN)gcc $< -g2 -I../include -o $@ $(API_LIB) -static -lpthread
+
+all: prepare $(addprefix $(BUILDDIR)/,$(FILES:.c=$(EXT)))
 
 clean:
 	rm -rf build
@@ -15,4 +18,3 @@ clean:
 prepare:
 	mkdir -p $(BUILDDIR)
 
-run: $(FILES:.c=.run)
