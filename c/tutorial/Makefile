@@ -1,7 +1,7 @@
 FILES = $(wildcard *.c)
 BUILDDIR=build
 
-ifeq (,$(findstring, $(TCHAIN),mingw))
+ifneq (,$(findstring mingw,$(TCHAIN)))
 	EXT=.exe
 endif
 
@@ -18,4 +18,5 @@ clean:
 
 prepare:
 	mkdir -p $(BUILDDIR)
-	make -C ..
+
+

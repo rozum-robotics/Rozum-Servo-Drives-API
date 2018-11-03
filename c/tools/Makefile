@@ -13,10 +13,14 @@ COLORIZE=no
 #
 BUILDDIR = build
 
+ifneq (,$(findstring mingw,$(TCHAIN)))
+	EXT=.exe
+endif
+
 #
 #Executable name
 #
-EXE_NAME = rr-fw-update.exe
+EXE_NAME = rr-update$(EXT)
 
 #
 #Enable binary creation
@@ -105,13 +109,15 @@ EXT_OBJECTS += ../build/libservo_api.a
 #Include directories
 #
 INCDIR += .
-INCDIR += common
+INCDIR += src/common
+INCDIR += src
 INCDIR += ../src
 
 #
 #C sources
 #
-C_SOURCES += $(wildcard common/*.c)
+C_SOURCES += $(wildcard src/*.c)
+C_SOURCES += $(wildcard src/common/*.c)
 C_SOURCES += $(wildcard *.c)
 
 #

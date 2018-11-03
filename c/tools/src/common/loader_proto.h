@@ -2,6 +2,26 @@
 #ifndef __LOADER_PROTO_H__
 #define __LOADER_PROTO_H__
 
+#define PARAM_STORE_PASSWORD   ((uint32_t)0x73617665) 
+#define PARAM_RESTORE_PASSWORD ((uint32_t)0x6C6F6164) 
+#define CO_OD_INDEX_STORE_PARAMETERS                        0x1010
+#define CO_OD_SUBINDEX_1_STORE_PARAMETERS_SAVE_ALL_PARAMETERS 1
+
+typedef enum
+{
+    CO_DEV_ERROR = 0,                   ///< Indicates error, input only, 1 byte of request field
+    CO_DEV_FIELD_FIRST=1,
+    CO_DEV_HW_ID_0 = 1,                 ///< First part of the device UID, 4 bytes MSB
+    CO_DEV_HW_ID_1,                     ///< Second part of the device UID, 4 bytes MSB
+    CO_DEV_HW_ID_2,                     ///< Third part of the device UID, 4 bytes MSB
+    CO_DEV_BOOT_TYPE,                   ///< Bootloader type, 1 byte, #DeviceIdType_t
+    CO_DEV_APP_TYPE,                    ///< Application type, 1 byte, #DeviceIdType_t
+    CO_DEV_BOOT_VER,                    ///< Bootloader version, 4 byte MSB
+    CO_DEV_APP_VER,                     ///< Application version, 4 byte MSB
+    CO_DEV_DEV_MODE,                    ///< Developer mode is activated
+    CO_DEV_FIELS_SIZE                    ///< last record, size
+}CO_DEV_FIELD_t;
+
 typedef enum {
     CO_DEV_CMD_ERASE_BOOT = 0, ///< Bootloader buffer erase command
     CO_DEV_CMD_ERASE_APP,      ///< Firmware buffer erase command
