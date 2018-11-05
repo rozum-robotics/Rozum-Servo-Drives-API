@@ -17,6 +17,7 @@ clean:
 	rm -rf build
 
 prepare:
+	make -C ..
 	mkdir -p $(BUILDDIR)
 
 

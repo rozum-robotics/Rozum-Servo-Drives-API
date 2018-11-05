@@ -24,30 +24,6 @@ static int usbcan_build_sdo_req(uint8_t *dst, bool write, uint8_t id,
 
 static int usbcan_rx(usbcan_instance_t *inst);
 
-#ifdef _WIN32
-void _win_print_last_error()
-{
-    //Get the error message, if any.
-    DWORD errorMessageID = GetLastError();
-    if(errorMessageID == 0)
-	{
-		LOG_INFO(debug_log, "win: no error");
-	}
-	else
-	{
-		LPSTR messageBuffer = NULL;
-		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-									 NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
-
-		messageBuffer[size] = '\0';
-		
-		LOG_ERROR(debug_log, "win: %s", messageBuffer);
-		
-		LocalFree(messageBuffer);
-	}
-}
-#endif
-
 /*
  * Check interface instance for consistency.
  */
@@ -55,12 +31,12 @@ static bool is_valid_instance(const usbcan_instance_t *inst)
 {
 	if(!inst)
 	{
-		LOG_ERROR(debug_log, "null interface");
+		LOG_ERROR(debug_log, "%s: null interface", __func__);
 		return false;
 	}
 	if(!inst->running)
 	{
-		LOG_ERROR(debug_log, "interface thread not running");
+		LOG_ERROR(debug_log, "%s: interface thread not running", __func__);
 		return false;
 	}
 	return true;
@@ -73,17 +49,17 @@ static bool is_valid_device(const usbcan_device_t *dev)
 {
 	if(!dev)
 	{
-		LOG_ERROR(debug_log, "null device");
+		LOG_ERROR(debug_log, "%s: null device", __func__);
 		return false;
 	}
 	if(!dev->inst)
 	{
-		LOG_ERROR(debug_log, "device pointing to null interface");
+		LOG_ERROR(debug_log, "%s: device pointing to null interface", __func__);
 		return false;
 	}
 	if(!dev->inst->running)
 	{
-		LOG_ERROR(debug_log, "device's corresponding interface thread not running");
+		LOG_ERROR(debug_log, "%s: device's corresponding interface thread not running", __func__);
 		return false;
 	}
 	return true;
@@ -110,17 +86,13 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 				case WAIT_OBJECT_0:
 					GetOverlappedResult(inst->fd, &inst->fd_overlap_write, &written, FALSE);
 					ResetEvent(&inst->fd_overlap_write.hEvent);
-					//LOG_INFO(debug_log, " %s %d bytes written", __func__, written);
-					//LOG_DUMP(debug_log, "write data bytes: ", b, l);
 					break;
 					
 				case WAIT_TIMEOUT:
-					//LOG_INFO(debug_log, " %s read timeout", __func__);
 					written = 0;
 					break;
 					
 				default:
-					//LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
 					written = 0;
 					break;		
 			}
@@ -128,7 +100,7 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 		ret = written;
 		if(ret != l)
 		{
-			LOG_ERROR(debug_log, " %s %d bytes of %d written", __func__, ret, l);
+			LOG_ERROR(debug_log, "%s: %d bytes of %d written", __func__, ret, l);
 		}
 	}
 	#else
@@ -610,7 +582,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 		{
 			if(GetLastError() != ERROR_IO_PENDING) 
 			{
-				LOG_INFO(debug_log, " %s WaitCommEvent failed", __func__);
+				LOG_INFO(debug_log, "%s: WaitCommEvent failed", __func__);
 				return 0;
 			}
 			else
@@ -641,11 +613,10 @@ static int usbcan_rx(usbcan_instance_t *inst)
 				break;
 				
 			case WAIT_TIMEOUT:
-				//LOG_INFO(debug_log, " %s read timeout", __func__);
 				return 0;
 				
 			default:
-				LOG_INFO(debug_log, " %s GetOverlappedResult failed", __func__);
+				LOG_INFO(debug_log, "%s: GetOverlappedResult failed", __func__);
 				inst->evt_waiting = FALSE;
 				return 0;		
 		}
@@ -655,7 +626,7 @@ static int usbcan_rx(usbcan_instance_t *inst)
 	{
 		if(!ReadFile(inst->fd, inst->rx_data.b, bytes_to_read, &inst->rx_data.l, &inst->fd_overlap_read))
 		{
-			LOG_ERROR(debug_log, " %s ReadFile failed to read buffered data", __func__);
+			LOG_ERROR(debug_log, "%s: ReadFile failed to read buffered data", __func__);
 		}
 	}
 	else
@@ -852,7 +823,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 						
 	if(inst->fd == INVALID_HANDLE_VALUE)
 	{
-		printf("%s: can't open serial device %s", __func__, inst->device);
+		LOG_ERROR(debug_log, "%s: can't open serial device %s", __func__, inst->device);
 		inst->fd = 0;
 		return;
 	}

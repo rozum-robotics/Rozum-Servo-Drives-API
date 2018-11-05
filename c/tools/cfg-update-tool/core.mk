@@ -89,17 +89,17 @@ prepare:
 	@mkdir -p $(BUILDTREE)
 
 
-$(SHARED_LIB): $(LINK_OBJECTS)
+$(SHARED_LIB): $(LINK_OBJECTS) $(EXT_OBJECTS)
 	$(VECHO)  ' [$(CLRED)L$(CLRST)]   $(CLRED)$@$(CLRST) ...\n'
 	$(Q)$(LD) -shared -o $@  $(LDFLAGS) $(LINK_OBJECTS) $(EXT_OBJECTS) $(addprefix -L,$(LIBDIR)) $(addprefix -l,$(EXT_LIBS)) 
 
-$(STATIC_LIB): $(LINK_OBJECTS)
+$(STATIC_LIB): $(LINK_OBJECTS) $(EXT_OBJECTS)
 	$(VECHO)  ' [$(CLRED)AR$(CLRST)]  $(CLRED)$@$(CLRST) ...\n'
 	$(Q)$(AR) -rc $@  $(LINK_OBJECTS) $(EXT_OBJECTS) 
 	$(VECHO)  ' [$(CLRED)RL$(CLRST)]  $(CLRED)$@$(CLRST) ...\n'
 	$(Q)$(RL) $@ 
 
-$(EXECUTABLE): $(LINK_OBJECTS) 
+$(EXECUTABLE): $(LINK_OBJECTS) $(EXT_OBJECTS)
 	$(VECHO)  ' [$(CLRED)L$(CLRST)]   $(CLRED)$@$(CLRST) ...\n'
 	$(Q)$(LD) -o $@  $(LDFLAGS) $(LINK_OBJECTS) $(EXT_OBJECTS) $(addprefix -L,$(LIBDIR)) $(addprefix -l,$(EXT_LIBS)) 
 
