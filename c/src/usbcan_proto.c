@@ -1201,7 +1201,7 @@ int usbcan_device_deinit(usbcan_device_t **dev)
 /*
  * User thread functions
  */
-
+ 
 int wait_device(usbcan_instance_t *inst, int id, int timeout_ms)
 {
 	if(!inst)

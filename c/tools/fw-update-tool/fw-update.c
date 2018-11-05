@@ -44,6 +44,7 @@ static uint32_t fw_len = 0;
 static ssize_t ptr = 0;
 static bool use_any_in_boot_mode = false;
 static bool do_not_wait_halt_responce = true;
+static bool update_all = false;
 
 uint32_t dev_hw = -1;
 uint32_t alive = 0;
@@ -71,7 +72,7 @@ void safe_exit()
 void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
 	static bool boot_captured = false;
-
+	
 	if(use_any_in_boot_mode)
 	{
 		if(!boot_captured && (state == 2))
@@ -350,10 +351,10 @@ void usage(char **argv)
 {
 	fprintf(stdout,	"Usage: %s\n"
 			"    port\n"
-			"    id\n"
+			"    id or 'all'\n"
 			"    [-F(--firmware-dir) firmware_folder_path] or [-X(--explicit-file) firmware_file]\n"
 			"    [-M(--master-hb)]\n"
-			"    [-B(--use-any-in-boot-mode) yes]\n", 
+			"    [-B(--use-any-in-boot-mode) yes]\n",
 			argv[0]);
 }
 
@@ -401,6 +402,7 @@ bool parse_cmd_line(int argc, char **argv)
 			case 'X':
 				expl_name = optarg;
 				break;
+	
 			case 'M':
 				LOG_INFO(debug_log, "Enabling master hearbeat");
 				master_hb_inhibit = false;
@@ -418,41 +420,19 @@ bool parse_cmd_line(int argc, char **argv)
 	return true;
 }
 
-int main(int argc, char **argv)
+void do_update(int id)
 {
 	DIR *dir;
 	char *name = 0;
 	struct stat s;
 	struct dirent *entry;
 	int to;
-	debug_log = stdout;
-
-	if(!parse_cmd_line(argc, argv))
-	{
-		usage(argv);
-		exit(1);
-	}
-
-	atexit(safe_exit);
-
-	inst = usbcan_instance_init(argv[1]);
-	if(!inst)
-	{
-		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
-		exit(1);
-	}
-	dev = usbcan_device_init(inst, strtol(argv[2], 0, 0));
+	
+	dev = usbcan_device_init(inst, id);
 	if(!dev)
 	{
 		LOG_ERROR(debug_log, "Can't create device instance\n");
 	}
-
-	usbcan_inhibit_master_hb(inst, master_hb_inhibit);
-
-	LOG_INFO(debug_log, "Updating firmware");
-
-	usbcan_setup_nmt_state_cb(inst, _nmt_state_cb);
-	usbcan_setup_com_frame_cb(inst, _com_frame_cb);
 
 	if(usbcan_get_device_state(inst, dev->id) == CO_NMT_BOOT)
 	{
@@ -492,7 +472,7 @@ int main(int argc, char **argv)
 		LOG_ERROR(debug_log, "Can't open firmware folder in '%s'", dir_name);
 		exit(1);
 	}
-
+	
 	while((entry = readdir(dir)) != NULL)
 	{
 		name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
@@ -523,6 +503,68 @@ int main(int argc, char **argv)
 	if(name)
 	{
 		free(name);
+	}
+	
+	usbcan_device_deinit(&dev);
+}
+
+int main(int argc, char **argv)
+{
+	debug_log = stdout;
+	int id = 0;
+
+	if(!parse_cmd_line(argc, argv))
+	{
+		usage(argv);
+		exit(1);
+	}
+
+	atexit(safe_exit);
+
+	inst = usbcan_instance_init(argv[1]);
+	if(!inst)
+	{
+		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
+		exit(1);
+	}
+	
+	if(strcmp(argv[2], "all") != 0)
+	{
+		update_all = false;
+		id = strtol(argv[2], 0, 0);
+	}
+	else
+	{
+		update_all = true;
+	}
+
+	usbcan_inhibit_master_hb(inst, master_hb_inhibit);
+
+	LOG_INFO(debug_log, "Updating firmware");
+	
+	if(update_all)
+	{		
+		LOG_INFO(debug_log, "Discovering devices...");
+		msleep(5000);
+	}
+
+	usbcan_setup_nmt_state_cb(inst, _nmt_state_cb);
+	usbcan_setup_com_frame_cb(inst, _com_frame_cb);
+	
+	if(update_all)
+	{
+		for(int i = 0; i < USB_CAN_MAX_DEV; i++)
+		{
+			if(inst->dev_alive[i] >= 0)
+			{
+				LOG_INFO(debug_log, "Updating device %d", i);
+				do_update(i);
+			}
+		}
+	}
+	else
+	{
+		do_update(id);
 	}
 
 	return 0;

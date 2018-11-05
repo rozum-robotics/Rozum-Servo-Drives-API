@@ -25,6 +25,8 @@ usbcan_instance_t *inst;
 usbcan_device_t *dev;
 
 uint32_t cfg_hw, cfg_rev, dev_hw, dev_rev;
+static bool update_all = false;
+bool master_hb_inhibit = true;
 
 uint32_t release(usbcan_device_t *dev)
 {
@@ -99,7 +101,7 @@ bool update(usbcan_device_t *dev, char *name)
 
 	LOG_INFO(debug_log, "Resetting device");
 	write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE); 
-	LOG_INFO(debug_log, "Sleep 5s to let device to boot");
+	LOG_INFO(debug_log, "Waitng to finish reset...");
 	if(!wait_device(dev->inst, dev->id, 5000))
 	{
 		LOG_ERROR(debug_log, "Can't find device on bus");
@@ -116,7 +118,7 @@ void usage(char **argv)
 {
 	fprintf(stdout,	"Usage: %s\n"
 			"    port\n"
-			"    id\n"
+			"    id or 'all'\n"
 			"    -C(--config-dir) config_folder_path\n"
 			"    [-M(--master-hb)]\n"
 			"\n",
@@ -150,7 +152,7 @@ bool parse_cmd_line(int argc, char **argv)
 
 			case 'M':
 				LOG_INFO(debug_log, "Enabling master hearbeat");
-				usbcan_inhibit_master_hb(inst, false);
+				master_hb_inhibit = false;
 				break;
 
 			default:
@@ -166,13 +168,79 @@ bool parse_cmd_line(int argc, char **argv)
 	return true;
 }
 
-int main(int argc, char **argv)
+void do_update(int id)
 {
 	DIR *dir;
 	char *name = 0;
 	struct stat s;
 	struct dirent *entry;
 	int len;
+	
+	do
+	{
+		dev = usbcan_device_init(inst, id);
+		if(!dev)
+		{
+			LOG_ERROR(debug_log, "Can't create device instance\n");
+		}
+
+		len = 4;
+		if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100))
+		{
+			LOG_ERROR(debug_log, "Can't read device HW type");
+			break;
+		}
+		len = 4;
+		if(read_raw_sdo(dev, 0x1018, 3, (uint8_t *)&dev_rev, &len, 1, 100))
+		{
+			LOG_ERROR(debug_log, "Can't read device revision");
+			break;
+		}
+
+		LOG_INFO(debug_log, "Device identity: Hardware: %"PRIu32", revision: %"PRIu32, dev_hw, dev_rev);
+
+		if(!(dir = opendir(dir_name)))
+		{
+			LOG_ERROR(debug_log, "Can't open config folder in '%s'", dir_name);
+			break;
+		}
+
+		while((entry = readdir(dir)) != NULL)
+		{
+			name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
+			sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
+			stat(name, &s);
+			if(!S_ISDIR(s.st_mode))
+			{
+				char *dot = strchr(entry->d_name, '.');
+				if(dot && (strcmp(dot, ".jsonconfig") == 0))
+				{
+					if(update(dev, name))
+					{
+						break;
+					}
+				}
+				else
+				{
+					LOG_WARN(debug_log, "Not a settings file '%s'", entry->d_name);
+				}
+			}
+		}
+	}
+	while(0);
+
+	if(name)
+	{
+		free(name);
+	}
+	
+	usbcan_device_deinit(&dev);	
+}
+
+int main(int argc, char **argv)
+{
+	int id = 0;
+	
 	debug_log = stdout;
 	
 	if(!parse_cmd_line(argc, argv))
@@ -187,62 +255,43 @@ int main(int argc, char **argv)
 		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
 		exit(1);
 	}
-	dev = usbcan_device_init(inst, strtol(argv[2], 0, 0));
-	if(!dev)
+	
+		if(strcmp(argv[2], "all") != 0)
 	{
-		LOG_ERROR(debug_log, "Can't create device instance\n");
+		update_all = false;
+		id = strtol(argv[2], 0, 0);
+	}
+	else
+	{
+		update_all = true;
 	}
 
-	LOG_INFO(debug_log, "Releasing controller");
-	release(dev);
+	usbcan_inhibit_master_hb(inst, master_hb_inhibit);
 
-	len = 4;
-	if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100))
-	{
-		LOG_ERROR(debug_log, "Can't read device HW type");
-		return 1;
-	}
-	len = 4;
-	if(read_raw_sdo(dev, 0x1018, 3, (uint8_t *)&dev_rev, &len, 1, 100))
-	{
-		LOG_ERROR(debug_log, "Can't read device revision");
-		return 1;
+	LOG_INFO(debug_log, "Updating firmware");
+	
+	if(update_all)
+	{		
+		LOG_INFO(debug_log, "Discovering devices...");
+		msleep(5000);
 	}
 
-	LOG_INFO(debug_log, "Device identity: Hardware: %"PRIu32", revision: %"PRIu32, dev_hw, dev_rev);
-
-	if(!(dir = opendir(dir_name)))
+	if(update_all)
 	{
-		LOG_ERROR(debug_log, "Can't open config folder in '%s'", dir_name);
-		exit(1);
-	}
-
-	while((entry = readdir(dir)) != NULL)
-	{
-		name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
-		sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
-		stat(name, &s);
-		if(!S_ISDIR(s.st_mode))
+		for(int i = 0; i < USB_CAN_MAX_DEV; i++)
 		{
-			char *dot = strchr(entry->d_name, '.');
-			if(dot && (strcmp(dot, ".jsonconfig") == 0))
+			if(inst->dev_alive[i] >= 0)
 			{
-				if(update(dev, name))
-				{
-					break;
-				}
-			}
-			else
-			{
-				LOG_WARN(debug_log, "Not a settings file '%s'", entry->d_name);
+				LOG_INFO(debug_log, "Updating device %d", i);
+				do_update(i);
 			}
 		}
 	}
-
-	if(name)
+	else
 	{
-		free(name);
+		do_update(id);
 	}
+
 	
 	return 0;
 }
