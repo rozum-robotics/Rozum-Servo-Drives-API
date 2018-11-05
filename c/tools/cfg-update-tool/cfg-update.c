@@ -13,15 +13,23 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+#define DIR_SEPARATOR "\\"
+#else
+#define DIR_SEPARATOR "/"
+#endif
+
 char *dir_name = NULL;
 
 usbcan_instance_t *inst;
 usbcan_device_t *dev;
 
-void release(usbcan_device_t *dev)
+uint32_t cfg_hw, cfg_rev, dev_hw, dev_rev;
+
+uint32_t release(usbcan_device_t *dev)
 {
     uint8_t data = 0;
-    write_raw_sdo(dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+    return write_raw_sdo(dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
 }
 
 bool update(usbcan_device_t *dev, char *name)
@@ -30,7 +38,6 @@ bool update(usbcan_device_t *dev, char *name)
 	JSON_Object *root_object;
 	JSON_Array *settings;
 	//const char *cfg_fw;
-	uint32_t cfg_hw, cfg_rev, dev_hw, dev_rev;
 	int idx;
 
 	LOG_INFO(debug_log, "Checking settings file '%s' compatibility", name);
@@ -44,26 +51,20 @@ bool update(usbcan_device_t *dev, char *name)
 		return false;
 	}
 
-	LOG_INFO(debug_log, "Reading config identity");
-
 	//cfg_fw = json_object_dotget_string(root_object, "ID.FW");
 	cfg_hw = atoi(json_object_dotget_string(root_object, "ID.HW"));
 	cfg_rev = atoi(json_object_dotget_string(root_object, "ID.REV"));
 
-	LOG_INFO(debug_log, "Hardware: %"PRIu32", revision: %"PRIu32, cfg_hw, cfg_rev);
-	LOG_INFO(debug_log, "Reading device identity");
-	
-	int len =4;
-	read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100);
-	len = 4;
-	read_raw_sdo(dev, 0x1018, 3, (uint8_t *)&dev_rev, &len, 1, 100);
-	
-	LOG_INFO(debug_log, "Hardware: %"PRIu32", revision: %"PRIu32, dev_hw, dev_rev);
+	LOG_INFO(debug_log, "Config file identity: Hardware: %"PRIu32", revision: %"PRIu32, cfg_hw, cfg_rev);
 
 	if((cfg_hw != dev_hw) || (cfg_rev != dev_rev))
 	{
-		LOG_INFO(debug_log, "Not compatible settings");
+		LOG_WARN(debug_log, "Not compatible settings");
 		return false;
+	}
+	else
+	{
+		LOG_INFO(debug_log, "Suitable config found");
 	}
 
 	settings = json_object_get_array(root_object, "Settings");
@@ -94,7 +95,7 @@ bool update(usbcan_device_t *dev, char *name)
 	uint32_t store_pass = PARAM_STORE_PASSWORD;
 	write_raw_sdo(dev, CO_OD_INDEX_STORE_PARAMETERS, 
 		CO_OD_SUBINDEX_1_STORE_PARAMETERS_SAVE_ALL_PARAMETERS, 
-		(uint8_t *)&store_pass, sizeof(store_pass), 1, 100);
+		(uint8_t *)&store_pass, sizeof(store_pass), 1, 2000);
 
 	LOG_INFO(debug_log, "Resetting device");
 	write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE); 
@@ -105,7 +106,7 @@ bool update(usbcan_device_t *dev, char *name)
 	}
 	else
 	{
-		LOG_ERROR(debug_log, "Rest finished");
+		LOG_INFO(debug_log, "Rest finished");
 	}
 
 	return true;
@@ -168,7 +169,10 @@ bool parse_cmd_line(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	DIR *dir;
+	char *name = 0;
+	struct stat s;
 	struct dirent *entry;
+	int len;
 	debug_log = stdout;
 	
 	if(!parse_cmd_line(argc, argv))
@@ -192,6 +196,21 @@ int main(int argc, char **argv)
 	LOG_INFO(debug_log, "Releasing controller");
 	release(dev);
 
+	len = 4;
+	if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100))
+	{
+		LOG_ERROR(debug_log, "Can't read device HW type");
+		return 1;
+	}
+	len = 4;
+	if(read_raw_sdo(dev, 0x1018, 3, (uint8_t *)&dev_rev, &len, 1, 100))
+	{
+		LOG_ERROR(debug_log, "Can't read device revision");
+		return 1;
+	}
+
+	LOG_INFO(debug_log, "Device identity: Hardware: %"PRIu32", revision: %"PRIu32, dev_hw, dev_rev);
+
 	if(!(dir = opendir(dir_name)))
 	{
 		LOG_ERROR(debug_log, "Can't open config folder in '%s'", dir_name);
@@ -200,15 +219,14 @@ int main(int argc, char **argv)
 
 	while((entry = readdir(dir)) != NULL)
 	{
-		struct stat s;
-		stat(entry->d_name, &s);
+		name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
+		sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
+		stat(name, &s);
 		if(!S_ISDIR(s.st_mode))
 		{
 			char *dot = strchr(entry->d_name, '.');
 			if(dot && (strcmp(dot, ".jsonconfig") == 0))
 			{
-				char name[strlen(entry->d_name) + strlen(dir_name) + 2];
-				sprintf(name, "%s/%s", dir_name, entry->d_name);
 				if(update(dev, name))
 				{
 					break;
@@ -219,6 +237,11 @@ int main(int argc, char **argv)
 				LOG_WARN(debug_log, "Not a settings file '%s'", entry->d_name);
 			}
 		}
+	}
+
+	if(name)
+	{
+		free(name);
 	}
 	
 	return 0;

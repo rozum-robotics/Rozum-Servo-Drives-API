@@ -12,6 +12,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+#define DIR_SEPARATOR "\\"
+#else
+#define DIR_SEPARATOR "/"
+#endif
+
 
 #define DOWNLOAD_TIMEOUT 15000
 #define RESET_TIMEOUT 15000
@@ -415,7 +421,10 @@ bool parse_cmd_line(int argc, char **argv)
 int main(int argc, char **argv)
 {
 	DIR *dir;
+	char *name = 0;
+	struct stat s;
 	struct dirent *entry;
+	int to;
 	debug_log = stdout;
 
 	if(!parse_cmd_line(argc, argv))
@@ -426,8 +435,6 @@ int main(int argc, char **argv)
 
 	atexit(safe_exit);
 
-	//LOG_INFO(debug_log, "Stopping bus");
-	
 	inst = usbcan_instance_init(argv[1]);
 	if(!inst)
 	{
@@ -458,21 +465,19 @@ int main(int argc, char **argv)
 		write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE); 
 	}
 
+	to = RESET_TIMEOUT;
+	for(;to > 0; to -= 100)
 	{
-		int to = RESET_TIMEOUT;
-		for(;to > 0; to -= 100)
+		if(dev_hw != -1)
 		{
-			if(dev_hw != -1)
-			{
-				break;
-			}
-			msleep(100);
+			break;
 		}
-		if(dev_hw == -1)
-		{
-			LOG_ERROR(debug_log, "Error reading device identity");
-			exit(1);
-		}
+		msleep(100);
+	}
+	if(dev_hw == -1)
+	{
+		LOG_ERROR(debug_log, "Error reading device identity");
+		exit(1);
 	}
 
 	if(expl_name)
@@ -490,16 +495,14 @@ int main(int argc, char **argv)
 
 	while((entry = readdir(dir)) != NULL)
 	{
-		struct stat s;
-		stat(entry->d_name, &s);
+		name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
+		sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
+		stat(name, &s);
 		if(!S_ISDIR(s.st_mode))
 		{
 			char *dot = strchr(entry->d_name, '.');
 			if(dot && (strcmp(dot, ".bin") == 0))
 			{
-				char name[strlen(entry->d_name) + strlen(dir_name) + 2];
-				sprintf(name, "%s/%s", dir_name, entry->d_name);
-						
 				download_result_t r = update(name, false);
 				if(r == DL_ERROR)
 				{
@@ -515,6 +518,11 @@ int main(int argc, char **argv)
 				LOG_WARN(debug_log, "Not a firmware file '%s'", entry->d_name);
 			}
 		}
+	}
+
+	if(name)
+	{
+		free(name);
 	}
 
 	return 0;

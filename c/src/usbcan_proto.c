@@ -78,7 +78,7 @@ static bool is_valid_device(const usbcan_device_t *dev)
 	}
 	if(!dev->inst)
 	{
-		LOG_ERROR(debug_log, "device points to null interface");
+		LOG_ERROR(debug_log, "device pointing to null interface");
 		return false;
 	}
 	if(!dev->inst->running)
@@ -962,8 +962,6 @@ static void *usbcan_process(void *udata)
 	
 	#ifdef _WIN32
 	struct timeval tprev, tnow;
-	
-	inst->running = true;
 
 	gettimeofday(&tnow, NULL);
 	
@@ -1094,7 +1092,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 {
 	int i;
 
-    usbcan_instance_t *inst = (usbcan_instance_t *)malloc(sizeof(usbcan_instance_t));
+	usbcan_instance_t *inst = (usbcan_instance_t *)malloc(sizeof(usbcan_instance_t));
 	if(!inst)
 	{
 		LOG_WARN(debug_log, "%s: can't allocate interface instance", __func__);
@@ -1131,6 +1129,8 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	pthread_mutex_init(&inst->mutex, NULL);
 	pthread_mutex_init(&inst->mutex_write, NULL);
 	pthread_cond_init(&inst->cond, NULL);
+
+	inst->running = true;
 	
 	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
 	{
