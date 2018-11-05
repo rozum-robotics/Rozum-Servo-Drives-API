@@ -1,3 +1,6 @@
+#ifdef _WIN32
+#include "windows.h"
+#endif
 #include "usbcan_util.h"
 
 uint32_t hexstr_to_int(uint8_t *src, int l)
@@ -47,6 +50,10 @@ void set_ux_(uint8_t *d, int *p, int x, uint64_t v)
 
 void msleep(uint32_t ms)
 {
+	#ifdef _WIN32
+	Sleep(ms);
+	#else
     usleep(ms * 1000);
+	#endif  
 }
 

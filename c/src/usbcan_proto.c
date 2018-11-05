@@ -1250,10 +1250,12 @@ int wait_device(usbcan_instance_t *inst, int id, int timeout_ms)
 
 	pthread_mutex_lock(&inst->mutex);
 
+	
 	inst->op.code = OP_WAIT_DEV;
 	inst->op.ttl = timeout_ms;
 	inst->op.id = id;
 	inst->op.abt = -1;
+	inst->dev_alive[inst->op.id] = -1;
 
 	pthread_cond_wait(&inst->cond, &inst->mutex);
 	pthread_mutex_unlock(&inst->mutex);

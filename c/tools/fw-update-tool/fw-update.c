@@ -1,21 +1,66 @@
-#include <getopt.h>
-#include <dirent.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include "logging.h"
 #include "usbcan_proto.h"
 #include "usbcan_types.h"
 #include "usbcan_util.h"
 #include "loader_proto.h"
 #include "crc32.h"
+#include "util.h"
+
+#include <getopt.h>
+#include <dirent.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+
+#define DOWNLOAD_TIMEOUT 15000
+#define RESET_TIMEOUT 15000
+
+typedef enum
+{
+	DL_IDLE,
+	DL_DOWNLOADING,
+	DL_SUCCESS,
+	DL_ERROR
+} download_result_t;
+
+FILE *debug_log;
 
 download_result_t download_result = DL_IDLE;
 
+char *dir_name = NULL;
+char *expl_name = NULL;
+
+static FILE *f = NULL;
+static uint8_t *map = NULL, *fw = NULL;
+static ssize_t map_len;
+static uint32_t fw_len = 0;
+static ssize_t ptr = 0;
+static bool use_any_in_boot_mode = false;
+static bool do_not_wait_halt_responce = true;
+
 uint32_t dev_hw = -1;
 uint32_t alive = 0;
+bool master_hb_inhibit = true;
+
+usbcan_instance_t *inst;
+usbcan_device_t *dev;
 
 void download_start();
+
+void safe_exit()
+{
+	if(map)
+	{
+		usbcan_instance_deinit(&inst);
+		free(map);
+		fclose(f);
+	}
+	if(fw)
+	{
+		free(fw);
+	}
+}
 
 void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
@@ -91,6 +136,7 @@ void download_start()
 		erase();
 	}
 }
+
 
 void download(uint8_t *data, ssize_t *off, ssize_t len)
 {
@@ -294,5 +340,183 @@ download_result_t update(char *name, bool id_ignore)
 	return download_result;
 }
 
+void usage(char **argv)
+{
+	fprintf(stdout,	"Usage: %s\n"
+			"    port\n"
+			"    id\n"
+			"    [-F(--firmware-dir) firmware_folder_path] or [-X(--explicit-file) firmware_file]\n"
+			"    [-M(--master-hb)]\n"
+			"    [-B(--use-any-in-boot-mode) yes]\n", 
+			argv[0]);
+}
 
+bool parse_cmd_line(int argc, char **argv)
+{
+	int c;
+	int option_index = 0;
+	static struct option long_options[] = 
+	{
+		{"use-any-in-boot-mode",     required_argument, 0, 'B' },
+		{"firmware-dir",    required_argument, 0, 'F' },
+		{"explicit-file",   required_argument, 0, 'X' },
+		{"master-hb",     optional_argument, 0, 'M' },
+		{0,         0,                 0,  0 }
+	};
+
+
+	while (1) 
+	{
+		c = getopt_long(argc, argv, "-:B:F:X:M", long_options, &option_index);
+		if (c == -1)
+		{
+			break;
+		}
+
+		switch (c) 
+		{
+			case ':':
+				return false;
+			case 'B':
+				if(strcmp(optarg, "yes") == 0)
+				{
+					use_any_in_boot_mode = true;
+					LOG_WARN(debug_log, "First device captured in BOOT mode will be used for flashing!!!");
+				}
+				else
+				{
+					LOG_ERROR(debug_log, "Type `yes` if you are brave.");
+					return false;
+				}
+				break;
+			case 'F':
+				dir_name = optarg;
+				break;
+			case 'X':
+				expl_name = optarg;
+				break;
+			case 'M':
+				LOG_INFO(debug_log, "Enabling master hearbeat");
+				master_hb_inhibit = false;
+				break;
+			default:
+				break;
+		}
+	}
+
+	if(!dir_name && !expl_name)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+int main(int argc, char **argv)
+{
+	DIR *dir;
+	struct dirent *entry;
+	debug_log = stdout;
+
+	if(!parse_cmd_line(argc, argv))
+	{
+		usage(argv);
+		exit(1);
+	}
+
+	atexit(safe_exit);
+
+	//LOG_INFO(debug_log, "Stopping bus");
+	
+	inst = usbcan_instance_init(argv[1]);
+	if(!inst)
+	{
+		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
+		exit(1);
+	}
+	dev = usbcan_device_init(inst, strtol(argv[2], 0, 0));
+	if(!dev)
+	{
+		LOG_ERROR(debug_log, "Can't create device instance\n");
+	}
+
+	usbcan_inhibit_master_hb(inst, master_hb_inhibit);
+
+	LOG_INFO(debug_log, "Updating firmware");
+
+	usbcan_setup_nmt_state_cb(inst, _nmt_state_cb);
+	usbcan_setup_com_frame_cb(inst, _com_frame_cb);
+
+	if(usbcan_get_device_state(inst, dev->id) == CO_NMT_BOOT)
+	{
+		LOG_INFO(debug_log, "Already in bootloader state");
+		_nmt_state_cb(inst, dev->id, CO_NMT_BOOT);	
+	}
+	else
+	{
+		LOG_INFO(debug_log, "Resetting device");
+		write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE); 
+	}
+
+	{
+		int to = RESET_TIMEOUT;
+		for(;to > 0; to -= 100)
+		{
+			if(dev_hw != -1)
+			{
+				break;
+			}
+			msleep(100);
+		}
+		if(dev_hw == -1)
+		{
+			LOG_ERROR(debug_log, "Error reading device identity");
+			exit(1);
+		}
+	}
+
+	if(expl_name)
+	{
+		LOG_WARN(debug_log, "Using explicit file! Device identity will be ignored!");
+		download_result_t r = update(expl_name, true);
+		exit(r == DL_ERROR ? 1 : 0);
+	}
+
+	if(!(dir = opendir(dir_name)))
+	{
+		LOG_ERROR(debug_log, "Can't open firmware folder in '%s'", dir_name);
+		exit(1);
+	}
+
+	while((entry = readdir(dir)) != NULL)
+	{
+		struct stat s;
+		stat(entry->d_name, &s);
+		if(!S_ISDIR(s.st_mode))
+		{
+			char *dot = strchr(entry->d_name, '.');
+			if(dot && (strcmp(dot, ".bin") == 0))
+			{
+				char name[strlen(entry->d_name) + strlen(dir_name) + 2];
+				sprintf(name, "%s/%s", dir_name, entry->d_name);
+						
+				download_result_t r = update(name, false);
+				if(r == DL_ERROR)
+				{
+						exit(1);
+				}
+				if(r == DL_SUCCESS)
+				{
+						break;
+				}
+			}
+			else
+			{
+				LOG_WARN(debug_log, "Not a firmware file '%s'", entry->d_name);
+			}
+		}
+	}
+
+	return 0;
+}
 
