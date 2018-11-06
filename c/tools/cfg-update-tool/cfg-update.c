@@ -168,7 +168,7 @@ bool parse_cmd_line(int argc, char **argv)
 	return true;
 }
 
-void do_update(int id)
+void batch_update(int id)
 {
 	DIR *dir;
 	char *name = 0;
@@ -283,13 +283,13 @@ int main(int argc, char **argv)
 			if(inst->dev_alive[i] >= 0)
 			{
 				LOG_INFO(debug_log, "Updating device %d", i);
-				do_update(i);
+				batch_update(i);
 			}
 		}
 	}
 	else
 	{
-		do_update(id);
+		batch_update(id);
 	}
 
 	

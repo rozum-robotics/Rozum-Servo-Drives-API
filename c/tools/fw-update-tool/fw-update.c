@@ -27,6 +27,7 @@ typedef enum
 	DL_IDLE,
 	DL_DOWNLOADING,
 	DL_SUCCESS,
+	DL_WRONG_IDENT,
 	DL_ERROR
 } download_result_t;
 
@@ -54,6 +55,9 @@ usbcan_instance_t *inst;
 usbcan_device_t *dev;
 
 void download_start();
+void erase();
+void download_start();
+void write_block(uint8_t *data, ssize_t *off, ssize_t len);
 
 void safe_exit()
 {
@@ -97,6 +101,103 @@ void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 			}
 		};
 		write_com_frame(inst, &m_read);
+	}
+}
+
+void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
+{
+	if(!do_not_wait_halt_responce)
+	{
+		if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
+				(m->data[1] == CO_DEV_CMD_HALT))
+		{
+			erase();
+		}
+	}
+
+	if((m->id == CO_CAN_ID_DEV_CMD) &&
+			                    ((m->data[1] == CO_DEV_CMD_ERASE_BOOT) || 
+								 (m->data[1] == CO_DEV_CMD_ERASE_APP)))
+	{
+		alive = 0;
+
+		LOG_INFO(debug_log, "Firmware flash region erased");
+		ptr = 0;
+
+		write_block(fw, &ptr, 4);
+		return;
+	}
+
+	if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
+			                    (m->data[1] == CO_DEV_CMD_REQUEST_FIELD) && 
+								 (m->data[2] == CO_DEV_APP_TYPE))
+	{
+		
+		alive = 0;
+		dev_hw = m->data[3];
+	
+		LOG_INFO(debug_log, "Device identity: %d", dev_hw);
+		return;
+
+	}
+
+	if((m->id == CO_CAN_ID_DEV_WRITE) && (m->data[0] == dev->id))
+	{
+		alive = 0;
+
+		if(ptr >= fw_len)
+		{
+			can_msg_t m_flash = 
+			{
+				.id = CO_CAN_ID_DEV_CMD, 
+				.dlc = 2, 
+				.data = 
+				{
+					dev->id, 
+					CO_DEV_CMD_FLASH_APP, 
+				}
+			};
+			write_com_frame(inst, &m_flash);
+
+			return;
+		}
+		
+		if((ptr % 1024) == 0)
+		{
+			LOG_INFO(debug_log, "Downloading %d/%d", ptr, fw_len);
+		}
+		write_block(fw, &ptr, 4);
+	}
+
+
+	if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
+			              ((m->data[1] == CO_DEV_CMD_FLASH_BOOT) || 
+						   (m->data[1] == CO_DEV_CMD_FLASH_APP)))
+	{
+		alive = 0;
+
+		if(m->data[2] == CO_BOOT_STATUS_OK)
+		{
+			LOG_INFO(debug_log, "FLASH OK");
+			can_msg_t m_exec = 
+			{
+				.id = CO_CAN_ID_DEV_CMD, 
+				.dlc = 2, 
+				.data = 
+				{
+					dev->id, 
+					CO_DEV_CMD_EXEC, 
+				}
+			};
+			write_com_frame(inst, &m_exec);
+			download_result = DL_SUCCESS;
+		
+		}
+		else
+		{
+			LOG_INFO(debug_log, "FLASH FAILED");
+			download_result = DL_ERROR;
+		}
 	}
 }
 
@@ -144,8 +245,7 @@ void download_start()
 	}
 }
 
-
-void download(uint8_t *data, ssize_t *off, ssize_t len)
+void write_block(uint8_t *data, ssize_t *off, ssize_t len)
 {
 		can_msg_t m_download = 
 		{
@@ -166,182 +266,146 @@ void download(uint8_t *data, ssize_t *off, ssize_t len)
 		write_com_frame(inst, &m_download);
 }
 
-void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
-{
-	if(!do_not_wait_halt_responce)
-	{
-		if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
-				(m->data[1] == CO_DEV_CMD_HALT))
-		{
-			erase();
-		}
-	}
-
-	if((m->id == CO_CAN_ID_DEV_CMD) &&
-			                    ((m->data[1] == CO_DEV_CMD_ERASE_BOOT) || 
-								 (m->data[1] == CO_DEV_CMD_ERASE_APP)))
-	{
-	
-		alive = 0;
-
-		LOG_INFO(debug_log, "Firmware flash region erased");
-		ptr = 0;
-
-		download(fw, &ptr, 4);
-		return;
-	}
-
-	if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
-			                    (m->data[1] == CO_DEV_CMD_REQUEST_FIELD) && 
-								 (m->data[2] == CO_DEV_APP_TYPE))
-	{
-		
-		alive = 0;
-		dev_hw = m->data[3];
-	
-		LOG_INFO(debug_log, "Device identity: %d", dev_hw);
-		return;
-
-	}
-
-		
-	if((m->id == CO_CAN_ID_DEV_WRITE) && (m->data[0] == dev->id))
-	{
-		alive = 0;
-
-		if(ptr >= fw_len)
-		{
-			can_msg_t m_flash = 
-			{
-				.id = CO_CAN_ID_DEV_CMD, 
-				.dlc = 2, 
-				.data = 
-				{
-					dev->id, 
-					CO_DEV_CMD_FLASH_APP, 
-				}
-			};
-			write_com_frame(inst, &m_flash);
-
-			return;
-		}
-		
-		if((ptr % 1024) == 0)
-		{
-			LOG_INFO(debug_log, "Downloading %d/%d", ptr, fw_len);
-		}
-		download(fw, &ptr, 4);
-	}
-
-
-	if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
-			              ((m->data[1] == CO_DEV_CMD_FLASH_BOOT) || 
-						   (m->data[1] == CO_DEV_CMD_FLASH_APP)))
-	{
-		alive = 0;
-
-		if(m->data[2] == CO_BOOT_STATUS_OK)
-		{
-			LOG_INFO(debug_log, "FLASH OK");
-			can_msg_t m_exec = 
-			{
-				.id = CO_CAN_ID_DEV_CMD, 
-				.dlc = 2, 
-				.data = 
-				{
-					dev->id, 
-					CO_DEV_CMD_EXEC, 
-				}
-			};
-			write_com_frame(inst, &m_exec);
-			download_result = DL_SUCCESS;
-		
-		}
-		else
-		{
-			LOG_INFO(debug_log, "FLASH FAILED");
-			download_result = DL_ERROR;
-		}
-	}
-}
-
 download_result_t update(char *name, bool id_ignore)
 {
 	uint32_t fw_hw = 0;
 	uint32_t crc = 0;
 	int orig_len;
+	int to;
 	
 	download_result = DL_IDLE;
-
-	if(!id_ignore)
+	
+	do
 	{
-		LOG_INFO(debug_log, "Checking firmware file '%s' compatibility", name);
-		LOG_INFO(debug_log, "Reading firmware identity");
-	}
-
-	f = fopen(name, "rb");
-	if(!f)
-	{
-		LOG_ERROR(debug_log, "Can't open file");
-		return DL_ERROR;
-	}
-	map_len = flen(f);
-	orig_len = map_len;
-
-	if((int)map_len <= 0)
-	{
-		LOG_ERROR(debug_log, "Empty file");
-		return DL_ERROR;
-	}
-
-	if(map_len % 4)
-	{
-		ssize_t new = 4 * (map_len / 4 + 1);
-		LOG_INFO(debug_log, "Firmware length (%d) not multiple 4 bytes, extending to (%d)", map_len, new);
-		map_len = new;
-	}
-
-	map = malloc(map_len);
-		
-	if(fread(map, 1, orig_len, f) != orig_len)
-	{
-		LOG_ERROR(debug_log, "fread error");
-		exit(1);
-	}
-
-	fw_hw = map[8];
-
-	if(!id_ignore)
-	{
-		LOG_INFO(debug_log, "Firmware identity %d", fw_hw);
-		if(fw_hw != dev_hw)
+		if(usbcan_get_device_state(inst, dev->id) == CO_NMT_BOOT)
 		{
-			LOG_INFO(debug_log, "Not compatible firmware");
-			return download_result;
+			LOG_INFO(debug_log, "Already in bootloader state");
+			_nmt_state_cb(inst, dev->id, CO_NMT_BOOT);	
+		}
+		else
+		{
+			int len;
+			len = 4;
+			if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100))
+			{
+				LOG_ERROR(debug_log, "Can't read device HW type");
+				download_result = DL_ERROR;
+				break;
+			}
+		}
+
+		if(expl_name)
+		{
+			LOG_WARN(debug_log, "Using explicit file! Device identity will be ignored!");
+			download_result_t r = update(expl_name, true);
+			exit(r == DL_ERROR ? 1 : 0);
+		}
+		
+		if(!id_ignore)
+		{
+			LOG_INFO(debug_log, "Checking firmware file '%s' compatibility", name);
+			LOG_INFO(debug_log, "Reading firmware identity");
+		}
+
+		f = fopen(name, "rb");
+		if(!f)
+		{
+			LOG_ERROR(debug_log, "Can't open file");
+			download_result = DL_ERROR;
+			break;
+		}
+		map_len = flen(f);
+		orig_len = map_len;
+
+		if((int)map_len <= 0)
+		{
+			LOG_ERROR(debug_log, "Empty file");
+			download_result = DL_ERROR;
+			break;
+		}
+
+		if(map_len % 4)
+		{
+			ssize_t new = 4 * (map_len / 4 + 1);
+			LOG_INFO(debug_log, "Firmware length (%d) not multiple 4 bytes, extending to (%d)", map_len, new);
+			map_len = new;
+		}
+
+		map = malloc(map_len);
+			
+		if(fread(map, 1, orig_len, f) != orig_len)
+		{
+			LOG_ERROR(debug_log, "fread error");
+			download_result = DL_ERROR;
+			break;
+		}
+
+		fw_hw = map[8];
+
+		if(!id_ignore)
+		{
+			LOG_INFO(debug_log, "Firmware identity %d", fw_hw);
+			if(fw_hw != dev_hw)
+			{
+				LOG_INFO(debug_log, "Not compatible firmware");
+				download_result = DL_WRONG_IDENT;
+				break;
+			}
+		}
+		
+		LOG_INFO(debug_log, "Resetting device");
+		write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
+		to = RESET_TIMEOUT;
+		for(;to > 0; to -= 100)
+		{
+			if(dev_hw != -1)
+			{
+				break;
+			}
+			msleep(100);
+		}
+		if(dev_hw == -1)
+		{
+			LOG_ERROR(debug_log, "Can't read device HW type");
+			break;
+		}
+
+		fw = malloc(map_len + sizeof(crc));
+		memcpy(fw, map, map_len);
+		fw_len = map_len;
+		memcpy(fw + 4, &fw_len, sizeof(fw_len));
+		crc = crc32(fw + 4, fw_len - 4);
+		memcpy(fw + fw_len, &crc, sizeof(crc));
+		fw_len += 4;
+		LOG_INFO(debug_log, "Firmware CRC: 0x%"PRIx32, crc);
+
+		download_start();
+
+		while((download_result == DL_DOWNLOADING) && (alive < DOWNLOAD_TIMEOUT))
+		{
+			msleep(100);
+			alive += 100;
+		}
+
+		if(alive >= DOWNLOAD_TIMEOUT)
+		{
+			LOG_ERROR(debug_log, "Timeout while downloading");
+			download_result = DL_ERROR;
 		}
 	}
-
-	fw = malloc(map_len + sizeof(crc));
-	memcpy(fw, map, map_len);
-	fw_len = map_len;
-	memcpy(fw + 4, &fw_len, sizeof(fw_len));
-	crc = crc32(fw + 4, fw_len - 4);
-	memcpy(fw + fw_len, &crc, sizeof(crc));
-	fw_len += 4;
-	LOG_INFO(debug_log, "Firmware CRC: 0x%"PRIx32, crc);
-
-	download_start();
-
-	while((download_result == DL_DOWNLOADING) && (alive < DOWNLOAD_TIMEOUT))
+	while(0);
+	
+	if(f)
 	{
-		msleep(100);
-		alive += 100;
+		fclose(f);
 	}
-
-	if(alive >= DOWNLOAD_TIMEOUT)
+	if(map)
 	{
-		LOG_ERROR(debug_log, "Timeout while downloading");
-		download_result = DL_ERROR;
+		free(map);
+	}
+	if(fw)
+	{
+		free(fw);
 	}
 
 	return download_result;
@@ -420,53 +484,19 @@ bool parse_cmd_line(int argc, char **argv)
 	return true;
 }
 
-void do_update(int id)
+void batch_update(int id)
 {
 	DIR *dir;
 	char *name = 0;
 	struct stat s;
 	struct dirent *entry;
-	int to;
 	
 	dev = usbcan_device_init(inst, id);
 	if(!dev)
 	{
 		LOG_ERROR(debug_log, "Can't create device instance\n");
 	}
-
-	if(usbcan_get_device_state(inst, dev->id) == CO_NMT_BOOT)
-	{
-		LOG_INFO(debug_log, "Already in bootloader state");
-		_nmt_state_cb(inst, dev->id, CO_NMT_BOOT);	
-	}
-	else
-	{
-		LOG_INFO(debug_log, "Resetting device");
-		write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE); 
-	}
-
-	to = RESET_TIMEOUT;
-	for(;to > 0; to -= 100)
-	{
-		if(dev_hw != -1)
-		{
-			break;
-		}
-		msleep(100);
-	}
-	if(dev_hw == -1)
-	{
-		LOG_ERROR(debug_log, "Error reading device identity");
-		exit(1);
-	}
-
-	if(expl_name)
-	{
-		LOG_WARN(debug_log, "Using explicit file! Device identity will be ignored!");
-		download_result_t r = update(expl_name, true);
-		exit(r == DL_ERROR ? 1 : 0);
-	}
-
+	
 	if(!(dir = opendir(dir_name)))
 	{
 		LOG_ERROR(debug_log, "Can't open firmware folder in '%s'", dir_name);
@@ -500,12 +530,13 @@ void do_update(int id)
 		}
 	}
 
+	usbcan_device_deinit(&dev);
+	
 	if(name)
 	{
 		free(name);
 	}
-	
-	usbcan_device_deinit(&dev);
+
 }
 
 int main(int argc, char **argv)
@@ -558,13 +589,13 @@ int main(int argc, char **argv)
 			if(inst->dev_alive[i] >= 0)
 			{
 				LOG_INFO(debug_log, "Updating device %d", i);
-				do_update(i);
+				batch_update(i);
 			}
 		}
 	}
 	else
 	{
-		do_update(id);
+		batch_update(id);
 	}
 
 	return 0;
