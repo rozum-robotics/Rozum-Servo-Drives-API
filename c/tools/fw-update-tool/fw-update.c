@@ -36,16 +36,15 @@ FILE *debug_log;
 download_result_t download_result = DL_IDLE;
 
 char *dir_name = NULL;
-char *expl_name = NULL;
 
 static FILE *f = NULL;
-static uint8_t *map = NULL, *fw = NULL;
-static ssize_t map_len;
-static uint32_t fw_len = 0;
+static uint8_t *fw = NULL;
+static ssize_t fw_len = 0;
 static ssize_t ptr = 0;
 static bool use_any_in_boot_mode = false;
 static bool do_not_wait_halt_responce = true;
 static bool update_all = false;
+static bool id_ignore = false;
 
 uint32_t dev_hw = -1;
 uint32_t alive = 0;
@@ -61,16 +60,17 @@ void write_block(uint8_t *data, ssize_t *off, ssize_t len);
 
 void safe_exit()
 {
-	if(map)
+	if(f)
 	{
-		usbcan_instance_deinit(&inst);
-		free(map);
 		fclose(f);
+		f = NULL;
 	}
 	if(fw)
 	{
 		free(fw);
+		fw = NULL;
 	}
+	usbcan_instance_deinit(&inst);
 }
 
 void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
@@ -178,7 +178,7 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 
 		if(m->data[2] == CO_BOOT_STATUS_OK)
 		{
-			LOG_INFO(debug_log, "FLASH OK");
+			LOG_INFO(debug_log, "FLASH OK\n");
 			can_msg_t m_exec = 
 			{
 				.id = CO_CAN_ID_DEV_CMD, 
@@ -270,7 +270,7 @@ download_result_t update(char *name, bool id_ignore)
 {
 	uint32_t fw_hw = 0;
 	uint32_t crc = 0;
-	int orig_len;
+	uint32_t file_len, data_len;
 	int to;
 	
 	download_result = DL_IDLE;
@@ -293,13 +293,6 @@ download_result_t update(char *name, bool id_ignore)
 				break;
 			}
 		}
-
-		if(expl_name)
-		{
-			LOG_WARN(debug_log, "Using explicit file! Device identity will be ignored!");
-			download_result_t r = update(expl_name, true);
-			exit(r == DL_ERROR ? 1 : 0);
-		}
 		
 		if(!id_ignore)
 		{
@@ -314,33 +307,32 @@ download_result_t update(char *name, bool id_ignore)
 			download_result = DL_ERROR;
 			break;
 		}
-		map_len = flen(f);
-		orig_len = map_len;
+		file_len = flen(f);
 
-		if((int)map_len <= 0)
+		if((int)file_len <= 0)
 		{
 			LOG_ERROR(debug_log, "Empty file");
 			download_result = DL_ERROR;
 			break;
 		}
 
-		if(map_len % 4)
+		data_len = (file_len % 4) ? 4 * (file_len / 4 + 1) : file_len;
+		if(data_len != file_len)
 		{
-			ssize_t new = 4 * (map_len / 4 + 1);
-			LOG_INFO(debug_log, "Firmware length (%d) not multiple 4 bytes, extending to (%d)", map_len, new);
-			map_len = new;
+			LOG_INFO(debug_log, "Firmware length (%d) not multiple 4 bytes, extending to (%d)", file_len, data_len);
 		}
-
-		map = malloc(map_len);
+		
+		fw_len = data_len + sizeof(crc);
+		fw = calloc(fw_len, 1);
 			
-		if(fread(map, 1, orig_len, f) != orig_len)
+		if(fread(fw, 1, file_len, f) != file_len)
 		{
 			LOG_ERROR(debug_log, "fread error");
 			download_result = DL_ERROR;
 			break;
 		}
 
-		fw_hw = map[8];
+		fw_hw = fw[8];
 
 		if(!id_ignore)
 		{
@@ -355,8 +347,8 @@ download_result_t update(char *name, bool id_ignore)
 		
 		LOG_INFO(debug_log, "Resetting device");
 		write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
-		to = RESET_TIMEOUT;
-		for(;to > 0; to -= 100)
+
+		for(to = RESET_TIMEOUT ;to > 0; to -= 100)
 		{
 			if(dev_hw != -1)
 			{
@@ -367,16 +359,14 @@ download_result_t update(char *name, bool id_ignore)
 		if(dev_hw == -1)
 		{
 			LOG_ERROR(debug_log, "Can't read device HW type");
+			download_result = DL_ERROR;
 			break;
 		}
+		
+		memcpy(fw + 4, &data_len, sizeof(data_len));
+		crc = crc32(fw + 4, data_len - 4);
+		memcpy(fw + data_len, &crc, sizeof(crc));
 
-		fw = malloc(map_len + sizeof(crc));
-		memcpy(fw, map, map_len);
-		fw_len = map_len;
-		memcpy(fw + 4, &fw_len, sizeof(fw_len));
-		crc = crc32(fw + 4, fw_len - 4);
-		memcpy(fw + fw_len, &crc, sizeof(crc));
-		fw_len += 4;
 		LOG_INFO(debug_log, "Firmware CRC: 0x%"PRIx32, crc);
 
 		download_start();
@@ -398,14 +388,12 @@ download_result_t update(char *name, bool id_ignore)
 	if(f)
 	{
 		fclose(f);
-	}
-	if(map)
-	{
-		free(map);
+		f = NULL;
 	}
 	if(fw)
 	{
 		free(fw);
+		fw = NULL;
 	}
 
 	return download_result;
@@ -416,7 +404,8 @@ void usage(char **argv)
 	fprintf(stdout,	"Usage: %s\n"
 			"    port\n"
 			"    id or 'all'\n"
-			"    [-F(--firmware-dir) firmware_folder_path] or [-X(--explicit-file) firmware_file]\n"
+			"    -F(--firmware-dir) firmware_folder_path]\n"
+			"    [-X(--ignore-ident)\n"
 			"    [-M(--master-hb)]\n"
 			"    [-B(--use-any-in-boot-mode) yes]\n",
 			argv[0]);
@@ -430,7 +419,7 @@ bool parse_cmd_line(int argc, char **argv)
 	{
 		{"use-any-in-boot-mode",     required_argument, 0, 'B' },
 		{"firmware-dir",    required_argument, 0, 'F' },
-		{"explicit-file",   required_argument, 0, 'X' },
+		{"ignore-ident",   optional_argument, 0, 'X' },
 		{"master-hb",     optional_argument, 0, 'M' },
 		{0,         0,                 0,  0 }
 	};
@@ -464,7 +453,7 @@ bool parse_cmd_line(int argc, char **argv)
 				dir_name = optarg;
 				break;
 			case 'X':
-				expl_name = optarg;
+				id_ignore = true;
 				break;
 	
 			case 'M':
@@ -476,7 +465,7 @@ bool parse_cmd_line(int argc, char **argv)
 		}
 	}
 
-	if(!dir_name && !expl_name)
+	if(!dir_name)
 	{
 		return false;
 	}
