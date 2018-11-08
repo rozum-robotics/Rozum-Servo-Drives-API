@@ -12,11 +12,15 @@ COLORIZE=no
 #Build directory
 #
 BUILDDIR = build
-PYTHONDIR = ../python/rozum/servo
+
+ifneq (,$(findstring mingw,$(TCHAIN)))
+	EXT=.exe
+endif
+
 #
 #Executable name
 #
-EXE_NAME = servo_api
+EXE_NAME = rr-fw-update$(EXT)
 
 #
 #Enable binary creation
@@ -26,17 +30,17 @@ MAKE_BINARY=no
 #
 #Enable binary creation
 #
-MAKE_EXECUTABLE=no
+MAKE_EXECUTABLE=yes
 
 #
 #Enable shared library creation
 #
-MAKE_SHARED_LIB=yes
+MAKE_SHARED_LIB=no
 
 #
 #Enable static library creation
 #
-MAKE_STATIC_LIB=yes
+MAKE_STATIC_LIB=no
 
 #
 #Enable MAP-file creation
@@ -82,7 +86,7 @@ OPT_LVL = 2
 #
 #Additional linker flags
 #
-#LDFLAGS += 
+LDFLAGS += -static 
 
 
 #
@@ -93,7 +97,7 @@ EXT_LIBS += pthread
 #
 #Additional non-project object files
 #
-#EXT_OBJECTS += /usr/lib/arm-none-eabi/newlib/thumb/libc_nano.a
+EXT_OBJECTS += ../../build/libservo_api.a
 
 
 #
@@ -101,19 +105,20 @@ EXT_LIBS += pthread
 #
 #PPDEFS += 
 
-
-
 #
 #Include directories
 #
 INCDIR += .
-INCDIR += include
-INCDIR += src
+INCDIR += ../common
+INCDIR += ../../src
+
+
 
 #
 #C sources
 #
-C_SOURCES += $(wildcard src/*.c)
+C_SOURCES += $(wildcard ../common/*.c)
+C_SOURCES += $(wildcard *.c)
 
 #
 #Assembler sources
