@@ -134,7 +134,7 @@ class Servo(object):
             User-defined position (in degrees) to replace the current position value
         :return: Status code: int
         """
-        return self._api.rr_set_zero_position(self._api, c_float(position_deg))
+        return self._api.rr_set_zero_position(self._servo, c_float(position_deg))
 
     def set_zero_position_and_save(self, position_deg: float):
         """The function enables setting the current position (in degrees) of the servo to any value defined by the user
