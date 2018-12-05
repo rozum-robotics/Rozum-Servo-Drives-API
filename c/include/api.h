@@ -286,6 +286,14 @@ rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t 
 rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_string, int *version_string_size);
 rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_string, int *version_string_size);
 
+bool rr_check_point(const float velocity_limit_deg_per_sec,
+                    float *velocity_max_calc_deg_per_sec,
+                    const float position_deg_start,
+                    const float velocity_deg_per_sec_start,
+                    const float position_deg_end,
+                    const float velocity_deg_per_sec_end,
+                    const uint32_t time_ms);
+
 #ifdef __cplusplus
 }
 #endif

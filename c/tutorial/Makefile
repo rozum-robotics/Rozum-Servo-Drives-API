@@ -8,7 +8,7 @@ endif
 API_LIB=../build/libservo_api.a
 
 $(BUILDDIR)/%$(EXT): %.c $(API_LIB)
-	$(TCHAIN)gcc $< -g2 -I../include -o $@ $(API_LIB) -static -lpthread
+	$(TCHAIN)gcc $< -g2 -I../include -o $@ $(API_LIB) -static -lpthread -std=gnu99
 	$(TCHAIN)strip $@
 
 all: prepare $(addprefix $(BUILDDIR)/,$(FILES:.c=$(EXT)))
