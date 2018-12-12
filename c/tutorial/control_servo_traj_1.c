@@ -6,7 +6,7 @@
  */
 
 #include "api.h"
-#include "tutorial.h"
+#include <stdlib.h>
 
 /**
  * \defgroup tutor_c_servomove1 PVT trajectory for one servo
@@ -47,13 +47,24 @@
  
 int main(int argc, char *argv[])
 {
+    uint8_t id;
+
+    if(argc == 3)
+    {
+        id = strtol(argv[2], NULL, 0);
+    }
+    else
+    {
+        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+        return 1;
+    }
     //! [cccode 1] 
     //! [Adding the interface1]
-    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_can_interface_t *iface = rr_init_interface(argv[1]);
     //! [Adding the interface1]
     
     //! [Adding the servo1]
-    rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    rr_servo_t *servo = rr_init_servo(iface, id);
     //! [Adding the servo1]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling one servo");

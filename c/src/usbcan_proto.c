@@ -865,8 +865,35 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	struct sockaddr_in host_addr;
 	FILE *f = NULL;
 	struct in_addr addr;
+	int in_port = USB_CAN_INGOING_UDP_PORT;
 
-	if(inet_aton(inst->device, &addr) != 0)
+	char dev_str[128];
+
+	char *dev_addr, *dev_port;
+
+	if(strnlen(inst->device, sizeof(dev_str)) == sizeof(dev_str))
+	{
+			LOG_ERROR(debug_log, "%s: device string to long", __func__);
+			return;
+	}
+
+	strcpy(dev_str, inst->device);
+
+	dev_addr = strtok(dev_str, ":");
+	dev_port = strtok(NULL, "");
+
+	if(dev_port)
+	{
+		char *endptr;
+		in_port = strtol(dev_port, &endptr, 0);
+		if(*endptr)
+		{
+			LOG_ERROR(debug_log, "%s: wrong UDP port", __func__);
+			return;
+		}
+	}
+
+	if(inet_aton(dev_addr, &addr) != 0)
 	{
 		usbcan_enable_udp(inst, true);
 		inst->fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -876,7 +903,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 			return;
 		}
 		host_addr.sin_family = AF_INET;
-		host_addr.sin_port = htons(USB_CAN_OUTGOING_UDP_PORT);
+		host_addr.sin_port = 0;//htons(USB_CAN_OUTGOING_UDP_PORT);
 		host_addr.sin_addr.s_addr = INADDR_ANY;
 		if(bind(inst->fd, (const struct sockaddr *)&host_addr, sizeof(struct sockaddr_in)) < 0)
 		{
@@ -885,7 +912,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 			return;
 		}
 		host_addr.sin_family = AF_INET;
-		host_addr.sin_port = htons(USB_CAN_INGOING_UDP_PORT);
+		host_addr.sin_port = htons(in_port);
 		host_addr.sin_addr.s_addr = addr.s_addr;
 		if(connect(inst->fd, (const struct sockaddr *)&host_addr, sizeof(struct sockaddr_in)) < 0)
 		{
@@ -901,7 +928,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 			return;
 		}
 	}
-	else if((f = fopen(inst->device, "r+")) != NULL)
+	else if((f = fopen(dev_addr, "r+")) != NULL)
 	{
 		inst->fd = fileno(f);
 		tcgetattr(inst->fd, &term);
