@@ -1,3 +1,32 @@
+OS:=$(strip$(OS))
+
+APP_NAME=servo_api
+
+ifeq ($(OS),win32)
+	SHARED_LIB_EXT=dll
+	STATIC_LIB_EXT=a
+	EXE_EXT=exe
+	BUILDDIR = build-win-32bit
+	EXE_NAME = $(APP_NAME)-32bit
+	TCHAIN=i686-w64-mingw32-
+	LDFLAGS += -static
+else ifeq ($(OS),win64)
+	SHARED_LIB_EXT=dll
+	STATIC_LIB_EXT=a
+	EXE_EXT=exe
+	BUILDDIR = build-win-64bit
+	EXE_NAME = $(APP_NAME)-64bit
+	TCHAIN=x86_64-w64-mingw32-
+	LDFLAGS += -static
+else
+	SHARED_LIB_EXT=
+	STATIC_LIB_EXT=
+	EXE_EXT=
+	BUILDDIR = build
+	EXE_NAME = $(APP_NAME)
+	PPDEFS += COLOR_TERM
+endif
+
 #
 #Verbose mode
 #
@@ -7,16 +36,6 @@ VERBOSE=no
 #Colorize ouput
 #
 COLORIZE=no
-
-#
-#Build directory
-#
-BUILDDIR = build
-PYTHONDIR = ../python/rozum/servo
-#
-#Executable name
-#
-EXE_NAME = servo_api
 
 #
 #Enable binary creation
@@ -51,7 +70,7 @@ CREATE_MAP=no
 #
 #CPU specific options
 #
-#MCPU += -mthumb
+#MCPU += -m32
 
 #
 #C language dialect
@@ -79,10 +98,6 @@ OPT_LVL = 2
 #
 #CPPCFLAGS += -felide-constructors
 
-#
-#Additional linker flags
-#
-#LDFLAGS += 
 
 
 #
@@ -93,7 +108,6 @@ EXT_LIBS += pthread
 #
 #Additional non-project object files
 #
-#EXT_OBJECTS += /usr/lib/arm-none-eabi/newlib/thumb/libc_nano.a
 
 
 #

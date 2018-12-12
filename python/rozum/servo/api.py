@@ -1,5 +1,6 @@
 import os
 import logging
+import platform
 from ctypes import *
 
 __all__ = ["ServoApi", "logger"]
@@ -585,7 +586,7 @@ class Interface(object):
         :return: status : int
         """
         servo_interface = self.init_servo(old_id).interface
-        status = self._api.rr_change_id_and_save(self._interface, servo_interface, c_uint8(new_can_id))
+        status = self._api.rr_change_id_and_save(self._interface, byref(servo_interface), c_uint8(new_can_id))
         del self._servos[old_id]
         return status
 
@@ -650,14 +651,25 @@ class Interface(object):
 
 
 class ServoApi(object, metaclass=_Singleton):
-    __LIBRARY_NAME = "libservo_api.so"
+    __LIB_UNIX = "libservo_api.so"
+    __LIB_WIN = "libservo_api-{}.dll"
 
     def __init__(self):
-        """The function is the first to call to be able to work with the user API.
+        """The function is the first to call to be able to work with the API.
+        Searches for the library in the rozum/servo directory and loads it.
+        Linux: libservo_api.so
+        Win32: libservo_api-32bit.dll
+        Win64: libservo_api-64bit.dll
 
-        Searches for the libservo_api.so library in the rozum/servo directory and loads it.
         """
-        self._api = CDLL(os.path.join(os.path.dirname(__file__), ServoApi.__LIBRARY_NAME))
+        module_path = os.path.dirname(__file__)
+        if os.name == "nt":
+            bit_v = platform.architecture()[0]
+            lib_path = os.path.join(module_path, self.__LIB_WIN.format(bit_v))
+        else:
+            lib_path = os.path.join(module_path, self.__LIB_UNIX)
+
+        self._api = CDLL(lib_path)
         self._check_library_loaded()
         self._interfaces = {}
         # change the restype due to windows specific behavior
@@ -666,8 +678,10 @@ class ServoApi(object, metaclass=_Singleton):
 
     def _check_library_loaded(self):
         if self._api is None:
-            raise AttributeError("Impossible to load the library. "
-                                 "Go back to the building instructions and execute `make python` first.")
+            raise AttributeError(
+                "Impossible to load the library. Go back to the building "
+                "instructions and execute `make python` first."
+            )
 
     @property
     def api(self):

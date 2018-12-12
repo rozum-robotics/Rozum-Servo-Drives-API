@@ -7,7 +7,7 @@
  */
 
 #include "api.h"
-#include "tutorial.h"
+#include <stdlib.h>
 
 /**
  * \defgroup tutor_c_servomove2 PVT trajectory for two servos
@@ -59,15 +59,27 @@
  */
 int main(int argc, char *argv[])
 {
+    uint8_t id1, id2;
+
+    if(argc == 4)
+    {
+        id1 = strtol(argv[2], NULL, 0);
+        id2 = strtol(argv[3], NULL, 0);
+    }
+    else
+    {
+        API_DEBUG("Wrong format!\nUsage: %s interface id1 id2\n", argv[0]);
+        return 1;
+    }
     //! [cccode 2] 
     //! [Adding the interface2]
-    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_can_interface_t *iface = rr_init_interface(argv[1]);
     //! [Adding the interface2]
     //! [Adding servo ID0]
-    rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    rr_servo_t *servo1 = rr_init_servo(iface, id1);
     //! [Adding servo ID0]
     //! [Adding servo ID1]
-    rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
+    rr_servo_t *servo2 = rr_init_servo(iface, id2);
     //! [Adding servo ID1]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling two servos");
