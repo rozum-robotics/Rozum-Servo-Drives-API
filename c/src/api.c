@@ -419,6 +419,13 @@ const char *rr_describe_emcy_bit(uint8_t bit)
     case CO_EM_HEARTBEAT_CONSUMER:
         return "Heartbeat consumer timeout";
 
+    case CO_EM_HW_CUR_LIMIT_A:
+        return "Current Limit Phase A";
+    case CO_EM_HW_CUR_LIMIT_B:
+        return "Current Limit Phase B";
+    case CO_EM_HW_CUR_LIMIT_C:
+        return "Current Limit Phase C";
+
     default:
         return "N/A";
     }

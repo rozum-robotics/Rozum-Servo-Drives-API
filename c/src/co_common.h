@@ -162,6 +162,10 @@ typedef enum
 	CO_EM_POWER_ERROR               = 0x43U,
 	CO_EM_FORCE_ERROR               = 0x44U,
 	CO_EM_HEARTBEAT_CONSUMER        = 0x45U, /**< 0x45, communication, critical, Heartbeat consumer timeout */
+    
+    CO_EM_HW_CUR_LIMIT_A            = 0x46U,
+    CO_EM_HW_CUR_LIMIT_B            = 0x47U,
+    CO_EM_HW_CUR_LIMIT_C            = 0x48U
 
 } co_emcy_err_bits_t;
 
