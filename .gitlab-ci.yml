@@ -1,13 +1,16 @@
-image: rozum/embed-gcc:latest
-
 stages:
   - document
+  - library_win
+  - update_tools_win
+  - tutorial_win
+
   
 before_script:
   - eval $(ssh-agent)
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
 
 document:
+ image: rozum/embed-gcc:latest
  stage: document
  script: 
     - git checkout master
@@ -37,5 +40,42 @@ document:
  only:
     - master
 
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
+library_win:
+ image: 
+   name: rozum/mingw-gcc:latest
+ stage: library_win
+ script:
+    - make -C c -e OS=win32
+    - make -C c -e OS=win64
+ artifacts:
+    paths:
+     - c/build-win-32bit/libservo_api-32bit.dll
+     - c/build-win-64bit/libservo_api-64bit.dll
+
+update_tools_win:
+ image: 
+   name: rozum/mingw-gcc:latest
+ stage: update_tools_win
+ script:
+    - make -C c -e OS=win32
+    - make -C c/tools/fw-update-tool -e OS=win32
+    - make -C c/tools/cfg-update-tool -e OS=win32
+ artifacts:
+    paths:
+     - c/tools/fw-update-tool/build-win-32bit/*.exe
+     - c/tools/cfg-update-tool/build-win-32bit/*.exe
+
+tutorial_win:
+ image: 
+   name: rozum/mingw-gcc:latest
+ stage: tutorial_win
+ script:
+    - make -C c -e OS=win32
+    - make -C c/tutorial -e OS=win32
+ artifacts:
+    paths:
+     - c/tutorial/build-win-32bit/*.exe
+
+     
+
+

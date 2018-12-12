@@ -6,8 +6,7 @@
  */
 
 #include "api.h"
-#include "stdlib.h"
-#include "tutorial.h"
+#include <stdlib.h>
 
 /**
  * \defgroup tutor_c_changeID1 Changing CAN ID of a single servo
@@ -44,19 +43,19 @@ int main(int argc, char *argv[])
     //! [Create 2 variables]
 
     //! [Check arguments]
-    if(argc == 3)
+    if(argc == 4)
     {
-        id_old = strtol(argv[1], NULL, 0);
-        id_new = strtol(argv[2], NULL, 0);
+        id_old = strtol(argv[2], NULL, 0);
+        id_new = strtol(argv[3], NULL, 0);
     }
     else
     {
-        API_DEBUG("Wrong format!\nUsage: %s old_id new_id\n", argv[0]);
+        API_DEBUG("Wrong format!\nUsage: %s interface old_id new_id\n", argv[0]);
         return 1;
     }
     //! [Check arguments]
     //! [Add interface10]
-    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_can_interface_t *iface = rr_init_interface(argv[1]);
     //! [Add interface10]
     //! [Add servo10]
     rr_servo_t *servo = rr_init_servo(iface, id_old);
@@ -69,7 +68,7 @@ int main(int argc, char *argv[])
     //! [Add servo10]
     API_DEBUG("========== Tutorial of the %s ==========\n", "changing CAN ID of one servo and saving it to the EEPROM");
     //! [Change ID]
-    rr_ret_status_t status = rr_change_id_and_save(iface, servo, id_new);
+    rr_ret_status_t status = rr_change_id_and_save(iface, &servo, id_new);
     if(status != RET_OK)
     {
         API_DEBUG("Failed to change servo CAN ID and save it to the EEPROM: %d\n", status);

@@ -31,6 +31,21 @@ else
 	VECHO=@true
 endif
 
+ifeq ($(SHARED_LIB_EXT),)
+	SHARED_LIB_EXT=.so
+else
+	SHARED_LIB_EXT:=.$(SHARED_LIB_EXT)
+endif
+
+ifeq ($(STATIC_LIB_EXT),)
+	STATIC_LIB_EXT=.a
+else
+	STATIC_LIB_EXT:=.$(STATIC_LIB_EXT)
+endif
+
+ifneq ($(EXE_EXT),)
+	EXE_EXT:=.$(EXE_EXT)
+endif
 
 FLAGS=-c -Wall -O$(OPT_LVL)
 FLAGS+=-gdwarf-2
@@ -51,10 +66,14 @@ LDFLAGS+=-Wl,-Map=$(BUILDDIR)/map.map
 endif
 LDFLAGS+=$(addprefix -T,$(LDSCRIPT))
 
-EXECUTABLE=$(BUILDDIR)/$(EXE_NAME)
+vpath %.c $(SRC_PATH)
+vpath %.s $(SRC_PATH)
+vpath %.cpp $(SRC_PATH)
+
+EXECUTABLE=$(BUILDDIR)/$(EXE_NAME)$(EXE_EXT)
 BINARY=$(BUILDDIR)/$(basename $(EXE_NAME)).bin
-SHARED_LIB=$(BUILDDIR)/$(basename lib$(EXE_NAME)).so
-STATIC_LIB=$(BUILDDIR)/$(basename lib$(EXE_NAME)).a
+SHARED_LIB=$(BUILDDIR)/$(basename lib$(EXE_NAME))$(SHARED_LIB_EXT)
+STATIC_LIB=$(BUILDDIR)/$(basename lib$(EXE_NAME))$(STATIC_LIB_EXT)
 
 CPP_OBJECTS=$(addprefix $(BUILDDIR)/, $(CPP_SOURCES:.cpp=.o))
 C_OBJECTS=$(addprefix $(BUILDDIR)/, $(C_SOURCES:.c=.o))
@@ -63,9 +82,6 @@ S_OBJECTS=$(addprefix $(BUILDDIR)/, $(S_SOURCES:.s=.o))
 LINK_OBJECTS=$(S_OBJECTS) $(C_OBJECTS) $(CPP_OBJECTS)
 BUILDTREE=$(BUILDDIR) $(dir $(LINK_OBJECTS))
 
-vpath %.c $(SRC_PATH)
-vpath %.s $(SRC_PATH)
-vpath %.cpp $(SRC_PATH)
 
 ifeq ($(strip $(MAKE_BINARY)),yes)
 	ARTEFACTS+=$(BINARY)
@@ -121,9 +137,6 @@ $(BUILDDIR)/%.o: %.cpp
 
 clean:
 	rm -fr $(BUILDDIR)
-
-python:
-	cp -i $(SHARED_LIB) $(PYTHONDIR)
 
 -include $(C_OBJECTS:.o=.d)
 -include $(CPP_OBJECTS:.o=.d)

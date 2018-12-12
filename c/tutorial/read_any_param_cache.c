@@ -5,8 +5,9 @@
  * @author Rozum
  * @date 2018-06-25
  */
+
 #include "api.h"
-#include "tutorial.h"
+#include <stdlib.h>
 
 /**
  * \defgroup tutor_c_param_cache Setting up parameter cache and reading cached parameters
@@ -64,12 +65,23 @@
  
 int main(int argc, char *argv[])
 {
+    uint8_t id;
+
+    if(argc == 3)
+    {
+        id = strtol(argv[2], NULL, 0);
+    }
+    else
+    {
+        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+        return 1;
+    }
     //! [cccode 5] 
     //! [Adding interface 5]
-    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_can_interface_t *iface = rr_init_interface(argv[1]);
     //! [Adding interface 5]
     //! [Adding servo 5]
-    rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    rr_servo_t *servo = rr_init_servo(iface, id);
     //! [Adding servo 5]
 
     API_DEBUG("========== Tutorial of %s ==========\n", "programming and reading the device parameter cache");

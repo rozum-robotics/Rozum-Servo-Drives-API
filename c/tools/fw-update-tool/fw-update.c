@@ -37,16 +37,19 @@ download_result_t download_result = DL_IDLE;
 
 char *dir_name = NULL;
 
-static FILE *f = NULL;
-static uint8_t *fw = NULL;
-static ssize_t fw_len = 0;
-static ssize_t ptr = 0;
-static bool use_any_in_boot_mode = false;
-static bool do_not_wait_halt_responce = true;
-static bool update_all = false;
-static bool id_ignore = false;
+FILE *f = NULL;
+uint8_t *fw = NULL;
+ssize_t fw_len = 0;
+ssize_t ptr = 0;
+bool use_any_in_boot_mode = false;
+bool do_not_wait_halt_responce = true;
+bool update_all = false;
+bool id_ignore = false;
+bool boot_legacy_mode = false;
+bool fw_legacy_mode = false;
 
-uint32_t dev_hw = -1;
+uint32_t dev_hw_type = -1;
+uint32_t dev_hw_rev = -1;
 uint32_t alive = 0;
 bool master_hb_inhibit = true;
 
@@ -79,14 +82,14 @@ void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 	
 	if(use_any_in_boot_mode)
 	{
-		if(!boot_captured && (state == 2))
+		if(!boot_captured && (state == CO_NMT_BOOT))
 		{
 			boot_captured = true;
 			dev->id = id;
 		}
 	}
 
-	if((dev_hw == -1) && (id == dev->id))
+	if((dev_hw_type == -1) && (id == dev->id))
 	{
 		LOG_INFO(debug_log, "Reading device identity");
 		can_msg_t m_read = 
@@ -134,9 +137,32 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 	{
 		
 		alive = 0;
-		dev_hw = m->data[3];
+		dev_hw_type = m->data[3];
 	
-		LOG_INFO(debug_log, "Device identity: %d", dev_hw);
+		can_msg_t m_read = 
+		{
+			.id = CO_CAN_ID_DEV_CMD, 
+			.dlc = 3, 
+			.data = 
+			{
+				dev->id, 
+				CO_DEV_CMD_REQUEST_FIELD,
+				CO_DEV_APP_VER
+			}
+		};
+		write_com_frame(inst, &m_read);
+		return;
+
+	}
+
+	if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
+			                    (m->data[1] == CO_DEV_CMD_REQUEST_FIELD) && 
+								 (m->data[2] == CO_DEV_APP_VER))
+	{
+		
+		alive = 0;
+		dev_hw_rev = m->data[5]; //??????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	
 		return;
 
 	}
@@ -164,7 +190,7 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 		
 		if((ptr % 1024) == 0)
 		{
-			LOG_INFO(debug_log, "Downloading %d/%d", ptr, fw_len);
+			LOG_INFO(debug_log, "Downloading %d/%d", (int)ptr, (int)fw_len);
 		}
 		write_block(fw, &ptr, 4);
 	}
@@ -212,7 +238,7 @@ void erase()
 		{
 			dev->id, 
 			CO_DEV_CMD_ERASE_APP, 
-			fw[8] /*?????*/, 
+			dev_hw_type, 
 			(fw_len >> 16) & 0xff, 
 			(fw_len >> 8) & 0xff, 
 			fw_len & 0xff
@@ -266,12 +292,36 @@ void write_block(uint8_t *data, ssize_t *off, ssize_t len)
 		write_com_frame(inst, &m_download);
 }
 
-download_result_t update(char *name, bool id_ignore)
+bool reset()
 {
-	uint32_t fw_hw = 0;
+	int to;
+
+	LOG_INFO(debug_log, "Resetting device");
+	write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
+
+	for(to = RESET_TIMEOUT ;to > 0; to -= 100)
+	{
+		if((dev_hw_type != -1) && (dev_hw_rev != -1))
+		{
+			break;
+		}
+		msleep(100);
+	}
+	if((dev_hw_type == -1) || (dev_hw_rev == -1))
+	{
+		LOG_ERROR(debug_log, "Can't read device HW type");
+		download_result = DL_ERROR;
+		return false;
+	}
+	return true;
+}
+
+download_result_t update(char *name, bool ignore_identity)
+{
+	uint16_t fw_hw_type = 0;
+	uint16_t fw_hw_rev = 0;
 	uint32_t crc = 0;
 	uint32_t file_len, data_len;
-	int to;
 	
 	download_result = DL_IDLE;
 	
@@ -282,19 +332,24 @@ download_result_t update(char *name, bool id_ignore)
 			LOG_INFO(debug_log, "Already in bootloader state");
 			_nmt_state_cb(inst, dev->id, CO_NMT_BOOT);	
 		}
+
+		int len = 2;
+		if(read_raw_sdo(dev, 0x2003, 1, (uint8_t *)&dev_hw_type, &len, 1, 100))
+		{
+			LOG_WARN(debug_log, "idx2003sub1 not supported, switching to legacy mode");
+			boot_legacy_mode = true;
+		}
 		else
 		{
-			int len;
-			len = 4;
-			if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100))
+			len = 2;
+			if(read_raw_sdo(dev, 0x2003, 2, (uint8_t *)&dev_hw_rev, &len, 1, 100))
 			{
-				LOG_ERROR(debug_log, "Can't read device HW type");
-				download_result = DL_ERROR;
-				break;
+				LOG_WARN(debug_log, "idx2003sub2 not supported, switching to legacy mode");
+				boot_legacy_mode = true;
 			}
 		}
-		
-		if(!id_ignore)
+
+		if(!ignore_identity)
 		{
 			LOG_INFO(debug_log, "Checking firmware file '%s' compatibility", name);
 			LOG_INFO(debug_log, "Reading firmware identity");
@@ -332,35 +387,39 @@ download_result_t update(char *name, bool id_ignore)
 			break;
 		}
 
-		fw_hw = fw[8];
-
-		if(!id_ignore)
+		if(boot_legacy_mode)
 		{
-			LOG_INFO(debug_log, "Firmware identity %d", fw_hw);
-			if(fw_hw != dev_hw)
+			if(!reset())
+			{
+				break;
+			}
+		}
+
+		LOG_INFO(debug_log, "Device HW type %d, rev %d", dev_hw_type, dev_hw_rev);
+
+		fw_hw_type = ((uint16_t *)fw)[4];
+		fw_hw_rev = ((uint16_t *)fw)[5];
+
+		if(!fw_hw_rev)
+		{
+			LOG_WARN(debug_log, "Firmware hardware revision == 0, guess it's legacy firmware");
+			fw_legacy_mode = true;
+		}
+
+
+		if(!ignore_identity)
+		{
+			LOG_INFO(debug_log, "Firmware HW type %d, rev %d", fw_hw_type, fw_hw_rev);
+			if((fw_hw_type != dev_hw_type) || (!fw_legacy_mode && !boot_legacy_mode & (fw_hw_rev != dev_hw_rev)))
 			{
 				LOG_INFO(debug_log, "Not compatible firmware");
 				download_result = DL_WRONG_IDENT;
 				break;
 			}
 		}
-		
-		LOG_INFO(debug_log, "Resetting device");
-		write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
-
-		for(to = RESET_TIMEOUT ;to > 0; to -= 100)
+		else
 		{
-			if(dev_hw != -1)
-			{
-				break;
-			}
-			msleep(100);
-		}
-		if(dev_hw == -1)
-		{
-			LOG_ERROR(debug_log, "Can't read device HW type");
-			download_result = DL_ERROR;
-			break;
+			LOG_WARN(debug_log, "Firmware identity ignored!!!");
 		}
 		
 		memcpy(fw + 4, &data_len, sizeof(data_len));
@@ -368,6 +427,14 @@ download_result_t update(char *name, bool id_ignore)
 		memcpy(fw + data_len, &crc, sizeof(crc));
 
 		LOG_INFO(debug_log, "Firmware CRC: 0x%"PRIx32, crc);
+
+		if(!boot_legacy_mode)
+		{
+			if(!reset())
+			{
+				break;
+			}
+		}
 
 		download_start();
 
@@ -402,12 +469,14 @@ download_result_t update(char *name, bool id_ignore)
 void usage(char **argv)
 {
 	fprintf(stdout,	"Usage: %s\n"
-			"    port\n"
-			"    id or 'all'\n"
-			"    -F(--firmware-dir) firmware_folder_path]\n"
 			"    [-X(--ignore-ident)\n"
 			"    [-M(--master-hb)]\n"
-			"    [-B(--use-any-in-boot-mode) yes]\n",
+			"    [-B(--use-any-in-boot-mode) yes]\n"
+			"    [-v(--version]\n"
+			"    port\n"
+			"    id or 'all'\n"
+			"    firmware_folder or firmware_file\n"
+			"\n",
 			argv[0]);
 }
 
@@ -418,16 +487,16 @@ bool parse_cmd_line(int argc, char **argv)
 	static struct option long_options[] = 
 	{
 		{"use-any-in-boot-mode",     required_argument, 0, 'B' },
-		{"firmware-dir",    required_argument, 0, 'F' },
-		{"ignore-ident",   optional_argument, 0, 'X' },
-		{"master-hb",     optional_argument, 0, 'M' },
+		{"ignore-ident",   no_argument, 0, 'X' },
+		{"version",   no_argument, 0, 'v' },
+		{"master-hb",     no_argument, 0, 'M' },
 		{0,         0,                 0,  0 }
 	};
 
 
 	while (1) 
 	{
-		c = getopt_long(argc, argv, "-:B:F:X:M", long_options, &option_index);
+		c = getopt_long(argc, argv, "B:XMv", long_options, &option_index);
 		if (c == -1)
 		{
 			break;
@@ -435,8 +504,8 @@ bool parse_cmd_line(int argc, char **argv)
 
 		switch (c) 
 		{
-			case ':':
-				return false;
+			case '?':
+				break;
 			case 'B':
 				if(strcmp(optarg, "yes") == 0)
 				{
@@ -449,9 +518,6 @@ bool parse_cmd_line(int argc, char **argv)
 					return false;
 				}
 				break;
-			case 'F':
-				dir_name = optarg;
-				break;
 			case 'X':
 				id_ignore = true;
 				break;
@@ -460,12 +526,15 @@ bool parse_cmd_line(int argc, char **argv)
 				LOG_INFO(debug_log, "Enabling master hearbeat");
 				master_hb_inhibit = false;
 				break;
+			case 'v':
+				fprintf(stdout, "Build date: %s\nBuild time: %s\n", __DATE__, __TIME__);
+				exit(0);
 			default:
 				break;
 		}
 	}
 
-	if(!dir_name)
+	if((argc - optind) < 3)
 	{
 		return false;
 	}
@@ -485,53 +554,75 @@ void batch_update(int id)
 	{
 		LOG_ERROR(debug_log, "Can't create device instance\n");
 	}
-	
-	if(!(dir = opendir(dir_name)))
+
+	if(!wait_device(inst, dev->id, 2000))
 	{
-		LOG_ERROR(debug_log, "Can't open firmware folder in '%s'", dir_name);
-		exit(1);
+		return;
 	}
-	
-	while((entry = readdir(dir)) != NULL)
-	{
-		name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
-		sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
-		stat(name, &s);
-		if(!S_ISDIR(s.st_mode))
+
+
+	stat(dir_name, &s);
+
+	if(!S_ISDIR(s.st_mode))
+        {
+		LOG_INFO(debug_log, "Using explicit file");
+		download_result_t r = update(dir_name, id_ignore);
+		if(r == DL_ERROR)
 		{
-			char *dot = strchr(entry->d_name, '.');
-			if(dot && (strcmp(dot, ".bin") == 0))
-			{
-				download_result_t r = update(name, false);
-				if(r == DL_ERROR)
-				{
-						exit(1);
-				}
-				if(r == DL_SUCCESS)
-				{
-						break;
-				}
-			}
-			else
-			{
-				LOG_WARN(debug_log, "Not a firmware file '%s'", entry->d_name);
-			}
+			exit(1);
 		}
 	}
-
-	usbcan_device_deinit(&dev);
-	
-	if(name)
+	else
 	{
-		free(name);
-	}
+		if(!(dir = opendir(dir_name)))
+		{
+			LOG_ERROR(debug_log, "Can't open firmware folder in '%s'", dir_name);
+			exit(1);
+		}
 
+
+
+		while((entry = readdir(dir)) != NULL)
+		{
+			name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
+			sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
+			stat(name, &s);
+			if(!S_ISDIR(s.st_mode))
+			{
+				char *dot = strchr(entry->d_name, '.');
+				if(dot && (strcmp(dot, ".bin") == 0))
+				{
+					download_result_t r = update(name, id_ignore);
+					if(r == DL_ERROR)
+					{
+						exit(1);
+					}
+					if(r == DL_SUCCESS)
+					{
+						break;
+					}
+				}
+				else
+				{
+					LOG_WARN(debug_log, "Not a firmware file '%s'", entry->d_name);
+				}
+			}
+		}
+
+		usbcan_device_deinit(&dev);
+
+		if(name)
+		{
+			free(name);
+		}
+	}
 }
 
 int main(int argc, char **argv)
 {
-	debug_log = stdout;
 	int id = 0;
+
+	debug_log = stdout;
 
 	if(!parse_cmd_line(argc, argv))
 	{
@@ -541,7 +632,7 @@ int main(int argc, char **argv)
 
 	atexit(safe_exit);
 
-	inst = usbcan_instance_init(argv[1]);
+	inst = usbcan_instance_init(argv[optind]);
 	if(!inst)
 	{
 		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
@@ -551,12 +642,14 @@ int main(int argc, char **argv)
 	if(strcmp(argv[2], "all") != 0)
 	{
 		update_all = false;
-		id = strtol(argv[2], 0, 0);
+		id = strtol(argv[optind + 1], 0, 0);
 	}
 	else
 	{
 		update_all = true;
 	}
+
+	dir_name = argv[optind + 2];
 
 	usbcan_inhibit_master_hb(inst, master_hb_inhibit);
 

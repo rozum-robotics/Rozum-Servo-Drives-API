@@ -1,7 +1,7 @@
 *.[od]
 *.swp
 tags
-build
+build*
 html
 latex
 xetex

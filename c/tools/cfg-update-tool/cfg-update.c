@@ -25,8 +25,9 @@ usbcan_instance_t *inst;
 usbcan_device_t *dev;
 
 uint32_t cfg_hw, cfg_rev, dev_hw, dev_rev;
-static bool update_all = false;
+bool update_all = false;
 bool master_hb_inhibit = true;
+bool legacy_mode = false;
 
 uint32_t release(usbcan_device_t *dev)
 {
@@ -117,10 +118,11 @@ bool update(usbcan_device_t *dev, char *name)
 void usage(char **argv)
 {
 	fprintf(stdout,	"Usage: %s\n"
+			"    [-M(--master-hb)]\n"
+			"    [-v(--version]\n"
 			"    port\n"
 			"    id or 'all'\n"
-			"    -C(--config-dir) config_folder_path\n"
-			"    [-M(--master-hb)]\n"
+			"    config_folder of config file\n"
 			"\n",
 			argv[0]);
 }
@@ -131,14 +133,14 @@ bool parse_cmd_line(int argc, char **argv)
 	int option_index = 0;
 	static struct option long_options[] = 
 	{
-		{"config-dir",     required_argument, 0, 'C' },
 		{"master-hb",     optional_argument, 0, 'M' },
+		{"version",     no_argument, 0, 'v' },
 		{0,         0,                 0,  0 }
 	};
 
 	while (1) 
 	{
-		c = getopt_long(argc, argv, "-:C:M", long_options, &option_index);
+		c = getopt_long(argc, argv, "Mv", long_options, &option_index);
 		if (c == -1)
 		{
 			break;
@@ -146,21 +148,22 @@ bool parse_cmd_line(int argc, char **argv)
 
 		switch (c) 
 		{
-			case 'C':
-				dir_name = optarg;
+			case '?':
 				break;
-
 			case 'M':
 				LOG_INFO(debug_log, "Enabling master hearbeat");
 				master_hb_inhibit = false;
 				break;
+			case 'v':
+				fprintf(stdout, "Build date: %s\nBuild time: %s\n", __DATE__, __TIME__);
+				exit(0);
 
 			default:
 				break;
 		}
 	}
 
-	if(!dir_name)
+	if((argc - optind) < 3)
 	{
 		return false;
 	}
@@ -184,45 +187,86 @@ void batch_update(int id)
 			LOG_ERROR(debug_log, "Can't create device instance\n");
 		}
 
-		len = 4;
-		if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100))
+		if(!wait_device(inst, dev->id, 2000))
 		{
-			LOG_ERROR(debug_log, "Can't read device HW type");
 			break;
 		}
-		len = 4;
-		if(read_raw_sdo(dev, 0x1018, 3, (uint8_t *)&dev_rev, &len, 1, 100))
+
+		len = 2;
+		if(read_raw_sdo(dev, 0x2003, 1, (uint8_t *)&dev_hw, &len, 1, 100))
 		{
-			LOG_ERROR(debug_log, "Can't read device revision");
-			break;
+			LOG_WARN(debug_log, "idx2003sub1 not supported, switching to legacy mode");
+			legacy_mode = true;
+		}
+
+		if(legacy_mode)
+		{
+			len = 4;
+			if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&dev_hw, &len, 1, 100))
+			{
+				LOG_ERROR(debug_log, "Can't read device HW type");
+				break;
+			}
+			len = 4;
+			if(read_raw_sdo(dev, 0x1018, 3, (uint8_t *)&dev_rev, &len, 1, 100))
+			{
+				LOG_ERROR(debug_log, "Can't read device revision");
+				break;
+			}
+		}
+		else
+		{
+			uint32_t id;
+			len = 4;
+			if(read_raw_sdo(dev, 0x1018, 2, (uint8_t *)&id, &len, 1, 100))
+			{
+				LOG_ERROR(debug_log, "Can't read device HW type");
+				break;
+			}
+			dev_hw = id >> 16;
+			dev_rev = id & 0xffff;
 		}
 
 		LOG_INFO(debug_log, "Device identity: Hardware: %"PRIu32", revision: %"PRIu32, dev_hw, dev_rev);
 
-		if(!(dir = opendir(dir_name)))
-		{
-			LOG_ERROR(debug_log, "Can't open config folder in '%s'", dir_name);
-			break;
-		}
 
-		while((entry = readdir(dir)) != NULL)
+		stat(dir_name, &s);
+
+		if(!S_ISDIR(s.st_mode))
 		{
-			name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
-			sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
-			stat(name, &s);
-			if(!S_ISDIR(s.st_mode))
+			LOG_INFO(debug_log, "Using explicit file");
+			if(update(dev, dir_name))
 			{
-				char *dot = strchr(entry->d_name, '.');
-				if(dot && (strcmp(dot, ".jsonconfig") == 0))
+				break;
+			}
+		}
+		else
+		{
+			if(!(dir = opendir(dir_name)))
+			{
+				LOG_ERROR(debug_log, "Can't open config folder in '%s'", dir_name);
+				break;
+			}
+
+			while((entry = readdir(dir)) != NULL)
+			{
+				name = realloc(name, strlen(entry->d_name) + strlen(dir_name) + 2);
+				sprintf(name, "%s"DIR_SEPARATOR"%s", dir_name, entry->d_name);
+				stat(name, &s);
+				if(!S_ISDIR(s.st_mode))
 				{
-					if(update(dev, name))
+					char *dot = strchr(entry->d_name, '.');
+					if(dot && (strcmp(dot, ".jsonconfig") == 0))
 					{
-						break;
+						if(update(dev, name))
+						{
+							break;
+						}
 					}
-				}
-				else
-				{
-					LOG_WARN(debug_log, "Not a settings file '%s'", entry->d_name);
+					else
+					{
+						LOG_WARN(debug_log, "Not a settings file '%s'", entry->d_name);
+					}
 				}
 			}
 		}
@@ -249,22 +293,24 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 	
-	inst = usbcan_instance_init(argv[1]);
+	inst = usbcan_instance_init(argv[optind]);
 	if(!inst)
 	{
 		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
 		exit(1);
 	}
 	
-		if(strcmp(argv[2], "all") != 0)
+		if(strcmp(argv[optind + 1], "all") != 0)
 	{
 		update_all = false;
-		id = strtol(argv[2], 0, 0);
+		id = strtol(argv[optind + 1], 0, 0);
 	}
 	else
 	{
 		update_all = true;
 	}
+
+	dir_name = argv[optind + 2];
 
 	usbcan_inhibit_master_hb(inst, master_hb_inhibit);
 
