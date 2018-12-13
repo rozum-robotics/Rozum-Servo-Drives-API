@@ -189,7 +189,7 @@ void batch_update(int id)
 
 		if(!wait_device(inst, dev->id, 2000))
 		{
-			break;
+			exit(1);
 		}
 
 		len = 2;
