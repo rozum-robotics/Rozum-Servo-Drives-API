@@ -15,15 +15,28 @@ extern "C"
 #include <string.h>
 #include <sys/time.h>
 
+#ifdef COLOR_TERM
+
 #define CLRED "\e[31m"
 #define CLGRN "\e[32m"
 #define CLYEL "\e[33m"
 #define CLBLU "\e[34m"
 #define CLCYA "\e[36m"
 #define CLRST "\e[0m"
-
 #define FMTBLD "\033[1m"
 #define FMTRST "\033[0m"
+
+#else
+
+#define CLRED ""
+#define CLGRN ""
+#define CLYEL ""
+#define CLBLU ""
+#define CLCYA ""
+#define CLRST ""
+#define FMTBLD ""
+#define FMTRST ""
+#endif
 
 void LOG_DUMP(FILE *stream, const char *label, uint8_t *b, int l);
 

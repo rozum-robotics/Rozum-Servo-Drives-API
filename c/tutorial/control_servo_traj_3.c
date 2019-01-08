@@ -7,7 +7,7 @@
  */
 
 #include "api.h"
-#include "tutorial.h"
+#include <stdlib.h>
 
 /**
  * \defgroup tutor_c_servomove3 PVT trajectory for three servos
@@ -71,18 +71,31 @@
  */
 int main(int argc, char *argv[])
 {
+    uint8_t id1, id2, id3;
+
+    if(argc == 5)
+    {
+        id1 = strtol(argv[2], NULL, 0);
+        id2 = strtol(argv[3], NULL, 0);
+        id3 = strtol(argv[4], NULL, 0);
+    }
+    else
+    {
+        API_DEBUG("Wrong format!\nUsage: %s interface id1 id2 id3\n", argv[0]);
+        return 1;
+    }
     //! [cccode 3] 
     //! [Adding the interface3]
-    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_can_interface_t *iface = rr_init_interface(argv[1]);
     //! [Adding the interface3]
     //! [Adding servo one]
-    rr_servo_t *servo1 = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    rr_servo_t *servo1 = rr_init_servo(iface, id1);
     //! [Adding servo one]
     //! [Adding servo two]
-    rr_servo_t *servo2 = rr_init_servo(iface, TUTORIAL_SERVO_1_ID);
+    rr_servo_t *servo2 = rr_init_servo(iface, id2);
     //! [Adding servo two]
     //! [Adding servo three]
-    rr_servo_t *servo3 = rr_init_servo(iface, TUTORIAL_SERVO_2_ID);
+    rr_servo_t *servo3 = rr_init_servo(iface, id3);
     //! [Adding servo three]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling three servos");

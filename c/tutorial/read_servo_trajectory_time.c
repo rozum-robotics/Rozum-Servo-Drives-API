@@ -7,7 +7,7 @@
  */
 
 #include "api.h"
-#include "tutorial.h"
+#include <stdlib.h>
 
 /**
  * \defgroup tutor_c_calculate_point PVT point calculation
@@ -35,12 +35,23 @@
 
 int main(int argc, char *argv[])
 {
+    uint8_t id;
+
+    if(argc == 3)
+    {
+        id = strtol(argv[2], NULL, 0);
+    }
+    else
+    {
+        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+        return 1;
+    }
     //! [cccode 9]
     //! [Adding interface 9]
-    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_can_interface_t *iface = rr_init_interface(argv[1]);
     //! [Adding interface 9]
     //! [Adding servo 9]
-    rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    rr_servo_t *servo = rr_init_servo(iface, id);
     //! [Adding servo 9]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "trajectory calculation");

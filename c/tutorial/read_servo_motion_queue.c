@@ -7,7 +7,7 @@
  */
 
 #include "api.h"
-#include "tutorial.h"
+#include <stdlib.h>
 
 /**
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
@@ -55,12 +55,23 @@
  
 int main(int argc, char *argv[])
 {
+    uint8_t id;
+
+    if(argc == 3)
+    {
+        id = strtol(argv[2], NULL, 0);
+    }
+    else
+    {
+        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+        return 1;
+    }
     //! [cccode 8] 
     //! [Adding interface 8]
-    rr_can_interface_t *iface = rr_init_interface(TUTORIAL_DEVICE);
+    rr_can_interface_t *iface = rr_init_interface(argv[1]);
     //! [Adding interface 8]
     //! [Adding servo 8]
-    rr_servo_t *servo = rr_init_servo(iface, TUTORIAL_SERVO_0_ID);
+    rr_servo_t *servo = rr_init_servo(iface, id);
     //! [Adding servo 8]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
