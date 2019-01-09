@@ -1133,8 +1133,10 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
     const float DFMS2_TO_DFS2 = 1000000.0;
     float accelLimitDFMS2 = accel_limit / DFMS2_TO_DFS2;
 
+    float velMaxDFS = __MIN(max_velocity, velocity_deg_per_sec);
+
     float ta, tm;
-    float velMaxDFMS = __MIN(max_velocity, velocity_deg_per_sec);
+    float velMaxDFMS = velMaxDFS * 0.001;
 
     typedef struct
     {
@@ -1176,11 +1178,14 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
 
     if(trajA * 2.0 >= deltaAbs)
     {
+        fprintf(stderr,"Mode 1\n");
         tm = 0.0;
 
         velMaxDFMS = sqrt((deltaAbs * 0.5) * accelLimitDFMS2 / 0.75);
         ta = (1.5 * velMaxDFMS) / accelLimitDFMS2;
         if(ta < 1.0) ta = 1.0;
+
+        fprintf(stderr,"ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
 
         pointA.timeEndMS = ta;
         pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
@@ -1193,11 +1198,14 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
     }
     else
     {
-        float velLimDFMS = __MIN(max_velocity, velocity_deg_per_sec);
+        fprintf(stderr,"Mode 2\n");
+        float velLimDFMS = velMaxDFS * 0.001;
+
         float timeAll = (3.0 * velLimDFMS * velLimDFMS + 2.0 * accelLimitDFMS2 * deltaAbs) / (2.0 * accelLimitDFMS2 * velLimDFMS);
         velMaxDFMS = (accelLimitDFMS2 * (timeAll - sqrtf((accelLimitDFMS2 * timeAll * timeAll - 6.0 * deltaAbs) / accelLimitDFMS2))) / 3.0;
         ta = (1.5 * velMaxDFMS) / (accelLimitDFMS2);
         tm = timeAll - 2.0 * ta;
+        fprintf(stderr,"ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
 
         pointA.timeEndMS = ta;
         pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
