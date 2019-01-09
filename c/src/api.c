@@ -1106,6 +1106,8 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
 #define __SIGN(a) ( ((a) > 0) ? 1 : (((a) == 0) ? 0 : -1) )
 #define __MIN(a, b) (((a) < (b)) ? (a) : (b))
 
+    const float accel_limit = 120.0; // degree per second
+
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
 
@@ -1116,8 +1118,6 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
 
     /* Simplification */
     if(velocity_deg_per_sec != 0.0) { return rr_set_position(servo, position_deg); }
-
-    const float accel_limit = 120.0; // degree per second
 
     /* Get current position */
     float current_position = 0.0;
