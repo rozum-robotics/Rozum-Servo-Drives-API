@@ -952,7 +952,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 
 /*
  * Thread task.
- * Handles recieced data from USB<->CAN ot Ethernet<->CAN.
+ * Handles recieved data from USB<->CAN ot Ethernet<->CAN.
  */
 static void *usbcan_process(void *udata)
 {
@@ -1098,6 +1098,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	}
 	memset(inst, 0, sizeof(usbcan_instance_t));
 	inst->master_hb_ival = USB_CAN_MASTER_HB_IVAL_MS;
+	inst->master_hb_timer = inst->master_hb_ival;
 	inst->hb_alive_threshold = USB_CAN_HB_ALIVE_THRESHOLD_MS;
 	inst->device = dev_name;
 
