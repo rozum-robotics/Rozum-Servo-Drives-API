@@ -1057,10 +1057,34 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
     uint8_t data[8];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
-    usb_can_put_float(data, 0, &current_a, 1);
+    usb_can_put_float(data + 4, 0, &current_a, 1);
     uint32_t sts = write_raw_sdo(dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
+}
+
+static rr_ret_status_t rr_add_trapezoid_position(
+    const rr_servo_t *servo,
+    const float position_deg,
+    const uint32_t time_plain_ms)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data[8];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
+    usb_can_put_uint32_t(data + 4, 0, &time_plain_ms, 1);
+
+    uint32_t sts = write_raw_sdo(dev, 0x2201, 3, data, sizeof(data), 1, 200);
+    if(sts == CO_SDO_AB_PRAM_INCOMPAT)
+    {
+        return RET_WRONG_TRAJ;
+    }
+    else
+    {
+        return ret_sdo(sts);
+    }
 }
 
 /**
@@ -1073,19 +1097,142 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-rr_ret_status_t rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
+rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
 {
+#define __SIGN(a) ( ((a) > 0) ? 1 : (((a) == 0) ? 0 : -1) )
+#define __MIN(a, b) (((a) < (b)) ? (a) : (b))
+
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
 
-    uint8_t data[12];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
-    usb_can_put_float(data, 0, &current_a, 1);
-    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
+    uint32_t sts = 0;
 
-    return ret_sdo(sts);
+    /* Deprecated */
+    if(current_a != 0.0) { return RET_ERROR; }
+
+    /* Simplification */
+    if(velocity_deg_per_sec != 0.0) { return rr_set_position(servo, position_deg); }
+
+    const float accel_limit = 120.0; // degree per second
+
+    /* Get current position */
+    float current_position = 0.0;
+    if((sts = rr_read_parameter(servo, APP_PARAM_POSITION, &current_position)) != CO_SDO_AB_NONE)
+    {
+        return ret_sdo(sts);
+    }
+
+    /* Read max velocity */
+    float max_velocity = 0.0;
+    if((sts = rr_get_max_velocity(servo, &max_velocity)) != CO_SDO_AB_NONE)
+    {
+        return ret_sdo(sts);
+    }
+
+    /* Calculate points */
+    const float DFMS2_TO_DFS2 = 1000000.0;
+    float accelLimitDFMS2 = accel_limit / DFMS2_TO_DFS2;
+
+    float ta, tm;
+    float velMaxDFMS = __MIN(max_velocity, velocity_deg_per_sec);
+
+    typedef struct
+    {
+        uint8_t state; ///< phase of the point (spline: [0;6] <= correct this, ramp:[0;2])
+
+        /* Ramp points */
+        uint32_t timeAccel;
+        uint32_t timePlain;
+        uint32_t timeDeaccel;
+
+        float posStartDF;
+        float posEndDF;
+
+        float velStartDFMS;
+        float velEndDFMS;
+
+        float accStartDFMS2;
+        float accEndDFMS2;
+
+        uint32_t timeStartMS; /* milliseconds */
+        uint32_t timeEndMS;   /* milliseconds */
+
+        float rampParameter; ///< Ramp maximum value parameter
+    } MotionPoint_t;
+
+    /* Initialize points */
+    static MotionPoint_t pointA, pointM, pointD;
+    memset(&pointA, 0, sizeof(pointA));
+    memset(&pointM, 0, sizeof(pointM));
+    memset(&pointD, 0, sizeof(pointD));
+
+    /* Movement delta */
+    float deltaAbs = fabsf(position_deg - current_position);
+
+    /* Direction of the movement */
+    float dir = __SIGN(position_deg - current_position);
+
+    float trajA = 0.75 * velMaxDFMS * velMaxDFMS / accelLimitDFMS2;
+
+    if(trajA * 2.0 >= deltaAbs)
+    {
+        tm = 0.0;
+
+        velMaxDFMS = sqrt((deltaAbs * 0.5) * accelLimitDFMS2 / 0.75);
+        ta = (1.5 * velMaxDFMS) / accelLimitDFMS2;
+        if(ta < 1.0) ta = 1.0;
+
+        pointA.timeEndMS = ta;
+        pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
+        pointA.velEndDFMS = dir * velMaxDFMS;
+
+        pointM.timeEndMS = 0.0;
+
+        pointD.timeEndMS = ta;
+        pointD.posEndDF = pointM.posEndDF + dir * ta * velMaxDFMS * 0.5;
+    }
+    else
+    {
+        float velLimDFMS = __MIN(max_velocity, velocity_deg_per_sec);
+        float timeAll = (3.0 * velLimDFMS * velLimDFMS + 2.0 * accelLimitDFMS2 * deltaAbs) / (2.0 * accelLimitDFMS2 * velLimDFMS);
+        velMaxDFMS = (accelLimitDFMS2 * (timeAll - sqrtf((accelLimitDFMS2 * timeAll * timeAll - 6.0 * deltaAbs) / accelLimitDFMS2))) / 3.0;
+        ta = (1.5 * velMaxDFMS) / (accelLimitDFMS2);
+        tm = timeAll - 2.0 * ta;
+
+        pointA.timeEndMS = ta;
+        pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
+        pointA.velEndDFMS = dir * velMaxDFMS;
+
+        pointM.timeAccel = pointM.timeEndMS = tm;
+        pointM.rampParameter = pointM.posEndDF = pointA.posEndDF + dir * velMaxDFMS * tm;
+
+        pointD.timeEndMS = ta;
+        pointD.posEndDF = pointM.posEndDF + dir * ta * velMaxDFMS * 0.5;
+    }
+
+    if((sts = rr_add_motion_point_pvat(servo, pointA.posEndDF, pointA.velEndDFMS, 0.0, pointA.timeEndMS)) != CO_SDO_AB_NONE)
+    {
+        rr_clear_points_all(servo);
+        return ret_sdo(sts);
+    }
+    if(pointM.timeEndMS != 0)
+    {
+        if((sts = rr_add_trapezoid_position(servo, pointM.posEndDF, pointM.timeEndMS)) != CO_SDO_AB_NONE)
+        {
+            rr_clear_points_all(servo);
+            return ret_sdo(sts);
+        }
+    }
+    if((sts = rr_add_motion_point_pvat(servo, pointD.posEndDF, pointD.velEndDFMS, 0.0, pointD.timeEndMS)) != CO_SDO_AB_NONE)
+    {
+        rr_clear_points_all(servo);
+        return ret_sdo(sts);
+    }
+
+    usbcan_instance_t *inst = ((usbcan_device_t *)servo->dev)->inst;
+    write_timestamp(inst, 0);
+
+    return RET_OK;
 }
 
 /**
