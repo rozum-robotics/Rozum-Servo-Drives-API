@@ -1106,7 +1106,7 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
 #define __SIGN(a) ( ((a) > 0) ? 1 : (((a) == 0) ? 0 : -1) )
 #define __MIN(a, b) (((a) < (b)) ? (a) : (b))
 
-    const float accel_limit = 120.0; // degree per second
+    const float accel_limit = 80.0; // degree per second
 
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
@@ -1117,7 +1117,7 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
     if(current_a != 0.0) { return RET_ERROR; }
 
     /* Simplification */
-    if(velocity_deg_per_sec != 0.0) { return rr_set_position(servo, position_deg); }
+    if(velocity_deg_per_sec == 0.0) { return RET_ERROR/*rr_set_position(servo, position_deg)*/; }
 
     /* Get current position */
     float current_position = 0.0;
@@ -1144,8 +1144,6 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
 
     typedef struct
     {
-        uint8_t state; ///< phase of the point (spline: [0;6] <= correct this, ramp:[0;2])
-
         /* Ramp points */
         uint32_t timeAccel;
         uint32_t timePlain;
@@ -1225,34 +1223,85 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
         pointD.posEndDF = pointM.posEndDF + dir * ta * velMaxDFMS * 0.5;
     }
 
-    fprintf(stdout, "pvt: %.3f %.3f %d\n", pointA.posEndDF, pointA.velEndDFMS, pointA.timeEndMS);
-    fprintf(stdout, " tp: %.3f      %d\n", pointM.posEndDF, pointM.timeAccel);
-    fprintf(stdout, "pvt: %.3f %.3f %d\n", pointD.posEndDF, pointD.velEndDFMS, pointD.timeEndMS);
+    rr_clear_points_all(servo);
 
-    if((sts = rr_add_motion_point_pvat(servo, pointA.posEndDF, pointA.velEndDFMS, 0.0, pointA.timeEndMS)) != CO_SDO_AB_NONE)
+    fprintf(stdout, "pvt: %.3f %.3f %d\n", pointA.posEndDF, pointA.velEndDFMS * 1000.0, pointA.timeEndMS);
+    if((sts = rr_add_motion_point_pvat(servo, pointA.posEndDF, pointA.velEndDFMS * 1000.0, 0.0, pointA.timeEndMS)) != CO_SDO_AB_NONE)
     {
         rr_clear_points_all(servo);
         return ret_sdo(sts);
     }
+
     if(pointM.timeEndMS != 0)
     {
+        fprintf(stdout, " tp: %.3f      %d\n", pointM.posEndDF, pointM.timeAccel);
         if((sts = rr_add_trapezoid_position(servo, pointM.posEndDF, pointM.timeAccel, 0, 0)) != CO_SDO_AB_NONE)
         {
             rr_clear_points_all(servo);
             return ret_sdo(sts);
         }
     }
-    if((sts = rr_add_motion_point_pvat(servo, pointD.posEndDF, pointD.velEndDFMS, 0.0, pointD.timeEndMS)) != CO_SDO_AB_NONE)
-    {
-        rr_clear_points_all(servo);
-        return ret_sdo(sts);
-    }
+    
+    // fprintf(stdout, "pvt: %.3f %.3f %d\n", pointD.posEndDF, pointD.velEndDFMS * 1000.0, pointD.timeEndMS);
+    // if((sts = rr_add_motion_point_pvat(servo, pointD.posEndDF, pointD.velEndDFMS * 1000.0, 0.0, pointD.timeEndMS)) != CO_SDO_AB_NONE)
+    // {
+    //     rr_clear_points_all(servo);
+    //     return ret_sdo(sts);
+    // }
 
     usbcan_instance_t *inst = ((usbcan_device_t *)servo->dev)->inst;
     write_timestamp(inst, 0);
 
     return RET_OK;
 }
+
+static rr_ret_status_t rr_add_motion_point_s(const rr_servo_t *servo, const float position_deg, const uint32_t time_ms)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data[8];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    usb_can_put_float(data, 0, &position_deg, 1);
+    usb_can_put_uint32_t(data + 8, 0, &time_ms, 1);
+
+    uint32_t sts = write_raw_sdo(dev, 0x2200, 4, data, sizeof(data), 1, 200);
+    if(sts == CO_SDO_AB_PRAM_INCOMPAT)
+    {
+        return RET_WRONG_TRAJ;
+    }
+    else
+    {
+        return ret_sdo(sts);
+    }
+}
+
+// rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
+// {
+//     // const float accel_limit = 80.0; // degree per second
+
+//     IS_VALID_SERVO(servo);
+//     CHECK_NMT_STATE(servo);
+
+//     uint32_t sts = 0;
+
+//     /* Deprecated */
+//     if(current_a != 0.0) { return RET_ERROR; }
+
+//     /* Simplification */
+//     if(velocity_deg_per_sec == 0.0) { return rr_set_position(servo, position_deg); }
+    
+//     if((sts = rr_add_motion_point_s(servo, position_deg, 0.0)) != CO_SDO_AB_NONE)
+//     {
+//         rr_clear_points_all(servo);
+//         return ret_sdo(sts);
+//     }
+
+//     usbcan_instance_t *inst = ((usbcan_device_t *)servo->dev)->inst;
+//     write_timestamp(inst, 0);
+
+//     return RET_OK;
+// }
 
 /**
  * @brief The function limits the input voltage supplied to the servo, enabling to adjust its motion velocity.
