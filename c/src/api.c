@@ -1066,15 +1066,19 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
 static rr_ret_status_t rr_add_trapezoid_position(
     const rr_servo_t *servo,
     const float position_deg,
-    const uint32_t time_plain_ms)
+    const uint32_t time_accel_ms,
+    const uint32_t time_plain_ms,
+    const uint32_t time_deaccel_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
 
-    uint8_t data[8];
+    uint8_t data[16];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_uint32_t(data + 4, 0, &time_plain_ms, 1);
+    usb_can_put_uint32_t(data + 4, 0, &time_accel_ms, 1);
+    usb_can_put_uint32_t(data + 8, 0, &time_plain_ms, 1);
+    usb_can_put_uint32_t(data + 12, 0, &time_deaccel_ms, 1);
 
     uint32_t sts = write_raw_sdo(dev, 0x2201, 3, data, sizeof(data), 1, 200);
     if(sts == CO_SDO_AB_PRAM_INCOMPAT)
@@ -1176,36 +1180,39 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
 
     float trajA = 0.75 * velMaxDFMS * velMaxDFMS / accelLimitDFMS2;
 
+    fprintf(stdout, "trajA: %.3f\n", trajA);
+
     if(trajA * 2.0 >= deltaAbs)
     {
-        fprintf(stderr,"Mode 1\n");
+        fprintf(stdout, "Mode 1\n");
         tm = 0.0;
 
         velMaxDFMS = sqrt((deltaAbs * 0.5) * accelLimitDFMS2 / 0.75);
         ta = (1.5 * velMaxDFMS) / accelLimitDFMS2;
         if(ta < 1.0) ta = 1.0;
 
-        fprintf(stderr,"ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
+        fprintf(stdout, "ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
 
         pointA.timeEndMS = ta;
         pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
         pointA.velEndDFMS = dir * velMaxDFMS;
 
         pointM.timeEndMS = 0.0;
+        pointM.timeAccel = 0.0;
 
         pointD.timeEndMS = ta;
         pointD.posEndDF = pointM.posEndDF + dir * ta * velMaxDFMS * 0.5;
     }
     else
     {
-        fprintf(stderr,"Mode 2\n");
+        fprintf(stdout, "Mode 2\n");
         float velLimDFMS = velMaxDFS * 0.001;
 
         float timeAll = (3.0 * velLimDFMS * velLimDFMS + 2.0 * accelLimitDFMS2 * deltaAbs) / (2.0 * accelLimitDFMS2 * velLimDFMS);
         velMaxDFMS = (accelLimitDFMS2 * (timeAll - sqrtf((accelLimitDFMS2 * timeAll * timeAll - 6.0 * deltaAbs) / accelLimitDFMS2))) / 3.0;
         ta = (1.5 * velMaxDFMS) / (accelLimitDFMS2);
         tm = timeAll - 2.0 * ta;
-        fprintf(stderr,"ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
+        fprintf(stdout, "ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
 
         pointA.timeEndMS = ta;
         pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
@@ -1218,6 +1225,10 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
         pointD.posEndDF = pointM.posEndDF + dir * ta * velMaxDFMS * 0.5;
     }
 
+    fprintf(stdout, "pvt: %.3f %.3f %d\n", pointA.posEndDF, pointA.velEndDFMS, pointA.timeEndMS);
+    fprintf(stdout, " tp: %.3f      %d\n", pointM.posEndDF, pointM.timeAccel);
+    fprintf(stdout, "pvt: %.3f %.3f %d\n", pointD.posEndDF, pointD.velEndDFMS, pointD.timeEndMS);
+
     if((sts = rr_add_motion_point_pvat(servo, pointA.posEndDF, pointA.velEndDFMS, 0.0, pointA.timeEndMS)) != CO_SDO_AB_NONE)
     {
         rr_clear_points_all(servo);
@@ -1225,7 +1236,7 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
     }
     if(pointM.timeEndMS != 0)
     {
-        if((sts = rr_add_trapezoid_position(servo, pointM.posEndDF, pointM.timeEndMS)) != CO_SDO_AB_NONE)
+        if((sts = rr_add_trapezoid_position(servo, pointM.posEndDF, pointM.timeAccel, 0, 0)) != CO_SDO_AB_NONE)
         {
             rr_clear_points_all(servo);
             return ret_sdo(sts);
