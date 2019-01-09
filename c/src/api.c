@@ -1063,34 +1063,6 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
     return ret_sdo(sts);
 }
 
-static rr_ret_status_t rr_add_trapezoid_position(
-    const rr_servo_t *servo,
-    const float position_deg,
-    const uint32_t time_accel_ms,
-    const uint32_t time_plain_ms,
-    const uint32_t time_deaccel_ms)
-{
-    IS_VALID_SERVO(servo);
-    CHECK_NMT_STATE(servo);
-
-    uint8_t data[16];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_uint32_t(data + 4, 0, &time_accel_ms, 1);
-    usb_can_put_uint32_t(data + 8, 0, &time_plain_ms, 1);
-    usb_can_put_uint32_t(data + 12, 0, &time_deaccel_ms, 1);
-
-    uint32_t sts = write_raw_sdo(dev, 0x2201, 3, data, sizeof(data), 1, 200);
-    if(sts == CO_SDO_AB_PRAM_INCOMPAT)
-    {
-        return RET_WRONG_TRAJ;
-    }
-    else
-    {
-        return ret_sdo(sts);
-    }
-}
-
 /**
  * @brief The function sets the position that the specified servo should reach
  * at user-defined velocity and current as a result of executing the command.
@@ -1101,23 +1073,12 @@ static rr_ret_status_t rr_add_trapezoid_position(
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
+rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float accel_deg_per_sec_sq, uint32_t *time_ms)
 {
-#define __SIGN(a) ( ((a) > 0) ? 1 : (((a) == 0) ? 0 : -1) )
-#define __MIN(a, b) (((a) < (b)) ? (a) : (b))
-
-    const float accel_limit = 120.0; // degree per second
-
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
 
     uint32_t sts = 0;
-
-    /* Deprecated */
-    if(current_a != 0.0) { return RET_ERROR; }
-
-    /* Simplification */
-    if(velocity_deg_per_sec != 0.0) { return rr_set_position(servo, position_deg); }
 
     /* Get current position */
     float current_position = 0.0;
@@ -1133,119 +1094,60 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
         return ret_sdo(sts);
     }
 
-    /* Calculate points */
-    const float DFMS2_TO_DFS2 = 1000000.0;
-    float accelLimitDFMS2 = accel_limit / DFMS2_TO_DFS2;
+    double vm = velocity_deg_per_sec; //max velocity
+    double ps = current_position; // start position
+    double pf = position_deg; // final position
+    double am = accel_deg_per_sec_sq; // max acceleration
 
-    float velMaxDFS = __MIN(max_velocity, velocity_deg_per_sec);
+    double dir = SIGN(pf - ps);
+    double d = 3.0 * SQ(vm) / 4.0 / am * dir;
+    bool cruise = true;
 
-    float ta, tm;
-    float velMaxDFMS = velMaxDFS * 0.001;
-
-    typedef struct
+    if(fabs(2.0 * d) >= fabs(pf - ps))
     {
-        uint8_t state; ///< phase of the point (spline: [0;6] <= correct this, ramp:[0;2])
-
-        /* Ramp points */
-        uint32_t timeAccel;
-        uint32_t timePlain;
-        uint32_t timeDeaccel;
-
-        float posStartDF;
-        float posEndDF;
-
-        float velStartDFMS;
-        float velEndDFMS;
-
-        float accStartDFMS2;
-        float accEndDFMS2;
-
-        uint32_t timeStartMS; /* milliseconds */
-        uint32_t timeEndMS;   /* milliseconds */
-
-        float rampParameter; ///< Ramp maximum value parameter
-    } MotionPoint_t;
-
-    /* Initialize points */
-    static MotionPoint_t pointA, pointM, pointD;
-    memset(&pointA, 0, sizeof(pointA));
-    memset(&pointM, 0, sizeof(pointM));
-    memset(&pointD, 0, sizeof(pointD));
-
-    /* Movement delta */
-    float deltaAbs = fabsf(position_deg - current_position);
-
-    /* Direction of the movement */
-    float dir = __SIGN(position_deg - current_position);
-
-    float trajA = 0.75 * velMaxDFMS * velMaxDFMS / accelLimitDFMS2;
-
-    fprintf(stdout, "trajA: %.3f\n", trajA);
-
-    if(trajA * 2.0 >= deltaAbs)
-    {
-        fprintf(stdout, "Mode 1\n");
-        tm = 0.0;
-
-        velMaxDFMS = sqrt((deltaAbs * 0.5) * accelLimitDFMS2 / 0.75);
-        ta = (1.5 * velMaxDFMS) / accelLimitDFMS2;
-        if(ta < 1.0) ta = 1.0;
-
-        fprintf(stdout, "ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
-
-        pointA.timeEndMS = ta;
-        pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
-        pointA.velEndDFMS = dir * velMaxDFMS;
-
-        pointM.timeEndMS = 0.0;
-        pointM.timeAccel = 0.0;
-
-        pointD.timeEndMS = ta;
-        pointD.posEndDF = pointM.posEndDF + dir * ta * velMaxDFMS * 0.5;
-    }
-    else
-    {
-        fprintf(stdout, "Mode 2\n");
-        float velLimDFMS = velMaxDFS * 0.001;
-
-        float timeAll = (3.0 * velLimDFMS * velLimDFMS + 2.0 * accelLimitDFMS2 * deltaAbs) / (2.0 * accelLimitDFMS2 * velLimDFMS);
-        velMaxDFMS = (accelLimitDFMS2 * (timeAll - sqrtf((accelLimitDFMS2 * timeAll * timeAll - 6.0 * deltaAbs) / accelLimitDFMS2))) / 3.0;
-        ta = (1.5 * velMaxDFMS) / (accelLimitDFMS2);
-        tm = timeAll - 2.0 * ta;
-        fprintf(stdout, "ta: %.3f tm: %.3f velmax: %.3f\n", ta, tm, velMaxDFMS);
-
-        pointA.timeEndMS = ta;
-        pointA.posEndDF = current_position + dir * ta * velMaxDFMS * 0.5;
-        pointA.velEndDFMS = dir * velMaxDFMS;
-
-        pointM.timeAccel = pointM.timeEndMS = tm;
-        pointM.rampParameter = pointM.posEndDF = pointA.posEndDF + dir * velMaxDFMS * tm;
-
-        pointD.timeEndMS = ta;
-        pointD.posEndDF = pointM.posEndDF + dir * ta * velMaxDFMS * 0.5;
+	    d = 0.5 * fabs(pf - ps);
+	    vm = 2.0 * sqrt(am * d / 3.0);
+	    d *= dir;
+	    cruise = false;
     }
 
-    fprintf(stdout, "pvt: %.3f %.3f %d\n", pointA.posEndDF, pointA.velEndDFMS, pointA.timeEndMS);
-    fprintf(stdout, " tp: %.3f      %d\n", pointM.posEndDF, pointM.timeAccel);
-    fprintf(stdout, "pvt: %.3f %.3f %d\n", pointD.posEndDF, pointD.velEndDFMS, pointD.timeEndMS);
+    double tc = (pf - ps - 2.0 * d) / (dir * vm); // cruise time
+    double ta = fabs(2.0 * d / vm); //acceleration time
 
-    if((sts = rr_add_motion_point_pvat(servo, pointA.posEndDF, pointA.velEndDFMS, 0.0, pointA.timeEndMS)) != CO_SDO_AB_NONE)
+    /*
+    fprintf(stderr, "pt.a = [0 0 0 0];\n");
+    fprintf(stderr, "pt.p = deg2rad([%f %f %f %f]);\n", ps, ps + d, pf - d, pf);
+    fprintf(stderr, "pt.v = deg2rad([%f %f %f %f]);\n", 0.0, dir * vm, dir * vm, 0.0);
+    fprintf(stderr, "pt.t = cumsum([%f %f %f %f]);\n", 0.0, ta, tc, ta);
+    */
+
+    if(time_ms)
     {
-        rr_clear_points_all(servo);
-        return ret_sdo(sts);
+    	*time_ms = 1000.0 * (2.0 * ta + tc);
     }
-    if(pointM.timeEndMS != 0)
+
+    if((sts = rr_add_motion_point_pvat(servo, ps + d, dir * vm, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
     {
-        if((sts = rr_add_trapezoid_position(servo, pointM.posEndDF, pointM.timeAccel, 0, 0)) != CO_SDO_AB_NONE)
-        {
-            rr_clear_points_all(servo);
-            return ret_sdo(sts);
-        }
+	    rr_clear_points_all(servo);
+	    LOG_ERROR(debug_log, "Can't add acceleration point");
+	    return ret_sdo(sts);
     }
-    if((sts = rr_add_motion_point_pvat(servo, pointD.posEndDF, pointD.velEndDFMS, 0.0, pointD.timeEndMS)) != CO_SDO_AB_NONE)
+
+    if(cruise)
     {
-        rr_clear_points_all(servo);
-        return ret_sdo(sts);
+	    if((sts = rr_add_motion_point_pvat(servo, pf - d, dir * vm, 0, 1000.0 * tc)) != CO_SDO_AB_NONE)
+	    {
+		    rr_clear_points_all(servo);
+		    LOG_ERROR(debug_log, "Can't add cruise point");
+		    return ret_sdo(sts);
+	    }
+    }
+
+    if((sts = rr_add_motion_point_pvat(servo, pf, 0, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
+    {
+	    rr_clear_points_all(servo);
+	    LOG_ERROR(debug_log, "Can't add deceleration point");
+	    return ret_sdo(sts);
     }
 
     usbcan_instance_t *inst = ((usbcan_device_t *)servo->dev)->inst;

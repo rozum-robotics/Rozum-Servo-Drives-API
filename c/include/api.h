@@ -243,7 +243,7 @@ rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_de
 rr_ret_status_t rr_set_velocity_motor(const rr_servo_t *servo, const float velocity_rpm);
 rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_deg);
 rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a);
-rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a);
+rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float accel_deg_per_sec_sq, uint32_t *time_ms);
 rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent);
 
 rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg, const uint32_t time_ms);
