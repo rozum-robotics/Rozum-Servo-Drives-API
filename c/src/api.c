@@ -1251,6 +1251,7 @@ rr_ret_status_t rr_add_motion_point_pvat(
 
     uint8_t data[16];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    int p = 0;
     p = usb_can_put_float(data, p, &position_deg, 1);
     p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
     p = usb_can_put_float(data, p, &accel_deg_per_sec2, 1);
