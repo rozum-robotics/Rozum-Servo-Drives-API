@@ -16,4 +16,4 @@ move_to.m - function to generate trajectory to move from start position to final
 trj_plot.m - example program which demonstrates the use of previously mentioned functions
 
 # Run
-Just run trj_plot.m script using Octave or MATLAB. The figure with sample generate trajectory should be displayed.
+Just run trj_plot.m script using Octave or MATLAB. The figure with sample generated trajectory should be displayed.
