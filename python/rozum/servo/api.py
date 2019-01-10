@@ -329,22 +329,24 @@ class Servo(object):
         """
         return self._api.rr_set_position(self._servo, c_float(position_deg))
 
-    def set_position_with_limits(self, position_deg: float, velocity_deg_per_sec: float, current_a: float):
-        """The function sets the position that the servo should reach at user-defined velocity and current as
-        a result of executing the command.
+    def set_position_with_limits(self, position_deg: float, velocity_deg_per_sec: float, accel_deg_per_sec_sq: float):
+        """The function sets the position that the servo should reach with velocity and acceleration limits on generated trajectory.
 
         :param position_deg: float:
             Final position of the servo flange (in degrees) to be reached
         :param velocity_deg_per_sec: float:
-            Velocity (in degrees/sec)at which the servo should move to the specified position
-        :param current_a: float:
-            Maximum user-defined current limit in Amperes
-        :return: Status code: int
+            Maximum Velocity on generated trajectory (in degrees/sec)
+        :param accel_deg_per_sec_sq:
+            Maximum acceleration on generated trajectory (in degrees/(sec*sec))
+        :return: Trajectory execution time (im milliseconds): int
         """
-        return self._api.rr_set_position_with_limits(self._servo,
-                                                     c_float(position_deg),
-                                                     c_float(velocity_deg_per_sec),
-                                                     c_float(current_a))
+        time_ms = c_uint32()
+        self._api.rr_set_position_with_limits(self._servo,
+                                              c_float(position_deg),
+                                              c_float(velocity_deg_per_sec),
+                                              c_float(accel_deg_per_sec_sq),
+                                              byref(time_ms))
+        return int(time_ms.value)
 
     def set_velocity_motor(self, velocity_rpm: float):
         return self._api.rr_set_velocity_motor(self._servo, c_float(velocity_rpm))
