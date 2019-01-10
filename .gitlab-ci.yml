@@ -17,7 +17,7 @@ test_tutorial:
     - cd ./c/tutorial && make && cd ./build
     - echo -en "cex 1 me\n" | nc -w1 -u $CAN_INTERFACE 2000
     - ./time_optimal_movement $CAN_INTERFACE:$CAN_PORT $MOTOR_ID 100 100 100 > time_optimal_movement.log
-    - ! grep -i "err" time_optimal_movement.log
+    - ! grep "ERROR:" time_optimal_movement.log
 
 document:
  image: rozum/embed-gcc:latest
