@@ -1065,12 +1065,12 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
 }
 
 /**
- * @brief The function sets the position that the specified servo should reach
- * at user-defined velocity and current as a result of executing the command.
+ * @brief The function sets the position that the servo should reach with velocity and acceleration limits on generated trajectory.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param position_deg Final position of the servo flange (in degrees) to be reached
- * @param velocity_deg_per_sec Velocity (in degrees/sec)at which the servo should move to the specified position
- * @param current_a Maximum user-defined current limit in Amperes
+ * @param velocity_deg_per_sec Maximum Velocity on generated trajectory (in degrees/sec)
+ * @param accel_deg_per_sec_sq Maximum acceleration on generated trajectory (in degrees/(sec*sec))
+ * @param time_ms Trajectory execution time (im milliseconds): int
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
@@ -1095,10 +1095,10 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
         return ret_sdo(sts);
     }
 
-    double vm = velocity_deg_per_sec; //max velocity
+    double vm = fabs(velocity_deg_per_sec); //max velocity
     double ps = current_position; // start position
     double pf = position_deg; // final position
-    double am = accel_deg_per_sec_sq; // max acceleration
+    double am = fabs(accel_deg_per_sec_sq); // max acceleration
 
     double dir = SIGN(pf - ps);
     double d = 3.0 * SQ(vm) / 4.0 / am * dir;
@@ -1114,13 +1114,6 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
 
     double tc = (pf - ps - 2.0 * d) / (dir * vm); // cruise time
     double ta = fabs(2.0 * d / vm); //acceleration time
-
-    /*
-    fprintf(stderr, "pt.a = [0 0 0 0];\n");
-    fprintf(stderr, "pt.p = deg2rad([%f %f %f %f]);\n", ps, ps + d, pf - d, pf);
-    fprintf(stderr, "pt.v = deg2rad([%f %f %f %f]);\n", 0.0, dir * vm, dir * vm, 0.0);
-    fprintf(stderr, "pt.t = cumsum([%f %f %f %f]);\n", 0.0, ta, tc, ta);
-    */
 
     if(time_ms)
     {
