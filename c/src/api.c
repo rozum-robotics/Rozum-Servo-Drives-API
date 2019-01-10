@@ -1056,8 +1056,9 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
 
     uint8_t data[8];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
-    usb_can_put_float(data, 0, &current_a, 1);
+    int p = 0;
+    p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
+    p = usb_can_put_float(data, p, &current_a, 1);
     uint32_t sts = write_raw_sdo(dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
     return ret_sdo(sts);
@@ -1073,19 +1074,87 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
-rr_ret_status_t rr_set_position_with_limits(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float current_a)
+rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float accel_deg_per_sec_sq, uint32_t *time_ms)
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
 
-    uint8_t data[12];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
-    usb_can_put_float(data, 0, &current_a, 1);
-    uint32_t sts = write_raw_sdo(dev, 0x2012, 0x06, data, sizeof(data), 1, 100);
+    uint32_t sts = 0;
 
-    return ret_sdo(sts);
+    /* Get current position */
+    float current_position = 0.0;
+    if((sts = rr_read_parameter(servo, APP_PARAM_POSITION, &current_position)) != CO_SDO_AB_NONE)
+    {
+        return ret_sdo(sts);
+    }
+
+    /* Read max velocity */
+    float max_velocity = 0.0;
+    if((sts = rr_get_max_velocity(servo, &max_velocity)) != CO_SDO_AB_NONE)
+    {
+        return ret_sdo(sts);
+    }
+
+    double vm = velocity_deg_per_sec; //max velocity
+    double ps = current_position; // start position
+    double pf = position_deg; // final position
+    double am = accel_deg_per_sec_sq; // max acceleration
+
+    double dir = SIGN(pf - ps);
+    double d = 3.0 * SQ(vm) / 4.0 / am * dir;
+    bool cruise = true;
+
+    if(fabs(2.0 * d) >= fabs(pf - ps))
+    {
+	    d = 0.5 * fabs(pf - ps);
+	    vm = 2.0 * sqrt(am * d / 3.0);
+	    d *= dir;
+	    cruise = false;
+    }
+
+    double tc = (pf - ps - 2.0 * d) / (dir * vm); // cruise time
+    double ta = fabs(2.0 * d / vm); //acceleration time
+
+    /*
+    fprintf(stderr, "pt.a = [0 0 0 0];\n");
+    fprintf(stderr, "pt.p = deg2rad([%f %f %f %f]);\n", ps, ps + d, pf - d, pf);
+    fprintf(stderr, "pt.v = deg2rad([%f %f %f %f]);\n", 0.0, dir * vm, dir * vm, 0.0);
+    fprintf(stderr, "pt.t = cumsum([%f %f %f %f]);\n", 0.0, ta, tc, ta);
+    */
+
+    if(time_ms)
+    {
+    	*time_ms = 1000.0 * (2.0 * ta + tc);
+    }
+
+    if((sts = rr_add_motion_point_pvat(servo, ps + d, dir * vm, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
+    {
+	    rr_clear_points_all(servo);
+	    LOG_ERROR(debug_log, "Can't add acceleration point");
+	    return ret_sdo(sts);
+    }
+
+    if(cruise)
+    {
+	    if((sts = rr_add_motion_point_pvat(servo, pf - d, dir * vm, 0, 1000.0 * tc)) != CO_SDO_AB_NONE)
+	    {
+		    rr_clear_points_all(servo);
+		    LOG_ERROR(debug_log, "Can't add cruise point");
+		    return ret_sdo(sts);
+	    }
+    }
+
+    if((sts = rr_add_motion_point_pvat(servo, pf, 0, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
+    {
+	    rr_clear_points_all(servo);
+	    LOG_ERROR(debug_log, "Can't add deceleration point");
+	    return ret_sdo(sts);
+    }
+
+    usbcan_instance_t *inst = ((usbcan_device_t *)servo->dev)->inst;
+    write_timestamp(inst, 0);
+
+    return RET_OK;
 }
 
 /**
@@ -1139,9 +1208,10 @@ rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float positio
 
     uint8_t data[12];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_float(data + 4, 0, &velocity_deg_per_sec, 1);
-    usb_can_put_uint32_t(data + 8, 0, &time_ms, 1);
+    int p = 0;
+    p = usb_can_put_float(data, p, &position_deg, 1);
+    p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
+    p = usb_can_put_uint32_t(data, p, &time_ms, 1);
 
     uint32_t sts = write_raw_sdo(dev, 0x2200, 2, data, sizeof(data), 1, 200);
     if(sts == CO_SDO_AB_PRAM_INCOMPAT)
@@ -1181,10 +1251,11 @@ rr_ret_status_t rr_add_motion_point_pvat(
 
     uint8_t data[16];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    usb_can_put_float(data, 0, &position_deg, 1);
-    usb_can_put_float(data + 4, 0, &velocity_deg_per_sec, 1);
-    usb_can_put_float(data + 8, 0, &accel_deg_per_sec2, 1);
-    usb_can_put_uint32_t(data + 12, 0, &time_ms, 1);
+    int p = 0;
+    p = usb_can_put_float(data, p, &position_deg, 1);
+    p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
+    p = usb_can_put_float(data, p, &accel_deg_per_sec2, 1);
+    p = usb_can_put_uint32_t(data, p, &time_ms, 1);
 
     uint32_t sts = write_raw_sdo(dev, 0x2200, 3, data, sizeof(data), 1, 200);
     if(sts == CO_SDO_AB_PRAM_INCOMPAT)

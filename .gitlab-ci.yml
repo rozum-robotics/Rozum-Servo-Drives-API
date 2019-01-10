@@ -1,4 +1,5 @@
 stages:
+  - test_tutorial
   - document
   - library_win
   - update_tools_win
@@ -8,6 +9,27 @@ stages:
 before_script:
   - eval $(ssh-agent)
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
+
+test_tutorial:
+  image: rozum/embed-gcc:latest
+  stage: test_tutorial
+  script:
+    - cd ./c/tutorial && make && cd ./build
+    - echo -en "cex 1 me\n" | nc -w1 -u $CAN_INTERFACE 2000
+
+    - ./change_servo_id $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID &> change_servo_id.log
+    - ./time_optimal_movement $CAN_INTERFACE:$CAN_PORT $MOTOR_ID 100 100 100 &> time_optimal_movement.log
+    - ./control_servo_traj_1 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID &> control_servo_traj_1.log
+    - ./control_servo_traj_2 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID &> control_servo_traj_2.log
+    - ./control_servo_traj_3 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID $MOTOR_ID &> control_servo_traj_3.log
+    - ./read_any_param $CAN_INTERFACE:$CAN_PORT $MOTOR_ID &> read_any_param.log
+    - ./read_any_param_cache $CAN_INTERFACE:$CAN_PORT $MOTOR_ID &> read_any_param_cache.log
+    - ./read_errors $CAN_INTERFACE:$CAN_PORT $MOTOR_ID &> read_errors.log
+    - ./read_servo_max_velocity $CAN_INTERFACE:$CAN_PORT $MOTOR_ID &> read_servo_max_velocity.log
+    - ./read_servo_motion_queue $CAN_INTERFACE:$CAN_PORT $MOTOR_ID &> read_servo_motion_queue.log
+    - ./read_servo_trajectory_time $CAN_INTERFACE:$CAN_PORT $MOTOR_ID &> read_servo_trajectory_time.log
+
+    - if [ "$(grep 'ERROR:' *.log)" != "" ]; then exit 1; fi
 
 document:
  image: rozum/embed-gcc:latest
