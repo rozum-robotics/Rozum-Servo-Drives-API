@@ -1,4 +1,5 @@
 stages:
+  - test_tutorial
   - document
   - library_win
   - update_tools_win
@@ -8,6 +9,15 @@ stages:
 before_script:
   - eval $(ssh-agent)
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
+
+test_tutorial:
+  image: rozum/embed-gcc:latest
+  stage: test_tutorial
+  script:
+    - cd ./c/tutorial && make && cd ./build
+    - echo -en "cex 1 me\n" | nc -w1 -u $CAN_INTERFACE 2000
+    - ./time_optimal_movement $CAN_INTERFACE:$CAN_PORT $MOTOR_ID 1000 1000 100 > time_optimal_movement.log
+    - ! grep -i "err" time_optimal_movement.log.log
 
 document:
  image: rozum/embed-gcc:latest
