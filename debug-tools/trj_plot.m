@@ -13,9 +13,6 @@ pt = ptcat(pt, move_to(pt.p(end), 0, 20, 10));
 
 %% visualize results
 
-% set global linewidth
-set(0, "defaultlinelinewidth", 1.5);
-
 % visualize position
 subplot(3, 1, 1); 
 plot(t, q); 
