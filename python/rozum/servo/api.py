@@ -7,7 +7,7 @@ __all__ = ["ServoApi", "logger"]
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
-# TODO rr_setup_nmt_callback, rr_describe_nmt, rr_setup_emcy_callback
+# TODO rr_setup_nmt_callback, rr_setup_emcy_callback
 # TODO normal logging
 # TODO write doc strings with references
 # TODO tests
@@ -640,6 +640,19 @@ class Interface(object):
         """
         return self._api.rr_net_set_state_stopped(self._interface)
 
+    def net_get_state(self, can_id: int):
+        """The function retrieves the actual NMT state of any device
+        (a servo motor or any other) connected to the specified CAN network.
+
+        :param can_id: int: identificator of the addressed device
+        :return Device status: int
+        """
+        nmt_state = c_int8()
+        self._api.rr_net_get_state(
+            self._interface, c_int(can_id), byref(nmt_state)
+        )
+        return nmt_state.value
+
     def deinit_interface(self):
         """The function closes the COM port where the corresponding CAN-USB dongle is connected, clearing all data
         associated with the interface descriptor.
@@ -677,6 +690,10 @@ class ServoApi(object, metaclass=_Singleton):
         # change the restype due to windows specific behavior
         self._api.rr_init_interface.restype = c_void_p
         self._api.rr_init_servo.restype = c_void_p
+        # change the restype due to return value not pointer
+        self._api.rr_describe_emcy_bit.restype = c_char_p
+        self._api.rr_describe_emcy_code.restype = c_char_p
+        self._api.rr_describe_nmt.restype = c_char_p
 
     def _check_library_loaded(self):
         if self._api is None:
@@ -727,27 +744,36 @@ class ServoApi(object, metaclass=_Singleton):
         """
         self._api.rr_sleep_ms(c_int(ms))
 
-    def describe_emcy_bit(self, bit: c_uint8):
+    def describe_emcy_bit(self, bit: int):
         """The function returns a string describing in detail a specific EMCY event based on the code in the 'bit'
         parameter (e.g., "CAN bus warning limit reached"). The function can be used in combination with the
         describe_emcy_code. The latter provides a more generic description of an EMCY event.
 
-        :param bit: c_uint8:
+        :param bit: int:
             Error bit field of the corresponding EMCY message (according to the CanOpen standard)
         :return: Description: str
         """
-        return self._api.rr_describe_emcy_bit(bit)
+        return self._api.rr_describe_emcy_bit(bit).decode("utf-8")
 
-    def describe_emcy_code(self, code: c_uint16):
+    def describe_emcy_code(self, code: int):
         """The function returns a string descibing a specific EMCY event based on the error code in the 'code'
         parameter. The description in the string is a generic type of the occured emergency event (e.g., "Temperature").
         For a more detailed description, use the function together with the describe_emcy_bit one.
 
-        :param code: c_uint_16
+        :param code: int
             Error code from the corresponding EMCY message (according to the CanOpen standard)
         :return: Description: str
         """
-        return self._api.rr_describe_emcy_code(code)
+        return self._api.rr_describe_emcy_code(code).decode("utf-8")
+
+    def describe_nmt_state(self, code: int):
+        """ The function returns a string describing the NMT state code
+        specified in the 'state' parameter.
+
+        :param code: int: state NMT state code to descibe
+        :return: Description: str
+        """
+        return self._api.rr_describe_nmt(code).decode("utf-8")
 
     def __del__(self):
         for interface in self._interfaces.values():
