@@ -3,7 +3,10 @@ import logging
 import platform
 from ctypes import *
 
-__all__ = ["ServoApi", "logger"]
+from .constants import RET_OK, RET_STATUS_MESSAGE
+
+__all__ = ["ServoApi", "ServoError", "logger"]
+
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.NullHandler())
@@ -11,6 +14,20 @@ logger.addHandler(logging.NullHandler())
 # TODO normal logging
 # TODO write doc strings with references
 # TODO tests
+
+
+class ServoError(Exception):
+    def __init__(self, code, message):
+        self.status = code
+        super(ServoError, self).__init__(message)
+
+    @staticmethod
+    def handle(code):
+        if code == RET_OK:
+            return
+
+        else:
+            raise ServoError(code, RET_STATUS_MESSAGE[code])
 
 
 class _Singleton(type):
@@ -51,13 +68,14 @@ class Servo(object):
         Let's assume you need to read 49 parameters. At a bit rate of 1 MBit/s, reading them one by one will take about
         35 ms, whereas reading them as an array will only take 10 ms.
 
-        :param param: c_int
+        :param param: int:
             Index of the parameter to read as indicated in the rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR) TODO refactor parameters
         :param enabled: bool
             Set True/False to enable/ disable the specified parameter for reading
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_param_cache_setup_entry(self._servo, c_int(param), c_bool(enabled))
+        status = self._api.rr_param_cache_setup_entry(self._servo, c_int(param), c_bool(enabled))
+        ServoError.handle(status)
 
     def param_cache_update(self):
         """The function is always used in combination with the param_cache_setup_entry function.
@@ -67,9 +85,10 @@ class Servo(object):
 
         **Note:** After you exit the program, the cache is cleared.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_param_cache_update(self._servo)
+        status = self._api.rr_param_cache_update(self._servo)
+        ServoError.handle(status)
 
     def read_cached_parameter(self, param: int):
         """The function is always used in combination with the param_cache_setup_entry and the param_cache_update
@@ -88,6 +107,7 @@ class Servo(object):
         """
         value = c_float()
         status = self._api.rr_read_cached_parameter(self._servo, c_int(param), byref(value))
+        ServoError.handle(status)
         return value.value
 
     def read_parameter(self, param: int):
@@ -102,6 +122,7 @@ class Servo(object):
         """
         value = c_float()
         status = self._api.rr_read_parameter(self._servo, c_int(param), byref(value))
+        ServoError.handle(status)
         return value.value
 
     def get_max_velocity(self):
@@ -113,6 +134,7 @@ class Servo(object):
         """
         velocity = c_float()
         status = self._api.rr_get_max_velocity(self._servo, byref(velocity))
+        ServoError.handle(status)
         return velocity.value
 
     def set_max_velocity(self, max_velocity_deg_per_sec: float):
@@ -121,9 +143,10 @@ class Servo(object):
 
         :param max_velocity_deg_per_sec: float:
             Velocity at the servo flange (in degrees/sec)
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_max_velocity(self._servo, c_float(max_velocity_deg_per_sec))
+        status = self._api.rr_set_max_velocity(self._servo, c_float(max_velocity_deg_per_sec))
+        ServoError.handle(status)
 
     def set_zero_position(self, position_deg: float):
         """The function enables setting the current position (in degrees) of the servo to any value defined by the user.
@@ -133,9 +156,10 @@ class Servo(object):
 
         :param position_deg: float:
             User-defined position (in degrees) to replace the current position value
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_zero_position(self._servo, c_float(position_deg))
+        status = self._api.rr_set_zero_position(self._servo, c_float(position_deg))
+        ServoError.handle(status)
 
     def set_zero_position_and_save(self, position_deg: float):
         """The function enables setting the current position (in degrees) of the servo to any value defined by the user
@@ -147,9 +171,10 @@ class Servo(object):
 
         :param position_deg: float:
             User-defined position (in degrees) to replace the current position value
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
+        status = self._api.rr_set_zero_position_and_save(self._servo, c_float(position_deg))
+        ServoError.handle(status)
 
     def add_motion_point(self, position_deg: float, velocity_deg_per_sec: float, time_ms: int,
                          accel_deg_per_sec2: float = None):
@@ -173,10 +198,10 @@ class Servo(object):
             The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days).
         :param accel_deg_per_sec2: float
             Acceleration (in degrees/sec**2) which the servo should have in the position where it comes.
-        :return: Status code: int
+        :return: None
         """
         if accel_deg_per_sec2 is not None:
-            return self._api.rr_add_motion_point_pvat(
+            status = self._api.rr_add_motion_point_pvat(
                 self._servo,
                 c_float(position_deg),
                 c_float(velocity_deg_per_sec),
@@ -184,9 +209,10 @@ class Servo(object):
                 c_uint32(time_ms)
             )
         else:
-            return self._api.rr_add_motion_point(
+            status = self._api.rr_add_motion_point(
                 self._servo, c_float(position_deg), c_float(velocity_deg_per_sec), c_uint32(time_ms)
             )
+        ServoError.handle(status)
 
     def clear_points(self, num_to_clear: int):
         """The function removes the number of PVT points indicated in the 'num_to_clear' parameter from the tail of the
@@ -195,17 +221,19 @@ class Servo(object):
 
         :param num_to_clear: int:
             Number of PVT points to be removed from the motion queue of the specified servo
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_clear_points(self._servo, c_uint32(num_to_clear))
+        status = self._api.rr_clear_points(self._servo, c_uint32(num_to_clear))
+        ServoError.handle(status)
 
     def clear_points_all(self):
         """The function clears the entire motion queue of the servo. The servo completes the move it started before the
         function call and then clears all the remaining PVT points in the queue.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_clear_points_all(self._servo)
+        status = self._api.rr_clear_points_all(self._servo)
+        ServoError.handle(status)
 
     def get_points_free_space(self):
         """The function returns how many more PVT points the user can add to the motion queue of the servo.
@@ -216,6 +244,7 @@ class Servo(object):
         """
         size = c_uint32(0)
         status = self._api.rr_get_points_free_space(self._servo, byref(size))
+        ServoError.handle(status)
         return size.value
 
     def get_points_size(self):
@@ -226,6 +255,7 @@ class Servo(object):
         """
         size = c_uint32(0)
         status = self._api.rr_get_points_size(self._servo, byref(size))
+        ServoError.handle(status)
         return size.value
 
     def invoke_time_calculation(self,
@@ -263,15 +293,17 @@ class Servo(object):
                                                       c_float(end_position), c_float(end_velocity_deg_per_sec),
                                                       c_float(end_acceleration_deg_per_sec2), c_uint32(end_time_ms),
                                                       byref(calculated_time))
+        ServoError.handle(status)
         return calculated_time.value
 
     def brake_engage(self, en: bool):
         """The function applies or releases servo's built-in brake (if installed).
 
         :param en: bool: Desired action: True - engage brake, False - disengage
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_brake_engage(self._servo, c_bool(en))
+        status = self._api.rr_brake_engage(self._servo, c_bool(en))
+        ServoError.handle(status)
 
     def release(self):
         """The function sets the specified servo to the released state. The servo is de-energized and stops without
@@ -280,16 +312,18 @@ class Servo(object):
         **Note:** When there is an external force affecting the servo (e.g., inertia, gravity), the servo may continue
         rotating or begin rotating in the opposite direction.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_release(self._servo)
+        status = self._api.rr_release(self._servo)
+        ServoError.handle(status)
 
     def freeze(self):
         """The function sets the specified servo to the freeze state. The servo stops, retaining its last position.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_freeze(self._servo)
+        status = self._api.rr_freeze(self._servo)
+        ServoError.handle(status)
 
     def set_current(self, current_a: float):
         """The function sets the current supplied to the stator of the servo specified in the 'servo' parameter.
@@ -299,9 +333,10 @@ class Servo(object):
 
         :param current_a: float:
             Phase current of the stator in Amperes
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_current(self._servo, c_float(current_a))
+        status = self._api.rr_set_current(self._servo, c_float(current_a))
+        ServoError.handle(status)
 
     def set_duty(self, duty_percent: float):
         """The function limits the input voltage supplied to the servo, enabling to adjust its motion velocity.
@@ -311,9 +346,10 @@ class Servo(object):
 
         :param duty_percent: float:
             User-defined percentage of the input voltage to be supplied to the servo
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_duty(self._servo, c_float(duty_percent))
+        status = self._api.rr_set_duty(self._servo, c_float(duty_percent))
+        ServoError.handle(status)
 
     def set_position(self, position_deg: float):
         """The function sets the position that the servo should reach as a result of executing the command.
@@ -325,9 +361,10 @@ class Servo(object):
             Position of the servo (in degrees) to be reached.
             The parameter is a multi-turn value (e.g., when set to 720, the servo will make two turns, 360 degrees each).
             When the parameter is set to a "-" sign value, the servo rotates in the opposite direction.
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_position(self._servo, c_float(position_deg))
+        status = self._api.rr_set_position(self._servo, c_float(position_deg))
+        ServoError.handle(status)
 
     def set_position_with_limits(self, position_deg: float, velocity_deg_per_sec: float, accel_deg_per_sec_sq: float):
         """The function sets the position that the servo should reach with velocity and acceleration limits on generated trajectory.
@@ -341,15 +378,29 @@ class Servo(object):
         :return: Trajectory execution time (im milliseconds): int
         """
         time_ms = c_uint32()
-        self._api.rr_set_position_with_limits(self._servo,
+        status = self._api.rr_set_position_with_limits(self._servo,
                                               c_float(position_deg),
                                               c_float(velocity_deg_per_sec),
                                               c_float(accel_deg_per_sec_sq),
                                               byref(time_ms))
+        ServoError.handle(status)
         return int(time_ms.value)
 
     def set_velocity_motor(self, velocity_rpm: float):
-        return self._api.rr_set_velocity_motor(self._servo, c_float(velocity_rpm))
+        """The function sets the velocity with which the motor of the specified
+         servo should move at its maximum current. The maximum current is in
+         accordance with the servo motor specification. You can use the
+         function for both geared servos and servos without a gearhead. When a
+         servo is geared, the velocity at the output flange will depend on the
+         applied gear ratio(refer to the servo motor specification).
+
+        :param velocity_rpm Velocity of the motor (in revolutions per minute)
+        :return: None
+        """
+        status = self._api.rr_set_velocity_motor(
+            self._servo, c_float(velocity_rpm)
+        )
+        ServoError.handle(status)
 
     def set_velocity(self, velocity_deg_per_sec: float):
         """The function sets the velocity at which the servo should move at its maximum current.
@@ -359,9 +410,10 @@ class Servo(object):
 
         :param velocity_deg_per_sec: float:
             Velocity (in degrees/sec) at the servo flange
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
+        status = self._api.rr_set_velocity(self._servo, c_float(velocity_deg_per_sec))
+        ServoError.handle(status)
 
     def set_velocity_with_limits(self, velocity_deg_per_sec: float, current_a: float):
         """The function commands the servo to rotate at the specified velocity, while setting the maximum
@@ -372,23 +424,28 @@ class Servo(object):
             rotate in the opposite direction
         :param current_a: float:
             Maximum user-defined current limit in Amperes.
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_set_velocity_with_limits(self._servo, c_float(velocity_deg_per_sec), c_float(current_a))
+        status =self._api.rr_set_velocity_with_limits(
+            self._servo, c_float(velocity_deg_per_sec), c_float(current_a)
+        )
+        ServoError.handle(status)
 
     def reboot(self):
         """The function reboots the servo, resetting it to the power-on state.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_servo_reboot(self._servo)
+        status = self._api.rr_servo_reboot(self._servo)
+        ServoError.handle(status)
 
     def reset_communication(self):
         """The function resets communication on the servo without resetting the entire interface.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_servo_reset_communication(self._servo)
+        status = self._api.rr_servo_reset_communication(self._servo)
+        ServoError.handle(status)
 
     def set_state_operational(self):
         """The function sets the servo to the operational state. In the state, the servo is both available
@@ -397,9 +454,10 @@ class Servo(object):
         For instance, you may need to call the function to switch the servo from the pre-operational state to the
         operational one after an error (e.g., due to overcurrent).
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_servo_set_state_operational(self._servo)
+        status = self._api.rr_servo_set_state_operational(self._servo)
+        ServoError.handle(status)
 
     def set_state_pre_operational(self):
         """The function sets the servo to the pre-operational state. In the state, the servo is available for
@@ -408,9 +466,10 @@ class Servo(object):
         For instance, you may need to call the function, if you want to force the servo to stop executing commands,
         e.g., in an emergency.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_servo_set_state_pre_operational(self._servo)
+        status = self._api.rr_servo_set_state_pre_operational(self._servo)
+        ServoError.handle(status)
 
     def set_state_stopped(self):
         """The function sets the servo to the stopped state. In the state, only Heartbeats are available.
@@ -419,9 +478,10 @@ class Servo(object):
         For instance, you may need to call the fuction to reduce the workload of a CAN bus by disabling individual
         servos connected to it without deninitializing them.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_servo_set_state_stopped(self._servo)
+        status = self._api.rr_servo_set_state_stopped(self._servo)
+        ServoError.handle(status)
 
     def read_error_status(self, array_size: int):
         """The functions enables reading the total actual count of servo hardware errors
@@ -440,7 +500,10 @@ class Servo(object):
         """
         error_count = c_uint32(0)
         error_array = (c_uint8 * array_size)()
-        self._api.rr_read_error_status(self._servo, byref(error_count), byref(error_array))
+        status = self._api.rr_read_error_status(
+            self._servo, byref(error_count), byref(error_array)
+        )
+        ServoError.handle(status)
         return error_count.value, error_array
 
     def get_version(self):
@@ -464,8 +527,14 @@ class Servo(object):
         buffer_size = 100
         hardware_version = create_string_buffer(buffer_size)
         soft_version = create_string_buffer(buffer_size)
-        self._api.rr_get_hardware_version(self._servo, hardware_version, byref(c_int(buffer_size)))
-        self._api.rr_get_software_version(self._servo, soft_version, byref(c_int(buffer_size)))
+        status = self._api.rr_get_hardware_version(
+            self._servo, hardware_version, byref(c_int(buffer_size))
+        )
+        ServoError.handle(status)
+        status = self._api.rr_get_software_version(
+            self._servo, soft_version, byref(c_int(buffer_size))
+        )
+        ServoError.handle(status)
         hardware_data = hardware_version.value.decode("utf-8").split(".")
         software_data = soft_version.value.decode("utf-8").split(".")
         return {
@@ -496,10 +565,12 @@ class Servo(object):
             Number of retries (if communication error occurred during request)
         :param tout: c_int:
             Request timeout in milliseconds
-        :return: status: int
+        :return: None
         """
-        return self._api.rr_write_raw_sdo(self._servo, idx, sidx, data, sz, retry, tout)
-
+        status = self._api.rr_write_raw_sdo(
+            self._servo, idx, sidx, data, sz, retry, tout
+        )
+        ServoError.handle(status)
 
     def _read_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
         """The function performs an arbitrary SDO read request.
@@ -518,16 +589,23 @@ class Servo(object):
             Request timeout in milliseconds
         :return: status: int
         """
-        return self._api.rr_read_raw_sdo(self._servo, idx, sidx, data, byref(sz), retry, tout)
+        status = self._api.rr_read_raw_sdo(
+            self._servo, idx, sidx, data, byref(sz), retry, tout
+        )
+        ServoError.handle(status)
 
 
 class Interface(object):
 
     def __init__(self, library_api, interface_name):
         self._api = library_api
-        self._interface = c_void_p(self._api.rr_init_interface(bytes(interface_name, encoding="utf-8")))
+        self._interface = c_void_p(self._api.rr_init_interface(
+                bytes(interface_name, encoding="utf-8")
+        ))
         if self._interface is None:
-            message = "Failed to initialize interface by name: {}".format(interface_name)
+            message = "Failed to initialize interface by name: {}".format(
+                interface_name
+            )
             logger.error(message)
             raise AttributeError(message)
         self._servos = {}
@@ -547,9 +625,10 @@ class Interface(object):
             Delay (in milliseconds) before the servos associated with the interface start to move.
             When the value is set to 0, the servos start moving immediately.
             The available value range is from 0 to 2^24-1.
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_start_motion(self._interface, c_uint32(timestamp_ms))
+        status = self._api.rr_start_motion(self._interface, c_uint32(timestamp_ms))
+        ServoError.handle(status)
 
     def init_servo(self, identifier) -> Servo:
         """The function determines whether the servo motor with the specified ID is connected to the specified interface.
@@ -585,28 +664,30 @@ class Interface(object):
         :param new_can_id: int:
             New CAN ID. You can set any value within the range from 1 to 127, only make sure no other servo has the same
             ID.
-        :return: status : int
+        :return: None
         """
         servo_interface = self.init_servo(old_id).interface
         status = self._api.rr_change_id_and_save(self._interface, byref(servo_interface), c_uint8(new_can_id))
+        ServoError.handle(status)
         del self._servos[old_id]
-        return status
 
     def net_reboot(self):
         """The function reboots all servos connected to the current interface, resetting them back to the power-on state.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_net_reboot(self._interface)
+        status = self._api.rr_net_reboot(self._interface)
+        ServoError.handle(status)
 
     def net_reset_communication(self):
         """The function resets communication on the current interface.
 
         For instance, you may need to use the function when changing settings that require a reset after modification.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_net_reset_communication(self._interface)
+        status = self._api.rr_net_reset_communication(self._interface)
+        ServoError.handle(status)
 
     def net_set_state_operational(self):
         """The function sets all servos connected to the current interface (CAN bus) to
@@ -615,9 +696,10 @@ class Interface(object):
         For instance, you may need to call the function to switch all servos on a specific bus from the pre-operational
         state to the operational one after an error (e.g., due to overcurrent).
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_net_set_state_operational(self._interface)
+        status = self._api.rr_net_set_state_operational(self._interface)
+        ServoError.handle(status)
 
     def net_set_state_pre_operational(self):
         """The function sets all servos connected to the current interface to the pre-operational state.
@@ -626,9 +708,10 @@ class Interface(object):
         For instance, you may need to call the function, if you want to force all servos on a specific bus to stop
         executing commands, e.g., in an emergency.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_net_set_state_pre_operational(self._interface)
+        status = self._api.rr_net_set_state_pre_operational(self._interface)
+        ServoError.handle(status)
 
     def net_set_state_stopped(self):
         """The function sets all servos connected to the interface specified in the 'interface' parameter to the stopped state.
@@ -636,9 +719,10 @@ class Interface(object):
 
         For instance, you may need to call the fuction to stop all servos on a specific bus without deinitializing them.
 
-        :return: Status code: int
+        :return: None
         """
-        return self._api.rr_net_set_state_stopped(self._interface)
+        status = self._api.rr_net_set_state_stopped(self._interface)
+        ServoError.handle(status)
 
     def net_get_state(self, can_id: int):
         """The function retrieves the actual NMT state of any device
@@ -648,9 +732,10 @@ class Interface(object):
         :return Device status: int
         """
         nmt_state = c_int8()
-        self._api.rr_net_get_state(
+        status = self._api.rr_net_get_state(
             self._interface, c_int(can_id), byref(nmt_state)
         )
+        ServoError.handle(status)
         return nmt_state.value
 
     def deinit_interface(self):
@@ -662,7 +747,8 @@ class Interface(object):
 
         :return: None
         """
-        return self._api.rr_deinit_interface(byref(self._interface))
+        status = self._api.rr_deinit_interface(byref(self._interface))
+        ServoError.handle(status)
 
 
 class ServoApi(object, metaclass=_Singleton):
@@ -726,7 +812,12 @@ class ServoApi(object, metaclass=_Singleton):
         if interface_name not in self._interfaces:
             interface = Interface(self._api, interface_name)
             if interface is None:
-                raise AttributeError("Failed to initialize interface named: {}.".format(interface_name))
+                raise AttributeError(
+                    "Failed to initialize interface named: {}.".format(
+                        interface_name
+                    )
+                )
+
             self._interfaces[interface_name] = interface
         return self._interfaces[interface_name]
 
