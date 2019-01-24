@@ -1654,7 +1654,7 @@ rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const flo
     uint8_t data[4];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
     usb_can_put_float(data, 0, &position_deg, 1);
-    uint32_t sts = write_raw_sdo(dev, 0x2208, 0x02, data, sizeof(data), 0, 200);
+    uint32_t sts = write_raw_sdo(dev, 0x2208, 0x02, data, sizeof(data), 0, 4000);
 
     return ret_sdo(sts);
 }
