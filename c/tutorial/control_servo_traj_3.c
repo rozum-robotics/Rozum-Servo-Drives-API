@@ -98,6 +98,12 @@ int main(int argc, char *argv[])
     rr_servo_t *servo3 = rr_init_servo(iface, id3);
     //! [Adding servo three]
 
+    //! [Switching to operational state]
+    rr_servo_set_state_operational(servo1);
+    rr_servo_set_state_operational(servo2);
+    rr_servo_set_state_operational(servo3);
+    //! [Switching to operational state]
+
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling three servos");
 
     //! [Clear points servo one]
