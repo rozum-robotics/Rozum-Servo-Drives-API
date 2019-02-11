@@ -550,6 +550,18 @@ class Servo(object):
             }
         }
 
+    def get_state(self):
+        """The function retrieves the actual NMT state of a servo motor
+
+        :return Device status: int
+        """
+        servo_state = c_int8()
+        status = self._api.rr_servo_get_state(
+            self._servo, byref(servo_state)
+        )
+        ServoError.handle(status)
+        return servo_state.value
+
     def _write_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
         """The function performs an arbitrary SDO write request.
 
