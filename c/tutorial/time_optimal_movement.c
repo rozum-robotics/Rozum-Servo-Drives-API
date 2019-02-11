@@ -23,6 +23,10 @@ int main(int argc, char *argv[])
     rr_can_interface_t *iface = rr_init_interface(argv[1]);
     rr_servo_t *servo = rr_init_servo(iface, id);
 
+    //! [Switching to operational state]
+    rr_servo_set_state_operational(servo);
+    //! [Switching to operational state]
+
     rr_clear_points_all(servo);
 
 
