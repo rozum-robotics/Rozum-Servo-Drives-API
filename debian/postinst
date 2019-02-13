@@ -1,0 +1,24 @@
+#!/bin/sh -e
+
+ec() {
+    echo "$@" >&2
+    "$@"
+}
+
+case "$1" in
+    configure)
+        cd /opt/rozum-update-tool/src/tools
+
+        make clean
+        make all
+        
+        cp /opt/rozum-update-tool/src/tools/fw-update-tool/build/rr-fw-update /opt/rozum-update-tool
+        cp /opt/rozum-update-tool/src/tools/cfg-update-tool/build/rr-cfg-update /opt/rozum-update-tool
+
+        ln -sf /opt/rozum-update-tool/rr-cfg-update /usr/local/bin/rr-cfg-update
+        ln -sf /opt/rozum-update-tool/rr-fw-update /usr/local/bin/rr-fw-update
+
+        rm -rf /opt/rozum-update-tool/src
+
+        ;;
+esac

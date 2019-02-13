@@ -235,7 +235,7 @@ void rr_setup_nmt_callback(rr_can_interface_t *iface, rr_nmt_cb_t cb)
 {
     if(iface)
     {
-        iface->nmt_cb = (void*)cb;
+        iface->nmt_cb = (void *)cb;
     }
 }
 
@@ -251,7 +251,7 @@ void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
 {
     if(iface)
     {
-        iface->emcy_cb = (void*)cb;
+        iface->emcy_cb = (void *)cb;
     }
 }
 
@@ -603,11 +603,11 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
     rr_set_debug_log_stream(stderr);
 
     usbcan_instance_t *usbcan = usbcan_instance_init(interface_name);
-	if(!usbcan)
-	{
-		free(i);
-		return NULL;
-	}
+    if(!usbcan)
+    {
+        free(i);
+        return NULL;
+    }
     usbcan->udata = i;
     i->iface = usbcan;
 
@@ -655,10 +655,10 @@ rr_ret_status_t rr_deinit_interface(rr_can_interface_t **iface)
  */
 rr_servo_t *rr_init_servo(rr_can_interface_t *iface, const uint8_t id)
 {
-	if(!iface)
-	{
-		return NULL;
-	}
+    if(!iface)
+    {
+        return NULL;
+    }
     rr_servo_t *s = (rr_servo_t *)calloc(1, sizeof(rr_servo_t));
 
     if(!s)
@@ -866,7 +866,7 @@ rr_ret_status_t rr_net_get_state(const rr_can_interface_t *iface, int id, rr_nmt
     IS_VALID_INTERFACE(iface);
     usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
 
-	*state = (rr_nmt_state_t)usbcan_get_device_state(inst, id);
+    *state = (rr_nmt_state_t)usbcan_get_device_state(inst, id);
 
     return RET_OK;
 }
@@ -884,7 +884,7 @@ rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *stat
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
-	*state = (rr_nmt_state_t)usbcan_get_device_state(dev->inst, dev->id);
+    *state = (rr_nmt_state_t)usbcan_get_device_state(dev->inst, dev->id);
 
     return RET_OK;
 }
@@ -1815,4 +1815,52 @@ rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_s
     uint32_t sts = read_raw_sdo(dev, 0x100A, 0x00, (uint8_t *)version_string, version_string_size, 1, 100);
 
     return ret_sdo(sts);
+}
+
+/**
+ * @brief 
+ * 
+ * @param velocity_limit_deg_per_sec Velocity limit (in degrees/sec)
+ * @param velocity_max_calc_deg_per_sec Pointer to the maximum calculated velocity within the point (in degrees/sec)
+ * @param position_deg_start Start position of the point (in degrees)
+ * @param velocity_deg_per_sec_start Start velocity of the point (in degrees/sec)
+ * @param position_deg_end End position of the point (in degrees)
+ * @param velocity_deg_per_sec_end End velocity of the point (in degrees/sec)
+ * @param time_ms Point time (in milliseconds)
+ * @return true If the maximum calculated point velocity is greater the velocity limit
+ * @return false If the maximum calculated point velocity is equal or lower the velocity limit
+ */
+bool rr_check_point(const float velocity_limit_deg_per_sec,
+                    float *velocity_max_calc_deg_per_sec,
+                    const float position_deg_start,
+                    const float velocity_deg_per_sec_start,
+                    const float position_deg_end,
+                    const float velocity_deg_per_sec_end,
+                    const uint32_t time_ms)
+{
+    float position = position_deg_end - position_deg_start;
+
+    float internal_peak_time = (time_ms * (3.0 * time_ms * velocity_deg_per_sec_start - 5.0 * position + 2.0 * time_ms * velocity_deg_per_sec_end)) /
+                               (5.0 * time_ms * velocity_deg_per_sec_start - 10.0 * position + 5.0 * time_ms * velocity_deg_per_sec_end);
+
+    *velocity_max_calc_deg_per_sec = (powf(time_ms, 3) * powf(velocity_deg_per_sec_start - velocity_deg_per_sec_end, 4)) /
+                                         (2000.0 * powf(time_ms * velocity_deg_per_sec_start - 2.0 * position + time_ms * velocity_deg_per_sec_end, 3)) -
+                                     (7.0 * time_ms * velocity_deg_per_sec_start - 30.0 * position + 7.0 * time_ms * velocity_deg_per_sec_end) / (16.0 * time_ms) +
+                                     (3.0 * time_ms * powf(velocity_deg_per_sec_start - velocity_deg_per_sec_end, 2)) / (40.0 * (2.0 * position - time_ms * (velocity_deg_per_sec_start + velocity_deg_per_sec_end)));
+
+    bool isInternalPeakNotExists = internal_peak_time <= 0 || internal_peak_time >= time_ms;
+
+    if(fabs(*velocity_max_calc_deg_per_sec) < fabs(velocity_deg_per_sec_start) || isInternalPeakNotExists)
+    {
+        *velocity_max_calc_deg_per_sec = velocity_deg_per_sec_start;
+    }
+
+    if(fabs(*velocity_max_calc_deg_per_sec) < fabs(velocity_deg_per_sec_end))
+    {
+        *velocity_max_calc_deg_per_sec = velocity_deg_per_sec_end;
+    }
+
+    *velocity_max_calc_deg_per_sec = fabs(*velocity_max_calc_deg_per_sec);
+
+    return fabs(velocity_limit_deg_per_sec) < *velocity_max_calc_deg_per_sec;
 }

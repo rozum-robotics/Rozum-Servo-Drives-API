@@ -81,6 +81,11 @@ int main(int argc, char *argv[])
     //! [Adding servo ID1]
     rr_servo_t *servo2 = rr_init_servo(iface, id2);
     //! [Adding servo ID1]
+    
+    //! [Switching to operational state]
+    rr_servo_set_state_operational(servo1);
+    rr_servo_set_state_operational(servo2);
+    //! [Switching to operational state]
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling two servos");
 

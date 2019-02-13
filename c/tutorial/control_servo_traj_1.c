@@ -67,6 +67,10 @@ int main(int argc, char *argv[])
     rr_servo_t *servo = rr_init_servo(iface, id);
     //! [Adding the servo1]
 
+    //! [Switching to operational state]
+    rr_servo_set_state_operational(servo);
+    //! [Switching to operational state]
+
     API_DEBUG("========== Tutorial of the %s ==========\n", "controlling one servo");
 
     //! [Clear points all1]
