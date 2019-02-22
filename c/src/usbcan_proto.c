@@ -24,6 +24,8 @@ static int usbcan_build_sdo_req(uint8_t *dst, bool write, uint8_t id,
 
 static int usbcan_rx(usbcan_instance_t *inst);
 
+
+
 /*
  * Check interface instance for consistency.
  */
@@ -1130,7 +1132,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	pthread_cond_init(&inst->cond, NULL);
 
 	inst->running = true;
-	
+
 	if(pthread_create(&inst->usbcan_thread, NULL, usbcan_process, inst))
 	{
 		LOG_WARN(debug_log, "%s: can't run thread", __func__);

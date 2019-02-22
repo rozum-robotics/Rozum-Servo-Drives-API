@@ -30,6 +30,16 @@ class ServoError(Exception):
             raise ServoError(code, RET_STATUS_MESSAGE[code])
 
 
+class EmcyObject(Structure):
+    _fields_ = [
+        ("id", c_uint8),
+        ("code", c_uint16),
+        ("registry", c_uint8),
+        ("bits", c_uint8),
+        ("info", c_uint32)
+    ]
+
+
 class _Singleton(type):
     _instances = {}
 
@@ -750,6 +760,25 @@ class Interface(object):
         ServoError.handle(status)
         return nmt_state.value
 
+    def emcy_log_pop(self):
+        """
+        The function pops single entry from EMCY logging buffer.
+
+        :return EmcyObject or None if no messages in buffer
+        """
+        emcy_object = self._api.rr_emcy_log_pop(self._interface)
+        if emcy_object:
+            return emcy_object.contents
+        else:
+            return None
+
+    def emcy_log_clear(self):
+        """The clears entire EMCY logging buffer.
+
+        :return: None
+        """
+        self._api.rr_emcy_log_clear(self._interface)
+
     def deinit_interface(self):
         """The function closes the COM port where the corresponding CAN-USB dongle is connected, clearing all data
         associated with the interface descriptor.
@@ -788,10 +817,12 @@ class ServoApi(object, metaclass=_Singleton):
         # change the restype due to windows specific behavior
         self._api.rr_init_interface.restype = c_void_p
         self._api.rr_init_servo.restype = c_void_p
-        # change the restype due to return value not pointer
+        # change the restype to return value not pointer
         self._api.rr_describe_emcy_bit.restype = c_char_p
         self._api.rr_describe_emcy_code.restype = c_char_p
         self._api.rr_describe_nmt.restype = c_char_p
+        # change the restype to return structure pointer
+        self._api.rr_emcy_log_pop.restype = POINTER(EmcyObject)
 
     def _check_library_loaded(self):
         if self._api is None:
