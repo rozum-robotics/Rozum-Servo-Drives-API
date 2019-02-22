@@ -120,12 +120,17 @@ void rr_nmt_state_master_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t 
     }
 }
 
+void rr_emcy_log_push(rr_can_interface_t *iface, uint8_t id, uint16_t err_code, uint8_t err_reg,
+	uint8_t err_bits, int32_t err_info);
+
 void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info)
 {
     rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
 
     LOG_WARN(debug_log, "Emergency frame received: id(%" PRId8 ") code(0x%" PRIX16 ") reg(0x%" PRIX8 ") bits(0x%" PRIX8 ") info(0x%" PRIX32 "):\n    '%s, %s'",
              id, code, reg, bits, info, rr_describe_emcy_code(code), rr_describe_emcy_bit(bits));
+
+    rr_emcy_log_push(i, id, code, reg, bits, info);
 
     if(i->emcy_cb)
     {
@@ -253,6 +258,56 @@ void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
     {
         iface->emcy_cb = (void *)cb;
     }
+}
+
+/*
+ * Emergency log manipulation functions
+ */
+
+void rr_emcy_log_push(rr_can_interface_t *iface, uint8_t id, uint16_t err_code, uint8_t err_reg,
+	uint8_t err_bits, int32_t err_info)
+{
+	int unused = iface->emcy_log.sz - ((iface->emcy_log.head - iface->emcy_log.tail + iface->emcy_log.sz) % iface->emcy_log.sz);
+	
+	iface->emcy_log.head = (iface->emcy_log.head + 1) % iface->emcy_log.sz;
+	iface->emcy_log.d[iface->emcy_log.head].id = id;
+	iface->emcy_log.d[iface->emcy_log.head].err_code = err_code;
+	iface->emcy_log.d[iface->emcy_log.head].err_reg = err_reg;
+	iface->emcy_log.d[iface->emcy_log.head].err_bits = err_bits;
+	iface->emcy_log.d[iface->emcy_log.head].err_info = err_info;
+	if(unused <= 1)
+	{
+		iface->emcy_log.tail = (iface->emcy_log.tail + 1) % iface->emcy_log.sz;
+	}
+}
+
+
+/**
+ * @brief The function pops single entry from EMCY logging buffer.
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @return emcy_log_entry_t pointer to EMCY entry or NULL if no messages in buffer
+ * @ingroup Err
+ */
+emcy_log_entry_t *rr_emcy_log_pop(rr_can_interface_t *iface)
+{
+	if(iface->emcy_log.tail != iface->emcy_log.head)
+	{
+		iface->emcy_log.tail = (iface->emcy_log.tail + 1) % iface->emcy_log.sz;
+		return &iface->emcy_log.d[iface->emcy_log.tail];
+	}
+	return NULL;
+}
+
+/**
+ * @brief The clears entire EMCY logging buffer.
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @return void
+ * @ingroup Err
+ */
+void rr_emcy_log_clear(rr_can_interface_t *iface)
+{
+	iface->emcy_log.head = 0;
+	iface->emcy_log.tail = 0;
 }
 
 /**
@@ -614,8 +669,14 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
     usbcan_setup_nmt_state_cb(usbcan, rr_nmt_state_master_cb);
     usbcan_setup_emcy_cb(usbcan, rr_emcy_master_cb);
 
+    i->emcy_log.d = (emcy_log_entry_t *)malloc(sizeof(emcy_log_entry_t) * EMCY_LOG_DEPTH);
+    i->emcy_log.sz = EMCY_LOG_DEPTH;
+    i->emcy_log.head = 0;
+    i->emcy_log.tail = 0;
+
     if(!i->iface)
     {
+	free(i->emcy_log.d);
         free(i);
         return NULL;
     }
