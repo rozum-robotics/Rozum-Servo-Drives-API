@@ -773,7 +773,7 @@ class Interface(object):
             return None
 
     def emcy_log_clear(self):
-        """The clears entire EMCY logging buffer.
+        """The fucntion clears entire EMCY logging buffer.
 
         :return: None
         """
