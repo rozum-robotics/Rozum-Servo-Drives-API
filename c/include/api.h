@@ -40,6 +40,12 @@ extern "C"
  */
 #define ARRAY_ERROR_BITS_SIZE (64)
 
+/**
+ * @brief Size of the emergency (EMCY) log entry
+ *
+ */
+#define EMCY_LOG_DEPTH	1024
+
 /* Exported types ------------------------------------------------------------*/
 /**
  * @brief Return codes of the API functions
@@ -154,6 +160,19 @@ typedef struct
 } param_cache_entry_t;
 
 /**
+ * @brief Emergency (EMCY) log entry structure
+ *
+ */
+typedef struct
+{
+	uint8_t id;
+	uint16_t err_code;
+	uint8_t err_reg;
+	uint8_t err_bits;
+       	int32_t err_info;
+} emcy_log_entry_t;
+
+/**
  * @brief Device instance structure
  * 
  */
@@ -172,6 +191,13 @@ typedef struct
     void *iface;   ///< Interface internals
     void *nmt_cb;  ///< NMT callback pointer
     void *emcy_cb; ///< EMCY callback pointer
+    struct
+    {
+	    emcy_log_entry_t *d;
+	    int head;
+	    int tail;
+	    int sz;
+    } emcy_log;
 } rr_can_interface_t;
 
 /**
@@ -213,6 +239,9 @@ void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb);
 const char *rr_describe_nmt(rr_nmt_state_t state);
 const char *rr_describe_emcy_code(uint16_t code);
 const char *rr_describe_emcy_bit(uint8_t bit);
+int rr_emcy_log_get_size(rr_can_interface_t *iface);
+emcy_log_entry_t *rr_emcy_log_pop(rr_can_interface_t *iface);
+void rr_emcy_log_clear(rr_can_interface_t *iface);
 
 rr_can_interface_t *rr_init_interface(const char *interface_name);
 rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface);
