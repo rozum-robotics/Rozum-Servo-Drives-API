@@ -760,6 +760,14 @@ class Interface(object):
         ServoError.handle(status)
         return nmt_state.value
 
+    def emcy_log_get_size(self):
+        """
+        The function returns actual count of entries in EMCY logging buffer.
+
+        :return: Number of unread entries :int
+        """
+        return self._api.rr_emcy_log_get_size(self._interface)
+
     def emcy_log_pop(self):
         """
         The function pops single entry from EMCY logging buffer.

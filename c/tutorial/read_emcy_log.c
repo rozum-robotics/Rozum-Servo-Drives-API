@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     
     while((emcy = rr_emcy_log_pop(iface)))
     {
-    	printf("id: %d, code: 0x%." PRIx16 ", reg: 0x%.2" PRIx8 ", bits: 0x%.2" PRIx8 ", info: 0x%.8" PRIx32 "\n", 
+    	printf("id: %d, code: 0x%." PRIx16 ", reg: 0x%.2" PRIx8 ", bits: 0x%.2" PRIx8 ", info: 0x%.8" PRIx32 "\n",
 			(int)emcy->id, emcy->err_code, emcy->err_reg, emcy->err_bits, emcy->err_info);
     }
 

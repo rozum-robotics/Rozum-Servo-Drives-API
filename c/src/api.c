@@ -264,11 +264,23 @@ void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
  * Emergency log manipulation functions
  */
 
+
+/**
+ * @brief The function returns actual count of entries in EMCY logging buffer.
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @return int number of unread entries
+ * @ingroup Err
+ */
+int rr_emcy_log_get_size(rr_can_interface_t *iface)
+{
+	return 	((iface->emcy_log.head - iface->emcy_log.tail + iface->emcy_log.sz) % iface->emcy_log.sz);
+}
+
 void rr_emcy_log_push(rr_can_interface_t *iface, uint8_t id, uint16_t err_code, uint8_t err_reg,
 	uint8_t err_bits, int32_t err_info)
 {
-	int unused = iface->emcy_log.sz - ((iface->emcy_log.head - iface->emcy_log.tail + iface->emcy_log.sz) % iface->emcy_log.sz);
-	
+	int unused = iface->emcy_log.sz - rr_emcy_log_get_size(iface);
+
 	iface->emcy_log.head = (iface->emcy_log.head + 1) % iface->emcy_log.sz;
 	iface->emcy_log.d[iface->emcy_log.head].id = id;
 	iface->emcy_log.d[iface->emcy_log.head].err_code = err_code;
