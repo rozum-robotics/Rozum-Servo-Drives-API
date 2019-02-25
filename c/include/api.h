@@ -42,7 +42,7 @@ extern "C"
 
 /**
  * @brief Size of the emergency (EMCY) log entry
- * 
+ *
  */
 #define EMCY_LOG_DEPTH	1024
 
@@ -161,7 +161,7 @@ typedef struct
 
 /**
  * @brief Emergency (EMCY) log entry structure
- * 
+ *
  */
 typedef struct
 {
@@ -239,6 +239,7 @@ void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb);
 const char *rr_describe_nmt(rr_nmt_state_t state);
 const char *rr_describe_emcy_code(uint16_t code);
 const char *rr_describe_emcy_bit(uint8_t bit);
+int rr_emcy_log_get_size(rr_can_interface_t *iface);
 emcy_log_entry_t *rr_emcy_log_pop(rr_can_interface_t *iface);
 void rr_emcy_log_clear(rr_can_interface_t *iface);
 
