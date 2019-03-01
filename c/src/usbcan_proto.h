@@ -49,9 +49,9 @@ typedef struct usbcan_device_t usbcan_device_t;
 typedef enum
 {
 	OP_NONE,
-	OP_WAIT_DEV,
+	OP_WAIT_DEV_STATE,
+	OP_WAIT_DEV_BOOT_UP,
 	OP_SDO,
-
 } usbcan_op_code_t;
 
 typedef struct
@@ -64,6 +64,7 @@ typedef struct
 		int sidx;
 		int len;
 		int ttl;
+		usbcan_nmt_state_t state;
 		int re_txn;
 		uint8_t data[8192];
 		uint32_t abt;
@@ -116,7 +117,10 @@ struct usbcan_instance_t
 	int64_t hb_alive_threshold;
 
 	int64_t dev_alive[USB_CAN_MAX_DEV];
+	bool dev_boot_up[USB_CAN_MAX_DEV];
 	int64_t dev_hb_ival[USB_CAN_MAX_DEV];
+	int64_t dev_min_hb_ival[USB_CAN_MAX_DEV];
+	int64_t dev_max_hb_ival[USB_CAN_MAX_DEV];
 	usbcan_nmt_state_t dev_state[USB_CAN_MAX_DEV];
 
 	bool inhibit_master_hb;
@@ -152,6 +156,9 @@ void usbcan_setup_com_frame_cb(usbcan_instance_t *inst, usbcan_com_frame_cb_t cb
 
 usbcan_nmt_state_t usbcan_get_device_state(usbcan_instance_t *inst, int id);
 int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id);
+int64_t usbcan_get_min_hb_interval(usbcan_instance_t *inst, int id);
+int64_t usbcan_get_max_hb_interval(usbcan_instance_t *inst, int id);
+bool usbcan_clear_hb_stat(usbcan_instance_t *inst, int id);
 void usbcan_inhibit_master_hb(usbcan_instance_t *inst, bool inh);
 
 void usbcan_set_comm_log_stream(usbcan_instance_t *inst, FILE *f);
@@ -166,6 +173,9 @@ int usbcan_device_deinit(usbcan_device_t **dev);
  * User thread functions
  */
 int wait_device(usbcan_instance_t *inst, int id, int timeout_ms);
+int wait_device_state(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state, int timeout_ms);
+void clear_device_boot_up_flag(usbcan_instance_t *inst, int id);
+int wait_device_boot_up(usbcan_instance_t *inst, int id, int timeout_ms);
 uint32_t write_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int len, int retry, int timeout_ms);
 uint32_t read_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t *data, int *len, int retry, int timeout_ms);
 int write_com_frame(usbcan_instance_t *inst, can_msg_t *msg);

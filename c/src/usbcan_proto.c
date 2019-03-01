@@ -68,7 +68,7 @@ static bool is_valid_device(const usbcan_device_t *dev)
 }
 
 /*
- * Writes to interface file descriptor. i
+ * Writes to interface file descriptor. 
  * Notice: data will be unwrapped if connection type is UDP socket.
  */
 static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
@@ -170,6 +170,7 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 		{
 			inst->dev_alive[i] = -1;
 			inst->dev_hb_ival[i] = -1;
+			inst->dev_state[i] = CO_NMT_HB_TIMEOUT;
 			if(inst->usbcan_nmt_state_cb)
 			{
 				((usbcan_nmt_state_cb_t)inst->usbcan_nmt_state_cb)(inst, i, CO_NMT_HB_TIMEOUT);
@@ -202,18 +203,45 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 		}
 	}
 
-	/*Wait for device apeared on bus*/
-	if(inst->op.code == OP_WAIT_DEV)
+	/*Wait for device specific state*/
+	if(inst->op.code == OP_WAIT_DEV_STATE)
 	{
 		if(inst->dev_alive[inst->op.id] > 0)
 		{			
+			if((inst->op.state == CO_NMT_ANY) || (inst->op.state == inst->dev_state[inst->op.id]))
+			{
+				inst->op.abt = 0;
+				inst->op.code = OP_NONE;
+				pthread_mutex_lock(&inst->mutex);
+				pthread_cond_signal(&inst->cond);
+				pthread_mutex_unlock(&inst->mutex);
+			}
+		}
+		if(inst->op.ttl <= 0)
+		{	
+			inst->op.abt = -1u;
+			inst->op.code = OP_NONE;
+			pthread_mutex_lock(&inst->mutex);
+			pthread_cond_signal(&inst->cond);
+			pthread_mutex_unlock(&inst->mutex);
+		}
+
+		inst->op.ttl -= delta_ms;
+	}
+
+	/*Wait for device boot-up*/
+	if(inst->op.code == OP_WAIT_DEV_BOOT_UP)
+	{
+		if(inst->dev_boot_up[inst->op.id])
+		{			
+			inst->dev_boot_up[inst->op.id] = false;
 			inst->op.abt = 0;
 			inst->op.code = OP_NONE;
 			pthread_mutex_lock(&inst->mutex);
 			pthread_cond_signal(&inst->cond);
 			pthread_mutex_unlock(&inst->mutex);
 		}
-		else if(inst->op.ttl <= 0)
+		if(inst->op.ttl <= 0)
 		{	
 			inst->op.abt = -1u;
 			inst->op.code = OP_NONE;
@@ -516,6 +544,11 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 				uint8_t id = get_ux_(data, &p, 1) & 0x7f;
                 usbcan_nmt_state_t state = (usbcan_nmt_state_t)get_ux_(data, &p, 1);
 
+				if(state == CO_NMT_INITIALIZING)
+				{
+					inst->dev_boot_up[id] = true;
+				}
+
 				if((inst->dev_state[id] != state) || (inst->dev_alive[id] == -1))
 				{
 					inst->dev_state[id] = state;
@@ -526,6 +559,12 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 				}
 
 				inst->dev_hb_ival[id] = inst->hb_alive_threshold - inst->dev_alive[id];
+				if(inst->dev_min_hb_ival[id] < 0)
+				{
+					inst->dev_min_hb_ival[id] = inst->dev_hb_ival[id];
+				}
+				inst->dev_min_hb_ival[id] = MIN(inst->dev_min_hb_ival[id], inst->dev_hb_ival[id]);
+				inst->dev_max_hb_ival[id] = MAX(inst->dev_max_hb_ival[id], inst->dev_hb_ival[id]);
 				inst->dev_alive[id] = inst->hb_alive_threshold;
 
 				if(inst->usbcan_hb_rx_cb)
@@ -1060,7 +1099,36 @@ int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id)
 	{
 		return inst->dev_hb_ival[id];
 	}
-	return 0;
+	return -1;
+}
+
+int64_t usbcan_get_min_hb_interval(usbcan_instance_t *inst, int id)
+{
+	if(INRANGE(id, 0, USB_CAN_MAX_DEV - 1))
+	{
+		return inst->dev_min_hb_ival[id];
+	}
+	return -1;
+}
+
+int64_t usbcan_get_max_hb_interval(usbcan_instance_t *inst, int id)
+{
+	if(INRANGE(id, 0, USB_CAN_MAX_DEV - 1))
+	{
+		return inst->dev_max_hb_ival[id];
+	}
+	return -1;
+}
+
+bool usbcan_clear_hb_stat(usbcan_instance_t *inst, int id)
+{
+	if(INRANGE(id, 0, USB_CAN_MAX_DEV - 1))
+	{
+		inst->dev_max_hb_ival[id] = -1;
+		inst->dev_min_hb_ival[id] = -1;
+		return true;
+	}
+	return false;
 }
 
 usbcan_nmt_state_t usbcan_get_device_state(usbcan_instance_t *inst, int id)
@@ -1107,7 +1175,9 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
 	{
 		inst->dev_alive[i] = -1;
+		inst->dev_boot_up[i] = false;
 		inst->dev_hb_ival[i] = -1;
+		usbcan_clear_hb_stat(inst, i);
 		inst->dev_state[i] = CO_NMT_HB_TIMEOUT;
 	}
 	
@@ -1231,8 +1301,13 @@ int usbcan_device_deinit(usbcan_device_t **dev)
 /*
  * User thread functions
  */
- 
+
 int wait_device(usbcan_instance_t *inst, int id, int timeout_ms)
+{
+	return wait_device_state(inst, id, CO_NMT_ANY, timeout_ms);
+}
+
+int wait_device_state(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state, int timeout_ms)
 {
 	if(!inst)
 	{
@@ -1250,10 +1325,10 @@ int wait_device(usbcan_instance_t *inst, int id, int timeout_ms)
 	}
 
 	pthread_mutex_lock(&inst->mutex);
-
 	
-	inst->op.code = OP_WAIT_DEV;
+	inst->op.code = OP_WAIT_DEV_STATE;
 	inst->op.ttl = timeout_ms;
+	inst->op.state = state;
 	inst->op.id = id;
 	inst->op.abt = -1;
 	inst->dev_alive[inst->op.id] = -1;
@@ -1263,7 +1338,47 @@ int wait_device(usbcan_instance_t *inst, int id, int timeout_ms)
 
 	if(inst->op.abt)
 	{
-		LOG_WARN(debug_log, "%s: device sent no heart beats during timeout (%d) period", __func__, timeout_ms);
+		LOG_WARN(debug_log, "%s: device (%d) not entered into desired (%d), mode during timeout (%d) period", __func__, id, state, timeout_ms);
+	}
+
+	return !inst->op.abt;
+}
+
+void clear_device_boot_up_flag(usbcan_instance_t *inst, int id)
+{
+    inst->dev_boot_up[id] = false;
+}
+
+int wait_device_boot_up(usbcan_instance_t *inst, int id, int timeout_ms)
+{
+	if(!inst)
+	{
+		return 0;
+	}
+
+	if(id <= 0)
+	{
+		return 0;
+	}
+
+	if(timeout_ms <= 0)
+	{
+		return 1;
+	}
+
+	pthread_mutex_lock(&inst->mutex);
+	
+	inst->op.code = OP_WAIT_DEV_BOOT_UP;
+	inst->op.ttl = timeout_ms;
+	inst->op.id = id;
+	inst->op.abt = -1;
+
+	pthread_cond_wait(&inst->cond, &inst->mutex);
+	pthread_mutex_unlock(&inst->mutex);
+
+	if(inst->op.abt)
+	{
+		LOG_WARN(debug_log, "%s: device (%d) sent no boot-up messages during timeout (%d) period", __func__, id, timeout_ms);
 	}
 
 	return !inst->op.abt;
