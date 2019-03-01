@@ -72,6 +72,9 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define RR_API_WAIT_DEVICE_TIMEOUT_MS 2000
+#define RR_API_REBOOT_TIMEOUT_MS 10000
+#define RR_API_RESET_COMM_TIMEOUT_MS 5000
+#define RR_API_CHANGE_STATE_TIMEOUT_MS 2000
 
 /* Private macro -------------------------------------------------------------*/
 #define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
@@ -769,7 +772,6 @@ rr_ret_status_t rr_deinit_servo(rr_servo_t **servo)
         return RET_OK;
     }
     return RET_ERROR;
-    //return usbcan_servo_deinit((rr_servo_t **)servo) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -782,8 +784,16 @@ rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;
-    ;
+    clear_device_boot_up_flag(dev->inst, dev->id);
+    if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE))
+	{
+		return RET_ERROR;
+	}
+	if(!wait_device_boot_up(dev->inst, dev->id, RR_API_REBOOT_TIMEOUT_MS))
+	{
+		return RET_ERROR;
+	}
+	return RET_OK;
 }
 
 /**
@@ -796,8 +806,16 @@ rr_ret_status_t rr_servo_reset_communication(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;
-    ;
+    clear_device_boot_up_flag(dev->inst, dev->id);
+    if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM))
+	{
+		return RET_ERROR;
+	}
+	if(!wait_device_boot_up(dev->inst, dev->id, RR_API_RESET_COMM_TIMEOUT_MS))
+	{
+		return RET_ERROR;
+	}
+	return RET_OK;
 }
 
 /**
@@ -812,8 +830,15 @@ rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;
-    ;
+    if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_OP))
+	{
+		return RET_ERROR;
+	}
+	if(!wait_device_state(dev->inst, dev->id, CO_NMT_OPERATIONAL, RR_API_CHANGE_STATE_TIMEOUT_MS))
+	{
+		return RET_ERROR;
+	}
+	return RET_OK;
 }
 
 /**
@@ -827,8 +852,15 @@ rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;
-    ;
+    if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_PREOP))
+	{
+		return RET_ERROR;
+	}
+	if(!wait_device_state(dev->inst, dev->id, CO_NMT_PRE_OPERATIONAL, RR_API_CHANGE_STATE_TIMEOUT_MS))
+	{
+		return RET_ERROR;
+	}
+	return RET_OK;
 }
 
 /**
@@ -842,8 +874,79 @@ rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
 {
     IS_VALID_SERVO(servo);
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    return write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;
-    ;
+    
+    if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_STOPPED))
+	{
+		return RET_ERROR;
+	}
+	
+	if(!wait_device_state(dev->inst, dev->id, CO_NMT_STOPPED, RR_API_CHANGE_STATE_TIMEOUT_MS))
+	{
+		return RET_ERROR;
+	}
+	return RET_OK;
+}
+
+/**
+ * @brief The function retrieves the actual NMT state of a specified servo. The state is described as a status code (:: rr_nmt_state_t).  
+ * <p></p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param state Pointer to the variable where the state of the servo is returned 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup State
+ */
+rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *state)
+{
+    IS_VALID_SERVO(servo);
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+
+    *state = (rr_nmt_state_t)usbcan_get_device_state(dev->inst, dev->id);
+
+    return RET_OK;
+}
+
+/**
+ * @brief The function retrieves heart-beat statistics (min & max arrival intervals).  
+ * <p></p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param min_hb_ival Pointer to the variable to where minimal arrival interval should be saved (pass NULL if unused)
+ * @param max_hb_ival Pointer to the variable to where maximal arrival interval should be saved (pass NULL if unused)
+ * @return Status code (::rr_ret_status_t), min_hb_ival & max_hb_ival - min/max arrival intervals or -1 if no information available
+ * @ingroup State
+ */
+rr_ret_status_t rr_servo_get_hb_stat(const rr_servo_t *servo, int64_t *min_hb_ival, int64_t *max_hb_ival)
+{
+    IS_VALID_SERVO(servo);
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+
+	if(min_hb_ival)
+	{
+		*min_hb_ival = usbcan_get_min_hb_interval(dev->inst, dev->id);
+	}
+
+	if(max_hb_ival)
+	{
+		*max_hb_ival = usbcan_get_max_hb_interval(dev->inst, dev->id);
+	}
+
+    return RET_OK;
+}
+
+/**
+ * @brief The function clears heart-beat statistics (min & max arrival intervals).  
+ * <p></p>
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup State
+ */
+rr_ret_status_t rr_servo_clear_hb_stat(const rr_servo_t *servo)
+{
+    IS_VALID_SERVO(servo);
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+
+	usbcan_clear_hb_stat(dev->inst, dev->id);
+
+    return RET_OK;
 }
 
 /**
@@ -858,7 +961,6 @@ rr_ret_status_t rr_net_reboot(const rr_can_interface_t *iface)
     IS_VALID_INTERFACE(iface);
     usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;
-    ;
 }
 
 /**
@@ -873,7 +975,6 @@ rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *iface)
     IS_VALID_INTERFACE(iface);
     usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;
-    ;
 }
 
 /**
@@ -890,7 +991,6 @@ rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *iface)
     IS_VALID_INTERFACE(iface);
     usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;
-    ;
 }
 
 /**
@@ -906,7 +1006,6 @@ rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *iface
     IS_VALID_INTERFACE(iface);
     usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
     return write_nmt(inst, 0, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;
-    ;
 }
 
 /**
@@ -944,23 +1043,6 @@ rr_ret_status_t rr_net_get_state(const rr_can_interface_t *iface, int id, rr_nmt
     return RET_OK;
 }
 
-/**
- * @brief The function retrieves the actual NMT state of a specified servo. The state is described as a status code (:: rr_nmt_state_t).  
- * <p></p>
- * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param state Pointer to the variable where the state of the servo is returned 
- * @return Status code (::rr_ret_status_t)
- * @ingroup State
- */
-rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *state)
-{
-    IS_VALID_SERVO(servo);
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-
-    *state = (rr_nmt_state_t)usbcan_get_device_state(dev->inst, dev->id);
-
-    return RET_OK;
-}
 
 /**
  * @brief The function sets the specified servo to the released state. The servo is de-energized 
@@ -1807,9 +1889,16 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *iface, rr_servo_t **serv
     if(node_id_sts) return ret_sdo(node_id_sts);
 
     /* Reset communication, so the servo will update it's internal CAN ID with the ID in the dictionary */
-    rr_ret_status_t reset_comm_sts = rr_net_reset_communication(iface);
-    if(reset_comm_sts) return reset_comm_sts;
-    
+    clear_device_boot_up_flag(dev->inst, new_can_id);
+    if(!write_nmt(dev->inst, 0, CO_NMT_CMD_RESET_COMM))
+	{
+		return RET_ERROR;
+	}
+	if(!wait_device_boot_up(dev->inst, new_can_id, RR_API_RESET_COMM_TIMEOUT_MS))
+	{
+		return RET_ERROR;
+	}
+
     /* Deinit the servo */
     rr_ret_status_t deinit_sts = rr_deinit_servo(servo);
     if(deinit_sts) return deinit_sts;
@@ -1817,6 +1906,8 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *iface, rr_servo_t **serv
     /* Initialize it with the new ID */
     *servo = rr_init_servo(iface, new_can_id);
     if(*servo == NULL) return RET_BAD_INSTANCE;
+
+
 
     return RET_OK;
 }
