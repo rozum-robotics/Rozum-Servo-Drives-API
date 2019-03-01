@@ -42,9 +42,14 @@ extern "C"
 
 /**
  * @brief Size of the emergency (EMCY) log entry
- *
  */
 #define EMCY_LOG_DEPTH	1024
+
+/**
+ * @brief Maximal number of CanOpen devoces on bus
+ *
+ */
+#define MAX_CO_DEV	128
 
 /* Exported types ------------------------------------------------------------*/
 /**
@@ -161,7 +166,6 @@ typedef struct
 
 /**
  * @brief Emergency (EMCY) log entry structure
- *
  */
 typedef struct
 {
@@ -254,13 +258,16 @@ rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo);
 rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo);
 rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo);
 
+rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *state);
+rr_ret_status_t rr_servo_get_hb_stat(const rr_servo_t *servo, int64_t *min_hb_ival, int64_t *max_hb_ival);
+rr_ret_status_t rr_servo_clear_hb_stat(const rr_servo_t *servo);
+
 rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface);
 rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, rr_nmt_state_t *state);
-rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *state);
 
 rr_ret_status_t rr_release(const rr_servo_t *servo);
 rr_ret_status_t rr_freeze(const rr_servo_t *servo);
