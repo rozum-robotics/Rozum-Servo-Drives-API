@@ -572,6 +572,31 @@ class Servo(object):
         ServoError.handle(status)
         return servo_state.value
 
+    def get_hb_stat(self):
+        """The function retrieves heart-beat statistics (min & max arrival intervals).
+
+        :return: Minimal value, Maximal value
+        """
+        min_inteval = c_int64()
+        max_interval = c_int64()
+
+        status = self._api.rr_servo_get_hb_stat(
+            self._servo,
+            byref(min_inteval),
+            byref(max_interval)
+        )
+        ServoError.handle(status)
+
+        return min_inteval.value, max_interval.value
+
+    def clear_hb_stat(self):
+        """The function clears heart-beat statistics (min & max arrival intervals).
+
+        :return: None
+        """
+        status = self._api.rr_servo_clear_hb_stat(self._servo)
+        ServoError.handle(status)
+
     def _write_raw_sdo(self, idx: c_uint16, sidx: c_uint8, data: c_void_p, sz: c_int, retry: c_int, tout: c_int):
         """The function performs an arbitrary SDO write request.
 
