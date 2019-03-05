@@ -33,6 +33,12 @@
  *    -# \ref tutor_c_read_motion_queue
  *    -# \ref tutor_c_get_max_velocity
  *    -# \ref tutor_c_changeID1
+ *    -# \ref tutor_c_cogging
+ *    -# \ref tutor_c_calibration_quality
+ *    -# \ref tutor_c_discovery
+ *    -# \ref tutor_c_read_emcy_log
+ *    -# \ref tutor_c_check_motion_points
+ *    -# \ref tutor_c_time_optimal_movement
  * - Java
  * - Python
  * - Ruby
@@ -59,6 +65,12 @@
  * \defgroup tutor_c_get_max_velocity Reading maximum servo velocity
  * \defgroup tutor_c_read_motion_queue Reading motion queue parameters
  * \defgroup tutor_c_changeID1 Changing CAN ID of a single servo
+ * \defgroup tutor_c_cogging Calibrating to mitigate cogging effects
+ * \defgroup tutor_c_calibration_quality Checking calibration quality
+ * \defgroup tutor_c_discovery Detecting available CAN devices
+ * \defgroup tutor_c_read_emcy_log Reading emergency (EMY) log
+ * \defgroup tutor_c_check_motion_points Checking PVT points
+ * \defgroup tutor_c_time_optimal_movement Setting position with limits
  */
 /* Includes ------------------------------------------------------------------*/
 #include "api.h"
@@ -269,8 +281,15 @@ void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
 
 
 /**
- * @brief The function returns actual count of entries in EMCY logging buffer.
- * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @brief The function returns the total count of entries in the EMCY logging buffer. Each entry in the buffer contains an EMCY event
+ * that have occurred up to the moment on the servo specified in the descriptor.
+ * <b>Note:</b>When the API library is disabled, no new entries are made in the buffer, irrespective of whether or not any events occur on the servo.
+ * <br>The function is used in combination with the ::rr_emcy_log_pop and ::rr_emcy_log_clear functions. The typical sequence is as follows:
+ * <ol><li>to clear the EMCY logging buffer with the ::rr_emcy_log_clear</li>
+ * <li>to get the total count of entries in the EMCY logging buffer, using the ::rr_emcy_log_get_size function </li>
+ * <li>to read the EMCY events from the buffer with the ::rr_emcy_log_pop function </li></ol>
+ 
+ * @param iface Descriptor of the interface returned by the ::rr_init_interface function
  * @return int number of unread entries
  * @ingroup Err
  */
@@ -298,9 +317,12 @@ void rr_emcy_log_push(rr_can_interface_t *iface, uint8_t id, uint16_t err_code, 
 
 
 /**
- * @brief The function pops single entry from EMCY logging buffer.
- * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
- * @return emcy_log_entry_t pointer to EMCY entry or NULL if no messages in buffer
+ * @brief The function enables reading entries from the EMCY logging buffer. Reading the entries is according to the "first in-first out" principle.
+ * Once an EMCY entry is read, the function removes it permenantly from the EMCY logging buffer.<br>
+ * <b>Note:</b>Typically, the rr_emcy_log_pop function is used in combination with the ::rr_emcy_log_get_size and ::rr_emcy_log_clear functions.
+ * For the sequence of using the functions, see ::rr_emcy_log_get_size.
+ * @param iface Descriptor of the interface returned by the ::rr_init_interface function
+ * @return emcy_log_entry_t pointer to the EMCY entry or NULL if the buffer contains no entries
  * @ingroup Err
  */
 emcy_log_entry_t *rr_emcy_log_pop(rr_can_interface_t *iface)
@@ -314,8 +336,10 @@ emcy_log_entry_t *rr_emcy_log_pop(rr_can_interface_t *iface)
 }
 
 /**
- * @brief The clears entire EMCY logging buffer.
- * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @brief The function clears the EMCY logging buffer, removing the total of entries from it.
+ * It is advisable to use the clearing function in the beginning of a new work session and before applying the ::rr_emcy_log_get_size and
+ * ::rr_emcy_log_pop functions. For the typical sequence of using the functions, see ::rr_emcy_log_get_size.
+ * @param iface Descriptor of the interface returned by the ::rr_init_interface function
  * @return void
  * @ingroup Err
  */
@@ -906,11 +930,14 @@ rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *stat
 }
 
 /**
- * @brief The function retrieves heart-beat statistics (min & max arrival intervals).  
- * <p></p>
+ * @brief The function retrieves statistics on minimal and maximal intervals between Heartbeat messages of a servo. The statistics is saved to the variables
+ * specified in the param min_hb_ival and param max_hb_ival parameters, from where they are available for the user to perform further operations (e.g., comparison).<br>
+ * The Heartbeat statistics is helpful in diagnozing and troubleshooting servo failures. For instance, when the Heartbeat interval of a servo is too long,
+ * it may mean that the control device sees the servo as being offline.<br>
+ * <b>Note:<b> Before using the function, it is advisable to clear Heartbeat statistics with ::rr_servo_clear_hb_stat. 
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param min_hb_ival Pointer to the variable to where minimal arrival interval should be saved (pass NULL if unused)
- * @param max_hb_ival Pointer to the variable to where maximal arrival interval should be saved (pass NULL if unused)
+ * @param min_hb_ival Pointer to the variable where the minimal arrival interval is to be saved; when set to NULL, the variable is disabled. 
+ * @param max_hb_ival Pointer to the variable where the maximal arrival interval is to be saved; when set to NULL, the variable is disabled.
  * @return Status code (::rr_ret_status_t), min_hb_ival & max_hb_ival - min/max arrival intervals or -1 if no information available
  * @ingroup State
  */
@@ -933,8 +960,8 @@ rr_ret_status_t rr_servo_get_hb_stat(const rr_servo_t *servo, int64_t *min_hb_iv
 }
 
 /**
- * @brief The function clears heart-beat statistics (min & max arrival intervals).  
- * <p></p>
+ * @brief The function clears statistics on minimal and maximal intervals between Heartbeat messages of a servo.
+ * It is advisable to use the function before attempting to get the Heartbeat statistics with the ::rr_servo_get_hb_stat function.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @return Status code (::rr_ret_status_t)
  * @ingroup State
@@ -1343,7 +1370,7 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * (whichever is the smallest value), the function returns an error.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
- * @param velocity_deg_per_sec Velocity(in degrees/sec) at which the servo should move to reach the specified position
+ * @param velocity_deg_per_sec Servo velocity(in degrees/sec) at the point
  * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one.
  * The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
  * @return Status code (::rr_ret_status_t)
@@ -1380,8 +1407,8 @@ rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float positio
  * <li>how long the movement to the specified position should take</li></ul>
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
- * @param velocity_deg_per_sec Velocity (in degrees/sec) at which the servo should move to reach the specified position
- * @param accel_deg_per_sec2 Acceleration (in degrees/sec^2) at the end of the motion point
+ * @param velocity_deg_per_sec Servo velocity (in degrees/sec) at the point
+ * @param accel_deg_per_sec2 Servo acceleration (in degrees/sec^2) at the point
  * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one.
  * The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days). 
  * @return Status code (::rr_ret_status_t)
@@ -1942,11 +1969,10 @@ rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *iface, rr_servo_t **se
 }
 
 /**
- * @brief The function reads hardware version of the device (unique ID of the MCU + hardware type + hardware revision)
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function. <b>Note</b>: All RDrive servos are supplied with <b>the same default CAN ID—32</b>.
- * @param version_string Pointer to the ASCII string that will be read
- * @param version_string_size Input: size of the ::version_string, Output: size of the readed string
+ * @brief The function reads the hardware version of a servo (unique ID of the MCU + hardware type + hardware revision).
+ * @param servo Servo descriptor returned by the ::rr_init_servo function.
+ * @param version_string Pointer to the ASCII string to read
+ * @param version_string_size Input: size of the ::version_string, Output: size of the read string
  * @return Status code (::rr_ret_status_t)
  */
 rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
@@ -1962,11 +1988,10 @@ rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_s
 }
 
 /**
- * @brief The function reads software version of the device (minor + major + firmware build date)
- * 
- * @param servo Servo descriptor returned by the ::rr_init_servo function. <b>Note</b>: All RDrive servos are supplied with <b>the same default CAN ID—32</b>.
- * @param version_string Pointer to the ASCII string that will be read
- * @param version_string_size Input: size of the ::version_string, Output: size of the readed string
+ * @brief The function reads the software version of a servo (minor + major + firmware build date).
+ * @param servo Servo descriptor returned by the ::rr_init_servo function.
+ * @param version_string Pointer to the ASCII string to read
+ * @param version_string_size Input: size of the ::version_string, Output: size of the read string
  * @return Status code (::rr_ret_status_t)
  */
 rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
@@ -1982,17 +2007,18 @@ rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_s
 }
 
 /**
- * @brief 
- * 
+ * @brief The function enables verifying validity (reachability) of a trajectory point without actually initializing an interface or a servo.
+ * To verify, the maximum velocity limit is compared against the calculation output of the function.
  * @param velocity_limit_deg_per_sec Velocity limit (in degrees/sec)
- * @param velocity_max_calc_deg_per_sec Pointer to the maximum calculated velocity within the point (in degrees/sec)
- * @param position_deg_start Start position of the point (in degrees)
- * @param velocity_deg_per_sec_start Start velocity of the point (in degrees/sec)
- * @param position_deg_end End position of the point (in degrees)
- * @param velocity_deg_per_sec_end End velocity of the point (in degrees/sec)
- * @param time_ms Point time (in milliseconds)
- * @return true If the maximum calculated point velocity is greater the velocity limit
- * @return false If the maximum calculated point velocity is equal or lower the velocity limit
+ * @param velocity_max_calc_deg_per_sec Pointer to the maximum velocity calculated for the point (in degrees/sec)
+ * @param position_deg_start Start position preset for the point (in degrees)
+ * @param velocity_deg_per_sec_start Start velocity preset for the point (in degrees/sec)
+ * @param position_deg_end End position preset for the point (in degrees)
+ * @param velocity_deg_per_sec_end End velocity preset for the point (in degrees/sec)
+ * @param time_ms Time (in milliseconds) it should take the servo to move from the previous position (PVT point in a motion trajectory or an initial point) to the commanded one.
+ * The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days)
+ * @return true If the maximum calculated velocity at the point is greater than the velocity limit
+ * @return false If the maximum calculated velocity at the point is equal or lower than the velocity limit
  */
 bool rr_check_point(const float velocity_limit_deg_per_sec,
                     float *velocity_max_calc_deg_per_sec,
