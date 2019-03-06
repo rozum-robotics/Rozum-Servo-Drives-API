@@ -53,6 +53,7 @@ uint32_t dev_hw_rev = -1;
 uint32_t alive = 0;
 bool master_hb_inhibit = true;
 bool read_dev_ident_req = false;
+bool do_not_reset = false;
 
 usbcan_instance_t *inst;
 usbcan_device_t *dev;
@@ -91,7 +92,6 @@ void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 		}
 	}
 
-	
 	if(read_dev_ident_req && (id == dev->id))
 	{
 		read_dev_ident_req = false;
@@ -337,6 +337,8 @@ download_result_t update(char *name, bool ignore_identity)
 		if(usbcan_get_device_state(inst, dev->id) == CO_NMT_BOOT)
 		{
 			LOG_INFO(debug_log, "Already in bootloader state");
+			read_dev_ident_req = true;
+			do_not_reset = true;
 			_nmt_state_cb(inst, dev->id, CO_NMT_BOOT);	
 		}
 
@@ -399,9 +401,12 @@ download_result_t update(char *name, bool ignore_identity)
 
 		if(boot_legacy_mode)
 		{
-			if(!reset())
+			if(!do_not_reset)
 			{
-				break;
+				if(!reset())
+				{
+					break;
+				}
 			}
 		}
 
@@ -440,9 +445,12 @@ download_result_t update(char *name, bool ignore_identity)
 
 		if(!boot_legacy_mode)
 		{
-			if(!reset())
+			if(!do_not_reset)
 			{
-				break;
+				if(!reset())
+				{
+					break;
+				}
 			}
 		}
 
