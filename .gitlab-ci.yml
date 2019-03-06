@@ -100,7 +100,7 @@ tutorial_win:
 
 update_tools_deb:
   image: 
-   name: rozum/embed-gcc:latest
+   name: ubuntu:xenial
   stage: update_tools
   script:
     - apt-get update && apt-get install -y build-essential
