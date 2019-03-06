@@ -328,6 +328,7 @@ download_result_t update(char *name, bool ignore_identity)
 	uint16_t fw_hw_rev = 0;
 	uint32_t crc = 0;
 	uint32_t file_len, data_len;
+	uint16_t v;	
 	
 	download_result = DL_IDLE;
 	
@@ -340,19 +341,22 @@ download_result_t update(char *name, bool ignore_identity)
 		}
 
 		int len = 2;
-		if(read_raw_sdo(dev, 0x2003, 1, (uint8_t *)&dev_hw_type, &len, 1, 100))
+
+		if(read_raw_sdo(dev, 0x2003, 1, (uint8_t *)&v, &len, 1, 100))
 		{
 			LOG_WARN(debug_log, "idx2003sub1 not supported, switching to legacy mode");
 			boot_legacy_mode = true;
 		}
 		else
 		{
+			dev_hw_type = v;
 			len = 2;
-			if(read_raw_sdo(dev, 0x2003, 2, (uint8_t *)&dev_hw_rev, &len, 1, 100))
+			if(read_raw_sdo(dev, 0x2003, 2, (uint8_t *)&v, &len, 1, 100))
 			{
 				LOG_WARN(debug_log, "idx2003sub2 not supported, switching to legacy mode");
 				boot_legacy_mode = true;
 			}
+			dev_hw_rev = v;
 		}
 
 		if(!ignore_identity)
