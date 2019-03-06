@@ -52,6 +52,7 @@ uint32_t dev_hw_type = -1;
 uint32_t dev_hw_rev = -1;
 uint32_t alive = 0;
 bool master_hb_inhibit = true;
+bool read_dev_ident_req = false;
 
 usbcan_instance_t *inst;
 usbcan_device_t *dev;
@@ -85,12 +86,15 @@ void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 		if(!boot_captured && (state == CO_NMT_BOOT))
 		{
 			boot_captured = true;
+			LOG_INFO(debug_log, "Captured device with ID %d", id);
 			dev->id = id;
 		}
 	}
 
-	if((dev_hw_type == -1) && (id == dev->id))
+	
+	if(read_dev_ident_req && (id == dev->id))
 	{
+		read_dev_ident_req = false;
 		LOG_INFO(debug_log, "Reading device identity");
 		can_msg_t m_read = 
 		{
@@ -296,7 +300,9 @@ bool reset()
 {
 	int to;
 
-	LOG_INFO(debug_log, "Resetting device");
+	read_dev_ident_req = true;
+
+	LOG_INFO(debug_log, "Resetting device %d", dev->id);
 	write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
 
 	for(to = RESET_TIMEOUT ;to > 0; to -= 100)
