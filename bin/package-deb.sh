@@ -2,7 +2,8 @@
 
 cd `dirname $0`/..
 
-version=$1
+tag=$1
+version="${tag:1}"
 
 echo "Preparing directories"
 
