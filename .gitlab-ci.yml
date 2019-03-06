@@ -102,6 +102,8 @@ update_tools_deb:
   image: 
    name: ubuntu:xenial
   stage: update_tools
+  before_script:
+    - echo 'Skipping before-script'
   script:
     - apt-get update && apt-get install -y build-essential
     - bin/package-deb.sh ${CI_COMMIT_TAG} 
