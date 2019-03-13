@@ -491,7 +491,7 @@ void usage(char **argv)
 			"    [-M(--master-hb)]\n"
 			"    [-B(--use-any-in-boot-mode) yes]\n"
 			"    [-v(--version)]\n"
-            "    [-R(\"do not reset\")]\n"
+            "    [-R(--do-not-reset)]\n"
 			"    port\n"
 			"    id or 'all'\n"
 			"    firmware_folder or firmware_file\n"
