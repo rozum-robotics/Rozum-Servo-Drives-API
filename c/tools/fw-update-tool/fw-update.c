@@ -491,7 +491,7 @@ void usage(char **argv)
 			"    [-M(--master-hb)]\n"
 			"    [-B(--use-any-in-boot-mode) yes]\n"
 			"    [-v(--version)]\n"
-            "    [-o(online (usb-can) mode)]\n"
+            "    [-R(\"do not reset\")]\n"
 			"    port\n"
 			"    id or 'all'\n"
 			"    firmware_folder or firmware_file\n"
@@ -509,14 +509,14 @@ bool parse_cmd_line(int argc, char **argv)
 		{"ignore-ident",   no_argument, 0, 'X' },
 		{"version",   no_argument, 0, 'v' },
 		{"master-hb",     no_argument, 0, 'M' },
-		{"online-mode",     no_argument, 0, 'o' },
+		{"do-not-reset",     no_argument, 0, 'R' },
 		{0,         0,                 0,  0 }
 	};
 
 
 	while (1) 
 	{
-		c = getopt_long(argc, argv, "B:XMvo", long_options, &option_index);
+		c = getopt_long(argc, argv, "B:XMvR", long_options, &option_index);
 		if (c == -1)
 		{
 			break;
@@ -527,9 +527,8 @@ bool parse_cmd_line(int argc, char **argv)
 			case '?':
 				break;
 
-            case 'o':
+            case 'R':
                 do_not_reset = true;
-                fprintf(stdout, "Online update mode is selected\n");
                 break;
 
 			case 'B':
