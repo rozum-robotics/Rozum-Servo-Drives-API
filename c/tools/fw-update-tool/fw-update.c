@@ -296,6 +296,42 @@ void write_block(uint8_t *data, ssize_t *off, ssize_t len)
 		write_com_frame(inst, &m_download);
 }
 
+bool read_ident()
+{
+	int to;
+
+	LOG_INFO(debug_log, "Reading device identity");
+	can_msg_t m_read = 
+	{
+		.id = CO_CAN_ID_DEV_CMD, 
+		.dlc = 3, 
+		.data = 
+		{
+			dev->id, 
+			CO_DEV_CMD_REQUEST_FIELD,
+			CO_DEV_APP_TYPE
+		}
+	};
+	write_com_frame(inst, &m_read);
+	
+
+	for(to = RESET_TIMEOUT ;to > 0; to -= 100)
+	{
+		if((dev_hw_type != -1) && (dev_hw_rev != -1))
+		{
+			break;
+		}
+		msleep(100);
+	}
+	if((dev_hw_type == -1) || (dev_hw_rev == -1))
+	{
+		LOG_ERROR(debug_log, "Can't read device HW type");
+		download_result = DL_ERROR;
+		return false;
+	}
+	return true;
+}
+
 bool reset()
 {
 	int to;
@@ -408,6 +444,13 @@ download_result_t update(char *name, bool ignore_identity)
 					break;
 				}
 			}
+			else
+			{
+				if(!read_ident())
+				{
+					break;
+				}
+			}
 		}
 
 		LOG_INFO(debug_log, "Device HW type %d, rev %d", dev_hw_type, dev_hw_rev);
@@ -452,6 +495,13 @@ download_result_t update(char *name, bool ignore_identity)
 					break;
 				}
 			}
+			else
+			{
+				if(!read_ident())
+				{
+					break;
+				}
+			}
 		}
 
 		download_start();
@@ -491,7 +541,7 @@ void usage(char **argv)
 			"    [-M(--master-hb)]\n"
 			"    [-B(--use-any-in-boot-mode) yes]\n"
 			"    [-v(--version)]\n"
-            "    [-R(--do-not-reset)]\n"
+            		"    [-R(--do-not-reset)]\n"
 			"    port\n"
 			"    id or 'all'\n"
 			"    firmware_folder or firmware_file\n"
@@ -527,9 +577,9 @@ bool parse_cmd_line(int argc, char **argv)
 			case '?':
 				break;
 
-            case 'R':
-                do_not_reset = true;
-                break;
+			case 'R':
+				do_not_reset = true;
+				break;
 
 			case 'B':
 				if(strcmp(optarg, "yes") == 0)
@@ -582,7 +632,15 @@ void batch_update(int id)
 
 	if(!wait_device(inst, dev->id, 2000))
 	{
-		exit(1);
+		if(!update_all)
+		{
+			exit(1);
+		}
+		else
+		{
+			usbcan_device_deinit(&dev);
+			return;
+		}
 	}
 
 
@@ -663,8 +721,8 @@ int main(int argc, char **argv)
 		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
 		exit(1);
 	}
-	
-	if(strcmp(argv[2], "all") != 0)
+
+	if(strcmp(argv[optind + 1], "all") != 0)
 	{
 		update_all = false;
 		id = strtol(argv[optind + 1], 0, 0);
