@@ -300,6 +300,9 @@ bool read_ident()
 {
 	int to;
 
+	dev_hw_type = -1;
+	dev_hw_rev = -1;
+
 	LOG_INFO(debug_log, "Reading device identity");
 	can_msg_t m_read = 
 	{
@@ -313,9 +316,8 @@ bool read_ident()
 		}
 	};
 	write_com_frame(inst, &m_read);
-	
 
-	for(to = RESET_TIMEOUT ;to > 0; to -= 100)
+	for(to = RESET_TIMEOUT; to > 0; to -= 100)
 	{
 		if((dev_hw_type != -1) && (dev_hw_rev != -1))
 		{
@@ -338,10 +340,13 @@ bool reset()
 
 	read_dev_ident_req = true;
 
+	dev_hw_type = -1;
+	dev_hw_rev = -1;
+
 	LOG_INFO(debug_log, "Resetting device %d", dev->id);
 	write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
 
-	for(to = RESET_TIMEOUT ;to > 0; to -= 100)
+	for(to = RESET_TIMEOUT; to > 0; to -= 100)
 	{
 		if((dev_hw_type != -1) && (dev_hw_rev != -1))
 		{
