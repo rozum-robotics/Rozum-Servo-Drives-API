@@ -1,18 +1,16 @@
 stages:
-  - test_tutorial
+  - build
+  - test
   - document
-  - library_win
-  - update_tools
-  - tutorial_win
+  - deploy
 
-  
 before_script:
   - eval $(ssh-agent)
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
 
 test_tutorial:
   image: rozum/embed-gcc:latest
-  stage: test_tutorial
+  stage: test
   script:
     - cd ./c/tutorial && make && cd ./build
     - echo -en "cex 1 me\n" | nc -w1 -u $CAN_INTERFACE 2000
@@ -31,82 +29,105 @@ test_tutorial:
 
     - if [ "$(grep 'ERROR:' *.log)" != "" ]; then exit 1; fi
 
-document:
- image: rozum/embed-gcc:latest
- stage: document
- script: 
+generate_docs:
+  image: rozum/embed-gcc:latest
+  stage: document
+  script:
+    - cd c
+    - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
+    - cd latex && make
+    - cd .. && cp latex/refman.pdf html/C-Servo-API.pdf
+    - mv html docs
+
+    - cd ../python
+    - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
+    - mv html docs
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - python/docs
+      - c/docs
+    expire_in: 1 week
+
+deploy_artifacts:
+  image: rozum/embed-gcc:latest
+  stage: deploy
+  script:
     - git checkout master
     - git reset --hard HEAD
     - git pull
+    - git tag -a v$(cat ../version) -m "Release v$(cat ../version)"
     - git config --global credential.helper store
     - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
     - git push -f "$GITHUB_URL" master
     - git tag
-    - cd c
-    - ( cat Doxyfile ; echo "PROJECT_NUMBER=$(git tag --contains HEAD)" ) | doxygen -  
-    - cd latex
-    - make
-    - cd ..
-    - mkdir archive
-    - cp latex/refman.pdf html/RR-UserAPI.pdf
-    - tar -czvf archive/rr-servoapi-doc-$(git tag --contains HEAD | tr -d '\n').tar.gz html
-#    - ssh -o StrictHostKeyChecking=no "$COMPANY_SRV" "echo HELLO"
-#    - ssh "$COMPANY_SRV" "rm -fr $COMPANY_SRV_DOC_DIR"
-    - scp -o StrictHostKeyChecking=no -r html/* "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR"
-    - scp -o StrictHostKeyChecking=no -r archive "$COMPANY_SRV":"$COMPANY_SRV_DOC_DIR"
- artifacts:
-    paths:
-     - c/html
-     - c/html/RR-UserAPI.pdf
-    expire_in: 1 month
- only:
+
+    - scp -o StrictHostKeyChecking=no -r c/docs "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
+    - scp -o StrictHostKeyChecking=no -r c/lib "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
+    - scp -o StrictHostKeyChecking=no -r c/utils "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
+    - scp -o StrictHostKeyChecking=no -r c/examples "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
+
+    - scp -o StrictHostKeyChecking=no -r python/docs "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/python"
+  only:
     - master
 
 library_win:
- image: 
-   name: rozum/mingw-gcc:latest
- stage: library_win
- script:
+  image:
+    name: rozum/mingw-gcc:latest
+  stage: build
+  script:
     - make -C c -e OS=win32
     - make -C c -e OS=win64
- artifacts:
+    - mkdir c/lib
+    - mv c/build-win-32bit/libservo_api-32bit.dll c/lib/libservo_api-32bit.dll
+    - mv c/build-win-64bit/libservo_api-64bit.dll c/lib/libservo_api-64bit.dll
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
     paths:
-     - c/build-win-32bit/libservo_api-32bit.dll
-     - c/build-win-64bit/libservo_api-64bit.dll
+      - c/lib
 
 update_tools_win:
- image: 
-   name: rozum/mingw-gcc:latest
- stage: update_tools
- script:
+  image:
+    name: rozum/mingw-gcc:latest
+  stage: build
+  script:
     - make -C c -e OS=win32
     - make -C c/tools/fw-update-tool -e OS=win32
     - make -C c/tools/cfg-update-tool -e OS=win32
- artifacts:
+    - mkdir c/utils
+    - mv c/tools/fw-update-tool/build-win-32bit/rr-fw-update-32bit.exe c/utils/rr-fw-update-32bit.exe
+    - mv c/tools/cfg-update-tool/build-win-32bit/rr-cfg-update-32bit.exe c/utils/rr-cfg-update-32bit.exe
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
     paths:
-     - c/tools/fw-update-tool/build-win-32bit/*.exe
-     - c/tools/cfg-update-tool/build-win-32bit/*.exe
+      - c/utils
 
 tutorial_win:
- image: 
-   name: rozum/mingw-gcc:latest
- stage: tutorial_win
- script:
+  image:
+    name: rozum/mingw-gcc:latest
+  stage: build
+  script:
     - make -C c -e OS=win32
     - make -C c/tutorial -e OS=win32
- artifacts:
+    - mkdir c/examples
+    - mv c/tutorial/build-win-32bit/* c/examples
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
     paths:
-     - c/tutorial/build-win-32bit/*.exe
+      - c/examples
 
 update_tools_deb:
-  image: 
-   name: rozum/embed-gcc:latest
-  stage: update_tools
+  image:
+    name: ubuntu:xenial
+  stage: build
+  before_script:
+    - echo 'Skipping before-script'
   script:
-    - bin/package_deb.sh ${CI_COMMIT_TAG} 
-  only: 
+    - apt-get update && apt-get install -y build-essential
+    - bin/package-deb.sh ${CI_COMMIT_TAG}
+  only:
     - tags
   artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
     paths:
       - build/*.deb
- 

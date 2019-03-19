@@ -52,6 +52,8 @@ uint32_t dev_hw_type = -1;
 uint32_t dev_hw_rev = -1;
 uint32_t alive = 0;
 bool master_hb_inhibit = true;
+bool read_dev_ident_req = false;
+bool do_not_reset = false;
 
 usbcan_instance_t *inst;
 usbcan_device_t *dev;
@@ -85,12 +87,14 @@ void _nmt_state_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 		if(!boot_captured && (state == CO_NMT_BOOT))
 		{
 			boot_captured = true;
+			LOG_INFO(debug_log, "Captured device with ID %d", id);
 			dev->id = id;
 		}
 	}
 
-	if((dev_hw_type == -1) && (id == dev->id))
+	if(read_dev_ident_req && (id == dev->id))
 	{
+		read_dev_ident_req = false;
 		LOG_INFO(debug_log, "Reading device identity");
 		can_msg_t m_read = 
 		{
@@ -292,14 +296,57 @@ void write_block(uint8_t *data, ssize_t *off, ssize_t len)
 		write_com_frame(inst, &m_download);
 }
 
+bool read_ident()
+{
+	int to;
+
+	dev_hw_type = -1;
+	dev_hw_rev = -1;
+
+	LOG_INFO(debug_log, "Reading device identity");
+	can_msg_t m_read = 
+	{
+		.id = CO_CAN_ID_DEV_CMD, 
+		.dlc = 3, 
+		.data = 
+		{
+			dev->id, 
+			CO_DEV_CMD_REQUEST_FIELD,
+			CO_DEV_APP_TYPE
+		}
+	};
+	write_com_frame(inst, &m_read);
+
+	for(to = RESET_TIMEOUT; to > 0; to -= 100)
+	{
+		if((dev_hw_type != -1) && (dev_hw_rev != -1))
+		{
+			break;
+		}
+		msleep(100);
+	}
+	if((dev_hw_type == -1) || (dev_hw_rev == -1))
+	{
+		LOG_ERROR(debug_log, "Can't read device HW type");
+		download_result = DL_ERROR;
+		return false;
+	}
+	return true;
+}
+
 bool reset()
 {
 	int to;
 
-	LOG_INFO(debug_log, "Resetting device");
+	read_dev_ident_req = true;
+
+	dev_hw_type = -1;
+	dev_hw_rev = -1;
+
+	LOG_INFO(debug_log, "Resetting device %d", dev->id);
 	write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
 
-	for(to = RESET_TIMEOUT ;to > 0; to -= 100)
+	for(to = RESET_TIMEOUT; to > 0; to -= 100)
 	{
 		if((dev_hw_type != -1) && (dev_hw_rev != -1))
 		{
@@ -322,6 +369,7 @@ download_result_t update(char *name, bool ignore_identity)
 	uint16_t fw_hw_rev = 0;
 	uint32_t crc = 0;
 	uint32_t file_len, data_len;
+	uint16_t v;	
 	
 	download_result = DL_IDLE;
 	
@@ -330,23 +378,28 @@ download_result_t update(char *name, bool ignore_identity)
 		if(usbcan_get_device_state(inst, dev->id) == CO_NMT_BOOT)
 		{
 			LOG_INFO(debug_log, "Already in bootloader state");
+			read_dev_ident_req = true;
+			do_not_reset = true;
 			_nmt_state_cb(inst, dev->id, CO_NMT_BOOT);	
 		}
 
 		int len = 2;
-		if(read_raw_sdo(dev, 0x2003, 1, (uint8_t *)&dev_hw_type, &len, 1, 100))
+
+		if(read_raw_sdo(dev, 0x2003, 1, (uint8_t *)&v, &len, 1, 100))
 		{
 			LOG_WARN(debug_log, "idx2003sub1 not supported, switching to legacy mode");
 			boot_legacy_mode = true;
 		}
 		else
 		{
+			dev_hw_type = v;
 			len = 2;
-			if(read_raw_sdo(dev, 0x2003, 2, (uint8_t *)&dev_hw_rev, &len, 1, 100))
+			if(read_raw_sdo(dev, 0x2003, 2, (uint8_t *)&v, &len, 1, 100))
 			{
 				LOG_WARN(debug_log, "idx2003sub2 not supported, switching to legacy mode");
 				boot_legacy_mode = true;
 			}
+			dev_hw_rev = v;
 		}
 
 		if(!ignore_identity)
@@ -389,9 +442,19 @@ download_result_t update(char *name, bool ignore_identity)
 
 		if(boot_legacy_mode)
 		{
-			if(!reset())
+			if(!do_not_reset)
 			{
-				break;
+				if(!reset())
+				{
+					break;
+				}
+			}
+			else
+			{
+				if(!read_ident())
+				{
+					break;
+				}
 			}
 		}
 
@@ -430,9 +493,19 @@ download_result_t update(char *name, bool ignore_identity)
 
 		if(!boot_legacy_mode)
 		{
-			if(!reset())
+			if(!do_not_reset)
 			{
-				break;
+				if(!reset())
+				{
+					break;
+				}
+			}
+			else
+			{
+				if(!read_ident())
+				{
+					break;
+				}
 			}
 		}
 
@@ -472,7 +545,8 @@ void usage(char **argv)
 			"    [-X(--ignore-ident)\n"
 			"    [-M(--master-hb)]\n"
 			"    [-B(--use-any-in-boot-mode) yes]\n"
-			"    [-v(--version]\n"
+			"    [-v(--version)]\n"
+            		"    [-R(--do-not-reset)]\n"
 			"    port\n"
 			"    id or 'all'\n"
 			"    firmware_folder or firmware_file\n"
@@ -490,13 +564,14 @@ bool parse_cmd_line(int argc, char **argv)
 		{"ignore-ident",   no_argument, 0, 'X' },
 		{"version",   no_argument, 0, 'v' },
 		{"master-hb",     no_argument, 0, 'M' },
+		{"do-not-reset",     no_argument, 0, 'R' },
 		{0,         0,                 0,  0 }
 	};
 
 
 	while (1) 
 	{
-		c = getopt_long(argc, argv, "B:XMv", long_options, &option_index);
+		c = getopt_long(argc, argv, "B:XMvR", long_options, &option_index);
 		if (c == -1)
 		{
 			break;
@@ -506,6 +581,11 @@ bool parse_cmd_line(int argc, char **argv)
 		{
 			case '?':
 				break;
+
+			case 'R':
+				do_not_reset = true;
+				break;
+
 			case 'B':
 				if(strcmp(optarg, "yes") == 0)
 				{
@@ -557,7 +637,15 @@ void batch_update(int id)
 
 	if(!wait_device(inst, dev->id, 2000))
 	{
-		exit(1);
+		if(!update_all)
+		{
+			exit(1);
+		}
+		else
+		{
+			usbcan_device_deinit(&dev);
+			return;
+		}
 	}
 
 
@@ -638,8 +726,8 @@ int main(int argc, char **argv)
 		LOG_ERROR(debug_log, "Can't create usbcan instance\n");
 		exit(1);
 	}
-	
-	if(strcmp(argv[2], "all") != 0)
+
+	if(strcmp(argv[optind + 1], "all") != 0)
 	{
 		update_all = false;
 		id = strtol(argv[optind + 1], 0, 0);
