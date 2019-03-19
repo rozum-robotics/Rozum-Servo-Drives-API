@@ -22,21 +22,17 @@
  * - \ref Dbg
  * 
  * \section tutor API Tutorials
- * - C
- *    -# \ref tutor_c_servomove1
- *    -# \ref tutor_c_servomove2
- *    -# \ref tutor_c_servomove3
- *    -# \ref tutor_c_param
- *    -# \ref tutor_c_param_cache
- *    -# \ref tutor_c_error_read
- *    -# \ref tutor_c_calculate_point
- *    -# \ref tutor_c_read_motion_queue
- *    -# \ref tutor_c_get_max_velocity
- *    -# \ref tutor_c_changeID1
- * - Java
- * - Python
- * - Ruby
- * 
+ *  - \ref tutor_c_servomove1
+ *  - \ref tutor_c_servomove2
+ *  - \ref tutor_c_servomove3
+ *  - \ref tutor_c_param
+ *  - \ref tutor_c_param_cache
+ *  - \ref tutor_c_error_read
+ *  - \ref tutor_c_calculate_point
+ *  - \ref tutor_c_read_motion_queue
+ *  - \ref tutor_c_get_max_velocity
+ *  - \ref tutor_c_changeID1
+ *
  * 
  * \defgroup Init Initialization and deinitialization
  * \defgroup State  Switching servo working states
