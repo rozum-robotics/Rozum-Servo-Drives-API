@@ -56,7 +56,9 @@ deploy_artifacts:
     - git checkout master
     - git reset --hard HEAD
     - git pull
+    - git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@dev.rozum.com/rozum-mcu/Software/userapi
     - git tag -a v$(cat version) -m "Release v$(cat version)"
+    - git push origin v$(cat version)
     - git config --global credential.helper store
     - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
     - git push -f "$GITHUB_URL" master
