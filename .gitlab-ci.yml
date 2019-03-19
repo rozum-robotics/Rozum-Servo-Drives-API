@@ -56,6 +56,8 @@ deploy_artifacts:
     - git checkout master
     - git reset --hard HEAD
     - git pull
+    - git config --global user.email "gitlab@rozum.com"
+    - git config --global user.name "gitlab-bot"
     - git remote set-url origin https://gitlab-ci-token:${CI_JOB_TOKEN}@dev.rozum.com/rozum-mcu/Software/userapi
     - git tag -a v$(cat version) -m "Release v$(cat version)"
     - git push origin v$(cat version)
