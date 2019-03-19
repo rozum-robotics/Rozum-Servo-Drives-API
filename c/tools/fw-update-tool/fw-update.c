@@ -63,6 +63,9 @@ void erase();
 void download_start();
 void write_block(uint8_t *data, ssize_t *off, ssize_t len);
 
+uint16_t fw_hw_type = 0;
+uint16_t fw_hw_rev = 0;
+
 void safe_exit()
 {
 	if(f)
@@ -128,10 +131,17 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 	{
 		alive = 0;
 
-		LOG_INFO(debug_log, "Firmware flash region erased");
-		ptr = 0;
-
-		write_block(fw, &ptr, 4);
+		if(m->data[2] == 0)
+		{
+			LOG_INFO(debug_log, "Firmware flash region erased");
+			ptr = 0;
+			write_block(fw, &ptr, 4);
+		}
+		else
+		{
+			LOG_ERROR(debug_log, "Error while erasing (%d)", m->data[2]);
+			download_result = DL_ERROR;
+		}
 		return;
 	}
 
@@ -163,17 +173,22 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 			                    (m->data[1] == CO_DEV_CMD_REQUEST_FIELD) && 
 								 (m->data[2] == CO_DEV_APP_VER))
 	{
-		
 		alive = 0;
 		dev_hw_rev = m->data[5]; //??????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 	
 		return;
-
 	}
 
 	if((m->id == CO_CAN_ID_DEV_WRITE) && (m->data[0] == dev->id))
 	{
 		alive = 0;
+
+		if(m->data[1] != 0)
+		{
+			LOG_ERROR(debug_log, "Error while downloading (%d)", m->data[1]);		
+			download_result = DL_ERROR;
+			return;
+		}
 
 		if(ptr >= fw_len)
 		{
@@ -191,7 +206,7 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 
 			return;
 		}
-		
+
 		if((ptr % 1024) == 0)
 		{
 			LOG_INFO(debug_log, "Downloading %d/%d", (int)ptr, (int)fw_len);
@@ -225,7 +240,7 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 		}
 		else
 		{
-			LOG_INFO(debug_log, "FLASH FAILED");
+			LOG_ERROR(debug_log, "FLASH FAILED");
 			download_result = DL_ERROR;
 		}
 	}
@@ -240,9 +255,9 @@ void erase()
 		.dlc = 6, 
 		.data = 
 		{
-			dev->id, 
+			dev->id,
 			CO_DEV_CMD_ERASE_APP, 
-			dev_hw_type, 
+			fw_hw_type, 
 			(fw_len >> 16) & 0xff, 
 			(fw_len >> 8) & 0xff, 
 			fw_len & 0xff
@@ -365,8 +380,6 @@ bool reset()
 
 download_result_t update(char *name, bool ignore_identity)
 {
-	uint16_t fw_hw_type = 0;
-	uint16_t fw_hw_rev = 0;
 	uint32_t crc = 0;
 	uint32_t file_len, data_len;
 	uint16_t v;	
@@ -462,6 +475,8 @@ download_result_t update(char *name, bool ignore_identity)
 
 		fw_hw_type = ((uint16_t *)fw)[4];
 		fw_hw_rev = ((uint16_t *)fw)[5];
+		fw_hw_type &= 0xff;
+		fw_hw_rev &= 0xff;
 
 		if(!fw_hw_rev)
 		{
