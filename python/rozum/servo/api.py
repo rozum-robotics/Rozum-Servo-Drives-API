@@ -201,13 +201,13 @@ class Servo(object):
         :param position_deg: float:
             Position that the servo flange (in degrees) should reach as a result of executing the command
         :param velocity_deg_per_sec: float:
-            Velocity(in degrees/sec) at which the servo should move to reach the specified position
+            Velocity(in degrees/sec) at the point
         :param time_ms: int:
             Time (in milliseconds) it should take the servo to move from the previous position
             (PVT point in a motion trajectory or an initial point) to the commanded one.
             The maximum admissible value is (2^32-1)/10 (roughly equivalent to 4.9 days).
         :param accel_deg_per_sec2: float
-            Acceleration (in degrees/sec**2) which the servo should have in the position where it comes.
+            Acceleration (in degrees/sec**2) at the point
         :return: None
         """
         if accel_deg_per_sec2 is not None:
@@ -573,7 +573,11 @@ class Servo(object):
         return servo_state.value
 
     def get_hb_stat(self):
-        """The function retrieves heart-beat statistics (min & max arrival intervals).
+        """The function retrieves statistics on minimal and maximal intervals between Heartbeat messages of a servo. The statistics is saved to the variables
+		specified in the param min_hb_ival and param max_hb_ival parameters, from where they are available for the user to perform further operations (e.g., comparison).
+		The Heartbeat statistics is helpful in diagnozing and troubleshooting servo failures. For instance, when the Heartbeat interval of a servo is too long,
+		it may mean that the control device sees the servo as being offline.
+		*Note: Before using the function, it is advisable to clear Heartbeat statistics with clear_hb_stat.
 
         :return: Minimal value, Maximal value
         """
@@ -590,7 +594,8 @@ class Servo(object):
         return min_inteval.value, max_interval.value
 
     def clear_hb_stat(self):
-        """The function clears heart-beat statistics (min & max arrival intervals).
+        """The function clears statistics on minimal and maximal intervals between Heartbeat messages of a servo.
+		It is advisable to use the function before attempting to get the Heartbeat statistics with the ::rr_servo_get_hb_stat function.
 
         :return: None
         """
@@ -787,15 +792,25 @@ class Interface(object):
 
     def emcy_log_get_size(self):
         """
-        The function returns actual count of entries in EMCY logging buffer.
-
+        The function returns the total count of entries in the EMCY logging buffer. Each entry in the buffer contains an EMCY event.
+        that have occurred up to the moment on the servo specified in the descriptor.
+		*Note: When the API library is disabled, no new entries are made in the buffer, irrespective of whether or not any events occur on the servo.
+		The function is used in combination with the emcy_log_pop and emcy_log_clear functions. The typical sequence is as follows:
+		1. to clear the EMCY logging buffer with the emcy_log_clear
+		2. to get the total count of entries in the EMCY logging buffer, using the emcy_log_get_size function
+		3. to read the EMCY events from the buffer with the emcy_log_pop function
+		
+		
         :return: Number of unread entries :int
         """
         return self._api.rr_emcy_log_get_size(self._interface)
 
     def emcy_log_pop(self):
         """
-        The function pops single entry from EMCY logging buffer.
+        The function enables reading entries from the EMCY logging buffer. Reading the entries is according to the first in-first out principle.
+		Once an EMCY entry is read, the function removes it permenantly from the EMCY logging buffer.
+		*Note: Typically, the emcy_log_pop function is used in combination with the emcy_log_get_size and emcy_log_clear functions.
+		For the sequence of using the functions, see emcy_log_get_size.
 
         :return EmcyObject or None if no messages in buffer
         """
@@ -806,7 +821,9 @@ class Interface(object):
             return None
 
     def emcy_log_clear(self):
-        """The fucntion clears entire EMCY logging buffer.
+        """The function clears the EMCY logging buffer, removing the total of entries from it.
+		It is advisable to use the clearing function in the beginning of a new work session and before applying the emcy_log_get_size and
+		emcy_log_pop functions. For the typical sequence of using the functions, see emcy_log_get_size.
 
         :return: None
         """
@@ -816,8 +833,8 @@ class Interface(object):
         """The function closes the COM port where the corresponding CAN-USB dongle is connected, clearing all data
         associated with the interface descriptor.
 
-        The function is called automatically when Servo API is deinitializing. In addition, it deinitializes all servos
-        on the interface
+        The function is called automatically when the Servo API is deinitializing. In addition, it deinitializes all servos
+        on the interface.
 
         :return: None
         """
