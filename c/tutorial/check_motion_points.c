@@ -8,14 +8,28 @@
 #include "api.h"
 
 /**
- * Maximum velocities (degrees per seconds) for the RDrive motors (@48V):
- *  - RD50: 267.84 ~= 260
- *  - RD60: 267.84 ~= 260
- *  - RD85: 244.80 ~= 240
+ *  \defgroup tutor_c_check_motion_points Calibrating to mitigate cogging effects
+ *  The tutorial demonstrates how to verify validity of PVT points in a servo trajectory
+ *  without actually connecting a servo, while checking for PVT velocities over maximum limits.
+ *  Maximum velocity limits (degrees per seconds) for RDrive motors (@48V):
+ *  <ul><li>RD50: 267.84 ~= 260</li>
+ *  <li>RD60: 267.84 ~= 260</li>
+ *  <li> RD85: 244.80 ~= 240</li></ul>
+ *
+ * 1. Create an array of PVT points to define the desired motion trajectory.
+ * \snippet check_motion_points.c Create PVT
+ * 2. Check the PVT points for velocities over the maximum limit.
+ * \snippet check_motion_points.c Check velocity at PVT
+ * Finally, the function displays calculation results for each of the PVT points.
+ *
+ *<b> Complete tutorial code: </b>
+ * \snippet check_motion_points.c check_motion_points_code_full
  */
-
+ 
+//! [check_motion_points_code_full]
 float velocity_limit = 80.0;
 
+   //! [Create PVT]
 int main(int argc, char *argv[])
 {
     typedef struct
@@ -45,7 +59,9 @@ int main(int argc, char *argv[])
         {345.56, 57.72, 208.5},
         {359.42, 35.09, 275.4},
         {373.52, 0.00, 709.8}};
-
+    //! [Create PVT]
+	
+    //! [Check velocity at PVT]
     for(uint32_t i = 0; i < sizeof(points) / sizeof(points[0]) - 1; i++)
     {
         float calc_velocity;
@@ -61,4 +77,6 @@ int main(int argc, char *argv[])
                   velocity_limit, calc_velocity,
                   over_speed ? "is too high" : "");
     }
+	//! [Check velocity at PVT]
 }
+//! [check_motion_points_code_full]
