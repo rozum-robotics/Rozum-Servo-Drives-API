@@ -45,11 +45,8 @@ bool use_any_in_boot_mode = false;
 bool do_not_wait_halt_responce = true;
 bool update_all = false;
 bool id_ignore = false;
-bool boot_legacy_mode = false;
-bool fw_legacy_mode = false;
 
 uint32_t dev_hw_type = -1;
-uint32_t dev_hw_rev = -1;
 uint32_t alive = 0;
 bool master_hb_inhibit = true;
 bool read_dev_ident_req = false;
@@ -169,15 +166,6 @@ void _com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
 
 	}
 
-	if((m->id == CO_CAN_ID_DEV_CMD) && (m->data[0] == dev->id) &&
-			                    (m->data[1] == CO_DEV_CMD_REQUEST_FIELD) && 
-								 (m->data[2] == CO_DEV_APP_VER))
-	{
-		alive = 0;
-		dev_hw_rev = m->data[5]; //??????????????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	
-		return;
-	}
 
 	if((m->id == CO_CAN_ID_DEV_WRITE) && (m->data[0] == dev->id))
 	{
@@ -316,7 +304,6 @@ bool read_ident()
 	int to;
 
 	dev_hw_type = -1;
-	dev_hw_rev = -1;
 
 	LOG_INFO(debug_log, "Reading device identity");
 	can_msg_t m_read = 
@@ -334,13 +321,13 @@ bool read_ident()
 
 	for(to = RESET_TIMEOUT; to > 0; to -= 100)
 	{
-		if((dev_hw_type != -1) && (dev_hw_rev != -1))
+		if(dev_hw_type != -1) 
 		{
 			break;
 		}
 		msleep(100);
 	}
-	if((dev_hw_type == -1) || (dev_hw_rev == -1))
+	if(dev_hw_type == -1) 
 	{
 		LOG_ERROR(debug_log, "Can't read device HW type");
 		download_result = DL_ERROR;
@@ -356,20 +343,19 @@ bool reset()
 	read_dev_ident_req = true;
 
 	dev_hw_type = -1;
-	dev_hw_rev = -1;
 
 	LOG_INFO(debug_log, "Resetting device %d", dev->id);
 	write_nmt(inst, dev->id, CO_NMT_CMD_RESET_NODE);
 
 	for(to = RESET_TIMEOUT; to > 0; to -= 100)
 	{
-		if((dev_hw_type != -1) && (dev_hw_rev != -1))
+		if(dev_hw_type != -1)
 		{
 			break;
 		}
 		msleep(100);
 	}
-	if((dev_hw_type == -1) || (dev_hw_rev == -1))
+	if(dev_hw_type == -1)
 	{
 		LOG_ERROR(debug_log, "Can't read device HW type");
 		download_result = DL_ERROR;
@@ -382,7 +368,6 @@ download_result_t update(char *name, bool ignore_identity)
 {
 	uint32_t crc = 0;
 	uint32_t file_len, data_len;
-	uint16_t v;	
 	
 	download_result = DL_IDLE;
 	
@@ -394,25 +379,6 @@ download_result_t update(char *name, bool ignore_identity)
 			read_dev_ident_req = true;
 			do_not_reset = true;
 			_nmt_state_cb(inst, dev->id, CO_NMT_BOOT);	
-		}
-
-		int len = 2;
-
-		if(read_raw_sdo(dev, 0x2003, 1, (uint8_t *)&v, &len, 1, 100))
-		{
-			LOG_WARN(debug_log, "idx2003sub1 not supported, switching to legacy mode");
-			boot_legacy_mode = true;
-		}
-		else
-		{
-			dev_hw_type = v;
-			len = 2;
-			if(read_raw_sdo(dev, 0x2003, 2, (uint8_t *)&v, &len, 1, 100))
-			{
-				LOG_WARN(debug_log, "idx2003sub2 not supported, switching to legacy mode");
-				boot_legacy_mode = true;
-			}
-			dev_hw_rev = v;
 		}
 
 		if(!ignore_identity)
@@ -453,42 +419,29 @@ download_result_t update(char *name, bool ignore_identity)
 			break;
 		}
 
-		if(boot_legacy_mode)
+		if(!do_not_reset)
 		{
-			if(!do_not_reset)
+			if(!reset())
 			{
-				if(!reset())
-				{
-					break;
-				}
+				break;
 			}
-			else
+		}
+		else
+		{
+			if(!read_ident())
 			{
-				if(!read_ident())
-				{
-					break;
-				}
+				break;
 			}
 		}
 
-		LOG_INFO(debug_log, "Device HW type %d, rev %d", dev_hw_type, dev_hw_rev);
+		LOG_INFO(debug_log, "Device HW type %d", dev_hw_type);
 
-		fw_hw_type = ((uint16_t *)fw)[4];
-		fw_hw_rev = ((uint16_t *)fw)[5];
-		fw_hw_type &= 0xff;
-		fw_hw_rev &= 0xff;
-
-		if(!fw_hw_rev)
-		{
-			LOG_WARN(debug_log, "Firmware hardware revision == 0, guess it's legacy firmware");
-			fw_legacy_mode = true;
-		}
-
+		fw_hw_type = fw[8];
 
 		if(!ignore_identity)
 		{
-			LOG_INFO(debug_log, "Firmware HW type %d, rev %d", fw_hw_type, fw_hw_rev);
-			if((fw_hw_type != dev_hw_type) || (!fw_legacy_mode && !boot_legacy_mode & (fw_hw_rev != dev_hw_rev)))
+			LOG_INFO(debug_log, "Firmware HW type %d", fw_hw_type);
+			if(fw_hw_type != dev_hw_type)
 			{
 				LOG_INFO(debug_log, "Not compatible firmware");
 				download_result = DL_WRONG_IDENT;
@@ -505,24 +458,7 @@ download_result_t update(char *name, bool ignore_identity)
 		memcpy(fw + data_len, &crc, sizeof(crc));
 
 		LOG_INFO(debug_log, "Firmware CRC: 0x%"PRIx32, crc);
-
-		if(!boot_legacy_mode)
-		{
-			if(!do_not_reset)
-			{
-				if(!reset())
-				{
-					break;
-				}
-			}
-			else
-			{
-				if(!read_ident())
-				{
-					break;
-				}
-			}
-		}
+		
 
 		download_start();
 
