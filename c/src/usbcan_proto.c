@@ -24,6 +24,7 @@ static int usbcan_build_sdo_req(uint8_t *dst, bool write, uint8_t id,
 
 static int usbcan_rx(usbcan_instance_t *inst);
 
+void usbcan_send_traj_sync(usbcan_instance_t *inst);
 
 
 /*
@@ -158,6 +159,7 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 	int i;
 
 	inst->master_hb_timer += delta_ms;
+	inst->traj_sync_timer += delta_ms;
 
 	/*Check if devices on bus*/
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
@@ -190,6 +192,16 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 			usbcan_send_master_hb(inst);
 		}
 		inst->master_hb_timer -= inst->master_hb_ival;
+	}
+
+	/*Send sync message*/
+	if(inst->traj_sync_timer >= inst->traj_sync_ival)
+	{
+		if(inst->send_traj_sync_enable)
+		{
+			usbcan_send_traj_sync(inst);
+		}
+		inst->traj_sync_timer -= inst->traj_sync_ival;
 	}
 
 	/*Wait for SDO response*/
@@ -421,6 +433,25 @@ int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 void usbcan_send_master_hb(usbcan_instance_t *inst)
 {
 	can_msg_t msg = {USB_CAN_MASTER_HB_COM_FRAME_ID, 1, {CO_NMT_OPERATIONAL}};
+
+	usbcan_send_com_frame(inst, &msg);
+}
+
+/*
+ * Sends sync message for trajectory execution synchronization. 
+ */
+void usbcan_send_traj_sync(usbcan_instance_t *inst)
+{
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	if(!inst->traj_sync_prev.tv_sec && !inst->traj_sync_prev.tv_usec)
+	{
+		inst->traj_sync_prev = now;
+		return;
+	}
+	uint32_t s = TIME_DELTA_US(now, inst->traj_sync_prev) % 600000000ll;
+	can_msg_t msg = {USB_CAN_TRAJ_SYNC_COM_FRAME_ID, sizeof(s)};
+	memcpy(msg.data, &s, sizeof(s));
 
 	usbcan_send_com_frame(inst, &msg);
 }
@@ -1171,6 +1202,9 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	inst->master_hb_timer = inst->master_hb_ival;
 	inst->hb_alive_threshold = USB_CAN_HB_ALIVE_THRESHOLD_MS;
 	inst->device = dev_name;
+
+	inst->traj_sync_ival = USB_CAN_TRAJ_SYNC_IVAL_MS;
+	inst->send_traj_sync_enable = true;
 
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
 	{

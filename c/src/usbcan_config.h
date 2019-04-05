@@ -17,8 +17,10 @@
 
 /*---------------- optionlal parameters ------------------*/
 #define USB_CAN_MASTER_HB_IVAL_MS		1000
+#define USB_CAN_TRAJ_SYNC_IVAL_MS		50
 #define USB_CAN_HB_ALIVE_THRESHOLD_MS		3000
 #define USB_CAN_MASTER_HB_COM_FRAME_ID		0x700
+#define USB_CAN_TRAJ_SYNC_COM_FRAME_ID		0x27F
 #define USB_CAN_MAX_PAYLOAD			4096
 
 #define USB_CAN_POLL_GRANULARITY_MS		10
