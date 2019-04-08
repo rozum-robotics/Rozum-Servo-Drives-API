@@ -213,7 +213,7 @@ class Servo(object):
         ServoError.handle(status)
         return velocity.value
 
-    def set_max_velocity(self, max_velocity_deg_per_sec: float)::
+    def set_max_velocity(self, max_velocity_deg_per_sec: float):
         """!@brief The function sets the maximum velocity limit for the servo.
         The setting is volatile: after a reset or a power outage, it is no longer valid.
 
