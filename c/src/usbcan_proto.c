@@ -153,11 +153,13 @@ static void usbcan_enable_udp(usbcan_instance_t *inst, bool en)
 /*
  * Handles devices statuses, SDO reception & master heart beat transmission.
  */
-static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
+static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms, uint32_t delta_us)
 {
 	int i;
 
 	inst->master_hb_timer += delta_ms;
+	inst->sync_pdo_timer += delta_ms;
+    inst->sync_pdo_ref_clock += delta_us * 1000U;
 
 	/*Check if devices on bus*/
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
@@ -190,6 +192,17 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 			usbcan_send_master_hb(inst);
 		}
 		inst->master_hb_timer -= inst->master_hb_ival;
+	}
+
+	/* Send sync PDO */
+	if(inst->sync_pdo_timer >= inst->sync_pdo_ival)
+	{
+		if(!inst->inhibit_sync_pdo)
+		{
+			usbcan_send_pdo(inst, USB_CAN_SYNC_CLOCK_PDO, (void*) &inst->sync_pdo_ref_clock, 4);
+            // LOG_INFO(stdout, "Sync: %u", inst->sync_pdo_ref_clock);
+		}
+		inst->sync_pdo_timer -= inst->sync_pdo_ival;
 	}
 
 	/*Wait for SDO response*/
@@ -388,6 +401,7 @@ int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts)
 {
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_timestamp(dst, ts);
+    inst->sync_pdo_ref_clock = 0; /* reset sync clock */
 	return usbcan_write_fd(inst, dst, l);
 }
 
@@ -412,6 +426,27 @@ int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 	uint8_t dst[USB_CAN_MAX_PAYLOAD];
 	int l = usbcan_build_com_frame(dst, m);
 	return usbcan_write_fd(inst, dst, l);
+}
+
+/**
+ * @brief Sends PDO message. 
+ * 
+ * @param inst Usbcan instance
+ * @param cob_id CAN frame COB-ID
+ * @param data pointer to data
+ * @parma len length of the data
+ * @return int status code
+ */
+int usbcan_send_pdo(usbcan_instance_t *inst, uint16_t cob_id, void *data, uint16_t len)
+{
+    if(len >= 8) return -1;
+
+    can_msg_t msg;
+    msg.id = cob_id;
+    msg.dlc = len;
+    memcpy(msg.data, data, msg.dlc);
+
+    return usbcan_send_com_frame(inst, &msg);
 }
 
 /*
@@ -1011,7 +1046,7 @@ static void *usbcan_process(void *udata)
 		tprev = tnow;
 		gettimeofday(&tnow, NULL);
 		//fprintf(stderr, "%ld\n", (long int)TIME_DELTA_MS(tnow, tprev));
-		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
+		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev), TIME_DELTA_US(tnow, tprev));
 	}
 	
 	#else
@@ -1033,7 +1068,7 @@ static void *usbcan_process(void *udata)
 		{
 			n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
 			gettimeofday(&tnow, NULL);
-			usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
+			usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev), TIME_DELTA_US(tnow, tprev));
 			if(n > 0)
 			{
 				if(pfds[0].revents & POLLERR)
@@ -1169,6 +1204,8 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	memset(inst, 0, sizeof(usbcan_instance_t));
 	inst->master_hb_ival = USB_CAN_MASTER_HB_IVAL_MS;
 	inst->master_hb_timer = inst->master_hb_ival;
+    inst->sync_pdo_ival = USB_CAN_SYNC_PDO_IVAL_MS;
+    inst->sync_pdo_timer = inst->sync_pdo_ival;
 	inst->hb_alive_threshold = USB_CAN_HB_ALIVE_THRESHOLD_MS;
 	inst->device = dev_name;
 

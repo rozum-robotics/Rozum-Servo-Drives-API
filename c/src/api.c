@@ -1969,6 +1969,26 @@ rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *iface, rr_servo_t **se
 }
 
 /**
+ * @brief Clears the error bits in the servo
+ * 
+ * @param servo Servo descriptor returned by the ::rr_init_servo function.
+ * @return Status code (::rr_ret_status_t)
+ */
+rr_ret_status_t rr_clear_errors(const rr_servo_t *servo)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data[4];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint32_t pass = 0x000C1EAA;
+    usb_can_put_uint32_t(data, 0, &pass, 1);
+    uint32_t sts = write_raw_sdo(dev, 0x2209, 0x00, data, sizeof(data), 0, 200);
+
+    return ret_sdo(sts);
+}
+
+/**
  * @brief The function reads the hardware version of a servo (unique ID of the MCU + hardware type + hardware revision).
  * @param servo Servo descriptor returned by the ::rr_init_servo function.
  * @param version_string Pointer to the ASCII string to read
