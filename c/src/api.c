@@ -1357,13 +1357,25 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * <li>how long the movement to the specified position should take</li></ul>
  * <p>The graphs below illustrate how a servo builds a trajectory based on the preset PVT points.<br> 
  * <b>Note:</b> In this case, the preset position values are 0, 45, 90, 45, and 0 degrees; the preset velocity values are 0, 30, 15, 30, 0 degrees per second;
- * the time values are equal to delta time between two adjacent points on the Time axis (e.g., 2,000ms-3,000ms=1,000ms).</p> 
+ * the time values are equal to delta time between two adjacent points on the Time axis (e.g., 2,000ms-3,000ms=1,000ms).</p>
  * @image html "PVT.png" "Example of calculated trajectory using PVT points" width=600 
  * @image latex "PVT.png" "Example of calculated trajectory using PVT points" width=300pt
  * Created PVT points are arranged into a motion queue that defines the motion trajectory of the specified servo. To execute the motion queue, 
  * use the ::rr_start_motion function.<br>
  * When any of the parameter values (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications 
- * (whichever is the smallest value), the function returns an error.
+ * whichever is the smallest value), the function returns an error.<br><br>
+ 
+ * <b>Note:</b> When you set a PVT trajectory to move more than one servo simultaneously, mind that the clock rate of the servos can differ by up to 2-3%.
+ * Therefore, if the preset PVT trajectory is rather long, servos can get desynchronized. To avoid the desynchronization, we have implemented the following mechanism:
+ * <ul><li>The device controlling the servos broadcasts a sync CAN frame to all servos on an interface. The frame should have the following format:<br>
+ * ID = 0x27f, data = uint32 (4 bytes),<br>
+ * <b>Where:</b> ‘data’ stands for the microseconds counter value by modulus of 600,000,000, starting from any value.</li><br>
+ * <li>Servos receive the frame and try to adjust their clock rates to that of the device using the PLL.
+ * The adjustment proper starts after the servos receive the second frame and can take up to 5 seconds, depending on the broadcasting frequency.
+ * The higher the broadcasting frequency, the less time the adjustment takes.</li><br>
+ * <li>The broadcasting frequency is 5 Hz minimum. The recommended frequency range is from 10 to 20 Hz.
+ * When the sync frames are not broadcast or the broadcast frequency is below 5 Hz, the clock rate of servos is as usual.</li><br>
+
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
  * @param velocity_deg_per_sec Servo velocity(in degrees/sec) at the point
@@ -1400,7 +1412,9 @@ rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float positio
  * PVAT points define the following:<br>
  * <ul><li>what position the servo specified in the 'servo' parameter should reach</li><br>
  * <li>how fast the servo should move to the specified position</li><br>
- * <li>how long the movement to the specified position should take</li></ul>
+ * <li>how long the movement to the specified position should take</li><br>
+ * <li>with what acceleration the servo should reach the specified position</li></ul>
+ * For details of PVAT motion synchronization when running multiple servos, see ::rr_add_motion_point.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param position_deg Position that the servo flange (in degrees) should reach as a result of executing the command
  * @param velocity_deg_per_sec Servo velocity (in degrees/sec) at the point
