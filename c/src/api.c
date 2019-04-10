@@ -11,6 +11,7 @@
  * - \subpage servo_box
  * 
  * \section intro_section API Categories
+ * - \ref Preinit
  * - \ref Aux
  * - \ref Init
  * - \ref State
@@ -39,11 +40,8 @@
  *    -# \ref tutor_c_read_emcy_log
  *    -# \ref tutor_c_check_motion_points
  *    -# \ref tutor_c_time_optimal_movement
- * - Java
- * - Python
- * - Ruby
  * 
- * 
+ * \defgroup Preinit Preparing for servo intialization
  * \defgroup Init Initialization and deinitialization
  * \defgroup State  Switching servo working states
  * \defgroup Motion Simple motion control (duty, current, velocity, position)
@@ -154,6 +152,31 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
 }
 
 /// @endcond
+
+
+
+
+/**
+ * \defgroup Preinit Reading device parameters
+ * 
+ * Once you have completed the servo integration procedure in accordance with the User (or servobox) manual
+ * and before you can start motion or send the majority of API commands,
+ * <b>it is essential to switch the servo(s) to the OPERATIONAL state</b>.
+ * In this case, follow the instructions below:<br>
+ * 1. Get the servo state, using ::rr_net_get_state.
+ * 2. Your further actions depend on the output of the ::rr_net_get_state function.<br><br>
+ * <b> A. In case the output is PRE-OPERATIONAL:</b><br>
+ * Send the ::rr_net_set_state_operational. The servo switches to the OPERATIONAL STATE,
+ * and you can start motion or send other API commands.<br><br>
+ * <b>Important!</b> When the servo has some critical error(s) from previous sessions or otherwise in the PRE-OPERATIONAL state,
+ * it will not be able to switch to OPERATIONAL. In this case, you need to reset the errors, using the 
+ * ::rr_clear_errors function. Once the errors are reset, you can re-send the ::rr_net_set_state_operational command
+ * to switch the servo to OPERATIONAL.<br><br>
+ * <b>B.In case the ouput is STOPPED:</b><br>
+ * Switch the servo to the PRE-OPERATIONAL state using the ::rr_net_set_state_pre_operational function.
+ * Then, reset errors with the ::rr_clear_errors function. The final step is to switch to the OPERATIONAL with 
+ * ::rr_net_set_state_operational.
+ */
 
 /**
  * @brief The function sets an idle period for the user program (e.g., to wait till a servo executes a motion trajectory).
