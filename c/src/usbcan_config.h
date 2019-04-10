@@ -18,7 +18,7 @@
 
 /*---------------- optional parameters ------------------*/
 #define USB_CAN_MASTER_HB_IVAL_MS		1000
-#define USB_CAN_SYNC_PDO_IVAL_MS		100
+#define USB_CAN_SYNC_PDO_IVAL_MS		20
 #define USB_CAN_HB_ALIVE_THRESHOLD_MS	3000
 #define USB_CAN_MASTER_HB_COM_FRAME_ID	0x700
 #define USB_CAN_MAX_PAYLOAD			    4096
