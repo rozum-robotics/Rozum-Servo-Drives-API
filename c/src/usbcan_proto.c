@@ -160,7 +160,7 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms, uint32_t delt
 	inst->master_hb_timer += delta_ms;
 	inst->sync_pdo_timer += delta_ms;
     inst->sync_pdo_ref_clock += delta_us;
-    if(inst->sync_pdo_ref_clock > 600e6) inst->sync_pdo_ref_clock -= 600e6;
+    // if(inst->sync_pdo_ref_clock > 600e6) inst->sync_pdo_ref_clock -= 600e6;
 
 	/*Check if devices on bus*/
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
