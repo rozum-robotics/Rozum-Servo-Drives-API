@@ -9,3 +9,5 @@ Description: Firmware Update Tool for Rozum Pulse robot
 Build-Depends: build-essential
 Replaces: pulse-desk-firmware-installer
 Conflicts: pulse-desk-firmware-installer
+Depends: build-essential
+
