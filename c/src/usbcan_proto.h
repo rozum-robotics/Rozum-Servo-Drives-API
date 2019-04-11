@@ -115,12 +115,13 @@ struct usbcan_instance_t
 	int64_t master_hb_ival;
 	int64_t master_hb_timer;
 
-    int64_t sync_pdo_ival;
-    int64_t sync_pdo_timer;
-
-    uint32_t sync_pdo_ref_clock;
-
 	int64_t hb_alive_threshold;
+
+	int64_t traj_sync_timer;
+	int64_t traj_sync_ival;
+    
+	struct timeval traj_sync_prev;
+	bool send_traj_sync_enable;
 
 	int64_t dev_alive[USB_CAN_MAX_DEV];
 	bool dev_boot_up[USB_CAN_MAX_DEV];

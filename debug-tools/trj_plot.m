@@ -3,17 +3,18 @@
 dt = 1e-3;
 
 %% generate a set of movements
-pt.t = [0 1];
-pt.p = [0 60];
-pt.v = [0 0];
-pt.a = [0 0];
-%pt = move_to(0, 100, 30, 0);
-%pt = ptcat(pt, move_to(pt.p(end), 0, 40, 10));
-%pt = ptcat(pt, move_to(pt.p(end), -50, 10, 50));
-%pt = ptcat(pt, move_to(pt.p(end), 0, 20, 10));
+%pt.t = [0 1];
+%pt.p = [0 60];
+%pt.v = [0 0];
+%pt.a = [0 0];
+pt = move_to(0, 100, 30, 0);
+pt = ptcat(pt, move_to(pt.p(end), 0, 40, 10));
+pt = ptcat(pt, move_to(pt.p(end), -50, 10, 50));
+pt = ptcat(pt, move_to(pt.p(end), 0, 20, 10));
+
 
 %% interpolate trajectory
-[t, q] = qupsample(pt, dt);
+[t, q] = qupsample(pt, single(dt));
 
 %% visualize results
 
