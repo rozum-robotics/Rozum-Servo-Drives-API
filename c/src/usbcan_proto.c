@@ -24,6 +24,7 @@ static int usbcan_build_sdo_req(uint8_t *dst, bool write, uint8_t id,
 
 static int usbcan_rx(usbcan_instance_t *inst);
 
+void usbcan_send_traj_sync(usbcan_instance_t *inst);
 
 
 /*
@@ -153,11 +154,12 @@ static void usbcan_enable_udp(usbcan_instance_t *inst, bool en)
 /*
  * Handles devices statuses, SDO reception & master heart beat transmission.
  */
-static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
+static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms, uint32_t delta_us)
 {
 	int i;
 
 	inst->master_hb_timer += delta_ms;
+	inst->traj_sync_timer += delta_ms;
 
 	/*Check if devices on bus*/
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
@@ -190,6 +192,16 @@ static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms)
 			usbcan_send_master_hb(inst);
 		}
 		inst->master_hb_timer -= inst->master_hb_ival;
+	}
+
+	/*Send sync message*/
+	if(inst->traj_sync_timer >= inst->traj_sync_ival)
+	{
+		if(inst->send_traj_sync_enable)
+		{
+			usbcan_send_traj_sync(inst);
+		}
+		inst->traj_sync_timer -= inst->traj_sync_ival;
 	}
 
 	/*Wait for SDO response*/
@@ -414,6 +426,27 @@ int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 	return usbcan_write_fd(inst, dst, l);
 }
 
+/**
+ * @brief Sends PDO message. 
+ * 
+ * @param inst Usbcan instance
+ * @param cob_id CAN frame COB-ID
+ * @param data pointer to data
+ * @parma len length of the data
+ * @return int status code
+ */
+int usbcan_send_pdo(usbcan_instance_t *inst, uint16_t cob_id, void *data, uint16_t len)
+{
+    if(len >= 8) return -1;
+
+    can_msg_t msg;
+    msg.id = cob_id;
+    msg.dlc = len;
+    memcpy(msg.data, data, msg.dlc);
+
+    return usbcan_send_com_frame(inst, &msg);
+}
+
 /*
  * Sends master heart beat. 
  * Notice: emulataed using generic CAN frame.
@@ -421,6 +454,25 @@ int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m)
 void usbcan_send_master_hb(usbcan_instance_t *inst)
 {
 	can_msg_t msg = {USB_CAN_MASTER_HB_COM_FRAME_ID, 1, {CO_NMT_OPERATIONAL}};
+
+	usbcan_send_com_frame(inst, &msg);
+}
+
+/*
+ * Sends sync message for trajectory execution synchronization. 
+ */
+void usbcan_send_traj_sync(usbcan_instance_t *inst)
+{
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	if(!inst->traj_sync_prev.tv_sec && !inst->traj_sync_prev.tv_usec)
+	{
+		inst->traj_sync_prev = now;
+		return;
+	}
+	uint32_t s = TIME_DELTA_US(now, inst->traj_sync_prev) % 600000000ll;
+	can_msg_t msg = {USB_CAN_TRAJ_SYNC_COM_FRAME_ID, sizeof(s)};
+	memcpy(msg.data, &s, sizeof(s));
 
 	usbcan_send_com_frame(inst, &msg);
 }
@@ -1011,7 +1063,7 @@ static void *usbcan_process(void *udata)
 		tprev = tnow;
 		gettimeofday(&tnow, NULL);
 		//fprintf(stderr, "%ld\n", (long int)TIME_DELTA_MS(tnow, tprev));
-		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
+		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev), TIME_DELTA_US(tnow, tprev));
 	}
 	
 	#else
@@ -1033,7 +1085,7 @@ static void *usbcan_process(void *udata)
 		{
 			n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
 			gettimeofday(&tnow, NULL);
-			usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev));
+			usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev), TIME_DELTA_US(tnow, tprev));
 			if(n > 0)
 			{
 				if(pfds[0].revents & POLLERR)
@@ -1171,6 +1223,9 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 	inst->master_hb_timer = inst->master_hb_ival;
 	inst->hb_alive_threshold = USB_CAN_HB_ALIVE_THRESHOLD_MS;
 	inst->device = dev_name;
+
+	inst->traj_sync_ival = USB_CAN_TRAJ_SYNC_IVAL_MS;
+	inst->send_traj_sync_enable = true;
 
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
 	{
@@ -1448,8 +1503,16 @@ uint32_t write_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t
 
     if(inst->op.abt)
     {
-        LOG_ERROR(debug_log, "%s: SDO failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", __func__,
-                  (unsigned int)idx, (int)sidx, len, inst->op.re_txn, inst->op.tout, (unsigned int)inst->op.abt, sdo_describe_error(inst->op.abt));
+        LOG_ERROR(debug_log, "%s: SDO failed id(%d) idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", 
+                    __func__,
+                    inst->op.id,
+                    (unsigned int)idx, 
+                    (int)sidx, 
+                    len, 
+                    inst->op.re_txn, 
+                    inst->op.tout, 
+                    (unsigned int)inst->op.abt, 
+                    sdo_describe_error(inst->op.abt));
     }
 
     return inst->op.abt;
@@ -1495,8 +1558,16 @@ uint32_t read_raw_sdo(usbcan_device_t *dev, uint16_t idx, uint8_t sidx, uint8_t 
     }
     else
     {
-        LOG_ERROR(debug_log, "%s: SDO failed idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", __func__,
-                  (unsigned int)idx, (int)sidx, *len, inst->op.re_txn, inst->op.tout, (unsigned int)inst->op.abt, sdo_describe_error(inst->op.abt));
+        LOG_ERROR(debug_log, "%s: SDO failed id(%d) idx(0x%X) sidx(%d), len(%d), re_txn(%d), tout(%d) with abort-code(0x%.X):\n    %s", 
+                    __func__,
+                    inst->op.id,
+                    (unsigned int)idx, 
+                    (int)sidx, 
+                    *len, 
+                    inst->op.re_txn, 
+                    inst->op.tout, 
+                    (unsigned int)inst->op.abt, 
+                    sdo_describe_error(inst->op.abt));
     }
 
     return inst->op.abt;

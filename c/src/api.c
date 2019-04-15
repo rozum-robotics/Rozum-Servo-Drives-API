@@ -11,6 +11,7 @@
  * - \subpage servo_box
  * 
  * \section intro_section API Categories
+ * - \ref Preinit
  * - \ref Aux
  * - \ref Init
  * - \ref State
@@ -40,6 +41,7 @@
  * -# \ref tutor_c_time_optimal_movement
  * 
  * 
+ * \defgroup Preinit Preparing for servo intialization
  * \defgroup Init Initialization and deinitialization
  * \defgroup State  Switching servo working states
  * \defgroup Motion Simple motion control (duty, current, velocity, position)
@@ -150,6 +152,31 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
 }
 
 /// @endcond
+
+
+
+
+/**
+ * \defgroup Preinit Reading device parameters
+ * 
+ * Once you have completed the servo integration procedure in accordance with the User (or servobox) manual
+ * and before you can start motion or send the majority of API commands,
+ * <b>it is essential to switch the servo(s) to the OPERATIONAL state</b>.
+ * In this case, follow the instructions below:<br>
+ * 1. Get the servo state, using ::rr_net_get_state.
+ * 2. Your further actions depend on the output of the ::rr_net_get_state function.<br><br>
+ * <b> A. In case the output is PRE-OPERATIONAL:</b><br>
+ * Send the ::rr_net_set_state_operational. The servo switches to the OPERATIONAL STATE,
+ * and you can start motion or send other API commands.<br><br>
+ * <b>Important!</b> When the servo has some critical error(s) from previous sessions or otherwise in the PRE-OPERATIONAL state,
+ * it will not be able to switch to OPERATIONAL. In this case, you need to reset the errors, using the 
+ * ::rr_clear_errors function. Once the errors are reset, you can re-send the ::rr_net_set_state_operational command
+ * to switch the servo to OPERATIONAL.<br><br>
+ * <b>B.In case the ouput is STOPPED:</b><br>
+ * Switch the servo to the PRE-OPERATIONAL state using the ::rr_net_set_state_pre_operational function.
+ * Then, reset errors with the ::rr_clear_errors function. The final step is to switch to the OPERATIONAL with 
+ * ::rr_net_set_state_operational.
+ */
 
 /**
  * @brief The function sets an idle period for the user program (e.g., to wait till a servo executes a motion trajectory).
@@ -1976,6 +2003,26 @@ rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *iface, rr_servo_t **se
  if(save_conf_sts) return ret_sdo(save_conf_sts);
 
  return RET_OK;
+}
+
+/**
+ * @brief Clears the error bits in the servo
+ * 
+ * @param servo Servo descriptor returned by the ::rr_init_servo function.
+ * @return Status code (::rr_ret_status_t)
+ */
+rr_ret_status_t rr_clear_errors(const rr_servo_t *servo)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data[4];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint32_t pass = 0x000C1EAA;
+    usb_can_put_uint32_t(data, 0, &pass, 1);
+    uint32_t sts = write_raw_sdo(dev, 0x2209, 0x00, data, sizeof(data), 0, 200);
+
+    return ret_sdo(sts);
 }
 
 /**
