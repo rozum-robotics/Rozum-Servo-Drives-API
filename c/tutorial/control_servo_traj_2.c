@@ -15,7 +15,20 @@
  * <ul><li>one PVT commanding servos to move to the position of 100 degrees in 6,000 milliseconds</li>
  * <li>one PVT commanding servos to move to the position of -100 degrees in 6,000 milliseconds</li></ul>
  * 
- * <p><b>Note: </b>Before setting up PVT points, make sure to change the default CAN ID of at least one of the servos (see the \ref tutor_c_changeID1 tutorial).</p>
+ * <p><b>Important!</b>Before setting up PVT points, make sure to change the default CAN ID of at least one of the servos (see the \ref tutor_c_changeID1 tutorial).</p>
+ * 
+ *
+ * <b>Note:</b> When you set a PVT trajectory to move more than one servo simultaneously, mind that the clock rate of the servos can differ by up to 2-3%.
+ * Therefore, if the preset PVT trajectory is rather long, servos can get desynchronized. To avoid the desynchronization, we have implemented the following mechanism:
+ * <ul><li>The device controlling the servos broadcasts a sync CAN frame to all servos on an interface. The frame should have the following format:<br>
+ * ID = 0x27f, data = uint32 (4 bytes),<br>
+ * <b>Where:</b> ‘data’ stands for the microseconds counter value by modulus of 600,000,000, starting from any value.</li>
+ * <li>Servos receive the frame and try to adjust their clock rates to that of the device using the PLL.
+ * The adjustment proper starts after the servos receive the second frame and can take up to 5 seconds, depending on the broadcasting frequency.
+ * The higher the broadcasting frequency, the less time the adjustment takes.</li>
+ * <li>The broadcasting frequency is 5 Hz minimum. The recommended frequency range is from 10 to 20 Hz.
+ * When the sync frames are not broadcast or the broadcast frequency is below 5 Hz, the clock rate of servos is as usual.</li>
+
 
  * 1. Initialize the interface.
  * \snippet control_servo_traj_2.c Adding the interface2
