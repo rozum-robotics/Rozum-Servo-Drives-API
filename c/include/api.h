@@ -134,7 +134,8 @@ typedef enum
     APP_PARAM_FOC_PWM3,                     ///< Internal use only
     APP_PARAM_FOC_TIMER_TOP,                ///< Internal use only
     APP_PARAM_DUTY,                         ///< Internal use only
-    APP_PARAM_SIZE,                         ///< Use to define the total parameter array size
+    APP_PARAM_BRAKE_TEMPERATURE = 75,       ///< Brake coil temperature
+    APP_PARAM_SIZE = 80,                    ///< Use to define the total parameter array size
 } rr_servo_param_t;
 
 /**
