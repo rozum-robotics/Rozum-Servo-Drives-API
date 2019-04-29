@@ -163,6 +163,20 @@ class Servo(object):
         status = self._api.rr_param_cache_update(self._servo)
         ServoError.handle(status)
 
+    def param_cache_update_with_timestamp(self):
+        """@brief The function is always used in combination with the param_cache_setup_entry() function.
+        It retrieves from the servo the array of parameters set up using the param_cache_setup_entry() function and saves
+        the array to the program cache. You can subsequently read the parameters from the program cache with the
+        read_cached_parameter() function. For more information, see param_cache_setup_entry().
+
+        **Note:** After you exit the program, the cache is cleared.
+
+        @return None
+        @ingroup Realtime
+        """
+        status = self._api.rr_param_cache_update_with_timestamp(self._servo)
+        ServoError.handle(status)
+
     def read_cached_parameter(self, param: int):
         """@brief The function is always used in combination with the param_cache_setup_entry() and the param_cache_update()
         functions. For more information, see param_cache_setup_entry().
@@ -185,6 +199,31 @@ class Servo(object):
         ServoError.handle(status)
         return value.value
 
+    def read_cached_parameter_with_timestamp(self, param: int):
+        """@brief The function is always used in combination with the param_cache_setup_entry() and the param_cache_update_with_timestamp()
+        functions. For more information, see param_cache_setup_entry().
+        The function enables reading parameters from the program cache along whith the timestamp. If you want to read more than one parameter,
+        you will need to make a separate API call for each of them.
+
+        **Note:** Prior to reading a parameter, make sure to update the program cache using the param_cache_update_with_timestamp()
+        function.
+
+        @param
+            param: int:
+            Index of the parameter to read; you can find these indices in the <a href=https://rozum.com/support/docs/servo-api/api_8h.html#aa1f58887fab4642cf49f6f453c1d276d>rr_servo_param_t list </a>
+            (e.g., APP_PARAM_POSITION_ROTOR)
+
+        @return Requested value: float,
+                Timestamp: int
+        @ingroup Realtime
+        """
+
+        value = c_float()
+        timestamp = c_uint32()
+        status = self._api.rr_read_cached_parameter_with_timestamp(self._servo, c_int(param), byref(value), byref(timestamp))
+        ServoError.handle(status)
+        return value.value, timestamp.value
+
     def read_parameter(self, param: int):
         """@brief The function makes it possible to read a single parameter directly from the servo and returns the current
         value of the parameter. Additionally, the parameter is saved to the program cache, irrespective of whether it
@@ -202,6 +241,26 @@ class Servo(object):
         status = self._api.rr_read_parameter(self._servo, c_int(param), byref(value))
         ServoError.handle(status)
         return value.value
+
+    def read_parameter_with_timestamp(self, param: int):
+        """@brief The function makes it possible to read a single parameter directly from the servo and returns the current
+        value of the parameter along with the timestamp. Additionally, the parameter is saved to the program cache, irrespective of whether it
+        was enabled/ disabled with the param_cache_setup_entry() function.
+
+        @param
+            param: int:
+            Index of the parameter to read; you can find these indices in the <a href=https://rozum.com/support/docs/servo-api/api_8h.html#aa1f58887fab4642cf49f6f453c1d276d>rr_servo_param_t list </a>
+            (e.g., APP_PARAM_POSITION_ROTOR)
+
+        @return: Requested value: float
+                 Timestamp: int
+        @ingroup Realtime
+        """
+        value = c_float()
+        timestamp = c_uint32()
+        status = self._api.rr_read_parameter_with_timestamp(self._servo, c_int(param), byref(value), byref(timestamp))
+        ServoError.handle(status)
+        return value.value, timestamp.value
 
     def get_max_velocity(self):
         """@brief The function reads the maximum velocity of the servo at the current moment. It returns the smallest of the
