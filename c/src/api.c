@@ -736,12 +736,12 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
  i->emcy_log.head = 0;
  i->emcy_log.tail = 0;
 
- if(!i->iface)
- {
-	free(i->emcy_log.d);
-  free(i);
-  return NULL;
- }
+    if(!i->iface)
+    {
+		free(i->emcy_log.d);
+        free(i);
+        return NULL;
+    }
 
  return i;
 }
@@ -1561,29 +1561,83 @@ rr_ret_status_t rr_param_cache_update(rr_servo_t *servo)
  IS_VALID_SERVO(servo);
  CHECK_NMT_STATE(servo);
 
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint8_t data[APP_PARAM_SIZE * sizeof(float)];
- int len = sizeof(data);
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint8_t data[APP_PARAM_SIZE * sizeof(float)];
+    int len = sizeof(data);
+    int i, src;
 
- int sts = read_raw_sdo(dev, 0x2014, 0x01, data, &len, 1, 100);
- int i, src;
+    int sts = read_raw_sdo(dev, 0x2014, 0x01, data, &len, 1, 100);
 
- if(sts == CO_SDO_AB_NONE)
- {
-  for(i = 0, src = 0; i < APP_PARAM_SIZE; i++)
-  {
-   if(servo->pcache[i].activated)
-   {
-    usb_can_get_float(data + src, 0, (float *)&servo->pcache[i].value, 1);
-    src += sizeof(float);
-   }
-  }
-  if(src != len)
-  {
-   return RET_SIZE_MISMATCH;
-  }
-  return RET_OK;
- }
+	if(sts != 0)
+	{
+    	return ret_sdo(sts);
+	}
+
+	for(i = 0, src = 0; i < APP_PARAM_SIZE; i++)
+	{
+		if(servo->pcache[i].activated)
+		{
+			usb_can_get_float(data + src, 0, (float *)&servo->pcache[i].value, 1);
+			servo->pcache[i].timestamp = RR_TIMESTAMP_INVALID;
+			src += sizeof(float);
+		}
+	}
+
+	if(src != len)
+	{
+		return RET_SIZE_MISMATCH;
+	}
+
+	return RET_OK;
+}
+
+/**
+ * @brief Same as ::rr_param_cache_update but with timestamp functionality.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Realtime
+ */
+rr_ret_status_t rr_param_cache_update_with_timestamp(rr_servo_t *servo)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    uint8_t data[APP_PARAM_SIZE * sizeof(float) + sizeof(uint32_t)];
+    int len = sizeof(data);
+    int i, src = 0;
+	uint32_t timestamp;
+
+    int sts = read_raw_sdo(dev, 0x2016, 0x01, data, &len, 1, 100);
+
+	if(sts != 0)
+	{
+    	return ret_sdo(sts);
+	}
+
+	if(len < sizeof(uint32_t))
+	{
+		return RET_SIZE_MISMATCH;
+	}
+
+	src = usb_can_get_uint32_t(data, src, &timestamp, 1);
+
+    if(sts == CO_SDO_AB_NONE)
+    {
+        for(i = 0; i < APP_PARAM_SIZE; i++)
+        {
+            if(servo->pcache[i].activated)
+            {
+				if((src + sizeof(float)) > len)
+				{
+					return RET_SIZE_MISMATCH;
+				}
+                src = usb_can_get_float(data, src, (float *)&servo->pcache[i].value, 1);
+				servo->pcache[i].timestamp = timestamp;
+            }
+        }
+        return RET_OK;
+    }
 
  return ret_sdo(sts);
 }
@@ -1645,19 +1699,75 @@ rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t para
  IS_VALID_SERVO(servo);
  CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- int size = sizeof(data);
+    uint8_t data[sizeof(float)];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    int size = sizeof(data);
 
- uint32_t sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
- if(sts == CO_SDO_AB_NONE && size == 4)
- {
-  usb_can_get_float(data, 0, (float *)&servo->pcache[param].value, 1);
-  *value = servo->pcache[param].value;
-  return RET_OK;
- }
+    uint32_t sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
 
- return ret_sdo(sts);
+	if(sts != CO_SDO_AB_NONE)
+	{
+		return ret_sdo(sts);
+	}
+
+    if(size != sizeof(float))
+	{
+		return RET_SIZE_MISMATCH;
+	}
+
+	usb_can_get_float(data, 0, (float *)&servo->pcache[param].value, 1);
+	if(value)
+	{
+		*value = servo->pcache[param].value;
+	}
+	servo->pcache[param].timestamp = RR_TIMESTAMP_INVALID;
+	return RET_OK;
+}
+
+/**
+ * @brief Same ::rr_read_parameter but with timestamp functionality. 
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
+ * @param param Index of the parameter to read; you can find these indices in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR).
+ * @param value Pointer to the variable where the function will save the reading
+ * @param timestamp pointer to variable to receive timestamp value (timestamp range is 0 to 599999999 microseconds)
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Realtime
+ */
+rr_ret_status_t rr_read_parameter_with_timestamp(rr_servo_t *servo, const rr_servo_param_t param, float *value, uint32_t *timestamp)
+{
+    IS_VALID_SERVO(servo);
+    CHECK_NMT_STATE(servo);
+
+    uint8_t data[sizeof(float) + sizeof(uint32_t)];
+    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+    int size = sizeof(data);
+	int src = 0;
+
+    uint32_t sts = read_raw_sdo(dev, 0x2017, param, data, &size, 2, 100);
+
+	if(sts != CO_SDO_AB_NONE)
+	{
+		return ret_sdo(sts);
+	}
+
+    if(size != (sizeof(float) + sizeof(uint32_t)))
+	{
+		return RET_SIZE_MISMATCH;
+	}
+
+	src = usb_can_get_uint32_t(data, src, &servo->pcache[param].timestamp, 1);
+
+	if(timestamp)
+	{
+		*timestamp = servo->pcache[param].timestamp;
+	}
+
+	usb_can_get_float(data, src, (float *)&servo->pcache[param].value, 1);
+	if(value)
+	{
+		*value = servo->pcache[param].value;
+	}
+	return RET_OK;
 }
 
 /**
@@ -1674,9 +1784,35 @@ rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t para
  */
 rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
- IS_VALID_SERVO(servo);
- *value = servo->pcache[param].value;
- return RET_OK;
+    IS_VALID_SERVO(servo);
+	if(value)
+	{
+    	*value = servo->pcache[param].value;
+	}
+    return RET_OK;
+}
+
+/**
+ * @brief Same as ::rr_read_cached_parameter but with timestamp functionality.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function
+ * @param param Index of the parameter to read; you can find these indices in the ::rr_servo_param_t list (e.g., APP_PARAM_POSITION_ROTOR)
+ * @param value Pointer to the variable where the function will save the reading
+ * @param timestamp pointer to variable to receive timestamp value (timestamp range is 0 to 599999999 microseconds)
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Realtime
+ */
+rr_ret_status_t rr_read_cached_parameter_with_timestamp(rr_servo_t *servo, const rr_servo_param_t param, float *value, uint32_t *timestamp)
+{
+    IS_VALID_SERVO(servo);
+	if(value)
+	{
+    	*value = servo->pcache[param].value;
+	}
+	if(timestamp)
+	{
+    	*timestamp = servo->pcache[param].timestamp;
+	}
+    return RET_OK;
 }
 
 /**

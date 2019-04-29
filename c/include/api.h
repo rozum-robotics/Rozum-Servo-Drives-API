@@ -156,13 +156,19 @@ typedef enum
 
 /**
  * @brief Device information source instance
- * 
  */
 typedef struct
 {
-    float value;       ///< Source value
-    uint8_t activated; ///< Source activation flag
+    float value;            ///< Source value
+	uint32_t timestamp;		///< Timestamp 0 - 599999999 us (value outside this range is invalid)
+    bool activated;         ///< Source activation flag
 } param_cache_entry_t;
+
+/**
+ * @brief Invalid timestamp value
+ */
+#define RR_TIMESTAMP_INVALID	0xffffffffu
+
 
 /**
  * @brief Emergency (EMCY) log entry structure
@@ -173,7 +179,7 @@ typedef struct
 	uint16_t err_code;
 	uint8_t err_reg;
 	uint8_t err_bits;
-       	int32_t err_info;
+    int32_t err_info;
 } emcy_log_entry_t;
 
 /**
@@ -295,10 +301,13 @@ rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestam
 rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, uint8_t *const error_array);
 
 rr_ret_status_t rr_param_cache_update(rr_servo_t *servo);
+rr_ret_status_t rr_param_cache_update_with_timestamp(rr_servo_t *servo);
 rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled);
 
 rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
+rr_ret_status_t rr_read_parameter_with_timestamp(rr_servo_t *servo, const rr_servo_param_t param, float *value, uint32_t *timestamp);
 rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value);
+rr_ret_status_t rr_read_cached_parameter_with_timestamp(rr_servo_t *servo, const rr_servo_param_t param, float *value, uint32_t *timestamp);
 
 rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo);
 rr_ret_status_t rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear);
