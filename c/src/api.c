@@ -88,6 +88,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 #define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
+#define BIT_CLR_UINT_ARRAY(array, bit) ((array)[(bit) / 8] &= ~(1 << ((bit) % 8)))
 
 #define IS_VALID_INTERFACE(v) \
  if(!v) return RET_BAD_INSTANCE
@@ -1668,6 +1669,11 @@ rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_par
  uint8_t array[10] = {0};
  usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
+ if((param < 0) || (param >= APP_PARAM_SIZE))
+ {
+ 	return RET_WRONG_ARG;
+ }
+
  servo->pcache[param].activated = enabled;
 
  for(int i = 0; i < APP_PARAM_SIZE; i++)
@@ -1675,6 +1681,10 @@ rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_par
   if(servo->pcache[i].activated)
   {
    BIT_SET_UINT_ARRAY(array, i);
+  }
+  else
+  {
+   BIT_CLR_UINT_ARRAY(array, i);
   }
  }
 
@@ -1696,21 +1706,26 @@ rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_par
  */
 rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
-    uint8_t data[sizeof(float)];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    int size = sizeof(data);
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
 
-    uint32_t sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
+	uint8_t data[sizeof(float)];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int size = sizeof(data);
+
+	uint32_t sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
 
 	if(sts != CO_SDO_AB_NONE)
 	{
 		return ret_sdo(sts);
 	}
 
-    if(size != sizeof(float))
+	if(size != sizeof(float))
 	{
 		return RET_SIZE_MISMATCH;
 	}
@@ -1737,6 +1752,11 @@ rr_ret_status_t rr_read_parameter_with_timestamp(rr_servo_t *servo, const rr_ser
 {
     IS_VALID_SERVO(servo);
     CHECK_NMT_STATE(servo);
+
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
 
     uint8_t data[sizeof(float) + sizeof(uint32_t)];
     usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
@@ -1785,6 +1805,12 @@ rr_ret_status_t rr_read_parameter_with_timestamp(rr_servo_t *servo, const rr_ser
 rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
     IS_VALID_SERVO(servo);
+
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
+
 	if(value)
 	{
     	*value = servo->pcache[param].value;
@@ -1804,6 +1830,12 @@ rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param
 rr_ret_status_t rr_read_cached_parameter_with_timestamp(rr_servo_t *servo, const rr_servo_param_t param, float *value, uint32_t *timestamp)
 {
     IS_VALID_SERVO(servo);
+
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
+
 	if(value)
 	{
     	*value = servo->pcache[param].value;
