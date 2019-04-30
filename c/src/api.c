@@ -90,17 +90,17 @@
 #define BIT_SET_UINT_ARRAY(array, bit) ((array)[(bit) / 8] |= (1 << ((bit) % 8)))
 
 #define IS_VALID_INTERFACE(v) \
- if(!v) return RET_BAD_INSTANCE
+	if(!v) return RET_BAD_INSTANCE
 #define IS_VALID_SERVO(v) \
- if(!v) return RET_BAD_INSTANCE
+	if(!v) return RET_BAD_INSTANCE
 
 #define CHECK_NMT_STATE(x)
 /*            \
- if(x->nmt_state == CO_NMT_STOPPED || x->nmt_state == CO_NMT_BOOT) \
- {                 \
-  return RET_STOPPED;             \
- }
- */
+			  if(x->nmt_state == CO_NMT_STOPPED || x->nmt_state == CO_NMT_BOOT) \
+			  {                 \
+			  return RET_STOPPED;             \
+			  }
+			  */
 //! @w
 
 /* Private variables ---------------------------------------------------------*/
@@ -110,45 +110,45 @@
 /* Private functions ---------------------------------------------------------*/
 static rr_ret_status_t ret_sdo(int code)
 {
- switch(code)
- {
- case CO_SDO_AB_NONE:
-  return RET_OK;
- case CO_SDO_AB_TIMEOUT:
-  return RET_TIMEOUT;
- default:
-  return RET_ERROR;
- }
+	switch(code)
+	{
+		case CO_SDO_AB_NONE:
+			return RET_OK;
+		case CO_SDO_AB_TIMEOUT:
+			return RET_TIMEOUT;
+		default:
+			return RET_ERROR;
+	}
 }
 
 void rr_nmt_state_master_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state)
 {
- rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
+	rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
 
- LOG_INFO(debug_log, "ID: %d %s", id, rr_describe_nmt((rr_nmt_state_t)state));
+	LOG_INFO(debug_log, "ID: %d %s", id, rr_describe_nmt((rr_nmt_state_t)state));
 
- if(i->nmt_cb)
- {
-  ((rr_nmt_cb_t)(i->nmt_cb))(i, id, (rr_nmt_state_t)state);
- }
+	if(i->nmt_cb)
+	{
+		((rr_nmt_cb_t)(i->nmt_cb))(i, id, (rr_nmt_state_t)state);
+	}
 }
 
 void rr_emcy_log_push(rr_can_interface_t *iface, uint8_t id, uint16_t err_code, uint8_t err_reg,
-	uint8_t err_bits, int32_t err_info);
+		uint8_t err_bits, int32_t err_info);
 
 void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info)
 {
- rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
+	rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
 
- LOG_WARN(debug_log, "Emergency frame received: id(%" PRId8 ") code(0x%" PRIX16 ") reg(0x%" PRIX8 ") bits(0x%" PRIX8 ") info(0x%" PRIX32 "):\n '%s, %s'",
-    id, code, reg, bits, info, rr_describe_emcy_code(code), rr_describe_emcy_bit(bits));
+	LOG_WARN(debug_log, "Emergency frame received: id(%" PRId8 ") code(0x%" PRIX16 ") reg(0x%" PRIX8 ") bits(0x%" PRIX8 ") info(0x%" PRIX32 "):\n '%s, %s'",
+			id, code, reg, bits, info, rr_describe_emcy_code(code), rr_describe_emcy_bit(bits));
 
- rr_emcy_log_push(i, id, code, reg, bits, info);
+	rr_emcy_log_push(i, id, code, reg, bits, info);
 
- if(i->emcy_cb)
- {
-  ((rr_emcy_cb_t)(i->emcy_cb))(i, id, code, reg, bits, info);
- }
+	if(i->emcy_cb)
+	{
+		((rr_emcy_cb_t)(i->emcy_cb))(i, id, code, reg, bits, info);
+	}
 }
 
 /// @endcond
@@ -190,7 +190,7 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
  */
 void rr_sleep_ms(int ms)
 {
- msleep(ms);
+	msleep(ms);
 }
 
 //! @cond Doxygen_Suppress
@@ -208,12 +208,12 @@ void rr_sleep_ms(int ms)
  */
 rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int sz, int retry, int tout)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint32_t sts = write_raw_sdo((usbcan_device_t *)servo->dev, idx, sidx, data, sz, retry, tout);
+	uint32_t sts = write_raw_sdo((usbcan_device_t *)servo->dev, idx, sidx, data, sz, retry, tout);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -230,12 +230,12 @@ rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t 
  */
 rr_ret_status_t rr_read_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int *sz, int retry, int tout)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint32_t sts = read_raw_sdo((usbcan_device_t *)servo->dev, idx, sidx, data, sz, retry, tout);
+	uint32_t sts = read_raw_sdo((usbcan_device_t *)servo->dev, idx, sidx, data, sz, retry, tout);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 /// @endcond
 
@@ -249,8 +249,8 @@ rr_ret_status_t rr_read_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t s
  */
 void rr_set_comm_log_stream(const rr_can_interface_t *iface, FILE *f)
 {
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
- usbcan_set_comm_log_stream(inst, f);
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	usbcan_set_comm_log_stream(inst, f);
 }
 
 /**
@@ -262,7 +262,7 @@ void rr_set_comm_log_stream(const rr_can_interface_t *iface, FILE *f)
  */
 void rr_set_debug_log_stream(FILE *f)
 {
- usbcan_set_debug_log_stream(f);
+	usbcan_set_debug_log_stream(f);
 }
 
 /**
@@ -276,10 +276,10 @@ void rr_set_debug_log_stream(FILE *f)
  */
 void rr_setup_nmt_callback(rr_can_interface_t *iface, rr_nmt_cb_t cb)
 {
- if(iface)
- {
-  iface->nmt_cb = (void *)cb;
- }
+	if(iface)
+	{
+		iface->nmt_cb = (void *)cb;
+	}
 }
 
 /**
@@ -292,10 +292,10 @@ void rr_setup_nmt_callback(rr_can_interface_t *iface, rr_nmt_cb_t cb)
  */
 void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
 {
- if(iface)
- {
-  iface->emcy_cb = (void *)cb;
- }
+	if(iface)
+	{
+		iface->emcy_cb = (void *)cb;
+	}
 }
 
 /*
@@ -311,7 +311,7 @@ void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
  * <ol><li>to clear the EMCY logging buffer with the ::rr_emcy_log_clear</li>
  * <li>to get the total count of entries in the EMCY logging buffer, using the ::rr_emcy_log_get_size function </li>
  * <li>to read the EMCY events from the buffer with the ::rr_emcy_log_pop function </li></ol>
- 
+
  * @param iface Descriptor of the interface returned by the ::rr_init_interface function
  * @return int number of unread entries
  * @ingroup Err
@@ -322,7 +322,7 @@ int rr_emcy_log_get_size(rr_can_interface_t *iface)
 }
 
 void rr_emcy_log_push(rr_can_interface_t *iface, uint8_t id, uint16_t err_code, uint8_t err_reg,
-	uint8_t err_bits, int32_t err_info)
+		uint8_t err_bits, int32_t err_info)
 {
 	int unused = iface->emcy_log.sz - rr_emcy_log_get_size(iface);
 
@@ -382,23 +382,23 @@ void rr_emcy_log_clear(rr_can_interface_t *iface)
  */
 const char *rr_describe_nmt(rr_nmt_state_t state)
 {
- switch(state)
- {
- case RR_NMT_INITIALIZING:
-  return "Device is initializing";
- case RR_NMT_BOOT:
-  return "Bootloader mode";
- case RR_NMT_PRE_OPERATIONAL:
-  return "Device is in pre-operational mode";
- case RR_NMT_OPERATIONAL:
-  return "Device is in operational mode";
- case RR_NMT_STOPPED:
-  return "Device is in stopped mode";
- case RR_NMT_HB_TIMEOUT:
-  return "Device disappeared";
- default:
-  return "N/A";
- }
+	switch(state)
+	{
+		case RR_NMT_INITIALIZING:
+			return "Device is initializing";
+		case RR_NMT_BOOT:
+			return "Bootloader mode";
+		case RR_NMT_PRE_OPERATIONAL:
+			return "Device is in pre-operational mode";
+		case RR_NMT_OPERATIONAL:
+			return "Device is in operational mode";
+		case RR_NMT_STOPPED:
+			return "Device is in stopped mode";
+		case RR_NMT_HB_TIMEOUT:
+			return "Device disappeared";
+		default:
+			return "N/A";
+	}
 }
 
 /**
@@ -410,142 +410,142 @@ const char *rr_describe_nmt(rr_nmt_state_t state)
  */
 const char *rr_describe_emcy_bit(uint8_t bit)
 {
- switch(bit)
- {
- case CO_EM_NO_ERROR:
-  return "Error Reset or No Error";
- case CO_EM_CAN_BUS_WARNING:
-  return "CAN bus warning limit reached";
- case CO_EM_RXMSG_WRONG_LENGTH:
-  return "Wrong data length of the received CAN message";
- case CO_EM_RXMSG_OVERFLOW:
-  return "Previous received CAN message wasn't processed yet";
- case CO_EM_RPDO_WRONG_LENGTH:
-  return "Wrong data length of received PDO";
- case CO_EM_RPDO_OVERFLOW:
-  return "Previous received PDO wasn't processed yet";
- case CO_EM_CAN_RX_BUS_PASSIVE:
-  return "CAN Rx passive";
- case CO_EM_CAN_TX_BUS_PASSIVE:
-  return "CAN Tx passive";
+	switch(bit)
+	{
+		case CO_EM_NO_ERROR:
+			return "Error Reset or No Error";
+		case CO_EM_CAN_BUS_WARNING:
+			return "CAN bus warning limit reached";
+		case CO_EM_RXMSG_WRONG_LENGTH:
+			return "Wrong data length of the received CAN message";
+		case CO_EM_RXMSG_OVERFLOW:
+			return "Previous received CAN message wasn't processed yet";
+		case CO_EM_RPDO_WRONG_LENGTH:
+			return "Wrong data length of received PDO";
+		case CO_EM_RPDO_OVERFLOW:
+			return "Previous received PDO wasn't processed yet";
+		case CO_EM_CAN_RX_BUS_PASSIVE:
+			return "CAN Rx passive";
+		case CO_EM_CAN_TX_BUS_PASSIVE:
+			return "CAN Tx passive";
 
- case CO_EM_NMT_WRONG_COMMAND:
-  return "Wrong NMT command received";
-  //case 09-11 unused
+		case CO_EM_NMT_WRONG_COMMAND:
+			return "Wrong NMT command received";
+			//case 09-11 unused
 
- case CO_EM_CAN_TX_BUS_OFF:
-  return "CAN transmit bus is off";
- case CO_EM_CAN_RXB_OVERFLOW:
-  return "CAN module receive buffer has overflowed";
- case CO_EM_CAN_TX_OVERFLOW:
-  return "CAN transmit buffer has overflowed";
- case CO_EM_TPDO_OUTSIDE_WINDOW:
-  return "TPDO is outside SYNC window";
+		case CO_EM_CAN_TX_BUS_OFF:
+			return "CAN transmit bus is off";
+		case CO_EM_CAN_RXB_OVERFLOW:
+			return "CAN module receive buffer has overflowed";
+		case CO_EM_CAN_TX_OVERFLOW:
+			return "CAN transmit buffer has overflowed";
+		case CO_EM_TPDO_OUTSIDE_WINDOW:
+			return "TPDO is outside SYNC window";
 
-  //case 16-17 unused
+			//case 16-17 unused
 
- case CO_EM_SYNC_TIME_OUT:
-  return "SYNC message timeout";
- case CO_EM_SYNC_LENGTH:
-  return "Unexpected SYNC data length";
- case CO_EM_PDO_WRONG_MAPPING:
-  return "Error with PDO mapping";
- case CO_EM_HB_CONSUMER_REMOTE_RESET:
-  return "Heartbeat consumer detected remote node reset";
+		case CO_EM_SYNC_TIME_OUT:
+			return "SYNC message timeout";
+		case CO_EM_SYNC_LENGTH:
+			return "Unexpected SYNC data length";
+		case CO_EM_PDO_WRONG_MAPPING:
+			return "Error with PDO mapping";
+		case CO_EM_HB_CONSUMER_REMOTE_RESET:
+			return "Heartbeat consumer detected remote node reset";
 
-  //case 1D-1F unused
+			//case 1D-1F unused
 
- case CO_EM_EMERGENCY_BUFFER_FULL:
-  return "Emergency buffer is full, Emergency message wasn't sent";
- case CO_EM_MOTION_ERROR:
-  return "Motion Error";
- case CO_EM_MICROCONTROLLER_RESET:
-  return "Microcontroller has just started";
- case CO_EM_UNAUTHORIZED_ACCESS:
-  return "Access is only available to service engineer";
- case CO_EM_TEMPERATURE_ERROR:
-  return "Temperature Motor is too high";
- case CO_EM_TEMPERATURE_INTRNL_ERROR:
-  return "Temperature PCB is too high";
- case CO_EM_HARDWARE_ERROR:
-  return "Hardware error (driver error)";
- case CO_EM_MOTION_INVALID:
-  return "Invalid motion command received";
+		case CO_EM_EMERGENCY_BUFFER_FULL:
+			return "Emergency buffer is full, Emergency message wasn't sent";
+		case CO_EM_MOTION_ERROR:
+			return "Motion Error";
+		case CO_EM_MICROCONTROLLER_RESET:
+			return "Microcontroller has just started";
+		case CO_EM_UNAUTHORIZED_ACCESS:
+			return "Access is only available to service engineer";
+		case CO_EM_TEMPERATURE_ERROR:
+			return "Temperature Motor is too high";
+		case CO_EM_TEMPERATURE_INTRNL_ERROR:
+			return "Temperature PCB is too high";
+		case CO_EM_HARDWARE_ERROR:
+			return "Hardware error (driver error)";
+		case CO_EM_MOTION_INVALID:
+			return "Invalid motion command received";
 
- case CO_EM_WRONG_ERROR_REPORT:
-  return "Wrong parameters to CO_EM_reportError() function";
- case CO_EM_ISR_TIMER_OVERFLOW:
-  return "Timer task has overflowed";
- case CO_EM_MEMORY_ALLOCATION_ERROR:
-  return "Unable to allocate memory for objects";
- case CO_EM_GENERIC_ERROR:
-  return "Generic error, test usage";
- case CO_EM_GENERIC_SOFTWARE_ERROR:
-  return "Software error";
- case CO_EM_INCONSISTENT_OBJECT_DICT:
-  return "Object dictionary does not match the software";
- case CO_EM_CALCULATION_OF_PARAMETERS:
-  return "Error in calculation of device parameters";
- case CO_EM_NON_VOLATILE_MEMORY:
-  return "Error with access to non volatile device memory";
+		case CO_EM_WRONG_ERROR_REPORT:
+			return "Wrong parameters to CO_EM_reportError() function";
+		case CO_EM_ISR_TIMER_OVERFLOW:
+			return "Timer task has overflowed";
+		case CO_EM_MEMORY_ALLOCATION_ERROR:
+			return "Unable to allocate memory for objects";
+		case CO_EM_GENERIC_ERROR:
+			return "Generic error, test usage";
+		case CO_EM_GENERIC_SOFTWARE_ERROR:
+			return "Software error";
+		case CO_EM_INCONSISTENT_OBJECT_DICT:
+			return "Object dictionary does not match the software";
+		case CO_EM_CALCULATION_OF_PARAMETERS:
+			return "Error in calculation of device parameters";
+		case CO_EM_NON_VOLATILE_MEMORY:
+			return "Error with access to non volatile device memory";
 
- case CO_EM_FLT_CONFIG_CONSTRAINT:
-  return "Constraint was applied to the settings";
- case CO_EM_FLT_CONFIG_CRC:
-  return "CRC check of the setings failed";
- case CO_EM_FLT_NTC:
-  return "NTC Error";
- case CO_EM_FLT_CS0:
-  return "Current sensor 0 error";
- case CO_EM_FLT_CS1:
-  return "Current sensor 1 error";
- case CO_EM_FLT_CS2:
-  return "Current sensor 2 error";
- case CO_EM_FLT_DRIVER:
-  return "Driver error";
- case CO_EM_FLT_VS0:
-  return "Voltage sensor error";
+		case CO_EM_FLT_CONFIG_CONSTRAINT:
+			return "Constraint was applied to the settings";
+		case CO_EM_FLT_CONFIG_CRC:
+			return "CRC check of the setings failed";
+		case CO_EM_FLT_NTC:
+			return "NTC Error";
+		case CO_EM_FLT_CS0:
+			return "Current sensor 0 error";
+		case CO_EM_FLT_CS1:
+			return "Current sensor 1 error";
+		case CO_EM_FLT_CS2:
+			return "Current sensor 2 error";
+		case CO_EM_FLT_DRIVER:
+			return "Driver error";
+		case CO_EM_FLT_VS0:
+			return "Voltage sensor error";
 
- case CO_EM_FLT_ENC_M_OFF:
-  return "Motor Encoder disconnected";
- case CO_EM_FLT_ENC_G_OFF:
-  return "Gear Encoder disconnected";
- case CO_EM_FLT_ENC_M_STUP_CRC:
-  return "Motor Encoder CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
- case CO_EM_FLT_ENC_G_STUP_CRC:
-  return "Gear Encoder CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
- case CO_EM_FLT_ENC_M_LEVEL:
-  return "Motor Encoder FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
- case CO_EM_FLT_ENC_G_LEVEL:
-  return "Gear Encoder FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
- case CO_EM_FLT_ENC_M_SIG:
-  return "Motor Encoder NON_CTR bit in STATUS1";
- case CO_EM_FLT_ENC_G_SIG:
-  return "Gear Encoder NON_CTR bit in STATUS1";
+		case CO_EM_FLT_ENC_M_OFF:
+			return "Motor Encoder disconnected";
+		case CO_EM_FLT_ENC_G_OFF:
+			return "Gear Encoder disconnected";
+		case CO_EM_FLT_ENC_M_STUP_CRC:
+			return "Motor Encoder CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
+		case CO_EM_FLT_ENC_G_STUP_CRC:
+			return "Gear Encoder CRC_ERR/EPR_ERR in STATUS1 & STUP in STATUS0";
+		case CO_EM_FLT_ENC_M_LEVEL:
+			return "Motor Encoder FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
+		case CO_EM_FLT_ENC_G_LEVEL:
+			return "Gear Encoder FRQ_ABZ/FRQ_CNV in STATUS1 & AN_MAX/AN_MIN/AM_MAX/AM_MIN in STATUS0";
+		case CO_EM_FLT_ENC_M_SIG:
+			return "Motor Encoder NON_CTR bit in STATUS1";
+		case CO_EM_FLT_ENC_G_SIG:
+			return "Gear Encoder NON_CTR bit in STATUS1";
 
- case CO_EM_HW_VOLT_LO:
-  return "Under Voltage";
- case CO_EM_HW_VOLT_HI:
-  return "Over Voltage";
- case CO_EM_HW_CUR_LIMIT:
-  return "Over Current";
- case CO_EM_POWER_ERROR:
-  return "Over Power";
- case CO_EM_FORCE_ERROR:
-  return "Over Force";
- case CO_EM_HEARTBEAT_CONSUMER:
-  return "Heartbeat consumer timeout";
+		case CO_EM_HW_VOLT_LO:
+			return "Under Voltage";
+		case CO_EM_HW_VOLT_HI:
+			return "Over Voltage";
+		case CO_EM_HW_CUR_LIMIT:
+			return "Over Current";
+		case CO_EM_POWER_ERROR:
+			return "Over Power";
+		case CO_EM_FORCE_ERROR:
+			return "Over Force";
+		case CO_EM_HEARTBEAT_CONSUMER:
+			return "Heartbeat consumer timeout";
 
- case CO_EM_HW_CUR_LIMIT_A:
-  return "Current Limit Phase A";
- case CO_EM_HW_CUR_LIMIT_B:
-  return "Current Limit Phase B";
- case CO_EM_HW_CUR_LIMIT_C:
-  return "Current Limit Phase C";
+		case CO_EM_HW_CUR_LIMIT_A:
+			return "Current Limit Phase A";
+		case CO_EM_HW_CUR_LIMIT_B:
+			return "Current Limit Phase B";
+		case CO_EM_HW_CUR_LIMIT_C:
+			return "Current Limit Phase C";
 
- default:
-  return "N/A";
- }
+		default:
+			return "N/A";
+	}
 }
 
 /**
@@ -558,138 +558,138 @@ const char *rr_describe_emcy_bit(uint8_t bit)
  */
 const char *rr_describe_emcy_code(uint16_t code)
 {
- switch(code)
- {
- case CO_EMC_NO_ERROR:
-  return "Error Reset or No Error";
- case CO_EMC_GENERIC:
-  return "Generic Error";
- case CO_EMC_CURRENT:
-  return "Current";
- case CO_EMC_CURRENT_INPUT:
-  return "Current, device input side";
- case CO_EMC_CURRENT_INSIDE:
-  return "Current inside the device";
- case CO_EMC_CURRENT_OUTPUT:
-  return "Current, device output side";
- case CO_EMC_VOLTAGE:
-  return "Voltage";
- case CO_EMC_VOLTAGE_MAINS:
-  return "Mains Voltage";
- case CO_EMC_VOLTAGE_INSIDE:
-  return "Voltage inside the device";
- case CO_EMC_VOLTAGE_OUTPUT:
-  return "Output Voltage";
- case CO_EMC_TEMPERATURE:
-  return "Temperature";
- case CO_EMC_TEMP_AMBIENT:
-  return "Ambient Temperature";
- case CO_EMC_TEMP_DEVICE:
-  return "Device Temperature";
- case CO_EMC_HARDWARE:
-  return "Device Hardware";
- case CO_EMC_SOFTWARE_DEVICE:
-  return "Device Software";
- case CO_EMC_SOFTWARE_INTERNAL:
-  return "Internal Software";
- case CO_EMC_SOFTWARE_USER:
-  return "User Software";
- case CO_EMC_DATA_SET:
-  return "Data Set";
- case CO_EMC_ADDITIONAL_MODUL:
-  return "Additional Modules";
- case CO_EMC_MONITORING:
-  return "Monitoring";
- case CO_EMC_COMMUNICATION:
-  return "Communication";
- case CO_EMC_CAN_OVERRUN:
-  return "CAN Overrun (Objects lost)";
- case CO_EMC_CAN_PASSIVE:
-  return "CAN Passive Mode";
- case CO_EMC_HEARTBEAT:
-  return "Life Guard Error or Heartbeat Error";
- case CO_EMC_BUS_OFF_RECOVERED:
-  return "recovered from bus off";
- case CO_EMC_CAN_ID_COLLISION:
-  return "CAN-ID collision";
- case CO_EMC_PROTOCOL_ERROR:
-  return "Protocol Error";
- case CO_EMC_PDO_LENGTH:
-  return "PDO not processed due to length error";
- case CO_EMC_PDO_LENGTH_EXC:
-  return "PDO length exceeded";
- case CO_EMC_DAM_MPDO:
-  return "DAM MPDO not processed, destination object not available";
- case CO_EMC_SYNC_DATA_LENGTH:
-  return "Unexpected SYNC data length";
- case CO_EMC_RPDO_TIMEOUT:
-  return "RPDO timeout";
- case CO_EMC_EXTERNAL_ERROR:
-  return "External Error";
- case CO_EMC_ADDITIONAL_FUNC:
-  return "Additional Functions";
- case CO_EMC_DEVICE_SPECIFIC:
-  return "Device specific";
+	switch(code)
+	{
+		case CO_EMC_NO_ERROR:
+			return "Error Reset or No Error";
+		case CO_EMC_GENERIC:
+			return "Generic Error";
+		case CO_EMC_CURRENT:
+			return "Current";
+		case CO_EMC_CURRENT_INPUT:
+			return "Current, device input side";
+		case CO_EMC_CURRENT_INSIDE:
+			return "Current inside the device";
+		case CO_EMC_CURRENT_OUTPUT:
+			return "Current, device output side";
+		case CO_EMC_VOLTAGE:
+			return "Voltage";
+		case CO_EMC_VOLTAGE_MAINS:
+			return "Mains Voltage";
+		case CO_EMC_VOLTAGE_INSIDE:
+			return "Voltage inside the device";
+		case CO_EMC_VOLTAGE_OUTPUT:
+			return "Output Voltage";
+		case CO_EMC_TEMPERATURE:
+			return "Temperature";
+		case CO_EMC_TEMP_AMBIENT:
+			return "Ambient Temperature";
+		case CO_EMC_TEMP_DEVICE:
+			return "Device Temperature";
+		case CO_EMC_HARDWARE:
+			return "Device Hardware";
+		case CO_EMC_SOFTWARE_DEVICE:
+			return "Device Software";
+		case CO_EMC_SOFTWARE_INTERNAL:
+			return "Internal Software";
+		case CO_EMC_SOFTWARE_USER:
+			return "User Software";
+		case CO_EMC_DATA_SET:
+			return "Data Set";
+		case CO_EMC_ADDITIONAL_MODUL:
+			return "Additional Modules";
+		case CO_EMC_MONITORING:
+			return "Monitoring";
+		case CO_EMC_COMMUNICATION:
+			return "Communication";
+		case CO_EMC_CAN_OVERRUN:
+			return "CAN Overrun (Objects lost)";
+		case CO_EMC_CAN_PASSIVE:
+			return "CAN Passive Mode";
+		case CO_EMC_HEARTBEAT:
+			return "Life Guard Error or Heartbeat Error";
+		case CO_EMC_BUS_OFF_RECOVERED:
+			return "recovered from bus off";
+		case CO_EMC_CAN_ID_COLLISION:
+			return "CAN-ID collision";
+		case CO_EMC_PROTOCOL_ERROR:
+			return "Protocol Error";
+		case CO_EMC_PDO_LENGTH:
+			return "PDO not processed due to length error";
+		case CO_EMC_PDO_LENGTH_EXC:
+			return "PDO length exceeded";
+		case CO_EMC_DAM_MPDO:
+			return "DAM MPDO not processed, destination object not available";
+		case CO_EMC_SYNC_DATA_LENGTH:
+			return "Unexpected SYNC data length";
+		case CO_EMC_RPDO_TIMEOUT:
+			return "RPDO timeout";
+		case CO_EMC_EXTERNAL_ERROR:
+			return "External Error";
+		case CO_EMC_ADDITIONAL_FUNC:
+			return "Additional Functions";
+		case CO_EMC_DEVICE_SPECIFIC:
+			return "Device specific";
 
- case CO_EMC401_OUT_CUR_HI:
-  return "DS401: Current at outputs too high (overload)";
- case CO_EMC401_OUT_SHORTED:
-  return "DS401: Short circuit at outputs";
- case CO_EMC401_OUT_LOAD_DUMP:
-  return "DS401: Load dump at outputs";
- case CO_EMC401_IN_VOLT_HI:
-  return "DS401: Input voltage too high";
- case CO_EMC401_IN_VOLT_LOW:
-  return "DS401: Input voltage too low";
- case CO_EMC401_INTERN_VOLT_HI:
-  return "DS401: Internal voltage too high";
- case CO_EMC401_INTERN_VOLT_LO:
-  return "DS401: Internal voltage too low";
- case CO_EMC401_OUT_VOLT_HIGH:
-  return "DS401: Output voltage too high";
- case CO_EMC401_OUT_VOLT_LOW:
-  return "DS401: Output voltage too low";
- case CO_EMC401_POWER_TEMP_OVER:
-  return "High temperature of the PCB";
- case CO_EMC401_MOTOR_TEMP_OVER:
-  return "High temperature of the motor";
- case CO_EMC401_SYS_ERROR:
-  return "System error";
- case CO_EMC401_POINT_ERROR:
-  return "System error: invalid motion point";
- case CO_EMC401_CURR_MEAS_OFFSET:
-  return "Control: Current measurement offset";
- case CO_EMC401_EE_FAULT:
-  return "EEPROM fault";
- case CO_EMC401_EE_CRC_ERROR:
-  return "EEPROM checksum error";
- case CO_EMC401_CONF_ERROR:
-  return "Configuration error";
- case CO_EMC401_ENC_CNT_ERROR:
-  return "Encoder counting error";
- case CO_EMC401_VEL_FLW_ERROR:
-  return "Velocity controller following error";
- case CO_EMC401_POS_LIMIT:
-  return "Position controller limits";
- case CO_EMC401_POS_FLW_ERROR:
-  return "Position controller following error";
- case CO_EMC401_POS_FLW_STATIC_ERROR:
-  return "Position controller static following error";
- case CO_EMC401_ACCESS_ERROR:
-  return "Unauthorized access";
- case CO_EMC401_PWRCTRL_ERROR:
-  return "Power Stage Controller Error";
- case CO_EMC401_BUSY:
-  return "Busy";
- case CO_EMC401_PROCEDURE_ERROR:
-  return "Procedure error";
- case CO_EMC401_FORCE_OVER:
-  return "Over force";
- case CO_EMC401_POWER_OVER:
-  return "Over power";
- default:
-  return "N/A";
- }
+		case CO_EMC401_OUT_CUR_HI:
+			return "DS401: Current at outputs too high (overload)";
+		case CO_EMC401_OUT_SHORTED:
+			return "DS401: Short circuit at outputs";
+		case CO_EMC401_OUT_LOAD_DUMP:
+			return "DS401: Load dump at outputs";
+		case CO_EMC401_IN_VOLT_HI:
+			return "DS401: Input voltage too high";
+		case CO_EMC401_IN_VOLT_LOW:
+			return "DS401: Input voltage too low";
+		case CO_EMC401_INTERN_VOLT_HI:
+			return "DS401: Internal voltage too high";
+		case CO_EMC401_INTERN_VOLT_LO:
+			return "DS401: Internal voltage too low";
+		case CO_EMC401_OUT_VOLT_HIGH:
+			return "DS401: Output voltage too high";
+		case CO_EMC401_OUT_VOLT_LOW:
+			return "DS401: Output voltage too low";
+		case CO_EMC401_POWER_TEMP_OVER:
+			return "High temperature of the PCB";
+		case CO_EMC401_MOTOR_TEMP_OVER:
+			return "High temperature of the motor";
+		case CO_EMC401_SYS_ERROR:
+			return "System error";
+		case CO_EMC401_POINT_ERROR:
+			return "System error: invalid motion point";
+		case CO_EMC401_CURR_MEAS_OFFSET:
+			return "Control: Current measurement offset";
+		case CO_EMC401_EE_FAULT:
+			return "EEPROM fault";
+		case CO_EMC401_EE_CRC_ERROR:
+			return "EEPROM checksum error";
+		case CO_EMC401_CONF_ERROR:
+			return "Configuration error";
+		case CO_EMC401_ENC_CNT_ERROR:
+			return "Encoder counting error";
+		case CO_EMC401_VEL_FLW_ERROR:
+			return "Velocity controller following error";
+		case CO_EMC401_POS_LIMIT:
+			return "Position controller limits";
+		case CO_EMC401_POS_FLW_ERROR:
+			return "Position controller following error";
+		case CO_EMC401_POS_FLW_STATIC_ERROR:
+			return "Position controller static following error";
+		case CO_EMC401_ACCESS_ERROR:
+			return "Unauthorized access";
+		case CO_EMC401_PWRCTRL_ERROR:
+			return "Power Stage Controller Error";
+		case CO_EMC401_BUSY:
+			return "Busy";
+		case CO_EMC401_PROCEDURE_ERROR:
+			return "Procedure error";
+		case CO_EMC401_FORCE_OVER:
+			return "Over force";
+		case CO_EMC401_POWER_OVER:
+			return "Over power";
+		default:
+			return "N/A";
+	}
 }
 
 /**
@@ -710,40 +710,40 @@ const char *rr_describe_emcy_code(uint16_t code)
  */
 rr_can_interface_t *rr_init_interface(const char *interface_name)
 {
- rr_can_interface_t *i = (rr_can_interface_t *)calloc(1, sizeof(rr_can_interface_t));
+	rr_can_interface_t *i = (rr_can_interface_t *)calloc(1, sizeof(rr_can_interface_t));
 
- if(!i)
- {
-  return NULL;
- }
+	if(!i)
+	{
+		return NULL;
+	}
 
- rr_set_debug_log_stream(stderr);
+	rr_set_debug_log_stream(stderr);
 
- usbcan_instance_t *usbcan = usbcan_instance_init(interface_name);
- if(!usbcan)
- {
-  free(i);
-  return NULL;
- }
- usbcan->udata = i;
- i->iface = usbcan;
+	usbcan_instance_t *usbcan = usbcan_instance_init(interface_name);
+	if(!usbcan)
+	{
+		free(i);
+		return NULL;
+	}
+	usbcan->udata = i;
+	i->iface = usbcan;
 
- usbcan_setup_nmt_state_cb(usbcan, rr_nmt_state_master_cb);
- usbcan_setup_emcy_cb(usbcan, rr_emcy_master_cb);
+	usbcan_setup_nmt_state_cb(usbcan, rr_nmt_state_master_cb);
+	usbcan_setup_emcy_cb(usbcan, rr_emcy_master_cb);
 
- i->emcy_log.d = (emcy_log_entry_t *)malloc(sizeof(emcy_log_entry_t) * EMCY_LOG_DEPTH);
- i->emcy_log.sz = EMCY_LOG_DEPTH;
- i->emcy_log.head = 0;
- i->emcy_log.tail = 0;
+	i->emcy_log.d = (emcy_log_entry_t *)malloc(sizeof(emcy_log_entry_t) * EMCY_LOG_DEPTH);
+	i->emcy_log.sz = EMCY_LOG_DEPTH;
+	i->emcy_log.head = 0;
+	i->emcy_log.tail = 0;
 
-    if(!i->iface)
-    {
+	if(!i->iface)
+	{
 		free(i->emcy_log.d);
-        free(i);
-        return NULL;
-    }
+		free(i);
+		return NULL;
+	}
 
- return i;
+	return i;
 }
 
 /**
@@ -756,15 +756,15 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
  */
 rr_ret_status_t rr_deinit_interface(rr_can_interface_t **iface)
 {
- IS_VALID_INTERFACE(*iface);
+	IS_VALID_INTERFACE(*iface);
 
- if(usbcan_instance_deinit((usbcan_instance_t **)&((*iface)->iface)))
- {
-  free(*iface);
-  *iface = NULL;
-  return RET_OK;
- }
- return RET_ERROR;
+	if(usbcan_instance_deinit((usbcan_instance_t **)&((*iface)->iface)))
+	{
+		free(*iface);
+		*iface = NULL;
+		return RET_OK;
+	}
+	return RET_ERROR;
 }
 
 /**
@@ -778,28 +778,28 @@ rr_ret_status_t rr_deinit_interface(rr_can_interface_t **iface)
  */
 rr_servo_t *rr_init_servo(rr_can_interface_t *iface, const uint8_t id)
 {
- if(!iface)
- {
-  return NULL;
- }
- rr_servo_t *s = (rr_servo_t *)calloc(1, sizeof(rr_servo_t));
+	if(!iface)
+	{
+		return NULL;
+	}
+	rr_servo_t *s = (rr_servo_t *)calloc(1, sizeof(rr_servo_t));
 
- if(!s)
- {
-  return NULL;
- }
+	if(!s)
+	{
+		return NULL;
+	}
 
- s->dev = usbcan_device_init((usbcan_instance_t *)iface->iface, id);
+	s->dev = usbcan_device_init((usbcan_instance_t *)iface->iface, id);
 
- if(!s->dev)
- {
-  free(s);
-  return NULL;
- }
+	if(!s->dev)
+	{
+		free(s);
+		return NULL;
+	}
 
- wait_device((usbcan_instance_t *)iface->iface, id, RR_API_WAIT_DEVICE_TIMEOUT_MS);
+	wait_device((usbcan_instance_t *)iface->iface, id, RR_API_WAIT_DEVICE_TIMEOUT_MS);
 
- return s;
+	return s;
 }
 
 /**
@@ -810,15 +810,15 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *iface, const uint8_t id)
  */
 rr_ret_status_t rr_deinit_servo(rr_servo_t **servo)
 {
- IS_VALID_SERVO(*servo);
+	IS_VALID_SERVO(*servo);
 
- if(usbcan_device_deinit((usbcan_device_t **)&((*servo)->dev)))
- {
-  free(*servo);
-  *servo = NULL;
-  return RET_OK;
- }
- return RET_ERROR;
+	if(usbcan_device_deinit((usbcan_device_t **)&((*servo)->dev)))
+	{
+		free(*servo);
+		*servo = NULL;
+		return RET_OK;
+	}
+	return RET_ERROR;
 }
 
 /**
@@ -829,10 +829,10 @@ rr_ret_status_t rr_deinit_servo(rr_servo_t **servo)
  */
 rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- clear_device_boot_up_flag(dev->inst, dev->id);
- if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE))
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	clear_device_boot_up_flag(dev->inst, dev->id);
+	if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE))
 	{
 		return RET_ERROR;
 	}
@@ -851,10 +851,10 @@ rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_servo_reset_communication(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- clear_device_boot_up_flag(dev->inst, dev->id);
- if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM))
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	clear_device_boot_up_flag(dev->inst, dev->id);
+	if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM))
 	{
 		return RET_ERROR;
 	}
@@ -875,9 +875,9 @@ rr_ret_status_t rr_servo_reset_communication(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_OP))
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_OP))
 	{
 		return RET_ERROR;
 	}
@@ -897,9 +897,9 @@ rr_ret_status_t rr_servo_set_state_operational(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_PREOP))
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_PREOP))
 	{
 		return RET_ERROR;
 	}
@@ -919,14 +919,14 @@ rr_ret_status_t rr_servo_set_state_pre_operational(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- 
- if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_STOPPED))
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+
+	if(!write_nmt(dev->inst, dev->id, CO_NMT_CMD_GOTO_STOPPED))
 	{
 		return RET_ERROR;
 	}
-	
+
 	if(!wait_device_state(dev->inst, dev->id, CO_NMT_STOPPED, RR_API_CHANGE_STATE_TIMEOUT_MS))
 	{
 		return RET_ERROR;
@@ -944,12 +944,12 @@ rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *state)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
- *state = (rr_nmt_state_t)usbcan_get_device_state(dev->inst, dev->id);
+	*state = (rr_nmt_state_t)usbcan_get_device_state(dev->inst, dev->id);
 
- return RET_OK;
+	return RET_OK;
 }
 
 /**
@@ -966,8 +966,8 @@ rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *stat
  */
 rr_ret_status_t rr_servo_get_hb_stat(const rr_servo_t *servo, int64_t *min_hb_ival, int64_t *max_hb_ival)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
 	if(min_hb_ival)
 	{
@@ -979,7 +979,7 @@ rr_ret_status_t rr_servo_get_hb_stat(const rr_servo_t *servo, int64_t *min_hb_iv
 		*max_hb_ival = usbcan_get_max_hb_interval(dev->inst, dev->id);
 	}
 
- return RET_OK;
+	return RET_OK;
 }
 
 /**
@@ -991,12 +991,12 @@ rr_ret_status_t rr_servo_get_hb_stat(const rr_servo_t *servo, int64_t *min_hb_iv
  */
 rr_ret_status_t rr_servo_clear_hb_stat(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	IS_VALID_SERVO(servo);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
 	usbcan_clear_hb_stat(dev->inst, dev->id);
 
- return RET_OK;
+	return RET_OK;
 }
 
 /**
@@ -1008,9 +1008,9 @@ rr_ret_status_t rr_servo_clear_hb_stat(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_net_reboot(const rr_can_interface_t *iface)
 {
- IS_VALID_INTERFACE(iface);
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
- return write_nmt(inst, 0, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;
+	IS_VALID_INTERFACE(iface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	return write_nmt(inst, 0, CO_NMT_CMD_RESET_NODE) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -1022,9 +1022,9 @@ rr_ret_status_t rr_net_reboot(const rr_can_interface_t *iface)
  */
 rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *iface)
 {
- IS_VALID_INTERFACE(iface);
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
- return write_nmt(inst, 0, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;
+	IS_VALID_INTERFACE(iface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	return write_nmt(inst, 0, CO_NMT_CMD_RESET_COMM) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -1038,9 +1038,9 @@ rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *iface)
  */
 rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *iface)
 {
- IS_VALID_INTERFACE(iface);
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
- return write_nmt(inst, 0, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;
+	IS_VALID_INTERFACE(iface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	return write_nmt(inst, 0, CO_NMT_CMD_GOTO_OP) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -1053,9 +1053,9 @@ rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *iface)
  */
 rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *iface)
 {
- IS_VALID_INTERFACE(iface);
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
- return write_nmt(inst, 0, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;
+	IS_VALID_INTERFACE(iface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	return write_nmt(inst, 0, CO_NMT_CMD_GOTO_PREOP) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -1068,9 +1068,9 @@ rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *iface
  */
 rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *iface)
 {
- IS_VALID_INTERFACE(iface);
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
- return write_nmt(inst, 0, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;
+	IS_VALID_INTERFACE(iface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	return write_nmt(inst, 0, CO_NMT_CMD_GOTO_STOPPED) ? RET_OK : RET_ERROR;
 }
 
 /**
@@ -1085,12 +1085,12 @@ rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *iface)
  */
 rr_ret_status_t rr_net_get_state(const rr_can_interface_t *iface, int id, rr_nmt_state_t *state)
 {
- IS_VALID_INTERFACE(iface);
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	IS_VALID_INTERFACE(iface);
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
 
- *state = (rr_nmt_state_t)usbcan_get_device_state(inst, id);
+	*state = (rr_nmt_state_t)usbcan_get_device_state(inst, id);
 
- return RET_OK;
+	return RET_OK;
 }
 
 
@@ -1104,14 +1104,14 @@ rr_ret_status_t rr_net_get_state(const rr_can_interface_t *iface, int id, rr_nmt
  */
 rr_ret_status_t rr_release(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data = 0;
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = write_raw_sdo(dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
+	uint8_t data = 0;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = write_raw_sdo(dev, 0x2010, 0x01, &data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1122,14 +1122,14 @@ rr_ret_status_t rr_release(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_freeze(const rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data = 0;
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = write_raw_sdo(dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
+	uint8_t data = 0;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = write_raw_sdo(dev, 0x2010, 0x02, &data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1142,15 +1142,15 @@ rr_ret_status_t rr_freeze(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float(data, 0, &current_a, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float(data, 0, &current_a, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2012, 0x01, data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1164,15 +1164,15 @@ rr_ret_status_t rr_set_current(const rr_servo_t *servo, const float current_a)
  */
 rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data = en ? 1 : 0;
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint8_t data = en ? 1 : 0;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
- uint32_t sts = write_raw_sdo(dev, 0x2010, 0x03, &data, sizeof(data), 1, 100);
+	uint32_t sts = write_raw_sdo(dev, 0x2010, 0x03, &data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1186,15 +1186,15 @@ rr_ret_status_t rr_brake_engage(const rr_servo_t *servo, const bool en)
  */
 rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_deg_per_sec)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float(data, 0, &velocity_deg_per_sec, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1209,15 +1209,15 @@ rr_ret_status_t rr_set_velocity(const rr_servo_t *servo, const float velocity_de
  */
 rr_ret_status_t rr_set_velocity_motor(const rr_servo_t *servo, const float velocity_rpm)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[3];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float24(data, 0, &velocity_rpm, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
+	uint8_t data[3];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float24(data, 0, &velocity_rpm, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2012, 0x03, data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1226,21 +1226,21 @@ rr_ret_status_t rr_set_velocity_motor(const rr_servo_t *servo, const float veloc
  * For setting lower velocity and current limits, use the ::rr_set_position_with_limits function.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg Position of the servo (in degrees) to be reached. The parameter is a multi-turn value (e.g., when set to 720, the servo will make two turns, 360 degrees each).
-  When the parameter is set to a "-" sign value, the servo will rotate in the opposite direction. 
+ When the parameter is set to a "-" sign value, the servo will rotate in the opposite direction. 
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
 rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_deg)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float(data, 0, &position_deg, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float(data, 0, &position_deg, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2012, 0x04, data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1256,17 +1256,17 @@ rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_de
  */
 rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float velocity_deg_per_sec, const float current_a)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[8];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- int p = 0;
- p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
- p = usb_can_put_float(data, p, &current_a, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
+	uint8_t data[8];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int p = 0;
+	p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
+	p = usb_can_put_float(data, p, &current_a, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2012, 0x05, data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1281,78 +1281,78 @@ rr_ret_status_t rr_set_velocity_with_limits(const rr_servo_t *servo, const float
  */
 rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const float accel_deg_per_sec_sq, uint32_t *time_ms)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint32_t sts = 0;
+	uint32_t sts = 0;
 
- /* Get current position */
- float current_position = 0.0;
- if((sts = rr_read_parameter(servo, APP_PARAM_POSITION, &current_position)) != CO_SDO_AB_NONE)
- {
-  return ret_sdo(sts);
- }
+	/* Get current position */
+	float current_position = 0.0;
+	if((sts = rr_read_parameter(servo, APP_PARAM_POSITION, &current_position)) != CO_SDO_AB_NONE)
+	{
+		return ret_sdo(sts);
+	}
 
- /* Read max velocity */
- float max_velocity = 0.0;
- if((sts = rr_get_max_velocity(servo, &max_velocity)) != CO_SDO_AB_NONE)
- {
-  return ret_sdo(sts);
- }
+	/* Read max velocity */
+	float max_velocity = 0.0;
+	if((sts = rr_get_max_velocity(servo, &max_velocity)) != CO_SDO_AB_NONE)
+	{
+		return ret_sdo(sts);
+	}
 
- double vm = fabs(velocity_deg_per_sec); //max velocity
- double ps = current_position; // start position
- double pf = position_deg; // final position
- double am = fabs(accel_deg_per_sec_sq); // max acceleration
+	double vm = fabs(velocity_deg_per_sec); //max velocity
+	double ps = current_position; // start position
+	double pf = position_deg; // final position
+	double am = fabs(accel_deg_per_sec_sq); // max acceleration
 
- double dir = SIGN(pf - ps);
- double d = 3.0 * SQ(vm) / 4.0 / am * dir;
- bool cruise = true;
+	double dir = SIGN(pf - ps);
+	double d = 3.0 * SQ(vm) / 4.0 / am * dir;
+	bool cruise = true;
 
- if(fabs(2.0 * d) >= fabs(pf - ps))
- {
-	 d = 0.5 * fabs(pf - ps);
-	 vm = 2.0 * sqrt(am * d / 3.0);
-	 d *= dir;
-	 cruise = false;
- }
+	if(fabs(2.0 * d) >= fabs(pf - ps))
+	{
+		d = 0.5 * fabs(pf - ps);
+		vm = 2.0 * sqrt(am * d / 3.0);
+		d *= dir;
+		cruise = false;
+	}
 
- double tc = (pf - ps - 2.0 * d) / (dir * vm); // cruise time
- double ta = fabs(2.0 * d / vm); //acceleration time
+	double tc = (pf - ps - 2.0 * d) / (dir * vm); // cruise time
+	double ta = fabs(2.0 * d / vm); //acceleration time
 
- if(time_ms)
- {
- 	*time_ms = 1000.0 * (2.0 * ta + tc);
- }
+	if(time_ms)
+	{
+		*time_ms = 1000.0 * (2.0 * ta + tc);
+	}
 
- if((sts = rr_add_motion_point_pvat(servo, ps + d, dir * vm, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
- {
-	 rr_clear_points_all(servo);
-	 LOG_ERROR(debug_log, "Can't add acceleration point");
-	 return ret_sdo(sts);
- }
+	if((sts = rr_add_motion_point_pvat(servo, ps + d, dir * vm, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
+	{
+		rr_clear_points_all(servo);
+		LOG_ERROR(debug_log, "Can't add acceleration point");
+		return ret_sdo(sts);
+	}
 
- if(cruise)
- {
-	 if((sts = rr_add_motion_point_pvat(servo, pf - d, dir * vm, 0, 1000.0 * tc)) != CO_SDO_AB_NONE)
-	 {
-		 rr_clear_points_all(servo);
-		 LOG_ERROR(debug_log, "Can't add cruise point");
-		 return ret_sdo(sts);
-	 }
- }
+	if(cruise)
+	{
+		if((sts = rr_add_motion_point_pvat(servo, pf - d, dir * vm, 0, 1000.0 * tc)) != CO_SDO_AB_NONE)
+		{
+			rr_clear_points_all(servo);
+			LOG_ERROR(debug_log, "Can't add cruise point");
+			return ret_sdo(sts);
+		}
+	}
 
- if((sts = rr_add_motion_point_pvat(servo, pf, 0, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
- {
-	 rr_clear_points_all(servo);
-	 LOG_ERROR(debug_log, "Can't add deceleration point");
-	 return ret_sdo(sts);
- }
+	if((sts = rr_add_motion_point_pvat(servo, pf, 0, 0, 1000.0 * ta)) != CO_SDO_AB_NONE)
+	{
+		rr_clear_points_all(servo);
+		LOG_ERROR(debug_log, "Can't add deceleration point");
+		return ret_sdo(sts);
+	}
 
- usbcan_instance_t *inst = ((usbcan_device_t *)servo->dev)->inst;
- write_timestamp(inst, 0);
+	usbcan_instance_t *inst = ((usbcan_device_t *)servo->dev)->inst;
+	write_timestamp(inst, 0);
 
- return RET_OK;
+	return RET_OK;
 }
 
 /**
@@ -1365,15 +1365,15 @@ rr_ret_status_t rr_set_position_with_limits(rr_servo_t *servo, const float posit
  */
 rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float(data, 0, &duty_percent, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float(data, 0, &duty_percent, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2012, 0x07, data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1391,7 +1391,7 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  * use the ::rr_start_motion function.<br>
  * When any of the parameter values (e.g., position, velocity) exceeds user-defined limits or the servo motor specifications 
  * whichever is the smallest value), the function returns an error.<br><br>
- 
+
  * <b>Note:</b> When you set a PVT trajectory to move more than one servo simultaneously, mind that the clock rate of the servos can differ by up to 2-3%.
  * Therefore, if the preset PVT trajectory is rather long, servos can get desynchronized. To avoid the desynchronization, we have implemented the following mechanism:
  * <ul><li>The device controlling the servos broadcasts a sync CAN frame to all servos on an interface. The frame should have the following format:<br>
@@ -1413,25 +1413,25 @@ rr_ret_status_t rr_set_duty(const rr_servo_t *servo, float duty_percent)
  */
 rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float position_deg, const float velocity_deg_per_sec, const uint32_t time_ms)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[12];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- int p = 0;
- p = usb_can_put_float(data, p, &position_deg, 1);
- p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
- p = usb_can_put_uint32_t(data, p, &time_ms, 1);
+	uint8_t data[12];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int p = 0;
+	p = usb_can_put_float(data, p, &position_deg, 1);
+	p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
+	p = usb_can_put_uint32_t(data, p, &time_ms, 1);
 
- uint32_t sts = write_raw_sdo(dev, 0x2200, 2, data, sizeof(data), 1, 200);
- if(sts == CO_SDO_AB_PRAM_INCOMPAT)
- {
-  return RET_WRONG_TRAJ;
- }
- else
- {
-  return ret_sdo(sts);
- }
+	uint32_t sts = write_raw_sdo(dev, 0x2200, 2, data, sizeof(data), 1, 200);
+	if(sts == CO_SDO_AB_PRAM_INCOMPAT)
+	{
+		return RET_WRONG_TRAJ;
+	}
+	else
+	{
+		return ret_sdo(sts);
+	}
 }
 
 /**
@@ -1452,32 +1452,32 @@ rr_ret_status_t rr_add_motion_point(const rr_servo_t *servo, const float positio
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_add_motion_point_pvat(
- const rr_servo_t *servo,
- const float position_deg,
- const float velocity_deg_per_sec,
- const float accel_deg_per_sec2,
- const uint32_t time_ms)
+		const rr_servo_t *servo,
+		const float position_deg,
+		const float velocity_deg_per_sec,
+		const float accel_deg_per_sec2,
+		const uint32_t time_ms)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[16];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- int p = 0;
- p = usb_can_put_float(data, p, &position_deg, 1);
- p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
- p = usb_can_put_float(data, p, &accel_deg_per_sec2, 1);
- p = usb_can_put_uint32_t(data, p, &time_ms, 1);
+	uint8_t data[16];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int p = 0;
+	p = usb_can_put_float(data, p, &position_deg, 1);
+	p = usb_can_put_float(data, p, &velocity_deg_per_sec, 1);
+	p = usb_can_put_float(data, p, &accel_deg_per_sec2, 1);
+	p = usb_can_put_uint32_t(data, p, &time_ms, 1);
 
- uint32_t sts = write_raw_sdo(dev, 0x2200, 3, data, sizeof(data), 1, 200);
- if(sts == CO_SDO_AB_PRAM_INCOMPAT)
- {
-  return RET_WRONG_TRAJ;
- }
- else
- {
-  return ret_sdo(sts);
- }
+	uint32_t sts = write_raw_sdo(dev, 0x2200, 3, data, sizeof(data), 1, 200);
+	if(sts == CO_SDO_AB_PRAM_INCOMPAT)
+	{
+		return RET_WRONG_TRAJ;
+	}
+	else
+	{
+		return ret_sdo(sts);
+	}
 }
 
 /**
@@ -1495,11 +1495,11 @@ rr_ret_status_t rr_add_motion_point_pvat(
  */
 rr_ret_status_t rr_start_motion(rr_can_interface_t *iface, uint32_t timestamp_ms)
 {
- IS_VALID_INTERFACE(iface);
+	IS_VALID_INTERFACE(iface);
 
- usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
- write_timestamp(inst, timestamp_ms);
- return RET_OK;
+	usbcan_instance_t *inst = (usbcan_instance_t *)iface->iface;
+	write_timestamp(inst, timestamp_ms);
+	return RET_OK;
 }
 
 /**
@@ -1517,34 +1517,34 @@ rr_ret_status_t rr_start_motion(rr_can_interface_t *iface, uint32_t timestamp_ms
  */
 rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, uint8_t *const error_array)
 {
- IS_VALID_SERVO(servo);
+	IS_VALID_SERVO(servo);
 
- CHECK_NMT_STATE(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t array[32];
- uint8_t *ptr = error_array == 0 ? array : error_array;
- *error_count = 0;
+	uint8_t array[32];
+	uint8_t *ptr = error_array == 0 ? array : error_array;
+	*error_count = 0;
 
- int size = sizeof(array); //? think about
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = read_raw_sdo(dev, 0x2000, 0, ptr, &size, 1, 200);
+	int size = sizeof(array); //? think about
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = read_raw_sdo(dev, 0x2000, 0, ptr, &size, 1, 200);
 
- if(sts == CO_SDO_AB_NONE)
- {
-  for(int i = 0; i < size * 8; i++)
-  {
-   if(ptr[i / 8] & (1 << (i % 8)))
-   {
-    if(error_array)
-    {
-     error_array[*error_count] = i;
-    }
-    *error_count += 1;
-   }
-  }
- }
+	if(sts == CO_SDO_AB_NONE)
+	{
+		for(int i = 0; i < size * 8; i++)
+		{
+			if(ptr[i / 8] & (1 << (i % 8)))
+			{
+				if(error_array)
+				{
+					error_array[*error_count] = i;
+				}
+				*error_count += 1;
+			}
+		}
+	}
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1558,19 +1558,19 @@ rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const er
  */
 rr_ret_status_t rr_param_cache_update(rr_servo_t *servo)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t data[APP_PARAM_SIZE * sizeof(float)];
-    int len = sizeof(data);
-    int i, src;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint8_t data[APP_PARAM_SIZE * sizeof(float)];
+	int len = sizeof(data);
+	int i, src;
 
-    int sts = read_raw_sdo(dev, 0x2014, 0x01, data, &len, 1, 100);
+	int sts = read_raw_sdo(dev, 0x2014, 0x01, data, &len, 1, 100);
 
 	if(sts != 0)
 	{
-    	return ret_sdo(sts);
+		return ret_sdo(sts);
 	}
 
 	for(i = 0, src = 0; i < APP_PARAM_SIZE; i++)
@@ -1599,20 +1599,20 @@ rr_ret_status_t rr_param_cache_update(rr_servo_t *servo)
  */
 rr_ret_status_t rr_param_cache_update_with_timestamp(rr_servo_t *servo)
 {
-    IS_VALID_SERVO(servo);
-    CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint8_t data[APP_PARAM_SIZE * sizeof(float) + sizeof(uint32_t)];
-    int len = sizeof(data);
-    int i, src = 0;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint8_t data[APP_PARAM_SIZE * sizeof(float) + sizeof(uint32_t)];
+	int len = sizeof(data);
+	int i, src = 0;
 	uint32_t timestamp;
 
-    int sts = read_raw_sdo(dev, 0x2016, 0x01, data, &len, 1, 100);
+	int sts = read_raw_sdo(dev, 0x2016, 0x01, data, &len, 1, 100);
 
 	if(sts != 0)
 	{
-    	return ret_sdo(sts);
+		return ret_sdo(sts);
 	}
 
 	if(len < sizeof(uint32_t))
@@ -1622,24 +1622,24 @@ rr_ret_status_t rr_param_cache_update_with_timestamp(rr_servo_t *servo)
 
 	src = usb_can_get_uint32_t(data, src, &timestamp, 1);
 
-    if(sts == CO_SDO_AB_NONE)
-    {
-        for(i = 0; i < APP_PARAM_SIZE; i++)
-        {
-            if(servo->pcache[i].activated)
-            {
+	if(sts == CO_SDO_AB_NONE)
+	{
+		for(i = 0; i < APP_PARAM_SIZE; i++)
+		{
+			if(servo->pcache[i].activated)
+			{
 				if((src + sizeof(float)) > len)
 				{
 					return RET_SIZE_MISMATCH;
 				}
-                src = usb_can_get_float(data, src, (float *)&servo->pcache[i].value, 1);
+				src = usb_can_get_float(data, src, (float *)&servo->pcache[i].value, 1);
 				servo->pcache[i].timestamp = timestamp;
-            }
-        }
-        return RET_OK;
-    }
+			}
+		}
+		return RET_OK;
+	}
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1662,25 +1662,30 @@ rr_ret_status_t rr_param_cache_update_with_timestamp(rr_servo_t *servo)
  */
 rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_param_t param, bool enabled)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t array[10] = {0};
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint8_t array[10] = {0};
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
- servo->pcache[param].activated = enabled;
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
 
- for(int i = 0; i < APP_PARAM_SIZE; i++)
- {
-  if(servo->pcache[i].activated)
-  {
-   BIT_SET_UINT_ARRAY(array, i);
-  }
- }
+	servo->pcache[param].activated = enabled;
 
- uint32_t sts = write_raw_sdo(dev, 0x2015, 1, array, sizeof(array), 1, 200);
+	for(int i = 0; i < APP_PARAM_SIZE; i++)
+	{
+		if(servo->pcache[i].activated)
+		{
+			BIT_SET_UINT_ARRAY(array, i);
+		}
+	}
 
- return ret_sdo(sts);
+	uint32_t sts = write_raw_sdo(dev, 0x2015, 1, array, sizeof(array), 1, 200);
+
+	return ret_sdo(sts);
 }
 
 /**
@@ -1696,21 +1701,26 @@ rr_ret_status_t rr_param_cache_setup_entry(rr_servo_t *servo, const rr_servo_par
  */
 rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
-    uint8_t data[sizeof(float)];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    int size = sizeof(data);
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
 
-    uint32_t sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
+	uint8_t data[sizeof(float)];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int size = sizeof(data);
+
+	uint32_t sts = read_raw_sdo(dev, 0x2013, param, data, &size, 2, 100);
 
 	if(sts != CO_SDO_AB_NONE)
 	{
 		return ret_sdo(sts);
 	}
 
-    if(size != sizeof(float))
+	if(size != sizeof(float))
 	{
 		return RET_SIZE_MISMATCH;
 	}
@@ -1735,22 +1745,27 @@ rr_ret_status_t rr_read_parameter(rr_servo_t *servo, const rr_servo_param_t para
  */
 rr_ret_status_t rr_read_parameter_with_timestamp(rr_servo_t *servo, const rr_servo_param_t param, float *value, uint32_t *timestamp)
 {
-    IS_VALID_SERVO(servo);
-    CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
-    uint8_t data[sizeof(float) + sizeof(uint32_t)];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    int size = sizeof(data);
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
+
+	uint8_t data[sizeof(float) + sizeof(uint32_t)];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int size = sizeof(data);
 	int src = 0;
 
-    uint32_t sts = read_raw_sdo(dev, 0x2017, param, data, &size, 2, 100);
+	uint32_t sts = read_raw_sdo(dev, 0x2017, param, data, &size, 2, 100);
 
 	if(sts != CO_SDO_AB_NONE)
 	{
 		return ret_sdo(sts);
 	}
 
-    if(size != (sizeof(float) + sizeof(uint32_t)))
+	if(size != (sizeof(float) + sizeof(uint32_t)))
 	{
 		return RET_SIZE_MISMATCH;
 	}
@@ -1784,12 +1799,18 @@ rr_ret_status_t rr_read_parameter_with_timestamp(rr_servo_t *servo, const rr_ser
  */
 rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param_t param, float *value)
 {
-    IS_VALID_SERVO(servo);
+	IS_VALID_SERVO(servo);
+
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
+
 	if(value)
 	{
-    	*value = servo->pcache[param].value;
+		*value = servo->pcache[param].value;
 	}
-    return RET_OK;
+	return RET_OK;
 }
 
 /**
@@ -1803,16 +1824,22 @@ rr_ret_status_t rr_read_cached_parameter(rr_servo_t *servo, const rr_servo_param
  */
 rr_ret_status_t rr_read_cached_parameter_with_timestamp(rr_servo_t *servo, const rr_servo_param_t param, float *value, uint32_t *timestamp)
 {
-    IS_VALID_SERVO(servo);
+	IS_VALID_SERVO(servo);
+
+	if((param < 0) || (param >= APP_PARAM_SIZE))
+	{
+		return RET_WRONG_ARG;
+	}
+
 	if(value)
 	{
-    	*value = servo->pcache[param].value;
+		*value = servo->pcache[param].value;
 	}
 	if(timestamp)
 	{
-    	*timestamp = servo->pcache[param].timestamp;
+		*timestamp = servo->pcache[param].timestamp;
 	}
-    return RET_OK;
+	return RET_OK;
 }
 
 /**
@@ -1824,7 +1851,7 @@ rr_ret_status_t rr_read_cached_parameter_with_timestamp(rr_servo_t *servo, const
  */
 rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo)
 {
- return rr_clear_points(servo, 0);
+	return rr_clear_points(servo, 0);
 }
 
 /**
@@ -1838,12 +1865,12 @@ rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_clear)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&num_to_clear, sizeof(num_to_clear), 1, 100);
- return ret_sdo(sts);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = write_raw_sdo(dev, 0x2202, 0x01, (uint8_t *)&num_to_clear, sizeof(num_to_clear), 1, 100);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1856,21 +1883,21 @@ rr_ret_status_t rr_clear_points(const rr_servo_t *servo, const uint32_t num_to_c
  */
 rr_ret_status_t rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- int len = sizeof(data);
- uint32_t sts = read_raw_sdo(dev, 0x2202, 0x02, data, &len, 1, 100);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int len = sizeof(data);
+	uint32_t sts = read_raw_sdo(dev, 0x2202, 0x02, data, &len, 1, 100);
 
- if(sts == CO_SDO_AB_NONE && len == 4)
- {
-  usb_can_get_uint32_t(data, 0, num, 1);
-  return RET_OK;
- }
+	if(sts == CO_SDO_AB_NONE && len == 4)
+	{
+		usb_can_get_uint32_t(data, 0, num, 1);
+		return RET_OK;
+	}
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1883,21 +1910,21 @@ rr_ret_status_t rr_get_points_size(const rr_servo_t *servo, uint32_t *num)
  */
 rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- int len = sizeof(data);
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = read_raw_sdo(dev, 0x2202, 0x03, data, &len, 1, 100);
+	uint8_t data[4];
+	int len = sizeof(data);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = read_raw_sdo(dev, 0x2202, 0x03, data, &len, 1, 100);
 
- if(sts == CO_SDO_AB_NONE && len == 4)
- {
-  usb_can_get_uint32_t(data, 0, num, 1);
-  return RET_OK;
- }
+	if(sts == CO_SDO_AB_NONE && len == 4)
+	{
+		usb_can_get_uint32_t(data, 0, num, 1);
+		return RET_OK;
+	}
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -1920,60 +1947,60 @@ rr_ret_status_t rr_get_points_free_space(const rr_servo_t *servo, uint32_t *num)
  * @ingroup Trajectory
  */
 rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
-             const float start_position_deg, const float start_velocity_deg_per_sec, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
-             const float end_position_deg, const float end_velocity_deg_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms,
-             uint32_t *time_ms)
+		const float start_position_deg, const float start_velocity_deg_per_sec, const float start_acceleration_deg_per_sec2, const uint32_t start_time_ms,
+		const float end_position_deg, const float end_velocity_deg_per_sec, const float end_acceleration_deg_per_sec2, const uint32_t end_time_ms,
+		uint32_t *time_ms)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[8 * 4];
- int p = 0;
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint8_t data[8 * 4];
+	int p = 0;
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
 
- p = usb_can_put_float(data, p, &start_position_deg, 1);
- p = usb_can_put_float(data, p, &start_velocity_deg_per_sec, 1);
- p = usb_can_put_float(data, p, &start_acceleration_deg_per_sec2, 1);
- p = usb_can_put_uint32_t(data, p, &start_time_ms, 1);
+	p = usb_can_put_float(data, p, &start_position_deg, 1);
+	p = usb_can_put_float(data, p, &start_velocity_deg_per_sec, 1);
+	p = usb_can_put_float(data, p, &start_acceleration_deg_per_sec2, 1);
+	p = usb_can_put_uint32_t(data, p, &start_time_ms, 1);
 
- p = usb_can_put_float(data, p, &end_position_deg, 1);
- p = usb_can_put_float(data, p, &end_velocity_deg_per_sec, 1);
- p = usb_can_put_float(data, p, &end_acceleration_deg_per_sec2, 1);
- p = usb_can_put_uint32_t(data, p, &end_time_ms, 1);
+	p = usb_can_put_float(data, p, &end_position_deg, 1);
+	p = usb_can_put_float(data, p, &end_velocity_deg_per_sec, 1);
+	p = usb_can_put_float(data, p, &end_acceleration_deg_per_sec2, 1);
+	p = usb_can_put_uint32_t(data, p, &end_time_ms, 1);
 
- uint32_t sts = write_raw_sdo(dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
+	uint32_t sts = write_raw_sdo(dev, 0x2203, 0x01, data, sizeof(data), 1, 200);
 
- if(sts == CO_SDO_AB_NONE)
- {
-  if(time_ms == 0)
-  {
-   return RET_WRONG_ARG;
-  }
+	if(sts == CO_SDO_AB_NONE)
+	{
+		if(time_ms == 0)
+		{
+			return RET_WRONG_ARG;
+		}
 
-  uint8_t data[4];
-  int len = sizeof(data);
-  uint32_t sts = read_raw_sdo(dev, 0x2203, 0x02, data, &len, 1, 100);
+		uint8_t data[4];
+		int len = sizeof(data);
+		uint32_t sts = read_raw_sdo(dev, 0x2203, 0x02, data, &len, 1, 100);
 
-  if(sts == CO_SDO_AB_NONE && len == 4)
-  {
-   usb_can_get_uint32_t(data, 0, time_ms, 1);
-   return RET_OK;
-  }
- }
- if(sts == CO_SDO_AB_GENERAL)
- {
-  return RET_WRONG_TRAJ;
- }
- else
- {
-  return ret_sdo(sts);
- }
+		if(sts == CO_SDO_AB_NONE && len == 4)
+		{
+			usb_can_get_uint32_t(data, 0, time_ms, 1);
+			return RET_OK;
+		}
+	}
+	if(sts == CO_SDO_AB_GENERAL)
+	{
+		return RET_WRONG_TRAJ;
+	}
+	else
+	{
+		return ret_sdo(sts);
+	}
 }
 
 /**
  * @brief The function enables setting the current position (in degrees) of the servo with the specified descriptor to any value defined by the user.
  * For instance, when the current servo position is 101 degrees and the 'position_deg' parameter is set to 25 degrees, the servo is assumed to be positioned at 25 degrees.
-* <p>The setting is volatile: after a reset or a power outage, it is no longer valid.</p>
+ * <p>The setting is volatile: after a reset or a power outage, it is no longer valid.</p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param position_deg User-defined position (in degrees) to replace the current position value
  * @return Status code (::rr_ret_status_t)
@@ -1981,15 +2008,15 @@ rr_ret_status_t rr_invoke_time_calculation(const rr_servo_t *servo,
  */
 rr_ret_status_t rr_set_zero_position(const rr_servo_t *servo, const float position_deg)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float(data, 0, &position_deg, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float(data, 0, &position_deg, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2208, 0x01, data, sizeof(data), 0, 200);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -2003,15 +2030,15 @@ rr_ret_status_t rr_set_zero_position(const rr_servo_t *servo, const float positi
  */
 rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const float position_deg)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float(data, 0, &position_deg, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2208, 0x02, data, sizeof(data), 0, 4000);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float(data, 0, &position_deg, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2208, 0x02, data, sizeof(data), 0, 4000);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -2024,20 +2051,20 @@ rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const flo
  */
 rr_ret_status_t rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- int len = sizeof(data);
+	uint8_t data[4];
+	int len = sizeof(data);
 
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = read_raw_sdo(dev, 0x2207, 0x02, data, &len, 1, 100);
- if(sts == CO_SDO_AB_NONE)
- {
-  usb_can_get_float(data, 0, velocity_deg_per_sec, 1);
- }
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = read_raw_sdo(dev, 0x2207, 0x02, data, &len, 1, 100);
+	if(sts == CO_SDO_AB_NONE)
+	{
+		usb_can_get_float(data, 0, velocity_deg_per_sec, 1);
+	}
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -2050,15 +2077,15 @@ rr_ret_status_t rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg
  */
 rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec)
 {
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- uint8_t data[4];
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- usb_can_put_float(data, 0, &max_velocity_deg_per_sec, 1);
- uint32_t sts = write_raw_sdo(dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	usb_can_put_float(data, 0, &max_velocity_deg_per_sec, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2300, 0x03, data, sizeof(data), 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 //! @cond Doxygen_Suppress
@@ -2073,24 +2100,24 @@ rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_vel
  */
 static rr_ret_status_t rr_change_id(rr_can_interface_t *iface, rr_servo_t **servo, uint8_t new_can_id)
 {
- if(new_can_id < 1 || new_can_id > 127) return RET_WRONG_ARG;
+	if(new_can_id < 1 || new_can_id > 127) return RET_WRONG_ARG;
 
- /* Check that new id is not the same */
- usbcan_device_t *dev = (usbcan_device_t *)(*servo)->dev;
- if(dev->id == new_can_id) return RET_OK;
+	/* Check that new id is not the same */
+	usbcan_device_t *dev = (usbcan_device_t *)(*servo)->dev;
+	if(dev->id == new_can_id) return RET_OK;
 
- IS_VALID_SERVO(*servo);
- CHECK_NMT_STATE(*servo);
+	IS_VALID_SERVO(*servo);
+	CHECK_NMT_STATE(*servo);
 
- /* Write new CAN ID to the dictionary */
- uint8_t data[1];
- usb_can_put_uint8_t(data, 0, &new_can_id, 1);
- uint32_t node_id_sts = write_raw_sdo(dev, 0x2100, 0x00, data, sizeof(data), 1, 100);
- if(node_id_sts) return ret_sdo(node_id_sts);
+	/* Write new CAN ID to the dictionary */
+	uint8_t data[1];
+	usb_can_put_uint8_t(data, 0, &new_can_id, 1);
+	uint32_t node_id_sts = write_raw_sdo(dev, 0x2100, 0x00, data, sizeof(data), 1, 100);
+	if(node_id_sts) return ret_sdo(node_id_sts);
 
- /* Reset communication, so the servo will update it's internal CAN ID with the ID in the dictionary */
- clear_device_boot_up_flag(dev->inst, new_can_id);
- if(!write_nmt(dev->inst, 0, CO_NMT_CMD_RESET_COMM))
+	/* Reset communication, so the servo will update it's internal CAN ID with the ID in the dictionary */
+	clear_device_boot_up_flag(dev->inst, new_can_id);
+	if(!write_nmt(dev->inst, 0, CO_NMT_CMD_RESET_COMM))
 	{
 		return RET_ERROR;
 	}
@@ -2099,17 +2126,17 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *iface, rr_servo_t **serv
 		return RET_ERROR;
 	}
 
- /* Deinit the servo */
- rr_ret_status_t deinit_sts = rr_deinit_servo(servo);
- if(deinit_sts) return deinit_sts;
+	/* Deinit the servo */
+	rr_ret_status_t deinit_sts = rr_deinit_servo(servo);
+	if(deinit_sts) return deinit_sts;
 
- /* Initialize it with the new ID */
- *servo = rr_init_servo(iface, new_can_id);
- if(*servo == NULL) return RET_BAD_INSTANCE;
+	/* Initialize it with the new ID */
+	*servo = rr_init_servo(iface, new_can_id);
+	if(*servo == NULL) return RET_BAD_INSTANCE;
 
 
 
- return RET_OK;
+	return RET_OK;
 }
 /// @endcond
 
@@ -2126,19 +2153,19 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *iface, rr_servo_t **serv
  */
 rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *iface, rr_servo_t **servo, uint8_t new_can_id)
 {
- rr_ret_status_t sts = rr_change_id(iface, servo, new_can_id);
- if(sts) return sts;
+	rr_ret_status_t sts = rr_change_id(iface, servo, new_can_id);
+	if(sts) return sts;
 
 #define PARAM_STORE_PASSWORD 0x73617665 // s a v e
 
- uint32_t pass = PARAM_STORE_PASSWORD;
- uint8_t data[4];
- usb_can_put_uint32_t(data, 0, &pass, 1);
- usbcan_device_t *dev = (usbcan_device_t *)(*servo)->dev;
- uint32_t save_conf_sts = write_raw_sdo(dev, 0x1010, 0x01, data, sizeof(data), 1, 4000);
- if(save_conf_sts) return ret_sdo(save_conf_sts);
+	uint32_t pass = PARAM_STORE_PASSWORD;
+	uint8_t data[4];
+	usb_can_put_uint32_t(data, 0, &pass, 1);
+	usbcan_device_t *dev = (usbcan_device_t *)(*servo)->dev;
+	uint32_t save_conf_sts = write_raw_sdo(dev, 0x1010, 0x01, data, sizeof(data), 1, 4000);
+	if(save_conf_sts) return ret_sdo(save_conf_sts);
 
- return RET_OK;
+	return RET_OK;
 }
 
 /**
@@ -2149,16 +2176,16 @@ rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *iface, rr_servo_t **se
  */
 rr_ret_status_t rr_clear_errors(const rr_servo_t *servo)
 {
-    IS_VALID_SERVO(servo);
-    CHECK_NMT_STATE(servo);
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
-    uint8_t data[4];
-    usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
-    uint32_t pass = 0x000C1EAA;
-    usb_can_put_uint32_t(data, 0, &pass, 1);
-    uint32_t sts = write_raw_sdo(dev, 0x2209, 0x00, data, sizeof(data), 0, 200);
+	uint8_t data[4];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t pass = 0x000C1EAA;
+	usb_can_put_uint32_t(data, 0, &pass, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x2209, 0x00, data, sizeof(data), 0, 200);
 
-    return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -2170,14 +2197,14 @@ rr_ret_status_t rr_clear_errors(const rr_servo_t *servo)
  */
 rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
 {
- // Note: see http://wiki.rozum.com/display/EMB/Versioning
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	// Note: see http://wiki.rozum.com/display/EMB/Versioning
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = read_raw_sdo(dev, 0x1009, 0x00, (uint8_t *)version_string, version_string_size, 1, 100);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = read_raw_sdo(dev, 0x1009, 0x00, (uint8_t *)version_string, version_string_size, 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -2189,14 +2216,14 @@ rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_s
  */
 rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
 {
- // Note: see http://wiki.rozum.com/display/EMB/Versioning
- IS_VALID_SERVO(servo);
- CHECK_NMT_STATE(servo);
+	// Note: see http://wiki.rozum.com/display/EMB/Versioning
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
 
- usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
- uint32_t sts = read_raw_sdo(dev, 0x100A, 0x00, (uint8_t *)version_string, version_string_size, 1, 100);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = read_raw_sdo(dev, 0x100A, 0x00, (uint8_t *)version_string, version_string_size, 1, 100);
 
- return ret_sdo(sts);
+	return ret_sdo(sts);
 }
 
 /**
@@ -2214,36 +2241,36 @@ rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_s
  * @return false If the maximum calculated velocity at the point is equal or lower than the velocity limit
  */
 bool rr_check_point(const float velocity_limit_deg_per_sec,
-     float *velocity_max_calc_deg_per_sec,
-     const float position_deg_start,
-     const float velocity_deg_per_sec_start,
-     const float position_deg_end,
-     const float velocity_deg_per_sec_end,
-     const uint32_t time_ms)
+		float *velocity_max_calc_deg_per_sec,
+		const float position_deg_start,
+		const float velocity_deg_per_sec_start,
+		const float position_deg_end,
+		const float velocity_deg_per_sec_end,
+		const uint32_t time_ms)
 {
- float position = position_deg_end - position_deg_start;
+	float position = position_deg_end - position_deg_start;
 
- float internal_peak_time = (time_ms * (3.0 * time_ms * velocity_deg_per_sec_start - 5.0 * position + 2.0 * time_ms * velocity_deg_per_sec_end)) /
-          (5.0 * time_ms * velocity_deg_per_sec_start - 10.0 * position + 5.0 * time_ms * velocity_deg_per_sec_end);
+	float internal_peak_time = (time_ms * (3.0 * time_ms * velocity_deg_per_sec_start - 5.0 * position + 2.0 * time_ms * velocity_deg_per_sec_end)) /
+		(5.0 * time_ms * velocity_deg_per_sec_start - 10.0 * position + 5.0 * time_ms * velocity_deg_per_sec_end);
 
- *velocity_max_calc_deg_per_sec = (powf(time_ms, 3) * powf(velocity_deg_per_sec_start - velocity_deg_per_sec_end, 4)) /
-           (2000.0 * powf(time_ms * velocity_deg_per_sec_start - 2.0 * position + time_ms * velocity_deg_per_sec_end, 3)) -
-          (7.0 * time_ms * velocity_deg_per_sec_start - 30.0 * position + 7.0 * time_ms * velocity_deg_per_sec_end) / (16.0 * time_ms) +
-          (3.0 * time_ms * powf(velocity_deg_per_sec_start - velocity_deg_per_sec_end, 2)) / (40.0 * (2.0 * position - time_ms * (velocity_deg_per_sec_start + velocity_deg_per_sec_end)));
+	*velocity_max_calc_deg_per_sec = (powf(time_ms, 3) * powf(velocity_deg_per_sec_start - velocity_deg_per_sec_end, 4)) /
+		(2000.0 * powf(time_ms * velocity_deg_per_sec_start - 2.0 * position + time_ms * velocity_deg_per_sec_end, 3)) -
+		(7.0 * time_ms * velocity_deg_per_sec_start - 30.0 * position + 7.0 * time_ms * velocity_deg_per_sec_end) / (16.0 * time_ms) +
+		(3.0 * time_ms * powf(velocity_deg_per_sec_start - velocity_deg_per_sec_end, 2)) / (40.0 * (2.0 * position - time_ms * (velocity_deg_per_sec_start + velocity_deg_per_sec_end)));
 
- bool isInternalPeakNotExists = internal_peak_time <= 0 || internal_peak_time >= time_ms;
+	bool isInternalPeakNotExists = internal_peak_time <= 0 || internal_peak_time >= time_ms;
 
- if(fabs(*velocity_max_calc_deg_per_sec) < fabs(velocity_deg_per_sec_start) || isInternalPeakNotExists)
- {
-  *velocity_max_calc_deg_per_sec = velocity_deg_per_sec_start;
- }
+	if(fabs(*velocity_max_calc_deg_per_sec) < fabs(velocity_deg_per_sec_start) || isInternalPeakNotExists)
+	{
+		*velocity_max_calc_deg_per_sec = velocity_deg_per_sec_start;
+	}
 
- if(fabs(*velocity_max_calc_deg_per_sec) < fabs(velocity_deg_per_sec_end))
- {
-  *velocity_max_calc_deg_per_sec = velocity_deg_per_sec_end;
- }
+	if(fabs(*velocity_max_calc_deg_per_sec) < fabs(velocity_deg_per_sec_end))
+	{
+		*velocity_max_calc_deg_per_sec = velocity_deg_per_sec_end;
+	}
 
- *velocity_max_calc_deg_per_sec = fabs(*velocity_max_calc_deg_per_sec);
+	*velocity_max_calc_deg_per_sec = fabs(*velocity_max_calc_deg_per_sec);
 
- return fabs(velocity_limit_deg_per_sec) < *velocity_max_calc_deg_per_sec;
+	return fabs(velocity_limit_deg_per_sec) < *velocity_max_calc_deg_per_sec;
 }
