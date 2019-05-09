@@ -1057,7 +1057,7 @@ class ServoApi(object, metaclass=_Singleton):
 
     def __init__(self):
         """@brief The function is the first to call to be able to work with the API.
-        Searches for a library as listed below in the <b>rozum/servo</b> directory and loads it:
+        Searches for a library as listed below in the <b>rdrive/servo</b> directory and loads it:
         <ul><li><b>Linux:</b> libservo_api.so</li>
         <li><b>Win32:</b> libservo_api-32bit.dll</li>
         <li><b>Win64:</b> libservo_api-64bit.dll</li>

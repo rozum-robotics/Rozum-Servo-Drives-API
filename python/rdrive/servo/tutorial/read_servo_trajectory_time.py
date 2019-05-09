@@ -4,8 +4,8 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
-import rozum as rr
-from rozum.servo.tutorial import *
+import rdrive as rr
+from rdrive.servo.tutorial import *
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
@@ -21,13 +21,5 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = interface.init_servo(SERVO_1_ID)
 
-    logger.info("Reading hardware and software info.")
-    version = servo.get_version()
-    logger.info("Got info: {}".format(version))
-
-    logger.info("Reading error status")
-    num, arr = servo.read_error_status(100)
-    logger.info("Got {} errors".format(num))
-    logger.info("Describing errors")
-    for i in range(num):
-        api.describe_emcy_bit(arr[i])
+    travel_time = servo.invoke_time_calculation(0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0)
+    logger.info("Travel time: {}".format(travel_time))
