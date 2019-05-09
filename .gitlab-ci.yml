@@ -1,5 +1,6 @@
 stages:
   - build
+  - build-python
   - test
   - document
   - deploy
@@ -137,7 +138,7 @@ update_tools_deb:
       - build/*.deb
 
 build_python:
-  stage: build
+  stage: build-python
   image:
     name: python3.7-alpine
   dependencies:
