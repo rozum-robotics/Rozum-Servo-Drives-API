@@ -140,9 +140,9 @@ update_tools_deb:
 build_python:
   stage: build-python
   image:
-    name: python3.7-alpine
+    name: python:3.7-alpine
   dependencies:
-    - build
+    - library_win
   script:
     - mkdir -p python/lib
     - /bin/cp -rf c/lib/libservo_api-32bit.dll python/lib/libservo_api-32bit.dll
