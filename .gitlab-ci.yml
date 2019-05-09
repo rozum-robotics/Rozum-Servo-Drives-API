@@ -138,7 +138,8 @@ update_tools_deb:
 
 build_python:
   stage: build
-  image: python3.7-alpine
+  image:
+    name: python3.7-alpine
   dependencies:
     - library_win
   script:
