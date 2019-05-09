@@ -9,17 +9,21 @@ from distutils.command.build import build
 from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
-version_file = os.path.join(here, '../version')
 
 NAME = 'rdrive'
 DESCRIPTION = 'Python API for RDrive servomotors'
 URL = 'https://rozum.com'
 EMAIL = 'dev@rozum.com'
 AUTHOR = 'Rozum Robotics'
-VERSION = open(version_file, 'r').readline().strip()
+VERSION = '1.0.31.dev0'  # use info from version file with optional dev classifiers
 REQUIRED = []
 DEPENDENCY_LINKS = []
-DEVELOPMENT_STATUS = 'Development Status :: 4 - Beta'
+
+if 'dev' in VERSION:
+    DEVELOPMENT_STATUS = 'Development Status :: 4 - Beta'
+else:
+    DEVELOPMENT_STATUS = 'Development Status :: 5 - Production/Stable'
+
 CLASSIFIERS = [
     'License :: OSI Approved :: MIT License',
     DEVELOPMENT_STATUS,
@@ -89,6 +93,9 @@ setup(
     long_description=LONG_DESCRIPTION,
     cmdclass={
         'build': Build,
+    },
+    package_data={
+        '': ['*.so', '*.dll']
     },
     zip_safe=False
 )
