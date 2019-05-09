@@ -138,11 +138,13 @@ update_tools_deb:
       - build/*.deb
 
 build_python:
-  stage: build-python
   image:
     name: python:3.7-alpine
+  stage: build-python
   dependencies:
     - library_win
+  before_script:
+    - echo 'Skipping before-script'
   script:
     - mkdir -p python/lib
     - /bin/cp -rf c/lib/libservo_api-32bit.dll python/lib/libservo_api-32bit.dll
