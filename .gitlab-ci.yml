@@ -142,7 +142,7 @@ build_python:
   image:
     name: python3.7-alpine
   dependencies:
-    - library_win
+    - build
   script:
     - mkdir -p python/lib
     - /bin/cp -rf c/lib/libservo_api-32bit.dll python/lib/libservo_api-32bit.dll
