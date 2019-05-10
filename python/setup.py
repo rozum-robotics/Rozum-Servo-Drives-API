@@ -8,6 +8,9 @@ import distutils.log as dlog
 from distutils.command.build import build
 from setuptools import setup, find_packages
 
+if sys.version_info[:2] < (3, 5):
+    raise RuntimeError('Python version >= 3.5 required.')
+
 here = os.path.abspath(os.path.dirname(__file__))
 
 NAME = 'rdrive'
