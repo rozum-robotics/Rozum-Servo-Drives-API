@@ -16,8 +16,8 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
-from rozum.servo.tutorial import *
-import rozum as rr
+from rdrive.servo.tutorial import *
+import rdrive as rr
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))

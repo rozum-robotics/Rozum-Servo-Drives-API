@@ -4,8 +4,8 @@ import sys
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
-import rozum as rr
-from rozum.servo.tutorial import *
+import rdrive as rr
+from rdrive.servo.tutorial import *
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
@@ -21,5 +21,15 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = interface.init_servo(SERVO_1_ID)
 
-    max_velocity = servo.get_max_velocity()
-    logger.info("Max velocity {}".format(max_velocity))
+    logger.info("Appending points")
+    servo.add_motion_point(100., 0., 6000)
+    servo.add_motion_point(-100., 0., 6000)
+    logger.info("Appending point with acceleration")
+    servo.add_motion_point(0, 0, 6000, accel_deg_per_sec2=0)
+    logger.info("Starting motion")
+    interface.start_motion(0)
+
+    logger.info("Waiting till motion ends")
+    api.sleep_ms(20000)
+
+
