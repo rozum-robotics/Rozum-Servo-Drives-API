@@ -129,8 +129,8 @@ deploy_python:
     - echo 'Skipping before-script'
   script:
     - mkdir -p python/lib
-    - /bin/cp -rf c/lib/libservo_api-32bit.dll python/lib/libservo_api-32bit.dll
-    - /bin/cp -rf c/lib/libservo_api-64bit.dll python/lib/libservo_api-64bit.dll
+    - /bin/cp -rf c/lib/libservo_api-32bit.dll python/rdrive/lib/libservo_api-32bit.dll
+    - /bin/cp -rf c/lib/libservo_api-64bit.dll python/rdrive/lib/libservo_api-64bit.dll
     - bin/copy-sources.sh
     - bin/publish-python.sh
   only:
