@@ -133,3 +133,6 @@ deploy_python:
     - /bin/cp -rf c/lib/libservo_api-64bit.dll python/lib/libservo_api-64bit.dll
     - bin/copy-sources.sh
     - bin/publish-python.sh
+  only:
+    - master
+    - dev
