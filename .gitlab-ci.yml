@@ -151,4 +151,5 @@ build_python:
     - /bin/cp -rf c/lib/libservo_api-64bit.dll python/lib/libservo_api-64bit.dll
     - bin/copy_sources.sh
     - pip install -U setuptools twine
+    - python setup.py sdist
     - twine upload --repository-url ${PYPI_URL} -u ${PYPI_USER} -p ${PYPI_PASSWORD} dist/*
