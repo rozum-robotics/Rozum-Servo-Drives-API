@@ -1,6 +1,5 @@
 stages:
   - build
-  - build-python
   - test
   - document
   - deploy
@@ -54,25 +53,8 @@ deploy_artifacts:
   image: rozum/embed-gcc:latest
   stage: deploy
   script:
-    - git checkout master
-    - git reset --hard HEAD
-    - git pull
-    - git config --global user.email "gitlab@rozum.com"
-    - git config --global user.name "gitlab-bot"
-    - git remote set-url origin "https://$GITLAB_CREDENTIALS@dev.rozum.com/rozum-mcu/Software/userapi.git"
-    - git tag -a v$(cat version) -m "Release v$(cat version)"
-    - git push origin v$(cat version)
-    - git config --global credential.helper store
-    - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
-    - git push -f "$GITHUB_URL" master
-    - git tag
-
-    - scp -o StrictHostKeyChecking=no -r c/docs "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-    - scp -o StrictHostKeyChecking=no -r c/lib "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-    - scp -o StrictHostKeyChecking=no -r c/utils "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-    - scp -o StrictHostKeyChecking=no -r c/examples "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-
-    - scp -o StrictHostKeyChecking=no -r python/docs "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/python"
+    - bin/git-tag.sh
+    - bin/publish-artifacts.sh
   only:
     - master
 
@@ -137,10 +119,10 @@ update_tools_deb:
     paths:
       - build/*.deb
 
-build_python:
+deploy_python:
   image:
     name: python:3.7-alpine
-  stage: build-python
+  stage: deploy
   dependencies:
     - library_win
   before_script:
@@ -149,8 +131,5 @@ build_python:
     - mkdir -p python/lib
     - /bin/cp -rf c/lib/libservo_api-32bit.dll python/lib/libservo_api-32bit.dll
     - /bin/cp -rf c/lib/libservo_api-64bit.dll python/lib/libservo_api-64bit.dll
-    - bin/copy_sources.sh
-    - cd python
-    - pip install -U setuptools twine
-    - python setup.py sdist
-    - twine upload --repository-url ${PYPI_URL} -u ${PYPI_USER} -p ${PYPI_PASSWORD} dist/*
+    - bin/copy-sources.sh
+    - bin/publish-python.sh
