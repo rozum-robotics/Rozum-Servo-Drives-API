@@ -6,14 +6,13 @@ Implementation is based on the `ctypes` module.
 1. Operating systems: Linux, Mac OS, Windows
 2. Python version 3.5 or later.
 3. No extra Python packages required.
-4. libservo_api shared library. For building instructions, refer [here](../c/README.md).
 
 ### File structure
    `rdrive` - package root
    
    `rdrive/servo` - package containing api
    
-   `rdrive/servo/tutorial` - examples for quick start
+   `examples` - examples for quick start
    
 ### Installation
 To get the latest version, use the following command:
@@ -33,11 +32,7 @@ _Hint:_ For Linux, you can find it out by executing the `ls /dev/serial/by-id/` 
 The output should contain something like: `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
 Alternatively, you can execute `ls /dev/` in the console. In this case, the output should be of the following type: `ttyACM1` (`ttyS1` in Cygwin). 
 _Note:_ The last number may differ on your machine.
-2. Navigate to the `tutorial` folder and replace the constants in `__init__.py` with relevant values. The constants are as follows:
-  * `LIBRARY_PATH` - full path to the library (string)
-  * `INTERFACE_NAME` - name of the interface (output from Step 2), e.g., "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00"
-  * `SERVO_N_ID` - your servo ID  
-4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the console.
+2. Use one of the scripts in the `examples` folder as a reference.
 
 ### Basic usage
 ```python

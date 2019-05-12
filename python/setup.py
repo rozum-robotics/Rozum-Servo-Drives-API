@@ -84,7 +84,7 @@ class Build(build):
 setup(
     name=NAME,
     version=VERSION,
-    packages=find_packages(),
+    packages=find_packages(exclude=('examples')),
     install_requires=REQUIRED,
     dependency_links=DEPENDENCY_LINKS,
     url=URL,
