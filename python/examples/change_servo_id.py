@@ -12,11 +12,7 @@ import argparse
 import logging
 import time
 import os
-import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-
-from rdrive.servo.tutorial import *
 import rdrive as rr
 
 logging.basicConfig()
@@ -26,14 +22,17 @@ logger.setLevel(logging.INFO)
 parser = argparse.ArgumentParser()
 parser.add_argument("--current_id", type=int, help="current servo ID that you want to change")
 parser.add_argument("--new_id", type=int, help="new servo ID that you want to set")
+parser.add_argument("--interface", type=str, help="interface name")
 
 args = parser.parse_args()
+
+INTERFACE_NAME = args.interface
 
 if __name__ == '__main__':
     logger.info("Initializing ServoApi")
     api = rr.ServoApi()
 # //! [add variables]
-    logger.info("Initializing interface")
+    logger.info("Initializing interface {}".format(INTERFACE_NAME))
     interface = api.init_interface(INTERFACE_NAME)
 # //! [add variables]
     logger.info("Changing current servo id {} to {}".format(args.current_id, args.new_id))

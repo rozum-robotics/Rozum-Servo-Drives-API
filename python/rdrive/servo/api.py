@@ -371,7 +371,9 @@ class Servo(object):
 
         @param
 			num_to_clear: int:
-            Number of PVT points to be removed from the motion queue of the specified servo
+            Number of PVT points to be removed from the motion queue of the specified servo. When the parameter is set to 0, the effect
+			of applying the function is similar to that of applying clear_points_all(). If the servo is executing a motion point command
+			when the function is called, the move is completed and then all the remaining PVT points are removed from the queue.
         @return None
 		@ingroup Trajectory
         """
@@ -379,8 +381,8 @@ class Servo(object):
         ServoError.handle(status)
 
     def clear_points_all(self):
-        """@brief The function clears the entire motion queue of the servo. The servo completes the move it started before the
-        function was called and then clears all the remaining PVT points in the queue.
+        """@brief The function clears the entire motion queue of the servo. If the servo is executing a motion point command when the
+        function is called, the move is completed and then all the remaining PVT points are removed from the queue.
 
         @return None
 		@ingroup Trajectory
