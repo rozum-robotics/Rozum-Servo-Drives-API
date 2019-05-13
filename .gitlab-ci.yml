@@ -53,25 +53,8 @@ deploy_artifacts:
   image: rozum/embed-gcc:latest
   stage: deploy
   script:
-    - git checkout master
-    - git reset --hard HEAD
-    - git pull
-    - git config --global user.email "gitlab@rozum.com"
-    - git config --global user.name "gitlab-bot"
-    - git remote set-url origin "https://$GITLAB_CREDENTIALS@dev.rozum.com/rozum-mcu/Software/userapi.git"
-    - git tag -a v$(cat version) -m "Release v$(cat version)"
-    - git push origin v$(cat version)
-    - git config --global credential.helper store
-    - echo "$GITHUB_CREDENTIALS" > ~/.git-credentials
-    - git push -f "$GITHUB_URL" master
-    - git tag
-
-    - scp -o StrictHostKeyChecking=no -r c/docs "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-    - scp -o StrictHostKeyChecking=no -r c/lib "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-    - scp -o StrictHostKeyChecking=no -r c/utils "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-    - scp -o StrictHostKeyChecking=no -r c/examples "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/c"
-
-    - scp -o StrictHostKeyChecking=no -r python/docs "$COMPANY_SRV":"$COMPANY_SRV_SUPPORT_DIR/python"
+    - bin/git-tag.sh
+    - bin/publish-artifacts.sh
   only:
     - master
 
@@ -135,3 +118,21 @@ update_tools_deb:
     name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
     paths:
       - build/*.deb
+
+deploy_python:
+  image:
+    name: python:3.7-alpine
+  stage: deploy
+  dependencies:
+    - library_win
+  before_script:
+    - echo 'Skipping before-script'
+  script:
+    - mkdir -p python/rdrive/lib
+    - /bin/cp -rf c/lib/libservo_api-32bit.dll python/rdrive/lib/libservo_api-32bit.dll
+    - /bin/cp -rf c/lib/libservo_api-64bit.dll python/rdrive/lib/libservo_api-64bit.dll
+    - bin/copy-sources.sh
+    - bin/publish-python.sh
+  only:
+    - master
+    - dev

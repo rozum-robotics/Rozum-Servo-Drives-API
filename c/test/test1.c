@@ -1,35 +1,31 @@
 #include "api.h"
 
-#define SERVO_ID	111
+#define SERVO_ID 36
 
 int main(int argc, char *argv[])
 {
-	FILE *log = fopen("comm.log", "w+");
+    FILE *log = fopen("comm.log", "w+");
 
-	api_setDebugLogStream(stderr);
-	CanInterface_t iface = api_initInterface("192.168.0.124");
-	api_setCommLogStream(iface, log);
+    rr_set_debug_log_stream(stderr);
 
-	CanDevice_t d[10];
-   
-	for(int i = 0; i < 10; i++)
-	{
-		d[i] = api_initDevice(iface, i + 1);
-	}
+    rr_can_interface_t *iface = rr_init_interface("192.168.0.50:17700");
 
-	api_deinitDevice(&d[4]);
-	api_deinitDevice(&d[1]);
-	api_deinitDevice(&d[8]);
+    rr_servo_t *servo = rr_init_servo(iface, SERVO_ID);
 
-	api_sleepMs(1000);
-	api_setVelocity(d[0], 10.0);
-	api_sleepMs(30000);
-	api_stopAndRelease(d);
+    rr_param_cache_setup_entry(servo, APP_PARAM_POSITION, true);
+    rr_param_cache_setup_entry(servo, APP_PARAM_VELOCITY, true);
+    rr_param_cache_setup_entry(servo, APP_PARAM_VOLTAGE_INPUT, true);
+    rr_param_cache_setup_entry(servo, APP_PARAM_CURRENT_INPUT, true);
 
-	
-	api_deinitInterface(&iface);
+    rr_param_cache_setup_entry(servo, APP_PARAM_CURRENT_INPUT, false);
+    rr_param_cache_setup_entry(servo, APP_PARAM_VOLTAGE_INPUT, false);
+    rr_param_cache_setup_entry(servo, APP_PARAM_VELOCITY, false);
+    rr_param_cache_setup_entry(servo, APP_PARAM_POSITION, false);
 
-	fclose(log);
+    rr_release(servo);
+    rr_deinit_interface(&iface);
 
-	return 0;
+    fclose(log);
+
+    return 0;
 }

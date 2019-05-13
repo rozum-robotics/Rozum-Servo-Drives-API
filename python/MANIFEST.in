@@ -1,0 +1,5 @@
+graft rdrive/include
+graft rdrive/src
+graft rdrive/lib
+include rdrive/core.mk
+include rdrive/Makefile
