@@ -1857,10 +1857,9 @@ rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo)
 
 /**
  * @brief The function removes the number of PVT points indicated in the 'num_to_clear' parameter from the tail of the motion queue
- * preset for the specified servo. If you call the function while the servo is executing a motion point command,
- * the servo stops without completing the motion and removes the indicated number of PVT points, starting from the queue tail.
+ * preset for the specified servo.
  * <b>Note:</b> In case the indicated number of PVT points to be removed exceeds the actual
- * remaining number of PVT points in the queue, the funtion clears only the actual remaining number of PVT points.
+ * remaining number of PVT points in the queue, the effect of applying the function is similar to that of applying ::rr_clear_points_all.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param num_to_clear Number of PVT points to be removed from the motion queue of the specified servo. When the parameter is set to 0, the effect of applying
  * the function is similar to that of applying ::rr_clear_points_all.
