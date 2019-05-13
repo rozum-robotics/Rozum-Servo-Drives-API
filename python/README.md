@@ -3,50 +3,37 @@ This folder contains `Python 3` wrapper for the `C` library.
 Implementation is based on the `ctypes` module.
 
 ### Requirements
-1. Operating systems: Linux, Mac OS, Windows (Cygwin)
+1. Operating systems: Linux, Mac OS, Windows
 2. Python version 3.5 or later.
 3. No extra Python packages required.
-4. libservo_api shared library. For building instructions, refer [here](../c/README.md).
-
-### File structure
-   `rozum` - package root
-   
-   `rozum/servo` - package containing api
-   
-   `rozum/servo/tutorial` - examples for quick start
    
 ### Installation
-After you have built the library, copy the `libservo_api.so` file into the `rozum/servo` directory. 
-Alternatively, you can run `make python` in the console after building to perform the copying operation.
+To get the latest version, use the following command:
 
-Currently, installation via **pip** is not supported. 
-So, copy the `rozum` module into your project root manually.
+`pip install rdrive -i https://pip.rozum.com/simple`
 
-##### For Windows OS:
-1. Install Cygwin.
-2. Install `make`, `gcc`, `python3` packages in Cygwin.
-3. Follow [the building guide](../c/README.md) using the Cygwin console.
-4. Use the `python3` interpreter in Cygwin to run your programs.
+To install a specific version: 
 
+`pip install rdrive==v1.v2.v3 -i https://pip.rozum.com/simple`
+where **v1**, **v2**, and **v3** (e.g., rdrive==1.0.31) are version numbers.
+
+**Note:** On MacOS and Linux make sure to install `gcc` compiler and `make`.
 
 ### Getting started
-1. Build the libservo_api shared library. Make sure to copy it into the `rozum` folder.
-2. Find out the **_CAN_** interface name. 
-_Hint:_ For Linux, you can find it out by executing the `ls /dev/serial/by-id/` command in the console.
-The output should contain something like: `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
-Alternatively, you can execute `ls /dev/` in the console. In this case, the output should be of the following type: `ttyACM1` (`ttyS1` in Cygwin). 
-_Note:_ The last number may differ on your machine.
-3. Navigate to the `tutorials` folder and replace the constants in `__init__.py` with relevant values. The constants are as follows:
-  * `LIBRARY_PATH` - full path to the library (string)
-  * `INTERFACE_NAME` - name of the interface (output from Step 2), e.g., "/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00"
-  * `SERVO_N_ID` - your servo ID  
-_Note:_ You can leave `LIBRARY_PATH = None` if you copied the library into the `rozum` folder in Step 1.
-4. Run `python path_to_tutorials/control_servo_traj_1.py` or any other tutorial in the console.
+1. Find out the **_CAN_** interface name. 
+    * On Linux, you can find it out by executing the `ls /dev/serial/by-id/` command in the console.
+    The output should contain something like: `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
+    Alternatively, you can execute `ls /dev/` in the console. In this case, the output should be of the following type: `ttyACM1` (`ttyS1` in Cygwin). 
+    _Note:_ The last number may differ on your machine.
+    * On Windows - open **Device manager** and find USB devices. The name should be of the following type: `COM3`.
+    * On MacOS, you can find it out by executing the `ls /dev/ | grep cu.usb` command in the console.
+    The output should contain something like: `/dev/cu.usbmodem301`
+2. Use one of the scripts in the `examples` folder as a reference.
 
 ### Basic usage
 ```python
 
-import rozum as rr
+import rdrive as rr
 
 api = rr.ServoApi() # api initialization and library loading
 interface = api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00") # interface initialization
@@ -62,10 +49,10 @@ servo.set_velocity(204.5)
 ```
 
 ### Advanced usage
-Below is the usual sequence of working with servos. For detailed instructions, refer to `tutorials`.
+Below is the usual sequence of working with servos. For detailed instructions, refer to `examples`.
 ```python
 # importing modules
-import rozum as rr
+import rdrive as rr
 
 # api initialization and library loading
 api = rr.ServoApi()

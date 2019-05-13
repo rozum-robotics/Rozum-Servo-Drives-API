@@ -1,15 +1,23 @@
+import argparse
 import logging
 import os
-import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
-
-import rozum as rr
-from rozum.servo.tutorial import *
+import rdrive as rr
 
 logging.basicConfig()
 logger = logging.getLogger(os.path.basename(__file__))
 logger.setLevel(logging.INFO)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--servo_1_id", type=int, help="first servo ID that you want control")
+parser.add_argument("--servo_2_id", type=int, help="second servo ID that you want control")
+parser.add_argument("--interface", type=str, help="interface name")
+
+args = parser.parse_args()
+
+INTERFACE_NAME = args.interface
+SERVO_1_ID = args.servo_1_id
+SERVO_2_ID = args.servo_2_id
 
 if __name__ == '__main__':
     logger.info("Initializing ServoApi")
