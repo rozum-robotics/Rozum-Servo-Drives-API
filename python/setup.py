@@ -18,7 +18,7 @@ DESCRIPTION = 'Python API for RDrive servomotors'
 URL = 'https://rozum.com'
 EMAIL = 'dev@rozum.com'
 AUTHOR = 'Rozum Robotics'
-VERSION = '1.0.31.dev2'  # use info from version file with optional dev classifiers
+VERSION = '1.0.31'  # use info from version file with optional dev classifiers
 REQUIRED = []
 DEPENDENCY_LINKS = []
 
