@@ -53,7 +53,7 @@ servo.set_velocity(204.5)
 ```
 
 ### Advanced usage
-Below is the usual sequence of working with servos. For detailed instructions, refer to `tutorials`.
+Below is the usual sequence of working with servos. For detailed instructions, refer to `examples`.
 ```python
 # importing modules
 import rdrive as rr
