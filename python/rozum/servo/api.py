@@ -366,10 +366,9 @@ class Servo(object):
 
     def clear_points(self, num_to_clear: int):
         """@brief The function removes the number of PVT points indicated in the <b>'num_to_clear'</b> parameter from the tail of the
-        motion queue preset for the servo. If you call the function while the servo is executing a motion point command,
-        the servo stops without completing the motion and removes the indicated number of PVT points, starting from the queue tail.
+        motion queue preset for the servo.
 		<b>Note:</b> In case the indicated number of PVT points to be removed exceeds the actual
-        remaining number of PVT points in the queue, the funtion clears only the actual remaining number of PVT points.
+        remaining number of PVT points in the queue, the effect of applying the function is similar to that of applying clear_points_all().
 
         @param
 			num_to_clear: int:
