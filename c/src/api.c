@@ -1843,8 +1843,10 @@ rr_ret_status_t rr_read_cached_parameter_with_timestamp(rr_servo_t *servo, const
 }
 
 /**
- * @brief The function clears the entire motion queue of the servo specified in the 'servo' parameter of the function. If the servo is executing a motion point command 
- * when the function is called, the move is completed and then all the remaining PVT points are removed from the queue.
+ * @brief The function clears the entire motion queue of the servo specified in the 'servo' parameter of the function.
+ * If you call the function while the servo is executing a motion point command, the servo stops without completing the motion.
+ * All the remaining motion points, including the one where the servo has been moving, are removed from the queue.
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
@@ -1855,12 +1857,12 @@ rr_ret_status_t rr_clear_points_all(const rr_servo_t *servo)
 
 /**
  * @brief The function removes the number of PVT points indicated in the 'num_to_clear' parameter from the tail of the motion queue
- * preset for the specified servo. When the indicated number of PVT points to be removed exceeds the actual remaining number of PVT points in the queue, 
- * the funtion clears only the actual remaining number of PVT points.
+ * preset for the specified servo.
+ * <b>Note:</b> In case the indicated number of PVT points to be removed exceeds the actual
+ * remaining number of PVT points in the queue, the effect of applying the function is similar to that of applying ::rr_clear_points_all.
  * @param servo Servo descriptor returned by the ::rr_init_servo function
  * @param num_to_clear Number of PVT points to be removed from the motion queue of the specified servo. When the parameter is set to 0, the effect of applying
- * the function is similar to that of applying ::rr_clear_points_all. If the servo is executing a motion point command when the function is called,
- * the move is completed and then all the remaining PVT points are removed from the queue.
+ * the function is similar to that of applying ::rr_clear_points_all.
  * @return Status code (::rr_ret_status_t)
  * @ingroup Trajectory
  */
