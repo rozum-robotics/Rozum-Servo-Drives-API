@@ -28,10 +28,13 @@ where **v1**, **v2**, and **v3** (e.g., rdrive==1.4.3) are version numbers.
 
 ### Getting started
 1. Find out the **_CAN_** interface name. 
-_Hint:_ For Linux, you can find it out by executing the `ls /dev/serial/by-id/` command in the console.
-The output should contain something like: `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
-Alternatively, you can execute `ls /dev/` in the console. In this case, the output should be of the following type: `ttyACM1` (`ttyS1` in Cygwin). 
-_Note:_ The last number may differ on your machine.
+    * On Linux, you can find it out by executing the `ls /dev/serial/by-id/` command in the console.
+    The output should contain something like: `usb-Rozum_Robotics_USB-CAN_Interface_301-if00`.
+    Alternatively, you can execute `ls /dev/` in the console. In this case, the output should be of the following type: `ttyACM1` (`ttyS1` in Cygwin). 
+    _Note:_ The last number may differ on your machine.
+    * On Windows - open **Device manager** and find USB devices. The name should be of the following type: `COM3`.
+    * On MacOS, you can find it out by executing the `ls /dev/ | grep cu.usb` command in the console.
+    The output should contain something like: `/dev/cu.usbmodem301`
 2. Use one of the scripts in the `examples` folder as a reference.
 
 ### Basic usage
