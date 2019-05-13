@@ -6,13 +6,6 @@ Implementation is based on the `ctypes` module.
 1. Operating systems: Linux, Mac OS, Windows
 2. Python version 3.5 or later.
 3. No extra Python packages required.
-
-### File structure
-   `rdrive` - package root
-   
-   `rdrive/servo` - package containing api
-   
-   `examples` - examples for quick start
    
 ### Installation
 To get the latest version, use the following command:
