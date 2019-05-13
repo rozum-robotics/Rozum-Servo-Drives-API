@@ -15,7 +15,7 @@ To get the latest version, use the following command:
 To install a specific version: 
 
 `pip install rdrive==v1.v2.v3 -i https://pip.rozum.com/simple`
-where **v1**, **v2**, and **v3** (e.g., rdrive==1.4.3) are version numbers.
+where **v1**, **v2**, and **v3** (e.g., rdrive==1.0.31) are version numbers.
 
 **Note:** On MacOS and Linux make sure to install `gcc` compiler and `make`.
 
