@@ -11,7 +11,7 @@
 /**
  * \defgroup tutor_c_changeID1 Changing CAN ID of a single servo
  * The tutorial describes how to change the CAN identifier of a single servo and save it to the EEPROM memory.
- * <p><b>Important!</b> RDrive servos are all supplied with <b>the same default CAN ID—32</b>.
+ * <p><b>Important!</b> RDrive servos are all supplied with <b>the same default CAN IDs ranging from 32 to 37.</b>.
  * To avoid collisions, you need to assign <b> a unique CAN ID</b> to each servo on the same CAN bus.</p>
  * 
  * 1. Create two variables—one for the default (current) CAN ID and one for the new CAN ID.

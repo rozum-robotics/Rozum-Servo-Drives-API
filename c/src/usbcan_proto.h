@@ -114,7 +114,14 @@ struct usbcan_instance_t
 
 	int64_t master_hb_ival;
 	int64_t master_hb_timer;
+
 	int64_t hb_alive_threshold;
+
+	int64_t traj_sync_timer;
+	int64_t traj_sync_ival;
+    
+	struct timeval traj_sync_prev;
+	bool send_traj_sync_enable;
 
 	int64_t dev_alive[USB_CAN_MAX_DEV];
 	bool dev_boot_up[USB_CAN_MAX_DEV];
@@ -124,6 +131,7 @@ struct usbcan_instance_t
 	usbcan_nmt_state_t dev_state[USB_CAN_MAX_DEV];
 
 	bool inhibit_master_hb;
+	bool inhibit_sync_pdo;
 	bool usbcan_udp;
 
 	FILE *comm_log;
@@ -193,6 +201,7 @@ int usbcan_send_com_frame(usbcan_instance_t *inst, can_msg_t *m);
 int usbcan_send_nmt(usbcan_instance_t *inst, int id, usbcan_nmt_cmd_t cmd);
 int usbcan_send_hb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state) __attribute__((unused));
 int usbcan_send_timestamp(usbcan_instance_t *inst, uint32_t ts);
+int usbcan_send_pdo(usbcan_instance_t *inst, uint16_t cob_id, void *data, uint16_t len);
 
 #ifdef __cplusplus
 }
