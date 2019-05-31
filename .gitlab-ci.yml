@@ -128,11 +128,7 @@ deploy_python_master:
   before_script:
     - echo 'Skipping before-script'
   script:
-    - mkdir -p python/rdrive/lib
-    - /bin/cp -rf c/lib/libservo_api-32bit.dll python/rdrive/lib/libservo_api-32bit.dll
-    - /bin/cp -rf c/lib/libservo_api-64bit.dll python/rdrive/lib/libservo_api-64bit.dll
-    - bin/copy-sources.sh
-    - bin/publish-python.sh
+    - bin/deploy_python.sh
   only:
     - master
 
@@ -145,11 +141,7 @@ deploy_python_dev:
   before_script:
     - echo 'Skipping before-script'
   script:
-    - mkdir -p python/rdrive/lib
-    - /bin/cp -rf c/lib/libservo_api-32bit.dll python/rdrive/lib/libservo_api-32bit.dll
-    - /bin/cp -rf c/lib/libservo_api-64bit.dll python/rdrive/lib/libservo_api-64bit.dll
-    - bin/copy-sources.sh
-    - bin/publish-python.sh
+    - bin/deploy_python.sh
   when: manual
   only:
     - dev
