@@ -13,12 +13,18 @@ if sys.version_info[:2] < (3, 5):
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+if os.path.isfile('rdrive/version'):
+    version_file = 'rdrive/version'
+else:
+    version_file = 'python/rdrive/version'
+
 NAME = 'rdrive'
 DESCRIPTION = 'Python API for RDrive servomotors'
 URL = 'https://rozum.com'
 EMAIL = 'dev@rozum.com'
 AUTHOR = 'Rozum Robotics'
-VERSION = '1.0.31'  # use info from version file with optional dev classifiers
+with open(version_file) as v:
+    VERSION = v.readline().rstrip()
 REQUIRED = []
 DEPENDENCY_LINKS = []
 

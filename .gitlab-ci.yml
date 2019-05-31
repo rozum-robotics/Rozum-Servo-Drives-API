@@ -131,7 +131,6 @@ deploy_python_master:
     - mkdir -p python/rdrive/lib
     - /bin/cp -rf c/lib/libservo_api-32bit.dll python/rdrive/lib/libservo_api-32bit.dll
     - /bin/cp -rf c/lib/libservo_api-64bit.dll python/rdrive/lib/libservo_api-64bit.dll
-    - bin/bump_python_version.sh
     - bin/copy-sources.sh
     - bin/publish-python.sh
   only:
