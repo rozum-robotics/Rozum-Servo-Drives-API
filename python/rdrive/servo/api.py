@@ -366,14 +366,15 @@ class Servo(object):
 
     def clear_points(self, num_to_clear: int):
         """@brief The function removes the number of PVT points indicated in the <b>'num_to_clear'</b> parameter from the tail of the
-        motion queue preset for the servo. When the indicated number of PVT points to be removed exceeds the actual
-        remaining number of PVT points in the queue, the funtion clears only the actual remaining number of PVT points.
+        motion queue preset for the servo.
+		<b>Note:</b> In case the indicated number of PVT points to be removed exceeds the actual
+        remaining number of PVT points in the queue, the effect of applying the function is similar to that of applying clear_points_all().
 
         @param
 			num_to_clear: int:
-            Number of PVT points to be removed from the motion queue of the specified servo. When the parameter is set to 0, the effect
-			of applying the function is similar to that of applying clear_points_all(). If the servo is executing a motion point command
-			when the function is called, the move is completed and then all the remaining PVT points are removed from the queue.
+            Number of PVT points to be removed from the motion queue of the specified servo.
+			When the parameter is set to 0, the effect of applying the function is similar to that of applying clear_points_all().
+			
         @return None
 		@ingroup Trajectory
         """
@@ -381,8 +382,8 @@ class Servo(object):
         ServoError.handle(status)
 
     def clear_points_all(self):
-        """@brief The function clears the entire motion queue of the servo. If the servo is executing a motion point command when the
-        function is called, the move is completed and then all the remaining PVT points are removed from the queue.
+        """@brief The function clears the entire motion queue of the servo. If you call the function while the servo is executing a motion point command,
+        the servo stops without completing the motion. All the remaining motion points, including the one where the servo has been moving, are removed from the queue.
 
         @return None
 		@ingroup Trajectory
