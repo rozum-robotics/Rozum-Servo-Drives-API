@@ -12,7 +12,12 @@ if sys.version_info[:2] < (3, 5):
     raise RuntimeError('Python version >= 3.5 required.')
 
 here = os.path.abspath(os.path.dirname(__file__))
-version_file = os.path.join(here, 'rdrive', 'version')
+if os.path.isfile(os.path.join(here, 'version')):
+    version_file = os.path.join(here, 'version')
+elif os.path.isfile(os.path.join(here, 'rdrive', 'version')):
+    version_file = os.path.join(here, 'rdrive', 'version')
+else:
+    raise FileNotFoundError("Version file was not found")
 
 NAME = 'rdrive'
 DESCRIPTION = 'Python API for RDrive servomotors'

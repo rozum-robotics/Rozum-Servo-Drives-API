@@ -1,7 +1,7 @@
 graft rdrive/include
 graft rdrive/src
 graft rdrive/lib
-graft rdrive/version
 graft README.md
 include rdrive/core.mk
 include rdrive/Makefile
+include rdrive/version
