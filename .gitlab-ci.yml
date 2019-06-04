@@ -147,5 +147,5 @@ deploy_python_dev:
   script:
     - bin/deploy_python.sh
   when: manual
-  only:
-    - dev
+  except:
+    - master
