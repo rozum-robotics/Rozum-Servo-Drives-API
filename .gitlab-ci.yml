@@ -39,11 +39,15 @@ generate_docs:
     - cd .. && cp latex/refman.pdf html/C-Servo-API.pdf
     - mv html docs
 
+    - apk update
+    - apk add python3
+    - apk add py3-pip
+    - pip3 install doxypypy
+
     - cd ../python
     - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
     - mv html docs
   artifacts:
-    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
     paths:
       - python/docs
       - c/docs
