@@ -27,6 +27,7 @@ usbcan_device_t *dev;
 uint32_t cfg_hw, cfg_rev, dev_hw, dev_rev;
 bool update_all = false;
 bool master_hb_inhibit = true;
+bool comm_reset = false;
 bool legacy_mode = false;
 
 uint32_t release(usbcan_device_t *dev)
@@ -101,7 +102,14 @@ bool update(usbcan_device_t *dev, char *name)
 		(uint8_t *)&store_pass, sizeof(store_pass), 1, 2000);
 
 	LOG_INFO(debug_log, "Resetting device");
-	write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE); 
+	if(comm_reset)
+	{
+		write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_COMM); 
+	}
+	else
+	{
+		write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE); 
+	}
 	LOG_INFO(debug_log, "Waitng to finish reset...");
 	if(!wait_device(dev->inst, dev->id, 5000))
 	{
@@ -120,6 +128,7 @@ void usage(char **argv)
 	fprintf(stdout,	"Usage: %s\n"
 			"    [-M(--master-hb)]\n"
 			"    [-v(--version]\n"
+			"    [-R(--comm-reset]\n"
 			"    port\n"
 			"    id or 'all'\n"
 			"    config_folder of config file\n"
@@ -135,6 +144,7 @@ bool parse_cmd_line(int argc, char **argv)
 	{
 		{"master-hb",     optional_argument, 0, 'M' },
 		{"version",     no_argument, 0, 'v' },
+		{"--comm-reset",     no_argument, 0, 'R' },
 		{0,         0,                 0,  0 }
 	};
 
@@ -153,6 +163,9 @@ bool parse_cmd_line(int argc, char **argv)
 			case 'M':
 				LOG_INFO(debug_log, "Enabling master hearbeat");
 				master_hb_inhibit = false;
+				break;
+			case 'R':
+				comm_reset = true;
 				break;
 			case 'v':
 				fprintf(stdout, "Build date: %s\nBuild time: %s\n", __DATE__, __TIME__);
