@@ -150,7 +150,7 @@ bool parse_cmd_line(int argc, char **argv)
 
 	while (1) 
 	{
-		c = getopt_long(argc, argv, "Mv", long_options, &option_index);
+		c = getopt_long(argc, argv, "MRv", long_options, &option_index);
 		if (c == -1)
 		{
 			break;
