@@ -109,15 +109,15 @@ bool update(usbcan_device_t *dev, char *name)
 	else
 	{
 		write_nmt(dev->inst, dev->id, CO_NMT_CMD_RESET_NODE); 
-	}
-	LOG_INFO(debug_log, "Waitng to finish reset...");
-	if(!wait_device(dev->inst, dev->id, 5000))
-	{
-		LOG_ERROR(debug_log, "Can't find device on bus");
-	}
-	else
-	{
-		LOG_INFO(debug_log, "Rest finished");
+		LOG_INFO(debug_log, "Waitng to finish reset...");
+		if(!wait_device(dev->inst, dev->id, 5000))
+		{
+			LOG_ERROR(debug_log, "Can't find device on bus");
+		}
+		else
+		{
+			LOG_INFO(debug_log, "Rest finished");
+		}
 	}
 
 	return true;
