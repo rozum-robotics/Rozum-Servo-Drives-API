@@ -144,7 +144,7 @@ bool parse_cmd_line(int argc, char **argv)
 	{
 		{"master-hb",     optional_argument, 0, 'M' },
 		{"version",     no_argument, 0, 'v' },
-		{"--comm-reset",     no_argument, 0, 'R' },
+		{"comm-reset",     no_argument, 0, 'R' },
 		{0,         0,                 0,  0 }
 	};
 
