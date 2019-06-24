@@ -4,63 +4,13 @@ stages:
   - document
   - deploy
 
+variables:
+  APP_PROJECT_ID: "154"
+  GITLAB_BASE_URL: "https://dev.rozum.com"
+
 before_script:
   - eval $(ssh-agent)
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
-
-test_tutorial:
-  image: rozum/embed-gcc:latest
-  stage: test
-  script:
-    - cd ./c/tutorial && make && cd ./build
-    - echo -en "cex 1 me\n" | nc -w1 -u $CAN_INTERFACE 2000
-
-    - ./change_servo_id $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID | tee change_servo_id.log
-    - ./time_optimal_movement $CAN_INTERFACE:$CAN_PORT $MOTOR_ID 100 100 100 | tee time_optimal_movement.log
-    - ./control_servo_traj_1 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee control_servo_traj_1.log
-    - ./control_servo_traj_2 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID | tee control_servo_traj_2.log
-    - ./control_servo_traj_3 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID $MOTOR_ID | tee control_servo_traj_3.log
-    - ./read_any_param $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_any_param.log
-    - ./read_any_param_cache $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_any_param_cache.log
-    - ./read_errors $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_errors.log
-    - ./read_servo_max_velocity $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_servo_max_velocity.log
-    - ./read_servo_motion_queue $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_servo_motion_queue.log
-    - ./read_servo_trajectory_time $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_servo_trajectory_time.log
-
-    - if [ "$(grep 'ERROR:' *.log)" != "" ]; then exit 1; fi
-
-generate_docs:
-  image: rozum/embed-gcc:latest
-  stage: document
-  script:
-    - cd c
-    - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
-    - cd latex && make
-    - cd .. && cp latex/refman.pdf html/C-Servo-API.pdf
-    - mv html docs
-
-    - apk update
-    - apk add python3
-    - apk add py3-pip
-    - pip3 install doxypypy
-
-    - cd ../python
-    - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
-    - mv html docs
-  artifacts:
-    paths:
-      - python/docs
-      - c/docs
-    expire_in: 1 week
-
-deploy_artifacts:
-  image: rozum/embed-gcc:latest
-  stage: deploy
-  script:
-    - bin/git-tag.sh
-    - bin/publish-artifacts.sh
-  only:
-    - master
 
 library_win:
   image:
@@ -123,6 +73,60 @@ update_tools_deb:
     paths:
       - build/*.deb
 
+test_tutorial:
+  image: rozum/embed-gcc:latest
+  stage: test
+  script:
+    - cd ./c/tutorial && make && cd ./build
+    - echo -en "cex 1 me\n" | nc -w1 -u $CAN_INTERFACE 2000
+
+    - ./change_servo_id $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID | tee change_servo_id.log
+    - ./time_optimal_movement $CAN_INTERFACE:$CAN_PORT $MOTOR_ID 100 100 100 | tee time_optimal_movement.log
+    - ./control_servo_traj_1 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee control_servo_traj_1.log
+    - ./control_servo_traj_2 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID | tee control_servo_traj_2.log
+    - ./control_servo_traj_3 $CAN_INTERFACE:$CAN_PORT $MOTOR_ID $MOTOR_ID $MOTOR_ID | tee control_servo_traj_3.log
+    - ./read_any_param $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_any_param.log
+    - ./read_any_param_cache $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_any_param_cache.log
+    - ./read_errors $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_errors.log
+    - ./read_servo_max_velocity $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_servo_max_velocity.log
+    - ./read_servo_motion_queue $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_servo_motion_queue.log
+    - ./read_servo_trajectory_time $CAN_INTERFACE:$CAN_PORT $MOTOR_ID | tee read_servo_trajectory_time.log
+
+    - if [ "$(grep 'ERROR:' *.log)" != "" ]; then exit 1; fi
+
+generate_docs:
+  image: rozum/embed-gcc:latest
+  stage: document
+  script:
+    - cd c
+    - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
+    - cd latex && make
+    - cd .. && cp latex/refman.pdf html/C-Servo-API.pdf
+    - mv html docs
+
+    - apk update
+    - apk add python3
+    - apk add py3-pip
+    - pip3 install doxypypy
+
+    - cd ../python
+    - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
+    - mv html docs
+  artifacts:
+    paths:
+      - python/docs
+      - c/docs
+    expire_in: 1 week
+
+deploy_artifacts:
+  image: rozum/embed-gcc:latest
+  stage: deploy
+  script:
+    - bin/git-tag.sh
+    - bin/publish-artifacts.sh
+  only:
+    - master
+
 deploy_python_master:
   image:
     name: python:3.7-alpine
@@ -149,3 +153,25 @@ deploy_python_dev:
   when: manual
   except:
     - master
+
+integration_tests:
+  stage: deploy
+  image:
+    name: rozum/mingw-gcc:latest
+  script:
+    - 'curl --trace-ascii --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+  only:
+    - master
+    - dev
+
+integration_tests_on_demand:
+  stage: deploy
+  image:
+    name: rozum/mingw-gcc:latest
+  script:
+    - 'curl --trace-ascii --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+  when: manual
+  except:
+    - master
+    - dev
+
