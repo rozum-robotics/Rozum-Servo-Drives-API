@@ -1,3 +1,5 @@
+image: rozum/mingw-gcc:latest
+
 stages:
   - build
   - test
@@ -13,8 +15,6 @@ before_script:
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
 
 library_win:
-  image:
-    name: rozum/mingw-gcc:latest
   stage: build
   script:
     - make -C c -e OS=win32
@@ -28,8 +28,6 @@ library_win:
       - c/lib
 
 update_tools_win:
-  image:
-    name: rozum/mingw-gcc:latest
   stage: build
   script:
     - make -C c -e OS=win32
@@ -44,8 +42,6 @@ update_tools_win:
       - c/utils
 
 tutorial_win:
-  image:
-    name: rozum/mingw-gcc:latest
   stage: build
   script:
     - make -C c -e OS=win32
@@ -75,6 +71,8 @@ update_tools_deb:
 
 test_tutorial:
   image: rozum/embed-gcc:latest
+  tags:
+    - solo_runner
   stage: test
   script:
     - cd ./c/tutorial && make && cd ./build
@@ -156,8 +154,6 @@ deploy_python_dev:
 
 integration_tests:
   stage: deploy
-  image:
-    name: rozum/mingw-gcc:latest
   script:
     - 'curl --fail --trace-ascii - --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
   only:
@@ -166,8 +162,6 @@ integration_tests:
 
 integration_tests_on_demand:
   stage: deploy
-  image:
-    name: rozum/mingw-gcc:latest
   script:
     - 'curl --fail --trace-ascii -  --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
   when: manual
