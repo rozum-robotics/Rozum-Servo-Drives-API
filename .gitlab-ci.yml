@@ -159,7 +159,7 @@ integration_tests:
   image:
     name: rozum/mingw-gcc:latest
   script:
-    - 'curl --trace-ascii --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+    - 'curl --fail --trace-ascii - --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
   only:
     - master
     - dev
@@ -169,7 +169,7 @@ integration_tests_on_demand:
   image:
     name: rozum/mingw-gcc:latest
   script:
-    - 'curl --trace-ascii --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+    - 'curl --fail --trace-ascii -  --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
   when: manual
   except:
     - master
