@@ -1,15 +1,78 @@
+image: rozum/mingw-gcc:latest
+
 stages:
   - build
   - test
   - document
   - deploy
 
+variables:
+  APP_PROJECT_ID: "154"
+  GITLAB_BASE_URL: "https://dev.rozum.com"
+
 before_script:
   - eval $(ssh-agent)
   - echo "$COMPANY_SRV_SSH_PRIVATE_KEY" | ssh-add -
 
+library_win:
+  stage: build
+  script:
+    - make -C c -e OS=win32
+    - make -C c -e OS=win64
+    - mkdir c/lib
+    - mv c/build-win-32bit/libservo_api-32bit.dll c/lib/libservo_api-32bit.dll
+    - mv c/build-win-64bit/libservo_api-64bit.dll c/lib/libservo_api-64bit.dll
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - c/lib
+
+update_tools_win:
+  stage: build
+  script:
+    - make -C c -e OS=win32
+    - make -C c/tools/fw-update-tool -e OS=win32
+    - make -C c/tools/cfg-update-tool -e OS=win32
+    - mkdir c/utils
+    - mv c/tools/fw-update-tool/build-win-32bit/rr-fw-update-32bit.exe c/utils/rr-fw-update-32bit.exe
+    - mv c/tools/cfg-update-tool/build-win-32bit/rr-cfg-update-32bit.exe c/utils/rr-cfg-update-32bit.exe
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - c/utils
+
+tutorial_win:
+  stage: build
+  script:
+    - make -C c -e OS=win32
+    - make -C c/tutorial -e OS=win32
+    - mkdir c/examples
+    - mv c/tutorial/build-win-32bit/* c/examples
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - c/examples
+
+update_tools_deb:
+  image:
+    name: ubuntu:xenial
+  stage: build
+  before_script:
+    - echo 'Skipping before-script'
+  script:
+    - apt-get update && apt-get install -y build-essential
+    - bin/package-deb.sh ${CI_COMMIT_TAG}
+  only:
+    - tags
+  artifacts:
+    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
+    paths:
+      - build/*.deb
+
 test_tutorial:
   image: rozum/embed-gcc:latest
+  tags:
+    - solo_runner
   stage: test
   script:
     - cd ./c/tutorial && make && cd ./build
@@ -62,67 +125,6 @@ deploy_artifacts:
   only:
     - master
 
-library_win:
-  image:
-    name: rozum/mingw-gcc:latest
-  stage: build
-  script:
-    - make -C c -e OS=win32
-    - make -C c -e OS=win64
-    - mkdir c/lib
-    - mv c/build-win-32bit/libservo_api-32bit.dll c/lib/libservo_api-32bit.dll
-    - mv c/build-win-64bit/libservo_api-64bit.dll c/lib/libservo_api-64bit.dll
-  artifacts:
-    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-    paths:
-      - c/lib
-
-update_tools_win:
-  image:
-    name: rozum/mingw-gcc:latest
-  stage: build
-  script:
-    - make -C c -e OS=win32
-    - make -C c/tools/fw-update-tool -e OS=win32
-    - make -C c/tools/cfg-update-tool -e OS=win32
-    - mkdir c/utils
-    - mv c/tools/fw-update-tool/build-win-32bit/rr-fw-update-32bit.exe c/utils/rr-fw-update-32bit.exe
-    - mv c/tools/cfg-update-tool/build-win-32bit/rr-cfg-update-32bit.exe c/utils/rr-cfg-update-32bit.exe
-  artifacts:
-    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-    paths:
-      - c/utils
-
-tutorial_win:
-  image:
-    name: rozum/mingw-gcc:latest
-  stage: build
-  script:
-    - make -C c -e OS=win32
-    - make -C c/tutorial -e OS=win32
-    - mkdir c/examples
-    - mv c/tutorial/build-win-32bit/* c/examples
-  artifacts:
-    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-    paths:
-      - c/examples
-
-update_tools_deb:
-  image:
-    name: ubuntu:xenial
-  stage: build
-  before_script:
-    - echo 'Skipping before-script'
-  script:
-    - apt-get update && apt-get install -y build-essential
-    - bin/package-deb.sh ${CI_COMMIT_TAG}
-  only:
-    - tags
-  artifacts:
-    name: "$CI_PROJECT_NAME-$CI_JOB_NAME-$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA"
-    paths:
-      - build/*.deb
-
 deploy_python_master:
   image:
     name: python:3.7-alpine
@@ -149,3 +151,21 @@ deploy_python_dev:
   when: manual
   except:
     - master
+
+integration_tests:
+  stage: deploy
+  script:
+    - 'curl --fail --trace-ascii - --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+  only:
+    - master
+    - dev
+
+integration_tests_on_demand:
+  stage: deploy
+  script:
+    - 'curl --fail --trace-ascii -  --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+  when: manual
+  except:
+    - master
+    - dev
+
