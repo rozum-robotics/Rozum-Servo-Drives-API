@@ -2,23 +2,23 @@
 
 ## Introduction
 
-The `c` folder includes a library in the C language, which is intended to enable control of Rozum Robotics RDrive-series servo motors.
+The `c` folder includes a C-language library intended to enable control of Rozum Robotics RDrive-series servo motors.
    
 For more information about the RDrive series, go to: https://rozum.com/servomotors/.
     
-For detailed technical specifications of RDrive servo motors, download the data-sheet for the series at: https://rozum.com/tpl/pdf/RD_50-85.pdf.
+For detailed technical specifications of RDrive servo motors, download the datasheet for the series at https://rozum.com/assets/files/rdrive/servomotors_rozum_robotics.pdf.
     
-Online documentation on the user API: https://rozum.com/support/docs/servo-api
+Online documentation about the Servo API is available at https://rozum.com/support/servo-api/c/docs/.
 
-Offline PDF documentation on the user API: https://rozum.com/support/docs/servo-api/RR-UserAPI.pdf
+Offline PDF documentation about the Servo API is available at https://rozum.com/support/docs/servo-api/RR-UserAPI.pdf.
     
 ## System and software requirements
 
-Operating systems: Linux, Mac OS, Windows (Cygwin)
+Operating systems: Linux, Windows (Cygwin), Mac OS.
    
 For compiling, use the gcc compiler.
    
-Additionally, make sure to install `libpthread` library and `make`
+Additionally, make sure to install `libpthread` library and `make`.
 
 ## Compiling
 
@@ -26,15 +26,15 @@ Run:
     
 `make clean; make`
         
-Two files should be created: `build/libservo_api.so` and `build/libservo_api.a`.
+As a result, two files should be created: `build/libservo_api.so` and `build/libservo_api.a`.
 
-**Note: You may skip further steps in case you are going to use the library within the high-level API appllication(i.e. Python)**
+**Note: You may skip further steps in case you are going to use the library within a higher-level API application— i.e., Python**
 
 ## Building the documentation
 
-Make sure `Doxygen` is installed (for generating the documentation)
+1. Make sure `Doxygen` is installed (for generating documentation).
 
-Then run:
+2. run:
     
 `doxygen`
         
@@ -42,15 +42,15 @@ The `html` folder should be created. Open html/index.html in a browser to view t
 
 ## Compiling tutorials
 
-Go to the tutorial folder:
+1. Go to the tutorial folder:
     
 `cd tutorial`
         
-Open and edit `tutorial.h`. Replace the `TUTORIAL_DEVICE` value with your device:
+2. Open `tutorial.h`. Replace the `TUTORIAL_DEVICE` value with the identifications of your device:
     
 name (e.g.,`/dev/ttyACM0`)
         
-Run:
+3. Run:
     
 `make`
 
@@ -62,7 +62,7 @@ Go to the `build` folder created during compilation. Run the executable files fr
 
 ## Static linking
 
-To link statically, pass `libservo_api.a` to linker together with other object files:
+To link statically, pass `libservo_api.a` to the linker together with other object files:
     
 `gcc -o app obj1.o obj2.o path_to_library/libservo_api.a -lpthread`
         
@@ -74,13 +74,13 @@ To link against the shared library, specify the path to the library using the `-
         
 ## File structure
 
-`build` - folder contains the compiled library (dynamic and static) and intermediate compiler files
+`build` - folder containing the compiled library (dynamic and static) and intermediate compiler files
         
-`html` - Doxygen-generated documentation HTML version
-    
-`latex` - Doxygen-generated documentation latex & PDF versions
+`html` - Doxygen-generated HTML documentation
 
-`doc-src` - Servobox hardware documentation sources
+`latex` - Doxygen-generated documentation (Latex & PDF versions)
+
+`doc-src` - servobox hardware documentation sources
     
 `include` - header files of the library
     
@@ -98,4 +98,4 @@ To link against the shared library, specify the path to the library using the `-
     
 `README.md` - this file
     
-`core.mk` - make rules (compile logic itself)
+`core.mk` - make rules (compilation logic itself)
