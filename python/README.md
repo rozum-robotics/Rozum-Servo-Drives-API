@@ -50,7 +50,7 @@ where **v1**, **v2**, and **v3** (e.g., rdrive==1.0.31) are version numbers.
 To run any of the program examples with Python code on Windows OS, complete the steps below.
 
 **Note:** Before running a tutorial, RDrive servo should be wired to a power supply and the CAN-USB dongle.
-as described in the User Manual or the Quick-Start Guide available for downloading at the [company website] (https://rozum.com/servomotors-documentation/).
+as described in the User Manual or the Quick-Start Guide available for downloading at the [company website] (https://rozum.com/servomotors/#rdrive-documentation).
 
 1. Open the Command Line Interface via the Start menu.
 

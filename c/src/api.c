@@ -935,7 +935,7 @@ rr_ret_status_t rr_servo_set_state_stopped(const rr_servo_t *servo)
 }
 
 /**
- * @brief The function retrieves the actual NMT state of a specified servo. The state is described as a status code (:: rr_nmt_state_t).  
+ * @brief The function retrieves the actual NMT state of a specified servo. The state is described as a status code (::rr_nmt_state_t).  
  * <p></p>
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param state Pointer to the variable where the state of the servo is returned 
