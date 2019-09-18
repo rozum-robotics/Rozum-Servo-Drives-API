@@ -134,7 +134,7 @@ deploy_python_master:
   before_script:
     - echo 'Skipping before-script'
   script:
-    - bin/deploy_python.sh
+    - bin/build_and_deploy_python.sh
   only:
     - master
 
@@ -147,7 +147,7 @@ deploy_python_dev:
   before_script:
     - echo 'Skipping before-script'
   script:
-    - bin/deploy_python.sh
+    - bin/build_and_deploy_python.sh
   when: manual
   except:
     - master
