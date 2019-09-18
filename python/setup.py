@@ -26,7 +26,7 @@ EMAIL = 'dev@rozum.com'
 AUTHOR = 'Rozum Robotics'
 with open(version_file) as v:
     VERSION = v.readline().rstrip()
-REQUIRED = []
+REQUIRED = ["Deprecated==1.2.6"]
 DEPENDENCY_LINKS = []
 
 if 'dev' in VERSION:
