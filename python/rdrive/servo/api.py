@@ -61,6 +61,7 @@ import os
 import logging
 import platform
 from ctypes import *
+from deprecated import deprecated
 
 from .constants import RET_OK, RET_STATUS_MESSAGE
 
@@ -1041,6 +1042,11 @@ class Interface(object):
         """
         self._api.rr_emcy_log_clear(self._interface)
 
+    @deprecated(
+        version="1.0.37", 
+        reason="Should be used deinit_interface method of appropriate ServoApi\
+ object",
+    )
     def deinit_interface(self):
         """@brief The function closes the COM port where the corresponding CAN-USB dongle is connected, clearing all data
         associated with the interface descriptor.
@@ -1126,6 +1132,20 @@ class ServoApi(object, metaclass=_Singleton):
 
             self._interfaces[interface_name] = interface
         return self._interfaces[interface_name]
+
+    def deinit_interface(self, interface_name: str):
+        """@brief The function closes the COM port where the corresponding CAN-USB dongle is connected, clearing all data
+        associated with the interface descriptor.
+        The function remove all the interface-related data from the API instance. So you will be able to re-init the interface later if need to.
+
+        @return None
+		@ingroup Init
+        """
+        status = self._api.rr_deinit_interface(
+            byref(self._interfaces[interface_name]._interface)
+        )
+        ServoError.handle(status)
+        self._interfaces.pop(interface_name)
 
     def sleep_ms(self, ms: int):
         """@brief The function sets an idle period for the user program (e.g., to wait till a servo executes a motion trajectory).
