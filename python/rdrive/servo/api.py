@@ -1044,8 +1044,7 @@ class Interface(object):
 
     @deprecated(
         version="1.0.37", 
-        reason="Should be used deinit_interface method of appropriate ServoApi\
- object",
+        reason="deinit_interface method of appropriate ServoApi should be used"
     )
     def deinit_interface(self):
         """@brief The function closes the COM port where the corresponding CAN-USB dongle is connected, clearing all data
