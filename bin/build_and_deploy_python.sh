@@ -19,4 +19,4 @@ pip install -U setuptools twine
 python setup.py sdist
 
 # Publish a package
-twine upload --repository-url ${PYPI_URL} -u ${PYPI_USER} -p ${PYPI_PASSWORD} dist/
+twine upload --repository-url ${PYPI_URL} -u ${PYPI_USER} -p ${PYPI_PASSWORD} dist/*
