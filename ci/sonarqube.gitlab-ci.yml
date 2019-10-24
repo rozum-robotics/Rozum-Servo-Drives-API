@@ -1,12 +1,12 @@
 ---
 image: rozum/sonar-scanner
 
-before_script:
-  - ./c/ && make
-
 sonarqube:
+  stage: test
   tags:
     - hub
+  before_script:
+    - ./c/ && make
   script:
     - sonar-scanner
       -Dsonar.projectKey=servo-api
@@ -16,10 +16,13 @@ sonarqube:
       -Dsonar.language=c
 
 sonarqube_review:
+  stage: test
   tags:
     - hub
   only:
     - /(feature|hotfix|bugfix)\/.*/
+  before_script:
+    - ./c/ && make
   script:
     - git config --global user.email "sonar.bot@rozum.com"
     - git config --global user.name "Sonar Bot"

@@ -154,3 +154,5 @@ integration_tests_on_demand:
     - master
     - dev
 
+include:
+  - local: ci/sonarqube.gitlab-ci.yml
