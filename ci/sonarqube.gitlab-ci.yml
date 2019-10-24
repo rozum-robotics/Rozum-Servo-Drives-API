@@ -1,7 +1,8 @@
 ---
-image: rozum/sonar-scanner
+
 
 sonarqube:
+  image: rozum/sonar-scanner
   stage: test
   tags:
     - hub
@@ -16,6 +17,7 @@ sonarqube:
       -Dsonar.language=c
 
 sonarqube_review:
+  image: rozum/sonar-scanner
   stage: test
   tags:
     - hub
