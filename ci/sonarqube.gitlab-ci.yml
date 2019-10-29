@@ -14,7 +14,7 @@ sonarqube:
       -Dsonar.sources=.
       -Dsonar.host.url=$SONAR_HOST
       -Dsonar.login=$SONAR_LOGIN
-      -Dsonar.language=c
+      -Dsonar.language=c++
 
 sonarqube_review:
   image: rozum/sonar-scanner
@@ -44,7 +44,7 @@ sonarqube_review:
       -Dsonar.gitlab.url=$SONAR_URL
       -Dsonar.gitlab.user_token=$SONAR_TOKEN
       -Dsonar.gitlab.comment_no_issue=true
-      -Dsonar.language=c
+      -Dsonar.language=c++
   artifacts:
     reports:
       codequality: codeclimate.json
