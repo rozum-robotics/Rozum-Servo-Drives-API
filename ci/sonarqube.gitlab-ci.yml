@@ -4,32 +4,26 @@
 sonarqube:
   image: rozum/sonar-scanner
   stage: test
-  tags:
-    - hub
-  before_script:
-    - ./c/ && make
   script:
+    - ./c/ && make
     - sonar-scanner
       -Dsonar.projectKey=servo-api
       -Dsonar.sources=.
       -Dsonar.host.url=$SONAR_HOST
       -Dsonar.login=$SONAR_LOGIN
-      -Dsonar.language=c++
+      -Dsonar.language="c"
 
 sonarqube_review:
   image: rozum/sonar-scanner
   stage: test
-  tags:
-    - hub
   only:
     - /(feature|hotfix|bugfix)\/.*/
-  before_script:
-    - ./c/ && make
   script:
     - git config --global user.email "sonar.bot@rozum.com"
     - git config --global user.name "Sonar Bot"
     - git checkout origin/dev
     - git merge $CI_COMMIT_SHA --no-commit --no-ff
+    - ./c/ && make
     - sonar-scanner
       -Dsonar.host.url=$SONAR_HOST
       -Dsonar.login=$SONAR_LOGIN
@@ -44,7 +38,7 @@ sonarqube_review:
       -Dsonar.gitlab.url=$SONAR_URL
       -Dsonar.gitlab.user_token=$SONAR_TOKEN
       -Dsonar.gitlab.comment_no_issue=true
-      -Dsonar.language=c++
+      -Dsonar.language="c"
   artifacts:
     reports:
       codequality: codeclimate.json
