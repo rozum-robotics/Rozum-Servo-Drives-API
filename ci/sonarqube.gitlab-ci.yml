@@ -1,6 +1,5 @@
 ---
 
-
 sonarqube:
   image: rozum/sonar-scanner
   stage: test
