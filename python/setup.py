@@ -1,4 +1,3 @@
-import io
 import platform
 import os
 import subprocess
@@ -46,7 +45,7 @@ CLASSIFIERS = [
 ]
 
 try:
-    with io.open(os.path.join(here, "README.md"), encoding="utf-8") as f:
+    with open(os.path.join(here, "README.md"), encoding="utf-8") as f:
         LONG_DESCRIPTION = "\n" + f.read()
 except FileNotFoundError:
     LONG_DESCRIPTION = DESCRIPTION
