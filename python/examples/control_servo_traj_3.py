@@ -31,11 +31,20 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo1 = interface.init_servo(SERVO_1_ID)
 
+    logger.info("Setting servo1 to operational state")
+    servo1.set_state_operational()
+
     logger.info("Initializing servo id {}".format(SERVO_2_ID))
     servo2 = interface.init_servo(SERVO_2_ID)
 
+    logger.info("Setting servo2 to operational state")
+    servo2.set_state_operational()
+
     logger.info("Initializing servo id {}".format(SERVO_3_ID))
     servo3 = interface.init_servo(SERVO_3_ID)
+
+    logger.info("Setting servo3 to operational state")
+    servo3.set_state_operational()
 
     logger.info("Appending points")
     servo1.add_motion_point(100., 0., 6000)

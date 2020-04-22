@@ -27,6 +27,9 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = interface.init_servo(SERVO_1_ID)
 
+    logger.info("Setting servo to operational state")
+    servo.set_state_operational()
+
     position_rotor = servo.read_parameter(rr.APP_PARAM_POSITION_ROTOR)
     logger.info("Position rotor {}".format(position_rotor))
 

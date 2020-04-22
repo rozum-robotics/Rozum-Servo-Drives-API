@@ -27,5 +27,8 @@ if __name__ == '__main__':
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = interface.init_servo(SERVO_1_ID)
 
+    logger.info("Setting servo to operational state")
+    servo.set_state_operational()
+
     max_velocity = servo.get_max_velocity()
     logger.info("Max velocity {}".format(max_velocity))
