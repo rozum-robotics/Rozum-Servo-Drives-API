@@ -61,6 +61,7 @@ as described in the User Manual or the Quick-Start Guide available for downloadi
 3. Find out the **CAN ID of the connected servo motor**. To do this, complete the following steps:
 
    - In the command console, run a tutorial from the `examples` folder by executing the following command with a specified CAN Interface ID and CAN Servo ID.
+   - **Note:** To run the examples you should clone the repository on your local machine.
    
      `python userapi\python\examples\read_servo_max_velocity.py --interface COM3 --servo_1_id 32`
 
@@ -100,6 +101,7 @@ To run any of the program examples with Python code on Linux OS, complete the st
 2. Find out the **CAN ID of the connected servo motor**. To do this, complete the following steps:
 
  - In the console, run a tutorial from the `examples` folder by executing the following command with a specified CAN Interface ID and a CAN Servo ID.
+ - **Note:** To run the examples you should clone the repository on your local machine.
    
      `python3 userapi/python/examples/read_servo_max_velocity.py --interface /dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00 --servo_1_id 32`
 
