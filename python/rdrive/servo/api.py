@@ -1199,5 +1199,6 @@ class ServoApi(object, metaclass=_Singleton):
         return self._api.rr_describe_nmt(code).decode("utf-8")
 
     def __del__(self):
-        for interface in self._interfaces.values():
-            interface.deinit_interface()
+        interface_names = [k for k in self._interfaces.keys()]
+        for interface_name in interface_names:
+            self.deinit_interface(interface_name)
