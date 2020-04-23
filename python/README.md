@@ -62,7 +62,7 @@ as described in the User Manual or the Quick-Start Guide available for downloadi
 
    - In the command console, run a tutorial from the `examples` folder by executing the following command with a specified CAN Interface ID and CAN Servo ID.
    
-     `python ..\userapi\python\examples\read_servo_max_velocity.py --interface COM3 --servo_1_id 32`
+     `python userapi\python\examples\read_servo_max_velocity.py --interface COM3 --servo_1_id 32`
 
    where **read_servo_max_velocity.py** is the tutorial name;<br>
    **interface COM3** is the parameter specifying the CAN Interface ID;<br>
@@ -78,7 +78,7 @@ as described in the User Manual or the Quick-Start Guide available for downloadi
  
  To do this, run the following command in the cmd console:
  
- `python ..\userapi\python\examples\read_servo_max_velocity.py --interface COM3 --servo_1_id 37`
+ `python userapi\python\examples\read_servo_max_velocity.py --interface COM3 --servo_1_id 37`
  
    where **read_servo_max_velocity.py** is the tutorial name (replace the name from the current example with any other tutorial name as needed);<br>
    **interface COM3** is the parameter specifying the CAN Interface ID (the one we got at Step 2);<br>
@@ -101,7 +101,7 @@ To run any of the program examples with Python code on Linux OS, complete the st
 
  - In the console, run a tutorial from the `examples` folder by executing the following command with a specified CAN Interface ID and a CAN Servo ID.
    
-     `python3 ..\userapi\python\examples\read_servo_max_velocity.py --interface /dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00 --servo_1_id 32`
+     `python3 userapi/python/examples/read_servo_max_velocity.py --interface /dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00 --servo_1_id 32`
 
    where **read_servo_max_velocity.py** is the tutorial name;
    **interface /dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00** is the parameter specifying the CAN Interface ID;<br>
@@ -117,7 +117,7 @@ To run any of the program examples with Python code on Linux OS, complete the st
 
    To do this, run the following command in the console:
  
-   `python3 ..\userapi\python\examples\read_servo_max_velocity.py --interface /dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00 --servo_1_id 37`
+   `python3 userapi/python/examples/read_servo_max_velocity.py --interface /dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00 --servo_1_id 37`
  
    where **read_servo_max_velocity.py** is the tutorial name (replace the name from the current example with any other tutorial name as needed);<br> 
    **interface /dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00** is the parameter specifying the CAN Interface ID (the one we got at Step 1);<br>
@@ -138,7 +138,11 @@ import rdrive as rr
 
 api = rr.ServoApi() # api initialization and library loading
 interface = api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Interface_301-if00") # interface initialization
-servo = interface.init_servo(64) # servo initialization
+
+# servo initialization
+servo = interface.init_servo(64)
+# toggle operational state on servo
+servo.set_state_operational()
 
 # go to specific position(degrees)
 servo.set_position(100.)
@@ -163,6 +167,8 @@ interface = api.init_interface("/dev/serial/by-id/usb-Rozum_Robotics_USB-CAN_Int
 
 # servo initialization
 servo = interface.init_servo(64)
+# toggle operational state on servo
+servo.set_state_operational()
 
 # servo usage
 # preparing specific realtime parameters for extraction
