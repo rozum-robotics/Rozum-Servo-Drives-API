@@ -641,7 +641,7 @@ class Servo(object):
         """@brief The function sets the servo to the operational state. In the state, the servo is both available
         for communication and can execute commands.
 
-        For instance, you may need to call the function to switch the servo from the pre-operational state to the
+        You must call the function to switch the servo from the pre-operational state to the
         operational state after an error (e.g., due to overcurrent).
 
         @return None
