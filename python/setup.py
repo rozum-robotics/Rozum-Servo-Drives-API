@@ -105,7 +105,7 @@ setup(
     install_requires=REQUIRED,
     dependency_links=DEPENDENCY_LINKS,
     url=URL,
-    license="MIT",
+    license="Apache License 2.0",
     classifiers=CLASSIFIERS,
     author=AUTHOR,
     author_email=EMAIL,
