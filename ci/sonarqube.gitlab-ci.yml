@@ -11,6 +11,7 @@ sonarqube:
       -Dsonar.host.url=$SONAR_HOST
       -Dsonar.login=$SONAR_LOGIN
       -Dsonar.language="c"
+  allow_failure: true
 
 sonarqube_review:
   image: rozum/sonar-scanner
@@ -42,3 +43,4 @@ sonarqube_review:
   artifacts:
     reports:
       codequality: codeclimate.json
+  allow_failure: true
