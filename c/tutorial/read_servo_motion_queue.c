@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
     API_DEBUG("Appending points\n");
     
     float pos;
-    rr_read_parameter(servo, APP_PARAM_POSITION_ROTOR, &pos);
+    rr_read_parameter(servo, APP_PARAM_POSITION, &pos);
     
     //! [Add point1]
     rr_add_motion_point(servo, pos, 0.0, 10000000);
