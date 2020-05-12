@@ -17,7 +17,7 @@
 #define USB_CAN_SYNC_CLOCK_PDO          (0x27FU)
 
 /*---------------- optional parameters ------------------*/
-#define USB_CAN_MASTER_HB_IVAL_MS		1000
+#define USB_CAN_MASTER_HB_IVAL_MS		250
 #define USB_CAN_TRAJ_SYNC_IVAL_MS		50
 #define USB_CAN_HB_ALIVE_THRESHOLD_MS	3000
 #define USB_CAN_MASTER_HB_COM_FRAME_ID	0x700
