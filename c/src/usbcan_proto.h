@@ -22,6 +22,7 @@ extern "C"
 #include "windows.h"
 #else
 #include <sys/socket.h>
+#include <sys/file.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <termios.h>
@@ -156,7 +157,7 @@ typedef void (*usbcan_emcy_cb_t)(usbcan_instance_t *inst, int id, uint16_t err_c
 extern const char *CAN_OPEN_CMD[];
 extern FILE *debug_log;
 
-void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to);
+void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to_us);
 void usbcan_setup_hb_rx_cb(usbcan_instance_t *inst, usbcan_hb_rx_cb_t cb);
 void usbcan_setup_emcy_cb(usbcan_instance_t *inst, usbcan_emcy_cb_t cb);
 void usbcan_setup_nmt_state_cb(usbcan_instance_t *inst, usbcan_nmt_state_cb_t cb);
