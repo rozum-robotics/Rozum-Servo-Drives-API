@@ -73,6 +73,12 @@ int main(int argc, char *argv[])
     //! [Adding servo 8]
     rr_servo_t *servo = rr_init_servo(iface, id);
     //! [Adding servo 8]
+    
+    if(rr_servo_set_state_operational(servo) != RET_OK)
+    {   
+            API_DEBUG("Can't put servo to operational mode\n");                                                                        
+            exit(1);                                                                                                                   
+    }   
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
 
