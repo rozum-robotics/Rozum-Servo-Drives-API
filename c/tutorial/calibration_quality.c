@@ -112,7 +112,7 @@ int main(int argc, char *argv[])
 {
 	uint8_t id;
 	struct timespec tprev, tnow, tstart;
-	float pos, curr;
+	float pos, curr, vel;
 	FILE *f;
 
 	if(argc == 3)
@@ -153,6 +153,7 @@ int main(int argc, char *argv[])
 	//! [Set up param entry]
 	rr_param_cache_setup_entry (servo, APP_PARAM_POSITION_ROTOR, true);
 	rr_param_cache_setup_entry (servo, APP_PARAM_CURRENT_PHASE, true);
+	rr_param_cache_setup_entry (servo, APP_PARAM_VELOCITY_ROTOR, true);
 	//! [Set up param entry]
 	//! [Disable cog table]
 	enable_compensation(servo, false);
@@ -180,8 +181,9 @@ int main(int argc, char *argv[])
 		rr_param_cache_update(servo);
 		rr_read_cached_parameter(servo, APP_PARAM_POSITION_ROTOR, &pos);
 		rr_read_cached_parameter(servo, APP_PARAM_CURRENT_PHASE, &curr);
+		rr_read_cached_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &vel);
 
-		fprintf(f, "%" PRId64 ", %f, %f\n", calcdiff(tnow, tprev), pos, curr);
+		fprintf(f, "%" PRId64 ", %f, %f, %f\n", calcdiff(tnow, tprev), pos, curr, vel);
 
 		if(calcdiff(tnow, tstart) >= 60000000)
 		{
@@ -222,8 +224,9 @@ int main(int argc, char *argv[])
 		rr_param_cache_update(servo);
 		rr_read_cached_parameter(servo, APP_PARAM_POSITION_ROTOR, &pos);
 		rr_read_cached_parameter(servo, APP_PARAM_CURRENT_PHASE, &curr);
+		rr_read_cached_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &vel);
 
-		fprintf(f, "%" PRId64 ", %f, %f\n", calcdiff(tnow, tprev), pos, curr);
+		fprintf(f, "%" PRId64 ", %f, %f, %f\n", calcdiff(tnow, tprev), pos, curr, vel);
 
 		if(calcdiff(tnow, tstart) >= 60000000)
 		{

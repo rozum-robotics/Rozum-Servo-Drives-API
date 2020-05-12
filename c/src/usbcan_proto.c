@@ -154,13 +154,14 @@ static void usbcan_enable_udp(usbcan_instance_t *inst, bool en)
 /*
  * Handles devices statuses, SDO reception & master heart beat transmission.
  */
-static void usbcan_poll(usbcan_instance_t *inst, int64_t delta_ms, uint32_t delta_us)
+static void usbcan_poll(usbcan_instance_t *inst, uint64_t delta_us)
 {
 	int i;
+	uint32_t delta_ms = delta_us / 1000 + (delta_us % 1000 ? 1 : 0);
 
-	inst->master_hb_timer += delta_ms;
-	inst->traj_sync_timer += delta_ms;
-
+	inst->master_hb_timer += delta_us;
+	inst->traj_sync_timer += delta_us;
+	
 	/*Check if devices on bus*/
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
 	{
@@ -1024,6 +1025,14 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	else if((f = fopen(dev_addr, "r+")) != NULL)
 	{
 		inst->fd = fileno(f);
+		if(flock(inst->fd, LOCK_EX | LOCK_NB) != 0)
+		{
+			close(inst->fd);
+			inst->fd = -1;
+			LOG_ERROR(debug_log, "%s: can't get exclusive lock", __func__);
+			return;
+		}
+
 		tcgetattr(inst->fd, &term);
 		cfmakeraw(&term);
 		tcsetattr(inst->fd, TCSANOW, &term);
@@ -1063,7 +1072,7 @@ static void *usbcan_process(void *udata)
 		tprev = tnow;
 		gettimeofday(&tnow, NULL);
 		//fprintf(stderr, "%ld\n", (long int)TIME_DELTA_MS(tnow, tprev));
-		usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev), TIME_DELTA_US(tnow, tprev));
+		usbcan_poll(inst, TIME_DELTA_US(tnow, tprev));
 	}
 	
 	#else
@@ -1079,13 +1088,11 @@ static void *usbcan_process(void *udata)
 		gettimeofday(&tnow, NULL);
 		tprev = tnow;
 
-		inst->running = true;
-
-		while(1)
+		while(inst->running)
 		{
 			n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
 			gettimeofday(&tnow, NULL);
-			usbcan_poll(inst, TIME_DELTA_MS(tnow, tprev), TIME_DELTA_US(tnow, tprev));
+			usbcan_poll(inst, TIME_DELTA_US(tnow, tprev));
 			if(n > 0)
 			{
 				if(pfds[0].revents & POLLERR)
@@ -1104,12 +1111,16 @@ static void *usbcan_process(void *udata)
 			}
 			tprev = tnow;
 		}
+		if(!inst->usbcan_udp)
+		{
+			flock(inst->fd, LOCK_UN);
+		}
 		close(inst->fd);
+		inst->fd = -1;
 	}
 	while(0);
 
 	inst->running = false;
-	LOG_ERROR(debug_log, "%s: thread finished", __func__);
 	#endif
 
 	return 0;
@@ -1119,9 +1130,9 @@ static void *usbcan_process(void *udata)
  * PUBLIC functions
  */
 
-void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to)
+void usbcan_setup_hb_tx_cb(usbcan_instance_t *inst, usbcan_hb_tx_cb_t cb, int64_t to_us)
 {
-	inst->master_hb_ival = to;
+	inst->master_hb_ival = to_us;
     inst->usbcan_hb_tx_cb = (void*)cb;
 }
 
@@ -1219,12 +1230,12 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 		return NULL;
 	}
 	memset(inst, 0, sizeof(usbcan_instance_t));
-	inst->master_hb_ival = USB_CAN_MASTER_HB_IVAL_MS;
+	inst->master_hb_ival = USB_CAN_MASTER_HB_IVAL_MS * 1000;
 	inst->master_hb_timer = inst->master_hb_ival;
 	inst->hb_alive_threshold = USB_CAN_HB_ALIVE_THRESHOLD_MS;
 	inst->device = dev_name;
 
-	inst->traj_sync_ival = USB_CAN_TRAJ_SYNC_IVAL_MS;
+	inst->traj_sync_ival = USB_CAN_TRAJ_SYNC_IVAL_MS * 1000;
 	inst->send_traj_sync_enable = true;
 
 	for(i = 0; i < USB_CAN_MAX_DEV; i++)
@@ -1247,7 +1258,7 @@ usbcan_instance_t *usbcan_instance_init(const char *dev_name)
 		return NULL;
 	}
 	
-	usbcan_setup_hb_tx_cb(inst, hb_tx_cb, 250);
+	usbcan_setup_hb_tx_cb(inst, hb_tx_cb, USB_CAN_MASTER_HB_IVAL_MS * 1000);
 	usbcan_setup_hb_rx_cb(inst, hb_rx_cb);
 	usbcan_setup_emcy_cb(inst, emcy_cb);
 	usbcan_setup_nmt_state_cb(inst, nmt_state_cb);
@@ -1277,7 +1288,24 @@ int usbcan_instance_deinit(usbcan_instance_t **inst)
 			dev->inst = NULL;
 		}
 
+		(*inst)->running = false;
+
+		msleep(10 * USB_CAN_POLL_GRANULARITY_MS);
+
+#ifndef _WIN32
+		if((*inst)->fd != -1)
+		{
+			LOG_WARN(debug_log, "%s: can't stop thread normally, cancelling it", __func__);
+			pthread_cancel((*inst)->usbcan_thread);
+			if(!(*inst)->usbcan_udp)
+			{
+				flock((*inst)->fd, LOCK_UN);
+			}
+			close((*inst)->fd);
+		}
+#else
 		pthread_cancel((*inst)->usbcan_thread);
+#endif
 		free((*inst)->rx_data.b);
 		free((*inst)->rx_data.rb);
 		free(*inst);

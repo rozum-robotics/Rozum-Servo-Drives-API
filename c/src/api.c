@@ -1244,7 +1244,69 @@ rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_de
 }
 
 /**
- * @brief The function commands the specified servo to rotate at the specified velocity,
+ * @brief The function changes velocity rate limiter acceleration value,
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param velocity_rpm_per_sec Velocity rate (in RPM/sec) at the motor flange. Take into account gear reduction ratio.
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Motion
+ */
+rr_ret_status_t rr_set_velocity_rate(const rr_servo_t *servo, const float velocity_rate_rpm_per_sec)
+{
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
+
+	if(velocity_rate_rpm_per_sec < 0)
+	{
+		return RET_WRONG_ARG;
+	}
+
+	uint8_t data[8];
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	int p = 0;
+	p = usb_can_put_float(data, p, &velocity_rate_rpm_per_sec, 1);
+	uint32_t sts = write_raw_sdo(dev, 0x4308, 0x06, data, p, 1, 100);
+
+	return ret_sdo(sts);
+}
+
+/**
+ * @brief The function reads velocity rate limiter acceleration value,
+ * @param servo Servo descriptor returned by the ::rr_init_servo function 
+ * @param velocity_rpm_per_sec Pointer to put velocity rate in. See ::rr_set_velocity_rate for details.
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Motion
+ */
+rr_ret_status_t rr_get_velocity_rate(const rr_servo_t *servo, float *const velocity_rate_rpm_per_sec)
+{
+	IS_VALID_SERVO(servo);
+	CHECK_NMT_STATE(servo);
+
+	if(velocity_rate_rpm_per_sec < 0)
+	{
+		return RET_WRONG_ARG;
+	}
+
+	uint8_t data[8];
+	int l = sizeof(data);
+	usbcan_device_t *dev = (usbcan_device_t *)servo->dev;
+	uint32_t sts = read_raw_sdo(dev, 0x4308, 0x06, data, &l, 1, 100);
+	if(sts != CO_SDO_AB_NONE)
+	{
+		return ret_sdo(sts);
+	}
+
+	if(l != sizeof(float))
+	{
+		return RET_SIZE_MISMATCH;
+	}
+
+	usb_can_get_float(data, 0, velocity_rate_rpm_per_sec, 1);
+	return RET_OK;
+}
+
+/**
+ * @brief Function is deprecated!. Use ::rr_get_velocity_rate and ::rr_set_velocity_rate to get or set velocity rate limiter acceleration value.
+ * The function commands the specified servo to rotate at the specified velocity,
  * while setting the maximum limit for the servo current (below the servo motor specifications).
  * The velocity value is the velocity of the servo’s output shaft.
  * <p>Similarly to ::rr_set_velocity(), this function can be used for geared servos only.</p>
