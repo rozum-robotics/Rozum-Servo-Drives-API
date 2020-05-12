@@ -135,6 +135,8 @@ int main(int argc, char *argv[])
     //![Save to flash]
 	API_DEBUG("Saving to flash\n");
 
+	rr_sleep_ms(5000);
+
 	if(rr_write_raw_sdo(servo, 0x1010, 1, (uint8_t *)"evas", 4, 1, 4000) != RET_OK)
 	{
 		API_DEBUG("Can't save to flash\n");

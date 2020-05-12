@@ -105,12 +105,12 @@ int main(int argc, char *argv[])
     
     float pos;
     rr_read_parameter(servo, APP_PARAM_POSITION, &pos);
-    
+
     //! [Add point1]
-    rr_add_motion_point(servo, pos, 0.0, 10000000);
+    rr_add_motion_point(servo, pos, 0.0, 100);
     //! [Add point1]
     //! [Add point2]
-    rr_add_motion_point(servo, pos, 0.0, 10000000);
+    rr_add_motion_point(servo, pos, 0.0, 100);
     //! [Add point2]
 
     //! [Points size2]
