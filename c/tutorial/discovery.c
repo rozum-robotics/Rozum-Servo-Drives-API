@@ -101,6 +101,8 @@ int main(int argc, char *argv[])
 	}
     //! [Enable hb variable]
 	API_DEBUG("Waiting for devices ...\nPress Ctrl-C to stop\n");
+	
+	rr_set_debug_log_stream(NULL);
     
 	//! [Scan]
 	while(true)
