@@ -3,6 +3,8 @@
 sonarqube:
   image: rozum/sonar-scanner
   stage: test
+  tags:
+    - rnd-dev
   script:
     - ./c/ && make
     - sonar-scanner
@@ -16,6 +18,8 @@ sonarqube:
 sonarqube_review:
   image: rozum/sonar-scanner
   stage: test
+  tags:
+    - rnd-dev
   when: manual
   only:
     - /(feature|hotfix|bugfix)\/.*/

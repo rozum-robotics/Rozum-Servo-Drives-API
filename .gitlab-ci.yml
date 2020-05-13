@@ -16,6 +16,8 @@ before_script:
 
 library_win:
   stage: build
+  tags:
+    - rnd-dev
   script:
     - make -C c -e OS=win32
     - make -C c -e OS=win64
@@ -29,6 +31,8 @@ library_win:
 
 update_tools_win:
   stage: build
+  tags:
+    - rnd-dev
   script:
     - make -C c -e OS=win32
     - make -C c/tools/fw-update-tool -e OS=win32
@@ -43,6 +47,8 @@ update_tools_win:
 
 tutorial_win:
   stage: build
+  tags:
+    - rnd-dev
   script:
     - make -C c -e OS=win32
     - make -C c/tutorial -e OS=win32
@@ -57,6 +63,8 @@ update_tools_deb:
   image:
     name: ubuntu:xenial
   stage: build
+  tags:
+    - rnd-dev
   before_script:
     - echo 'Skipping before-script'
   script:
@@ -80,6 +88,8 @@ test_tutorial:
 generate_docs:
   image: rozum/embed-gcc:latest
   stage: document
+  tags:
+    - rnd-dev
   script:
     - cd c
     - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
@@ -104,6 +114,8 @@ generate_docs:
 deploy_artifacts:
   image: rozum/embed-gcc:latest
   stage: deploy
+  tags:
+    - rnd-dev
   script:
     - bin/git-tag.sh
     - bin/publish-artifacts.sh
@@ -114,6 +126,8 @@ deploy_python_master:
   image:
     name: python:3.7-alpine
   stage: deploy
+  tags:
+    - rnd-dev
   dependencies:
     - library_win
   before_script:
@@ -127,6 +141,8 @@ deploy_python_dev:
   image:
     name: rozum/embed-gcc:latest
   stage: deploy
+  tags:
+    - rnd-dev
   dependencies:
     - library_win
   before_script:
