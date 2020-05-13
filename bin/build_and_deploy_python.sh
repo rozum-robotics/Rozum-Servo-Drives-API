@@ -15,8 +15,8 @@ mkdir -p python/rdrive/lib
 
 # Make a Python package
 cd python
-pip install -U setuptools twine
-python setup.py sdist
+python3 -m pip install -U setuptools twine
+python3 setup.py sdist
 
 # Publish a package
 twine upload --repository-url ${PYPI_URL} -u ${PYPI_USER} -p ${PYPI_PASSWORD} dist/*
