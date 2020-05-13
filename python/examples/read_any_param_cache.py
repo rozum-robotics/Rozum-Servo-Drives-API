@@ -9,7 +9,9 @@ logger = logging.getLogger(os.path.basename(__file__))
 logger.setLevel(logging.INFO)
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--servo_1_id", type=int, help="first servo ID that you want control")
+parser.add_argument(
+    "--servo_1_id", type=int, help="first servo ID that you want control"
+)
 parser.add_argument("--interface", type=str, help="interface name")
 
 args = parser.parse_args()
@@ -17,7 +19,7 @@ args = parser.parse_args()
 INTERFACE_NAME = args.interface
 SERVO_1_ID = args.servo_1_id
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logger.info("Initializing ServoApi")
     api = rr.ServoApi()
 
@@ -26,6 +28,9 @@ if __name__ == '__main__':
 
     logger.info("Initializing servo id {}".format(SERVO_1_ID))
     servo = interface.init_servo(SERVO_1_ID)
+
+    logger.info("Setting servo to operational state")
+    servo.set_state_operational()
 
     logger.info("Setting cache")
     servo.param_cache_setup_entry(rr.APP_PARAM_POSITION_ROTOR, True)
@@ -42,5 +47,8 @@ if __name__ == '__main__':
     voltage_input = servo.read_cached_parameter(rr.APP_PARAM_VOLTAGE_INPUT)
     current_input = servo.read_cached_parameter(rr.APP_PARAM_CURRENT_INPUT)
 
-    logger.info("\nposition_rotor = {}\nvelocity_rotor = {}\nvoltage_input = {}\ncurrent_input = {}"
-                .format(position_rotor, velocity_rotor, voltage_input, current_input))
+    logger.info(
+        "\nposition_rotor = {}\nvelocity_rotor = {}\nvoltage_input = {}\ncurrent_input = {}".format(
+            position_rotor, velocity_rotor, voltage_input, current_input
+        )
+    )

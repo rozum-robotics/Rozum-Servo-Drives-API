@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 
     //! [Start calibration]
 	uint8_t cogging_cmd[] = {0x1a, 0, 0, 0, 0};
-	float value = 0, value_prev = 0;    
+	uint8_t cogging_status = 0, cogging_status_prev = 0;
 
 	if(rr_write_raw_sdo(servo, 0x4010, 0, (uint8_t *)cogging_cmd, sizeof(cogging_cmd), 1, 100) != RET_OK)
 	{
@@ -99,33 +99,51 @@ int main(int argc, char *argv[])
     //![Start calibration]
 
     //![Read vel setpoint]
+
+	for(int i = 0; i < 10; i++)
+	{
+		rr_sleep_ms(10);
+		int l = sizeof(cogging_status);
+		if(rr_read_raw_sdo(servo, 0x4210, 0, &cogging_status, &l, 1, 100) != RET_OK)
+		{
+			API_DEBUG("Can't read procedure status\n");
+			exit(1);
+		}
+		if(cogging_status)
+		{
+			API_DEBUG("Calibration started\n");
+			break;
+		}
+		
+	}
+	cogging_status_prev = cogging_status;
 	while(true)
 	{
 		rr_sleep_ms(100);
-		rr_read_parameter(servo, APP_PARAM_CONTROLLER_VELOCITY_SETPOINT, &value);
-		if(value != value_prev)
+		int l = sizeof(cogging_status);
+		if(rr_read_raw_sdo(servo, 0x4210, 0, &cogging_status, &l, 1, 100) != RET_OK)
 		{
-			API_DEBUG("APP_PARAM_CONTROLLER_VELOCITY_SETPOINT value: %.3f\n", value);
+			API_DEBUG("Can't read procedure status\n");
+			exit(1);
 		}
-		value_prev = value;
-
-		if(fabsf(value) < 1)
+		if(cogging_status != cogging_status_prev)
+		{
+			API_DEBUG("Actual status %d\n", (int)cogging_status);
+		}
+		cogging_status_prev = cogging_status;
+		if(!cogging_status)
 		{
 			API_DEBUG("Calibration finished\n");
 			break;
 		}
 	}
     //![Read vel setpoint]
-
+	
     //![Enable cog table]
-	value = 1.0;
-	if(rr_write_raw_sdo(servo, 0x41ff, 15, (uint8_t *)&value, sizeof(value), 1, 100) != RET_OK)
-	{
-		API_DEBUG("Can't enable cogging map\n");
-		exit(1);
-	}
 
-	if(rr_write_raw_sdo(servo, 0x41ff, 16, (uint8_t *)&value, sizeof(value), 1, 100) != RET_OK)
+	float enable = 1;
+
+	if(rr_write_raw_sdo(servo, 0x41ff, 15, (uint8_t *)&enable, sizeof(enable), 1, 100) != RET_OK)
 	{
 		API_DEBUG("Can't enable friction map\n");
 		exit(1);
@@ -134,8 +152,6 @@ int main(int argc, char *argv[])
 
     //![Save to flash]
 	API_DEBUG("Saving to flash\n");
-
-	rr_sleep_ms(5000);
 
 	if(rr_write_raw_sdo(servo, 0x1010, 1, (uint8_t *)"evas", 4, 1, 4000) != RET_OK)
 	{

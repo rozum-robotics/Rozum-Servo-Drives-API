@@ -641,7 +641,7 @@ class Servo(object):
         """@brief The function sets the servo to the operational state. In the state, the servo is both available
         for communication and can execute commands.
 
-        For instance, you may need to call the function to switch the servo from the pre-operational state to the
+        You must call the function to switch the servo from the pre-operational state to the
         operational state after an error (e.g., due to overcurrent).
 
         @return None
@@ -1199,5 +1199,6 @@ class ServoApi(object, metaclass=_Singleton):
         return self._api.rr_describe_nmt(code).decode("utf-8")
 
     def __del__(self):
-        for interface in self._interfaces.values():
-            interface.deinit_interface()
+        interface_names = [k for k in self._interfaces.keys()]
+        for interface_name in interface_names:
+            self.deinit_interface(interface_name)

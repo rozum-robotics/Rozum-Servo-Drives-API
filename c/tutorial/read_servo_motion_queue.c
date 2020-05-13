@@ -73,6 +73,12 @@ int main(int argc, char *argv[])
     //! [Adding servo 8]
     rr_servo_t *servo = rr_init_servo(iface, id);
     //! [Adding servo 8]
+    
+    if(rr_servo_set_state_operational(servo) != RET_OK)
+    {   
+            API_DEBUG("Can't put servo to operational mode\n");                                                                        
+            exit(1);                                                                                                                   
+    }   
 
     API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
 
@@ -97,11 +103,14 @@ int main(int argc, char *argv[])
 
     API_DEBUG("Appending points\n");
     
+    float pos;
+    rr_read_parameter(servo, APP_PARAM_POSITION, &pos);
+
     //! [Add point1]
-    rr_add_motion_point(servo, 0.0, 0.0, 10000000);
+    rr_add_motion_point(servo, pos, 0.0, 100);
     //! [Add point1]
     //! [Add point2]
-    rr_add_motion_point(servo, 0.0, 0.0, 10000000);
+    rr_add_motion_point(servo, pos, 0.0, 100);
     //! [Add point2]
 
     //! [Points size2]

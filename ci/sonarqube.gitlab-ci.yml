@@ -1,0 +1,46 @@
+---
+
+sonarqube:
+  image: rozum/sonar-scanner
+  stage: test
+  script:
+    - ./c/ && make
+    - sonar-scanner
+      -Dsonar.projectKey=servo-api
+      -Dsonar.sources=.
+      -Dsonar.host.url=$SONAR_HOST
+      -Dsonar.login=$SONAR_LOGIN
+      -Dsonar.language="c"
+  allow_failure: true
+
+sonarqube_review:
+  image: rozum/sonar-scanner
+  stage: test
+  when: manual
+  only:
+    - /(feature|hotfix|bugfix)\/.*/
+  script:
+    - git config --global user.email "sonar.bot@rozum.com"
+    - git config --global user.name "Sonar Bot"
+    - git checkout origin/dev
+    - git merge $CI_COMMIT_SHA --no-commit --no-ff
+    - ./c/ && make
+    - sonar-scanner
+      -Dsonar.host.url=$SONAR_HOST
+      -Dsonar.login=$SONAR_LOGIN
+      -Dsonar.projectKey=servo-api
+      -Dsonar.sources=.
+      -Dsonar.analysis.mode=preview
+      -Dsonar.gitlab.project_id=$CI_PROJECT_PATH
+      -Dsonar.gitlab.commit_sha=$CI_COMMIT_SHA
+      -Dsonar.gitlab.ref_name=$CI_COMMIT_REF_NAME
+      -Dsonar.gitlab.json_mode=CODECLIMATE
+      -Dsonar.gitlab.failure_notification_mode=commit-status
+      -Dsonar.gitlab.url=$SONAR_URL
+      -Dsonar.gitlab.user_token=$SONAR_TOKEN
+      -Dsonar.gitlab.comment_no_issue=true
+      -Dsonar.language="c"
+  artifacts:
+    reports:
+      codequality: codeclimate.json
+  allow_failure: true
