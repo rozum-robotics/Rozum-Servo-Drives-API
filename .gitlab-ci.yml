@@ -86,7 +86,7 @@ test_tutorial:
     - ./bin/build_and_test_tutorials.sh
 
 generate_docs:
-  image: rozum/embed-gcc:latest
+  image: rozum/embed-gcc:python3
   stage: document
   tags:
     - rnd-dev
@@ -97,9 +97,6 @@ generate_docs:
     - cd .. && cp latex/refman.pdf html/C-Servo-API.pdf
     - mv html docs
 
-    - apk update
-    - apk add python3
-    - apk add py3-pip
     - pip3 install doxypypy
 
     - cd ../python
@@ -139,7 +136,7 @@ deploy_python_master:
 
 deploy_python_dev:
   image:
-    name: rozum/embed-gcc:latest
+    name: rozum/embed-gcc:python3
   stage: deploy
   tags:
     - rnd-dev
@@ -147,9 +144,6 @@ deploy_python_dev:
     - library_win
   before_script:
     - echo 'Skipping before-script'
-    - apk update
-    - apk add python3
-    - apk add py3-pip
   script:
     - bin/build_and_deploy_python.sh
   when: manual
