@@ -1,3 +1,9 @@
+""" @page tutor_py_error_read Reading error information
+Complete source code: <br>
+\snippet read_errors_and_servo_information.py read_errors_and_servo_information_py
+"""
+
+"""! [read_errors_and_servo_information_py] """
 import logging
 import os
 import argparse
@@ -42,3 +48,4 @@ if __name__ == "__main__":
     logger.info("Describing errors")
     for i in range(num):
         api.describe_emcy_bit(arr[i])
+"""! [read_errors_and_servo_information_py] """

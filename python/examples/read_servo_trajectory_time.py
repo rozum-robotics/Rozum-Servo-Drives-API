@@ -1,3 +1,9 @@
+""" @page tutor_py_trajectory_time Calculating trajectory time
+Complete source code: <br>
+\snippet read_servo_trajectory_time.py read_servo_trajectory_time_py
+"""
+
+"""! [read_servo_trajectory_time_py] """
 import logging
 import os
 import argparse
@@ -36,3 +42,4 @@ if __name__ == "__main__":
         0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0
     )
     logger.info("Travel time: {}".format(travel_time))
+"""! [read_servo_trajectory_time_py] """

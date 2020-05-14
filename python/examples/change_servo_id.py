@@ -1,13 +1,9 @@
-##
-# \defgroup tutor_py_changeID1 Changing CAN ID of a single servo
-"""The tutorial describes how to change the CAN identifier of a single servo and save it to the EEPROM memory.
-<b>Important!</b> RDrive servos are all supplied with the same range of <b>default CAN IDs—from 32 to 37</b>.  
-To avoid collisions, you need to assign a unique CAN ID to each servo on the same CAN bus.
-
-1. Create two variables
-# \snippet change_servo_id.py add variables
+""" @page tutor_py_changeID1 Changing CAN ID of a servo
+Complete source code: <br>
+\snippet change_servo_id.py change_servo_id_py
 """
 
+"""! [change_servo_id_py] """
 import argparse
 import logging
 import time
@@ -49,3 +45,4 @@ if __name__ == "__main__":
     logger.info("Returning current id value {}".format(args.current_id))
     interface.change_id_and_save(args.new_id, args.current_id)
     time.sleep(5)
+"""! [change_servo_id_py] """
