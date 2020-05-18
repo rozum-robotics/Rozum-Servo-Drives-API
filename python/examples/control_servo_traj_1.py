@@ -1,3 +1,9 @@
+""" @page tutor_py_servomove1 PVT trajectory for one servo 
+Complete source code: <br>
+\snippet control_servo_traj_1.py control_servo_traj_1_py
+"""
+
+"""! [control_servo_traj_1_py] """
 import logging
 import os
 import argparse
@@ -42,3 +48,5 @@ if __name__ == "__main__":
 
     logger.info("Waiting till motion ends")
     api.sleep_ms(20000)
+"""! [control_servo_traj_1_py] """
+

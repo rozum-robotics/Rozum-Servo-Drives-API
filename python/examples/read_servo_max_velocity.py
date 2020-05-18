@@ -1,3 +1,9 @@
+""" @page tutor_py_get_max_velocity Obtain possible max. velocity
+Complete source code: <br>
+\snippet read_servo_max_velocity.py read_servo_max_velocity_py
+"""
+
+"""! [read_servo_max_velocity_py] """
 import logging
 import os
 import argparse
@@ -34,3 +40,4 @@ if __name__ == "__main__":
 
     max_velocity = servo.get_max_velocity()
     logger.info("Max velocity {}".format(max_velocity))
+"""! [read_servo_max_velocity_py] """

@@ -1,3 +1,9 @@
+""" @page tutor_py_param Reading single parameter
+Complete source code: <br>
+\snippet read_any_param.py read_any_param_py
+"""
+
+"""! [read_any_param_py] """
 import logging
 import os
 import argparse
@@ -43,3 +49,4 @@ if __name__ == "__main__":
 
     current_input = servo.read_parameter(rr.APP_PARAM_CURRENT_INPUT)
     logger.info("Current input {}".format(current_input))
+"""! [read_any_param_py] """

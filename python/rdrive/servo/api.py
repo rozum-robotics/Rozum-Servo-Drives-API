@@ -11,22 +11,17 @@
 # - \ref Dbg
 # 
 # \section tutor API Tutorials
+# -# \ref tutor_py_changeID1
 # -# \ref tutor_py_servomove1
 # -# \ref tutor_py_servomove2
 # -# \ref tutor_py_servomove3
 # -# \ref tutor_py_param
 # -# \ref tutor_py_param_cache
 # -# \ref tutor_py_error_read
-# -# \ref tutor_py_calculate_point
-# -# \ref tutor_py_read_motion_queue
 # -# \ref tutor_py_get_max_velocity
-# -# \ref tutor_py_changeID1
-# -# \ref tutor_py_cogging
-# -# \ref tutor_py_calibration_quality
-# -# \ref tutor_py_discovery
-# -# \ref tutor_py_read_emcy_log
-# -# \ref tutor_py_check_motion_points
-# -# \ref tutor_py_time_optimal_movement
+# -# \ref tutor_py_read_motion_queue
+# -# \ref tutor_py_nmt_state
+# -# \ref tutor_py_trajectory_time
 # 
 # 
 # \defgroup Init Initialization and deinitialization
@@ -39,23 +34,6 @@
 # \defgroup Dbg Debugging
 # \defgroup Aux Auxiliary functions
 # 
-# \defgroup hw_manual Servo box specs & manual
-# 
-# \defgroup tutor_py_servomove1 PVT trajectory for one servo
-# \defgroup tutor_py_servomove2 PVT trajectory for two servos
-# \defgroup tutor_py_servomove3 PVT trajectory for three servos
-# \defgroup tutor_py_param_cache Setting up parameter cache and reading cached parameters
-# \defgroup tutor_py_param Reading device parameters
-# \defgroup tutor_py_calculate_point PVT point calculation
-# \defgroup tutor_py_get_max_velocity Reading maximum servo velocity
-# \defgroup tutor_py_read_motion_queue Reading motion queue parameters
-# \defgroup tutor_py_changeID1 Changing CAN ID of a single servo
-# \defgroup tutor_py_cogging Calibrating to mitigate cogging effects
-# \defgroup tutor_py_calibration_quality Checking calibration quality
-# \defgroup tutor_py_discovery Detecting available CAN devices
-# \defgroup tutor_py_read_emcy_log Reading emergency (EMY) log
-# \defgroup tutor_py_check_motion_points Checking PVT points
-# \defgroup tutor_py_time_optimal_movement Setting position with limits
 
 import os
 import logging
