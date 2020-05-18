@@ -150,22 +150,22 @@ deploy_python_dev:
   except:
     - master
 
-integration_tests:
-  stage: deploy
-  script:
-    - 'curl --fail --trace-ascii - --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
-  only:
-    - master
-    - dev
+#integration_tests:
+#  stage: deploy
+#  script:
+#    - 'curl --fail --trace-ascii - --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+#  only:
+#    - master
+#    - dev
 
-integration_tests_on_demand:
-  stage: deploy
-  script:
-    - 'curl --fail --trace-ascii -  --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
-  when: manual
-  except:
-    - master
-    - dev
+#integration_tests_on_demand:
+#  stage: deploy
+#  script:
+#    - 'curl --fail --trace-ascii -  --request POST --form "token=$CI_JOB_TOKEN" --form ref=dev-c $GITLAB_BASE_URL/api/v4/projects/$APP_PROJECT_ID/trigger/pipeline'
+#  when: manual
+#  except:
+#    - master
+#    - dev
 
 include:
   - local: ci/sonarqube.gitlab-ci.yml
