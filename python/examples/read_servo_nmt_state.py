@@ -1,3 +1,9 @@
+""" @page tutor_py_nmt_state Reading CanOpen network state 
+Complete source code: <br>
+\snippet read_servo_nmt_state.py read_servo_nmt_state_py
+"""
+
+"""! [read_servo_nmt_state_py] """
 import logging
 import os
 import argparse
@@ -33,3 +39,4 @@ if __name__ == "__main__":
 
     human_readable_result = api.describe_nmt_state(nmt_code)
     logger.info("Got state: {}".format(human_readable_result))
+"""! [read_servo_nmt_state_py] """

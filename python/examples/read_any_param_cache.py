@@ -1,3 +1,9 @@
+""" @page tutor_py_param_cache Reading few parameters synchronously
+Complete source code: <br>
+\snippet read_any_param_cache.py read_any_param_cache_py
+"""
+
+"""! [read_any_param_cache_py] """
 import logging
 import os
 import argparse
@@ -52,3 +58,4 @@ if __name__ == "__main__":
             position_rotor, velocity_rotor, voltage_input, current_input
         )
     )
+"""! [read_any_param_cache_py] """

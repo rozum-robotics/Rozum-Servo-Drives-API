@@ -1,3 +1,9 @@
+""" @page tutor_py_read_motion_queue Manipulations with motion queue
+Complete source code: <br>
+\snippet read_servo_motion_queue.py read_servo_motion_queue_py
+"""
+
+"""! [read_servo_motion_queue_py] """
 import logging
 import os
 import argparse
@@ -53,3 +59,4 @@ if __name__ == "__main__":
 
     logger.info("Clearing points")
     servo.clear_points_all()
+"""! [read_servo_motion_queue_py] """
