@@ -1,3 +1,4 @@
+---
 image: rozum/mingw-gcc:latest
 
 stages:
@@ -131,6 +132,7 @@ deploy_python_master:
     - echo 'Skipping before-script'
   script:
     - bin/build_and_deploy_python.sh
+  when: manual
   only:
     - master
 
@@ -149,6 +151,38 @@ deploy_python_dev:
   when: manual
   except:
     - master
+
+deploy_python_master_pypi:
+  image:
+    name: python:3.7-alpine
+  stage: deploy
+  tags:
+    - rnd-dev
+  dependencies:
+    - library_win
+  before_script:
+    - echo 'Skipping before-script'
+  script:
+    - bin/deploy_python_pypi.sh
+  only:
+    - master
+  when: manual
+
+deploy_python_master_testpypi:
+  image:
+    name: python:3.7-alpine
+  stage: deploy
+  tags:
+    - rnd-dev
+  dependencies:
+    - library_win
+  before_script:
+    - echo 'Skipping before-script'
+  script:
+    - bin/deploy_python_testpypi.sh
+  only:
+    - master
+  when: manual
 
 #integration_tests:
 #  stage: deploy
