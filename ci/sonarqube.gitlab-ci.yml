@@ -1,6 +1,6 @@
 ---
 
-sonarqube:
+.sonarqube:
   image: rozum/sonar-scanner
   stage: test
   tags:
@@ -15,7 +15,7 @@ sonarqube:
       -Dsonar.language="c"
   allow_failure: true
 
-sonarqube_review:
+.sonarqube_review:
   image: rozum/sonar-scanner
   stage: test
   tags:

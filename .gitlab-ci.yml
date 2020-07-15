@@ -1,3 +1,4 @@
+---
 image: rozum/mingw-gcc:latest
 
 stages:
@@ -17,7 +18,7 @@ before_script:
 library_win:
   stage: build
   tags:
-    - rnd-dev
+    - rnd-qa
   script:
     - make -C c -e OS=win32
     - make -C c -e OS=win64
@@ -32,7 +33,7 @@ library_win:
 update_tools_win:
   stage: build
   tags:
-    - rnd-dev
+    - rnd-qa
   script:
     - make -C c -e OS=win32
     - make -C c/tools/fw-update-tool -e OS=win32
@@ -48,7 +49,7 @@ update_tools_win:
 tutorial_win:
   stage: build
   tags:
-    - rnd-dev
+    - rnd-qa
   script:
     - make -C c -e OS=win32
     - make -C c/tutorial -e OS=win32
@@ -64,7 +65,7 @@ update_tools_deb:
     name: ubuntu:xenial
   stage: build
   tags:
-    - rnd-dev
+    - rnd-qa
   before_script:
     - echo 'Skipping before-script'
   script:
@@ -89,7 +90,7 @@ generate_docs:
   image: rozum/embed-gcc:python3
   stage: document
   tags:
-    - rnd-dev
+    - rnd-qa
   script:
     - cd c
     - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
@@ -112,25 +113,27 @@ deploy_artifacts:
   image: rozum/embed-gcc:latest
   stage: deploy
   tags:
-    - rnd-dev
+    - rnd-qa
   script:
     - bin/git-tag.sh
     - bin/publish-artifacts.sh
   only:
     - master
+  when: manual
 
 deploy_python_master:
   image:
     name: python:3.7-alpine
   stage: deploy
   tags:
-    - rnd-dev
+    - rnd-qa
   dependencies:
     - library_win
   before_script:
     - echo 'Skipping before-script'
   script:
     - bin/build_and_deploy_python.sh
+  when: manual
   only:
     - master
 
@@ -139,7 +142,7 @@ deploy_python_dev:
     name: rozum/embed-gcc:python3
   stage: deploy
   tags:
-    - rnd-dev
+    - rnd-qa
   dependencies:
     - library_win
   before_script:
@@ -149,6 +152,38 @@ deploy_python_dev:
   when: manual
   except:
     - master
+
+deploy_python_master_pypi:
+  image:
+    name: python:3.7-alpine
+  stage: deploy
+  tags:
+    - rnd-qa
+  dependencies:
+    - library_win
+  before_script:
+    - echo 'Skipping before-script'
+  script:
+    - bin/deploy_python_pypi.sh
+  only:
+    - master
+  when: manual
+
+deploy_python_master_testpypi:
+  image:
+    name: python:3.7-alpine
+  stage: deploy
+  tags:
+    - rnd-qa
+  dependencies:
+    - library_win
+  before_script:
+    - echo 'Skipping before-script'
+  script:
+    - bin/deploy_python_testpypi.sh
+  only:
+    - master
+  when: manual
 
 #integration_tests:
 #  stage: deploy
