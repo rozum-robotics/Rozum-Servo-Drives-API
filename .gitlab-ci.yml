@@ -119,6 +119,7 @@ deploy_artifacts:
     - bin/publish-artifacts.sh
   only:
     - master
+  when: manual
 
 deploy_python_master:
   image:
