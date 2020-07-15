@@ -123,7 +123,7 @@ deploy_artifacts:
 
 deploy_python_master:
   image:
-    name: python:3.7-alpine
+    name: python:3.7-slim-stretch
   stage: deploy
   tags:
     - rnd-qa
@@ -155,7 +155,7 @@ deploy_python_dev:
 
 deploy_python_master_pypi:
   image:
-    name: python:3.7-alpine
+    name: python:3.7-slim-stretch
   stage: deploy
   tags:
     - rnd-qa
@@ -171,7 +171,7 @@ deploy_python_master_pypi:
 
 deploy_python_master_testpypi:
   image:
-    name: python:3.7-alpine
+    name: python:3.7-slim-stretch
   stage: deploy
   tags:
     - rnd-qa
