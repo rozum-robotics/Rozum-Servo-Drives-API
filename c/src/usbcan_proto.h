@@ -21,7 +21,6 @@ extern "C"
 #ifdef _WIN32
 #include "winsock2.h"
 #include "windows.h"
-#include "poll.h"
 #else
 #include <sys/socket.h>
 #include <sys/file.h>
@@ -29,7 +28,6 @@ extern "C"
 #include <arpa/inet.h>
 #include <termios.h>
 #include <signal.h>
-#include <poll.h>
 #endif
 #include <pthread.h>
 #include "usbcan_config.h"

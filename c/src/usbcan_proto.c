@@ -1,12 +1,16 @@
-#include <string.h>
-#include <inttypes.h>
-#include <errno.h>
 #include "usbcan_proto.h"
 #include "usbcan_util.h"
 #include "rb_tools.h"
 #include "crc16-ccitt.h"
 #include "logging.h"
 
+#include <string.h>
+#include <inttypes.h>
+#include <errno.h>
+
+#ifndef _WIN32
+#include <sys/select.h>
+#endif
 
 FILE *debug_log = NULL;
 
@@ -791,29 +795,22 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 	uint8_t discard[USB_CAN_MAX_PAYLOAD];
 
 	struct timeval tprev, tnow;
-	struct pollfd pfds[1];
-
-	pfds[0].fd = (int)inst->fd;
-	pfds[0].events = POLLIN | POLLERR;
+	fd_set rfds;
 
 	gettimeofday(&tnow, NULL);
 	tprev = tnow;
 	
 	for(int t = USB_CAN_FLUSH_TOUT_MS; t > 0;)
 	{
-		int n;
+		FD_ZERO(&rfds);
+		FD_SET(inst->fd, &rfds);
+		struct timeval tv = {.tv_sec = 0, .tv_usec = USB_CAN_POLL_GRANULARITY_MS * 1000};
 
-		n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
+		int n = select(inst->fd + 1, &rfds, 0, 0, &tv);
 		gettimeofday(&tnow, NULL);
 		if(n > 0)
 		{
-			if(pfds[0].revents & POLLERR)
-			{
-				LOG_ERROR(debug_log, "%s: poll failed", __func__);
-				inst->fd = (typeof(inst->fd)) -1;
-				return;
-			}
-			if(pfds[0].revents & POLLIN)
+			if(FD_ISSET(inst->fd, &rfds))
 			{
 				if(read(inst->fd, discard, sizeof(discard)) < 0)
 				{
@@ -934,6 +931,7 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 			return;
 		}
 		LOG_INFO(debug_log, "Connected to UDP socket: %s port %d", dev_addr, in_port);
+		
 	}
 	else
 	{
@@ -948,7 +946,8 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 		if(inst->commh == INVALID_HANDLE_VALUE)
 		{
 			LOG_ERROR(debug_log, "%s: can't open serial device %s", __func__, inst->device);
-			inst->fd = 0;
+			inst->commh = 0;
+			inst->fd = -1;
 			return;
 		}
 		
@@ -1058,7 +1057,10 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 
 #ifdef _WIN32
 
-int win_comm_recv(usbcan_instance_t *inst)
+/*
+ * Windows specific COM-port receive function
+ */
+static int win_comm_recv(usbcan_instance_t *inst)
 {
 	DWORD bytes_to_read = 0;
 	DWORD err;
@@ -1116,10 +1118,15 @@ int win_comm_recv(usbcan_instance_t *inst)
 		if(!ReadFile(inst->commh, inst->rx_data.b, bytes_to_read, &inst->rx_data.l, &inst->overlap_read))
 		{
 			LOG_ERROR(debug_log, "%s: ReadFile failed to read buffered data", __func__);
+			return 0;
 		}
 	}
+	else
+	{
+		return 0;
+	}
 
-	return 0;
+	return 1;
 }
 
 #endif
@@ -1135,7 +1142,6 @@ static void *usbcan_process(void *udata)
 	usbcan_instance_t *inst = (usbcan_instance_t *)udata;
 	
 #ifdef _WIN32
-
 	if(!inst->usbcan_udp)
 	{
 		struct timeval tprev, tnow;
@@ -1144,12 +1150,13 @@ static void *usbcan_process(void *udata)
 
 		while(1)
 		{
-			win_comm_recv(inst);
-			usbcan_rx(inst);
+			if(win_comm_recv(inst))
+			{
+				usbcan_rx(inst);
+			}
 
 			tprev = tnow;
 			gettimeofday(&tnow, NULL);
-			//fprintf(stderr, "%ld\n", (long int)TIME_DELTA_MS(tnow, tprev));
 			usbcan_poll(inst, TIME_DELTA_US(tnow, tprev));
 		}
 	}
@@ -1157,65 +1164,60 @@ static void *usbcan_process(void *udata)
 #endif
 	{
 		struct timeval tprev, tnow;
-		int n = 0;
-		struct pollfd pfds[1];
+		fd_set rfds;
 
-		do
+		gettimeofday(&tnow, NULL);
+		tprev = tnow;
+
+		while(inst->running)
 		{
-			pfds[0].fd = inst->fd;
-			pfds[0].events = POLLIN | POLLERR;
+			FD_ZERO(&rfds);
+			FD_SET(inst->fd, &rfds);
+			struct timeval tv = {.tv_sec = 0, .tv_usec = USB_CAN_POLL_GRANULARITY_MS * 1000};
 
+			
+			int n = select(inst->fd + 1, &rfds, 0, 0, &tv);
 			gettimeofday(&tnow, NULL);
-			tprev = tnow;
+			usbcan_poll(inst, TIME_DELTA_US(tnow, tprev));
 
-			while(inst->running)
+			if(n > 0)
 			{
-				n = poll(pfds, 1, USB_CAN_POLL_GRANULARITY_MS);
-				gettimeofday(&tnow, NULL);
-				usbcan_poll(inst, TIME_DELTA_US(tnow, tprev));
-				if(n > 0)
+				if(FD_ISSET(inst->fd, &rfds))
 				{
-					if(pfds[0].revents & POLLERR)
+					if(inst->usbcan_udp)
 					{
-						LOG_ERROR(debug_log, "%s: poll failed", __func__);
+						inst->rx_data.l = recv(inst->fd, (char*)inst->rx_data.b, USB_CAN_MAX_PAYLOAD, 0);
+					}
+					else
+					{
+						inst->rx_data.l = read(inst->fd, (char*)inst->rx_data.b, USB_CAN_MAX_PAYLOAD);
+					}
+
+					if(inst->rx_data.l <= 0)
+					{
+						LOG_ERROR(debug_log, "%s: usbcan read failed", __func__);
 						break;
 					}
-					if(pfds[0].revents & POLLIN)
+
+					if(usbcan_rx(inst) < 0)
 					{
-						if(inst->usbcan_udp)
-						{
-							inst->rx_data.l = recv(inst->fd, (char*)inst->rx_data.b, USB_CAN_MAX_PAYLOAD, 0);
-						}
-						else
-						{
-							inst->rx_data.l = read(inst->fd, (char*)inst->rx_data.b, USB_CAN_MAX_PAYLOAD);
-						}
-
-						if(inst->rx_data.l <= 0)
-						{
-							LOG_ERROR(debug_log, "%s: usbcan read failed", __func__);
-							break;
-						}
-
-						if(usbcan_rx(inst) < 0)
-						{
-							LOG_ERROR(debug_log, "%s: read failed", __func__);
-							break;
-						}
+						LOG_ERROR(debug_log, "%s: read failed", __func__);
+						break;
 					}
 				}
-				tprev = tnow;
 			}
-#ifndef _WIN32
-			if(!inst->usbcan_udp)
-			{
-				flock(inst->fd, LOCK_UN);
-			}
-#endif
-			close(inst->fd);
-			inst->fd = -1;
+			tprev = tnow;
 		}
-		while(0);
+#ifndef _WIN32
+		if(!inst->usbcan_udp)
+		{
+			flock(inst->fd, LOCK_UN);
+		}
+		close(inst->fd);
+#else
+		closesocket(inst->fd);
+#endif
+		inst->fd = -1;
 
 		inst->running = false;
 	}
