@@ -10,6 +10,7 @@ ifeq ($(OS),win32)
 	EXE_NAME = $(APP_NAME)-32bit
 	TCHAIN=i686-w64-mingw32-
 	LDFLAGS += -static
+	EXT_LIBS = Ws2_32
 else ifeq ($(OS),win64)
 	SHARED_LIB_EXT=dll
 	STATIC_LIB_EXT=a
@@ -18,6 +19,7 @@ else ifeq ($(OS),win64)
 	EXE_NAME = $(APP_NAME)-64bit
 	TCHAIN=x86_64-w64-mingw32-
 	LDFLAGS += -static
+	EXT_LIBS = Ws2_32
 else
 	SHARED_LIB_EXT=
 	STATIC_LIB_EXT=

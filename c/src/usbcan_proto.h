@@ -19,7 +19,9 @@ extern "C"
 #include <sys/time.h>
 #include <sys/types.h>
 #ifdef _WIN32
+#include "winsock2.h"
 #include "windows.h"
+#include "poll.h"
 #else
 #include <sys/socket.h>
 #include <sys/file.h>

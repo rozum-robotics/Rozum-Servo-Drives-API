@@ -848,18 +848,18 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 		return;
 	}
 	
-	#ifdef _WIN32
-	PurgeComm(inst->fd, PURGE_RXCLEAR | 
-						PURGE_TXCLEAR |
-						PURGE_TXABORT |
-						PURGE_RXABORT);	
-	#else
+	// #ifdef _WIN32
+	// PurgeComm(inst->fd, PURGE_RXCLEAR | 
+	// 					PURGE_TXCLEAR |
+	// 					PURGE_TXABORT |
+	// 					PURGE_RXABORT);	
+	// #else
 	uint8_t discard[USB_CAN_MAX_PAYLOAD];
 
 	struct timeval tprev, tnow;
 	struct pollfd pfds[1];
 
-	pfds[0].fd = inst->fd;
+	pfds[0].fd = (int)inst->fd;
 	pfds[0].events = POLLIN | POLLERR;
 
 	gettimeofday(&tnow, NULL);
@@ -876,15 +876,15 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 			if(pfds[0].revents & POLLERR)
 			{
 				LOG_ERROR(debug_log, "%s: poll failed", __func__);
-				inst->fd = -1;
+				inst->fd = (typeof(inst->fd)) -1;
 				return;
 			}
 			if(pfds[0].revents & POLLIN)
 			{
-				if(read(inst->fd, discard, sizeof(discard)) < 0)
+				if(read((int)inst->fd, discard, sizeof(discard)) < 0)
 				{
 					LOG_ERROR(debug_log, "%s: read failed", __func__);
-					inst->fd = -1;
+					inst->fd = (typeof(inst->fd)) -1;
 					return;
 				}
 			}
@@ -896,7 +896,7 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 		t -= TIME_DELTA_MS(tnow, tprev);
 		tprev = tnow;
 	}
-	#endif	
+	// #endif	
 	
 }
 
