@@ -111,7 +111,14 @@ static int usbcan_write_fd(usbcan_instance_t *inst, uint8_t *b, int l)
 	}
 	else
 	{
-		ret = send(inst->fd, (char*)(b + USB_CAN_HEAD_SZ), l - USB_CAN_OHEAD, 0);
+		if(inst->usbcan_udp)
+		{
+			ret = send(inst->fd, (char*)(b + USB_CAN_HEAD_SZ), l - USB_CAN_OHEAD, 0);
+		}
+		else
+		{
+			ret = write(inst->fd, (char*)(b + USB_CAN_HEAD_SZ), l - USB_CAN_OHEAD);
+		}
 		if(ret < 0)
 		{
 			LOG_ERROR(debug_log, "%s: usbcan write failed", __func__);
@@ -808,7 +815,7 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 			}
 			if(pfds[0].revents & POLLIN)
 			{
-				if(read((int)inst->fd, discard, sizeof(discard)) < 0)
+				if(read(inst->fd, discard, sizeof(discard)) < 0)
 				{
 					LOG_ERROR(debug_log, "%s: read failed", __func__);
 					inst->fd = (typeof(inst->fd)) -1;
@@ -823,7 +830,7 @@ static void usbcan_flush_device(usbcan_instance_t *inst)
 		t -= TIME_DELTA_MS(tnow, tprev);
 		tprev = tnow;
 	}
- #endif
+#endif
 }
 
 #ifdef WIN32
@@ -1175,10 +1182,18 @@ static void *usbcan_process(void *udata)
 					}
 					if(pfds[0].revents & POLLIN)
 					{
-						inst->rx_data.l = recv(inst->fd, (char*)inst->rx_data.b, USB_CAN_MAX_PAYLOAD, 0);
+						if(inst->usbcan_udp)
+						{
+							inst->rx_data.l = recv(inst->fd, (char*)inst->rx_data.b, USB_CAN_MAX_PAYLOAD, 0);
+						}
+						else
+						{
+							inst->rx_data.l = read(inst->fd, (char*)inst->rx_data.b, USB_CAN_MAX_PAYLOAD);
+						}
+
 						if(inst->rx_data.l <= 0)
 						{
-							LOG_ERROR(debug_log, "%s: usbcan UDP read failed", __func__);
+							LOG_ERROR(debug_log, "%s: usbcan read failed", __func__);
 							break;
 						}
 
