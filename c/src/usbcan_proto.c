@@ -935,7 +935,29 @@ static void usbcan_open_device(usbcan_instance_t *inst)
 	}
 	else
 	{
-		inst->commh = CreateFile(inst->device,
+		char com_name[32];
+		int com_idx;
+		int n = sscanf(inst->device, "%3c%d", com_name, &com_idx);
+		bool com_name_err = false;
+
+		com_name_err = n != 2;
+
+		if(!com_name_err)
+		{
+			com_name_err = strncasecmp(com_name, "com", 3) != 0;
+		}
+
+		if(com_name_err)
+		{
+			LOG_ERROR(debug_log, "%s: wrong serial device name %s", __func__, inst->device);
+			inst->commh = 0;
+			inst->fd = -1;
+			return;
+		}
+
+		snprintf(com_name, 32, "%sCOM%d", com_idx > 9 ? "\\\\.\\" : "", com_idx);
+
+		inst->commh = CreateFile(com_name,
 						GENERIC_READ | GENERIC_WRITE,
 						0,
 						NULL,
