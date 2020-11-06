@@ -68,7 +68,7 @@
  *
  *16. Start a new measurement cycle, saving measured values. The total measurement cycle time is 1 minute.
  *\snippet calibration_quality.c Measure param2
- 
+
  *17. Close the CSV file you opened at Step 14.
  *\snippet calibration_quality.c Close file2
  *
@@ -102,10 +102,10 @@ void enable_compensation(rr_servo_t *servo, bool en)
 
 int64_t calcdiff(struct timespec t1, struct timespec t2) 
 {
-  int64_t diff;
-  diff = USEC_PER_SEC * (long long)((int) t1.tv_sec - (int) t2.tv_sec);
-  diff += ((int) t1.tv_nsec - (int) t2.tv_nsec) / 1000;
-  return diff;
+	int64_t diff;
+	diff = USEC_PER_SEC * (long long)((int) t1.tv_sec - (int) t2.tv_sec);
+	diff += ((int) t1.tv_nsec - (int) t2.tv_nsec) / 1000;
+	return diff;
 }
 //! [Read tutorial param2]
 int main(int argc, char *argv[])
@@ -124,16 +124,26 @@ int main(int argc, char *argv[])
 		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
 		return 1;
 	}
-//! [Read tutorial param2]
+	//! [Read tutorial param2]
 	//! [Init interface32]
 	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
 	//! [Init interface32]
 	//! [Init servo32]
 	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
 	//! [Init servo32]
 	//! [Switching to operational]
 	rr_servo_set_state_operational(servo);
-		
+
 	rr_nmt_state_t state = 0;
 	for(int i = 0; i < 20; i++)
 	{
@@ -149,7 +159,7 @@ int main(int argc, char *argv[])
 		API_DEBUG("Can't switch tot operational mode\n");
 		exit(1);
 	}
-    //! [Switching to operational]
+	//! [Switching to operational]
 	//! [Set up param entry]
 	rr_param_cache_setup_entry (servo, APP_PARAM_POSITION_ROTOR, true);
 	rr_param_cache_setup_entry (servo, APP_PARAM_CURRENT_PHASE, true);
@@ -163,17 +173,17 @@ int main(int argc, char *argv[])
 	API_DEBUG("Setting 4 RPM @ motor without cogging comp.\n");
 	API_DEBUG("Collecting data (~60sec) ...\n");
 	//! [Set velocity1]
- 	//! [Open file1]
+	//! [Open file1]
 	f = fopen("without_comp.csv", "w+");
 	//! [Open file1]
-	
+
 	//! [Record time1]
 	fprintf(f, "time_us, mpos_deg, mcurr_amp\n");
 	clock_gettime(CLOCK_REALTIME, &tnow);
 	tprev = tnow;
 	tstart = tnow;
 	//! [Record time1]
-	
+
 	//! [Measure param1]
 	while(true)
 	{
@@ -190,33 +200,33 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-   	//! [Measure param1]
-	
+	//! [Measure param1]
+
 	//! [Close file1]
 	fclose(f);
-    //! [Close file1]
-	
+	//! [Close file1]
+
 	//! [Enable cog table]
 	enable_compensation(servo, true);
 	//! [Enable cog table]
-	
+
 	//! [Set velocity2]
 	rr_set_velocity_motor(servo, -4.0);
 	API_DEBUG("Setting -4 RPM @ motor with cogging comp.\n");
 	API_DEBUG("Collecting data (~60sec) ...\n");
 	//! [Set velocity2]
-	
+
 	//! [Open file2]
 	f = fopen("with_comp.csv", "w+");
 	//! [Open file2]
-	
+
 	//! [Record time2]
 	fprintf(f, "time_us, mpos_deg, mcurr_amp\n");
 	clock_gettime(CLOCK_REALTIME, &tnow);
 	tprev = tnow;
 	tstart = tnow;
 	//! [Record time2]
-	
+
 	//! [Measure param2]
 	while(true)
 	{
@@ -234,15 +244,15 @@ int main(int argc, char *argv[])
 		}	
 	}
 	//! [Measure param2]
-	
+
 	//! [Close file2]
 	fclose(f);
 	//! [Close file2]
-	
+
 	//! [Release]
 	rr_release(servo);
 	//! [Release]
-		    }
+}
 //! [calibration_quality_code_full]
 
 

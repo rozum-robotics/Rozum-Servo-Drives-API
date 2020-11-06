@@ -35,40 +35,50 @@
 
 int main(int argc, char *argv[])
 {
-    uint8_t id;
+	uint8_t id;
 
-    if(argc == 3)
-    {
-        id = strtol(argv[2], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 9]
-    //! [Adding interface 9]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Adding interface 9]
-    //! [Adding servo 9]
-    rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Adding servo 9]
+	if(argc == 3)
+	{
+		id = strtol(argv[2], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 9]
+	//! [Adding interface 9]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Adding interface 9]
+	//! [Adding servo 9]
+	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Adding servo 9]
 
-    API_DEBUG("========== Tutorial of the %s ==========\n", "trajectory calculation");
+	API_DEBUG("========== Tutorial of the %s ==========\n", "trajectory calculation");
 
-    //! [Travel time variable]
-    uint32_t travel_time;
-    //! [Travel time variable]
+	//! [Travel time variable]
+	uint32_t travel_time;
+	//! [Travel time variable]
 
-    //! [Time calculation]
-    int status = rr_invoke_time_calculation(servo, 0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0, &travel_time);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation\n");
-        return 1;
-    }
-    //! [Time calculation]
+	//! [Time calculation]
+	int status = rr_invoke_time_calculation(servo, 0.0, 0.0, 0.0, 0, 100.0, 0.0, 0.0, 0, &travel_time);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation\n");
+		return 1;
+	}
+	//! [Time calculation]
 
-    API_DEBUG("\tCalculated travel time: %d ms.\n", travel_time);
-    //! [cccode 9]
+	API_DEBUG("\tCalculated travel time: %d ms.\n", travel_time);
+	//! [cccode 9]
 }

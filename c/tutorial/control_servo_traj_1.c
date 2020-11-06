@@ -44,60 +44,70 @@
  * <b> Complete tutorial code: </b>
  * \snippet control_servo_traj_1.c cccode 1
  */
- 
+
 int main(int argc, char *argv[])
 {
-    uint8_t id;
+	uint8_t id;
 
-    if(argc == 3)
-    {
-        id = strtol(argv[2], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 1] 
-    //! [Adding the interface1]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Adding the interface1]
-    
-    //! [Adding the servo1]
-    rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Adding the servo1]
+	if(argc == 3)
+	{
+		id = strtol(argv[2], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 1] 
+	//! [Adding the interface1]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Adding the interface1]
 
-    //! [Switching to operational state]
-    rr_servo_set_state_operational(servo);
-    //! [Switching to operational state]
+	//! [Adding the servo1]
+	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Adding the servo1]
 
-    API_DEBUG("========== Tutorial of the %s ==========\n", "controlling one servo");
+	//! [Switching to operational state]
+	rr_servo_set_state_operational(servo);
+	//! [Switching to operational state]
 
-    //! [Clear points all1]
-    rr_clear_points_all(servo);
-    //! [Clear points all1]
-    API_DEBUG("Appending points\n");
-    //! [Add motion point first]
-    int status = rr_add_motion_point(servo, 100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add motion point first]
-    //! [Add motion point second]
-    status = rr_add_motion_point(servo, -100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add motion point second]
-    //! [Start motion1]
-    rr_start_motion(iface, 0);
-    //! [Start motion1]
-    //! [Sleep1]
-    rr_sleep_ms(14000); // wait till the movement ends
-    //! [Sleep1]
-    //! [cccode 1]
+	API_DEBUG("========== Tutorial of the %s ==========\n", "controlling one servo");
+
+	//! [Clear points all1]
+	rr_clear_points_all(servo);
+	//! [Clear points all1]
+	API_DEBUG("Appending points\n");
+	//! [Add motion point first]
+	int status = rr_add_motion_point(servo, 100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add motion point first]
+	//! [Add motion point second]
+	status = rr_add_motion_point(servo, -100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add motion point second]
+	//! [Start motion1]
+	rr_start_motion(iface, 0);
+	//! [Start motion1]
+	//! [Sleep1]
+	rr_sleep_ms(14000); // wait till the movement ends
+	//! [Sleep1]
+	//! [cccode 1]
 }

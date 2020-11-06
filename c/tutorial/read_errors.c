@@ -48,52 +48,62 @@
 
 int main(int argc, char *argv[])
 {
-    uint8_t id;
+	uint8_t id;
 
-    if(argc == 3)
-    {
-        id = strtol(argv[2], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 6]
-    //! [Adding interface 6]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Adding interface 6]
+	if(argc == 3)
+	{
+		id = strtol(argv[2], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 6]
+	//! [Adding interface 6]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Adding interface 6]
 
-    //! [Adding servo 6]
-    rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Adding servo 6]
+	//! [Adding servo 6]
+	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Adding servo 6]
 
-    API_DEBUG("========== Tutorial of the %s ==========\n", "reading servo error count");
+	API_DEBUG("Reading servo error count ...");
 
-    //! [Error count var]
-    uint32_t _size;
-    //! [Error count var]
-    //! [Error count read]
-    rr_read_error_status(servo, &_size, 0);
-    //! [Error count read]
-    API_DEBUG("\tError count: %d %s\n", _size, _size ? "" : "(No errors)");
+	//! [Error count var]
+	uint32_t _size;
+	//! [Error count var]
+	//! [Error count read]
+	rr_read_error_status(servo, &_size, 0);
+	//! [Error count read]
+	API_DEBUG("\tError count: %d %s\n", _size, _size ? "" : "(No errors)");
 
-    API_DEBUG("========== Tutorial of the %s ==========\n", "reading servo error list");
-    //! [Error array 2]
-    uint8_t array[100];
-    //! [Error array 2]
-    //! [Error count var 2]
-    uint32_t size;
-    //! [Error count var 2]
-    //! [Error count and array read]
-    rr_read_error_status(servo, &size, array);
-    //! [Error count and array read]
-    API_DEBUG("\tError count: %d %s\n", size, size ? "" : "(No errors)");
-    //! [Cyclic read]
-    for(int i = 0; i < size; i++)
-    {
-        API_DEBUG("\t\tError: %s\n", rr_describe_emcy_bit(array[i]));
-    }
-    //! [Cyclic read]
-    //! [cccode 6]
+	API_DEBUG("Reading servo error list ...");
+	//! [Error array 2]
+	uint8_t array[100];
+	//! [Error array 2]
+	//! [Error count var 2]
+	uint32_t size;
+	//! [Error count var 2]
+	//! [Error count and array read]
+	rr_read_error_status(servo, &size, array);
+	//! [Error count and array read]
+	API_DEBUG("\tError count: %d %s\n", size, size ? "" : "(No errors)");
+	//! [Cyclic read]
+	for(int i = 0; i < size; i++)
+	{
+		API_DEBUG("\t\tError: %s\n", rr_describe_emcy_bit(array[i]));
+	}
+	//! [Cyclic read]
+	//! [cccode 6]
 }
