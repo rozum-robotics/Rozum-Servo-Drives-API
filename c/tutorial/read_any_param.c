@@ -42,53 +42,60 @@
  * <b> Complete tutorial code: </b>
  * \snippet read_any_param.c cccode 4
  */
- 
+
 int main(int argc, char *argv[])
 {
-    uint8_t id;
+	uint8_t id;
 
-    if(argc == 3)
-    {
-        id = strtol(argv[2], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 4] 
-    //! [Adding interface 4]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-	
-    //! [Adding interface 4]
-    //! [Adding servo 4]
-    rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Adding servo 4]
+	if(argc == 3)
+	{
+		id = strtol(argv[2], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 4] 
+	//! [Adding interface 4]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
 
-    API_DEBUG("========== Tutorial of %s ==========\n", "reading any device parameter (single)");
+	//! [Adding interface 4]
+	//! [Adding servo 4]
+	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Adding servo 4]
 
-    //! [Read parameter variable]
-    float value;
-    //! [Read parameter variable]
+	API_DEBUG("========== Tutorial of %s ==========\n", "reading any device parameter (single)");
 
-    //! [Read rotor position]
-    rr_read_parameter(servo, APP_PARAM_POSITION_ROTOR, &value);
-    //! [Read rotor position]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_POSITION_ROTOR), value);
+	//! [Read parameter variable]
+	float value;
+	//! [Read parameter variable]
 
-    //! [Read rotor velocity]
-    rr_read_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &value);
-    //! [Read rotor velocity]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VELOCITY_ROTOR), value);
+	//! [Read rotor position]
+	rr_read_parameter(servo, APP_PARAM_POSITION_ROTOR, &value);
+	//! [Read rotor position]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_POSITION_ROTOR), value);
 
-    //! [Read voltage]
-    rr_read_parameter(servo, APP_PARAM_VOLTAGE_INPUT, &value);
-    //! [Read voltage]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VOLTAGE_INPUT), value);
+	//! [Read rotor velocity]
+	rr_read_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &value);
+	//! [Read rotor velocity]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VELOCITY_ROTOR), value);
 
-    //! [Read current]
-    rr_read_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
-    //! [Read current]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
-    //! [cccode 4]
+	//! [Read voltage]
+	rr_read_parameter(servo, APP_PARAM_VOLTAGE_INPUT, &value);
+	//! [Read voltage]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VOLTAGE_INPUT), value);
+
+	//! [Read current]
+	rr_read_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
+	//! [Read current]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
+	//! [cccode 4]
 }
+
+

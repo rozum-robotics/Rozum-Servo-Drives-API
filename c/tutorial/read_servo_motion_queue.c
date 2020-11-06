@@ -52,75 +52,85 @@
  * <b> Complete tutorial code: </b>
  * \snippet read_servo_motion_queue.c cccode 8
  */ 
- 
+
 int main(int argc, char *argv[])
 {
-    uint8_t id;
+	uint8_t id;
 
-    if(argc == 3)
-    {
-        id = strtol(argv[2], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 8] 
-    //! [Adding interface 8]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Adding interface 8]
-    //! [Adding servo 8]
-    rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Adding servo 8]
-    
-    if(rr_servo_set_state_operational(servo) != RET_OK)
-    {   
-            API_DEBUG("Can't put servo to operational mode\n");                                                                        
-            exit(1);                                                                                                                   
-    }   
+	if(argc == 3)
+	{
+		id = strtol(argv[2], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 8] 
+	//! [Adding interface 8]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Adding interface 8]
+	//! [Adding servo 8]
+	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Adding servo 8]
 
-    API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
+	if(rr_servo_set_state_operational(servo) != RET_OK)
+	{   
+		API_DEBUG("Can't put servo to operational mode\n");                                                                        
+		exit(1);                                                                                                                   
+	}   
 
-    API_DEBUG("Clearing points\n");
-    //! [Clear points 8]
-    rr_clear_points_all(servo);
-    //! [Clear points 8]
-    
+	API_DEBUG("========== Tutorial of the %s ==========\n", "reading motion queue parameters");
 
-    //! [Points size variable]
-    uint32_t num;
-    //! [Points size variable]
-    //! [Points size1]
-    rr_get_points_size(servo, &num);
-    //! [Points size1]
-    API_DEBUG("\tPoints in the queue before: %d\n", num);
+	API_DEBUG("Clearing points\n");
+	//! [Clear points 8]
+	rr_clear_points_all(servo);
+	//! [Clear points 8]
 
-    //! [Points free1]
-    rr_get_points_free_space(servo, &num);
-    //! [Points free1]
-    API_DEBUG("\tPoints queue free size before: %d\n", num);
 
-    API_DEBUG("Appending points\n");
-    
-    float pos;
-    rr_read_parameter(servo, APP_PARAM_POSITION, &pos);
+	//! [Points size variable]
+	uint32_t num;
+	//! [Points size variable]
+	//! [Points size1]
+	rr_get_points_size(servo, &num);
+	//! [Points size1]
+	API_DEBUG("\tPoints in the queue before: %d\n", num);
 
-    //! [Add point1]
-    rr_add_motion_point(servo, pos, 0.0, 100);
-    //! [Add point1]
-    //! [Add point2]
-    rr_add_motion_point(servo, pos, 0.0, 100);
-    //! [Add point2]
+	//! [Points free1]
+	rr_get_points_free_space(servo, &num);
+	//! [Points free1]
+	API_DEBUG("\tPoints queue free size before: %d\n", num);
 
-    //! [Points size2]
-    rr_get_points_size(servo, &num);
-    //! [Points size2]
-    API_DEBUG("\tPoints in the queue after: %d\n", num);
+	API_DEBUG("Appending points\n");
 
-    //! [Points free2]
-    rr_get_points_free_space(servo, &num);
-    //! [Points free2]
-    API_DEBUG("\tPoints queue free size after: %d\n", num);
-    //! [cccode 8]
+	float pos;
+	rr_read_parameter(servo, APP_PARAM_POSITION, &pos);
+
+	//! [Add point1]
+	rr_add_motion_point(servo, pos, 0.0, 100);
+	//! [Add point1]
+	//! [Add point2]
+	rr_add_motion_point(servo, pos, 0.0, 100);
+	//! [Add point2]
+
+	//! [Points size2]
+	rr_get_points_size(servo, &num);
+	//! [Points size2]
+	API_DEBUG("\tPoints in the queue after: %d\n", num);
+
+	//! [Points free2]
+	rr_get_points_free_space(servo, &num);
+	//! [Points free2]
+	API_DEBUG("\tPoints queue free size after: %d\n", num);
+	//! [cccode 8]
 }

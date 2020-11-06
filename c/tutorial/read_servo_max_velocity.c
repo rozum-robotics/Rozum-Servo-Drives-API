@@ -34,34 +34,44 @@
  */
 int main(int argc, char *argv[])
 {
-    uint8_t id;
+	uint8_t id;
 
-    if(argc == 3)
-    {
-        id = strtol(argv[2], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 7] 
-    //! [Adding interface 7]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Adding interface 7]
-    //! [Adding servo 7]
-    rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Adding servo 7]
+	if(argc == 3)
+	{
+		id = strtol(argv[2], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 7] 
+	//! [Adding interface 7]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Adding interface 7]
+	//! [Adding servo 7]
+	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Adding servo 7]
 
-    API_DEBUG("========== Tutorial of the %s ==========\n", "reading servo max velocity");
-   
-    //! [Velocity variable]
-    float velocity;
-    //! [Velocity variable]
-    //! [Read max velocity]
-    rr_get_max_velocity(servo, &velocity);
-    //! [Read max velocity]
+	API_DEBUG("========== Tutorial of the %s ==========\n", "reading servo max velocity");
 
-    API_DEBUG("\tMax velocity: %.3f Deg/sec\n", velocity);
-    //! [cccode 7]
+	//! [Velocity variable]
+	float velocity;
+	//! [Velocity variable]
+	//! [Read max velocity]
+	rr_get_max_velocity(servo, &velocity);
+	//! [Read max velocity]
+
+	API_DEBUG("\tMax velocity: %.3f Deg/sec\n", velocity);
+	//! [cccode 7]
 }

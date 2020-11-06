@@ -64,9 +64,9 @@ void get_dev_info(rr_can_interface_t *iface, int id)
 	char hw[1024];
 	char sw[1024];
 
-    	sdo_read_str(servo, 0x1008, 0, name, sizeof(name));
-    	sdo_read_str(servo, 0x1009, 0, hw, sizeof(hw));
-    	sdo_read_str(servo, 0x100a, 0, sw, sizeof(sw));
+	sdo_read_str(servo, 0x1008, 0, name, sizeof(name));
+	sdo_read_str(servo, 0x1009, 0, hw, sizeof(hw));
+	sdo_read_str(servo, 0x100a, 0, sw, sizeof(sw));
 
 	API_DEBUG("Device %d:\n  NAME: %s\n  HW: %s\n  SW: %s\n", id,
 			name[0] ? name : "N/A",
@@ -75,9 +75,9 @@ void get_dev_info(rr_can_interface_t *iface, int id)
 
 	rr_deinit_servo(&servo);
 }
-    //! [auxiliary to display]
+//! [auxiliary to display]
 
-    //! [Create variables]
+//! [Create variables]
 int main(int argc, char *argv[])
 {
 	rr_nmt_state_t states[MAX_CO_DEV];
@@ -88,10 +88,15 @@ int main(int argc, char *argv[])
 		API_DEBUG("Wrong format!\nUsage: %s interface\n", argv[0]);
 		return 1;
 	}
-    //! [Create variables]
+	//! [Create variables]
 
-    //! [Init interface33]
+	//! [Init interface33]
 	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
 	//! [Init interface33]
 
 	//! [Enable hb variable]
@@ -99,11 +104,11 @@ int main(int argc, char *argv[])
 	{
 		states[i] = RR_NMT_HB_TIMEOUT;
 	}
-    //! [Enable hb variable]
+	//! [Enable hb variable]
 	API_DEBUG("Waiting for devices ...\nPress Ctrl-C to stop\n");
-	
+
 	rr_set_debug_log_stream(NULL);
-    
+
 	//! [Scan]
 	while(true)
 	{
