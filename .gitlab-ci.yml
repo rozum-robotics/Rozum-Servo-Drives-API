@@ -18,7 +18,7 @@ before_script:
 library_win:
   stage: build
   tags:
-    - rnd-qa
+    - servo-testbench
   script:
     - make -C c -e OS=win32
     - make -C c -e OS=win64
@@ -33,7 +33,7 @@ library_win:
 update_tools_win:
   stage: build
   tags:
-    - rnd-qa
+    - servo-testbench
   script:
     - make -C c -e OS=win32
     - make -C c/tools/fw-update-tool -e OS=win32
@@ -49,7 +49,7 @@ update_tools_win:
 tutorial_win:
   stage: build
   tags:
-    - rnd-qa
+    - servo-testbench
   script:
     - make -C c -e OS=win32
     - make -C c/tutorial -e OS=win32
@@ -65,7 +65,7 @@ update_tools_deb:
     name: ubuntu:xenial
   stage: build
   tags:
-    - rnd-qa
+    - servo-testbench
   before_script:
     - echo 'Skipping before-script'
   script:
@@ -90,7 +90,7 @@ generate_docs:
   image: rozum/embed-gcc:python3
   stage: document
   tags:
-    - rnd-qa
+    - servo-testbench
   script:
     - cd c
     - ( cat Doxyfile ; echo "PROJECT_NUMBER=v$(cat ../version)" ) | doxygen -
@@ -113,7 +113,7 @@ deploy_artifacts:
   image: rozum/embed-gcc:latest
   stage: deploy
   tags:
-    - rnd-qa
+    - servo-testbench
   script:
     - bin/git-tag.sh
     - bin/publish-artifacts.sh
@@ -126,7 +126,7 @@ deploy_python_master:
     name: python:3.7-slim-stretch
   stage: deploy
   tags:
-    - rnd-qa
+    - servo-testbench
   dependencies:
     - library_win
   before_script:
@@ -142,7 +142,7 @@ deploy_python_dev:
     name: rozum/embed-gcc:python3
   stage: deploy
   tags:
-    - rnd-qa
+    - servo-testbench
   dependencies:
     - library_win
   before_script:
@@ -158,7 +158,7 @@ deploy_python_master_pypi:
     name: python:3.7-slim-stretch
   stage: deploy
   tags:
-    - rnd-qa
+    - servo-testbench
   dependencies:
     - library_win
   before_script:
@@ -174,7 +174,7 @@ deploy_python_master_testpypi:
     name: python:3.7-slim-stretch
   stage: deploy
   tags:
-    - rnd-qa
+    - servo-testbench
   dependencies:
     - library_win
   before_script:
