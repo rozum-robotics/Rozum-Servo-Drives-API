@@ -21,8 +21,18 @@ int main(int argc, char *argv[])
 
 		printf("init iface\n");
 		rr_can_interface_t *iface = rr_init_interface(argv[1]);
+		if(!iface)
+		{
+			API_DEBUG("Interface init error\n");
+			return 1;
+		}
 		printf("init servo\n");
 		rr_servo_t *servo = rr_init_servo(iface, id);
+		if(!servo)
+		{
+			API_DEBUG("Servo init error\n");
+			return 1;
+		}
 		printf("putting to operational\n");
 		rr_servo_set_state_operational(servo);
 
@@ -36,7 +46,7 @@ int main(int argc, char *argv[])
 		printf("deinit\n");
 		rr_deinit_interface (&iface);
 	}
-	
+
 }
 
 

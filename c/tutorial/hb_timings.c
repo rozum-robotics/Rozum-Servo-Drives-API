@@ -20,7 +20,17 @@ int main(int argc, char *argv[])
 	}
 
 	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
 	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
 
 	rr_servo_set_state_operational(servo);
 

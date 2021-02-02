@@ -19,6 +19,7 @@ extern "C"
 #include <sys/time.h>
 #include <sys/types.h>
 #ifdef _WIN32
+#include "winsock2.h"
 #include "windows.h"
 #else
 #include <sys/socket.h>
@@ -27,7 +28,6 @@ extern "C"
 #include <arpa/inet.h>
 #include <termios.h>
 #include <signal.h>
-#include <poll.h>
 #endif
 #include <pthread.h>
 #include "usbcan_config.h"
@@ -77,25 +77,24 @@ typedef struct
 	int t;
 	uint8_t *b;
 	uint8_t *rb;
-	#ifdef _WIN32
+#ifdef _WIN32
 	DWORD l;
 	#else
 	int l;
-	#endif
+#endif
 } usbcan_rx_data_t;
 
 struct usbcan_instance_t
 {
 	void *udata;
 	const char *device;
-	#ifdef _WIN32
-	HANDLE fd;
-	OVERLAPPED fd_overlap_read, fd_overlap_write, fd_overlap_evt;
+#ifdef _WIN32
+	HANDLE commh;
+	OVERLAPPED overlap_read, overlap_write, overlap_evt;
 	BOOL evt_waiting;
 	DWORD evt_mask, evt_mask_len;
-	#else
+#endif
 	int fd;
-	#endif
 	
 	usbcan_rx_data_t rx_data;
 

@@ -797,7 +797,10 @@ rr_servo_t *rr_init_servo(rr_can_interface_t *iface, const uint8_t id)
 		return NULL;
 	}
 
-	wait_device((usbcan_instance_t *)iface->iface, id, RR_API_WAIT_DEVICE_TIMEOUT_MS);
+	if(!wait_device((usbcan_instance_t *)iface->iface, id, RR_API_WAIT_DEVICE_TIMEOUT_MS))
+	{
+		rr_deinit_servo(&s);
+	}
 
 	return s;
 }

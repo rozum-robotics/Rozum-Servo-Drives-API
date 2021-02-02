@@ -13,8 +13,8 @@
  * \defgroup tutor_c_cogging Example of using velocity rate limiter
  *The tutorial demonstrates how to use velocity control with velocity rate limiter.
  *
-*/
-  
+ */
+
 int main(int argc, char *argv[])
 {
 	uint8_t id;
@@ -35,7 +35,17 @@ int main(int argc, char *argv[])
 
 
 	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
 	rr_servo_t * servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
 
 	if(!servo)
 	{
@@ -43,7 +53,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	
+
 	if(rr_servo_set_state_operational(servo) != RET_OK)
 	{
 		API_DEBUG("Can't put servo to operational mode\n");
@@ -68,9 +78,9 @@ int main(int argc, char *argv[])
 	float vel_rotor_rpm;
 
 	rr_read_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &vel_rotor_rpm);
-	
+
 	rr_sleep_ms(fabsf(vel_rotor_rpm) / rate_des * 1000.0);
-	
+
 }
 
 

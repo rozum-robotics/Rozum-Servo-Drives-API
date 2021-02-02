@@ -10,6 +10,7 @@ ifeq ($(OS),win32)
 	EXE_NAME = $(APP_NAME)-32bit
 	TCHAIN=i686-w64-mingw32-
 	LDFLAGS += -static -Wl,-subsystem,console
+	EXT_LIBS += ws2_32
 	EXT_OBJECTS += ../../build-win-32bit/libservo_api-32bit.a
 else ifeq ($(OS),win64)
 	SHARED_LIB_EXT=dll
@@ -19,6 +20,7 @@ else ifeq ($(OS),win64)
 	EXE_NAME = $(APP_NAME)-64bit
 	TCHAIN=x86_64-w64-mingw32-
 	LDFLAGS += -static -Wl,-subsystem,console
+	EXT_LIBS += ws2_32
 	EXT_OBJECTS += ../../build-win-64bit/libservo_api-64bit.a
 else
 	SHARED_LIB_EXT=

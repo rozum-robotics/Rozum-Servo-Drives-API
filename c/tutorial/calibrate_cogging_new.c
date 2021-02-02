@@ -40,8 +40,8 @@
  *
  * <b> Complete tutorial code: </b>
  * \snippet calibrate_cogging.c calibrate_cogging_code_full
-  */
-  
+ */
+
 //! [calibrate_cogging_code_full]
 //! [Read tutorial param1]
 int main(int argc, char *argv[])
@@ -57,19 +57,29 @@ int main(int argc, char *argv[])
 		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
 		return 1;
 	}
-    //! [Read tutorial param1]
+	//! [Read tutorial param1]
 
-    //! [Init interface31]
+	//! [Init interface31]
 	rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Init interface31]
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Init interface31]
 
-    //! [Init servo31]
+	//! [Init servo31]
 	rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Init servo31]
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Init servo31]
 
-    //! [Switching to operational state1]
+	//! [Switching to operational state1]
 	rr_servo_set_state_operational(servo);
-	
+
 	rr_nmt_state_t state = 0;
 	for(int i = 0; i < 20; i++)
 	{
@@ -85,9 +95,9 @@ int main(int argc, char *argv[])
 		API_DEBUG("Can't switch tot operational mode\n");
 		exit(1);
 	}
-    //! [Switching to operational state1]
+	//! [Switching to operational state1]
 
-    //! [Start calibration]
+	//! [Start calibration]
 	uint8_t cogging_cmd[] = {0x1a, 0, 0, 0, 0};
 	uint8_t cogging_status = 0, cogging_status_prev = 0;
 
@@ -96,9 +106,9 @@ int main(int argc, char *argv[])
 		API_DEBUG("Can't start calibration\n");
 		exit(1);
 	}
-    //![Start calibration]
+	//![Start calibration]
 
-    //![Read vel setpoint]
+	//![Read vel setpoint]
 
 	for(int i = 0; i < 10; i++)
 	{
@@ -114,7 +124,7 @@ int main(int argc, char *argv[])
 			API_DEBUG("Calibration started\n");
 			break;
 		}
-		
+
 	}
 	cogging_status_prev = cogging_status;
 	while(true)
@@ -137,9 +147,9 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-    //![Read vel setpoint]
-	
-    //![Enable cog table]
+	//![Read vel setpoint]
+
+	//![Enable cog table]
 
 	float enable = 1;
 
@@ -148,17 +158,17 @@ int main(int argc, char *argv[])
 		API_DEBUG("Can't enable friction map\n");
 		exit(1);
 	}
-    //![Enable cog table]
+	//![Enable cog table]
 
-    //![Save to flash]
+	//![Save to flash]
 	API_DEBUG("Saving to flash\n");
 
 	if(rr_write_raw_sdo(servo, 0x1010, 1, (uint8_t *)"evas", 4, 1, 4000) != RET_OK)
 	{
 		API_DEBUG("Can't save to flash\n");
 	}
-    //![Save to flash]
-    //![calibrate_cogging_code_full]
+	//![Save to flash]
+	//![calibrate_cogging_code_full]
 }
 
 

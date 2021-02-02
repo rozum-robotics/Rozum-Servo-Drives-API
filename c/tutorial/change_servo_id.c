@@ -36,44 +36,49 @@
 
 int main(int argc, char *argv[])
 {
-    //! [change_id_code_full]
-    //! [Create 2 variables]
-    uint8_t id_old;
-    uint8_t id_new;
-    //! [Create 2 variables]
+	//! [change_id_code_full]
+	//! [Create 2 variables]
+	uint8_t id_old;
+	uint8_t id_new;
+	//! [Create 2 variables]
 
-    //! [Check arguments]
-    if(argc == 4)
-    {
-        id_old = strtol(argv[2], NULL, 0);
-        id_new = strtol(argv[3], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface old_id new_id\n", argv[0]);
-        return 1;
-    }
-    //! [Check arguments]
-    //! [Add interface10]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Add interface10]
-    //! [Add servo10]
-    rr_servo_t *servo = rr_init_servo(iface, id_old);
-    if(servo == NULL)
-    {
-        API_DEBUG("Failed to init servo with ID: %d\n", id_old);
-        return 1;
-    }
+	//! [Check arguments]
+	if(argc == 4)
+	{
+		id_old = strtol(argv[2], NULL, 0);
+		id_new = strtol(argv[3], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface old_id new_id\n", argv[0]);
+		return 1;
+	}
+	//! [Check arguments]
+	//! [Add interface10]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Add interface10]
+	//! [Add servo10]
+	rr_servo_t *servo = rr_init_servo(iface, id_old);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
 
-    //! [Add servo10]
-    API_DEBUG("========== Tutorial of the %s ==========\n", "changing CAN ID of one servo and saving it to the EEPROM");
-    //! [Change ID]
-    rr_ret_status_t status = rr_change_id_and_save(iface, &servo, id_new);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Failed to change servo CAN ID and save it to the EEPROM: %d\n", status);
-        return 1;
-    }
-    //! [Change ID]
-    //! [change_id_code_full]
+	//! [Add servo10]
+	API_DEBUG("========== Tutorial of the %s ==========\n", "changing CAN ID of one servo and saving it to the EEPROM");
+	//! [Change ID]
+	rr_ret_status_t status = rr_change_id_and_save(iface, &servo, id_new);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Failed to change servo CAN ID and save it to the EEPROM: %d\n", status);
+		return 1;
+	}
+	//! [Change ID]
+	//! [change_id_code_full]
 }

@@ -61,70 +61,80 @@
  * <b> Complete tutorial code: </b>
  * \snippet read_any_param_cache.c cccode 5
  */
- 
- 
+
+
 int main(int argc, char *argv[])
 {
-    uint8_t id;
+	uint8_t id;
 
-    if(argc == 3)
-    {
-        id = strtol(argv[2], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 5] 
-    //! [Adding interface 5]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Adding interface 5]
-    //! [Adding servo 5]
-    rr_servo_t *servo = rr_init_servo(iface, id);
-    //! [Adding servo 5]
+	if(argc == 3)
+	{
+		id = strtol(argv[2], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 5] 
+	//! [Adding interface 5]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Adding interface 5]
+	//! [Adding servo 5]
+	rr_servo_t *servo = rr_init_servo(iface, id);
+	if(!servo)
+	{
+		API_DEBUG("Servo init error\n");
+		return 1;
+	}
+	//! [Adding servo 5]
 
-    API_DEBUG("========== Tutorial of %s ==========\n", "programming and reading the device parameter cache");
+	API_DEBUG("========== Tutorial of %s ==========\n", "programming and reading the device parameter cache");
 
-    //! [Cache setup entry 1]
-    rr_param_cache_setup_entry(servo, APP_PARAM_POSITION_ROTOR, true);
-    //! [Cache setup entry 1]
-    //! [Cache setup entry 2]
-    rr_param_cache_setup_entry(servo, APP_PARAM_VELOCITY_ROTOR, true);
-    //! [Cache setup entry 2]
-    //! [Cache setup entry 3]
-    rr_param_cache_setup_entry(servo, APP_PARAM_VOLTAGE_INPUT, true);
-    //! [Cache setup entry 3]
-    //! [Cache setup entry 4]
-    rr_param_cache_setup_entry(servo, APP_PARAM_CURRENT_INPUT, true);
-    //! [Cache setup entry 4]
+	//! [Cache setup entry 1]
+	rr_param_cache_setup_entry(servo, APP_PARAM_POSITION_ROTOR, true);
+	//! [Cache setup entry 1]
+	//! [Cache setup entry 2]
+	rr_param_cache_setup_entry(servo, APP_PARAM_VELOCITY_ROTOR, true);
+	//! [Cache setup entry 2]
+	//! [Cache setup entry 3]
+	rr_param_cache_setup_entry(servo, APP_PARAM_VOLTAGE_INPUT, true);
+	//! [Cache setup entry 3]
+	//! [Cache setup entry 4]
+	rr_param_cache_setup_entry(servo, APP_PARAM_CURRENT_INPUT, true);
+	//! [Cache setup entry 4]
 
-    //! [Cache update]
-    rr_param_cache_update(servo);
-    //! [Cache update]
+	//! [Cache update]
+	rr_param_cache_update(servo);
+	//! [Cache update]
 
-    //! [Parameter array]
-    float value;
-    //! [Parameter array]
+	//! [Parameter array]
+	float value;
+	//! [Parameter array]
 
-    //! [Read cached parameter 1]
-    rr_read_cached_parameter(servo, APP_PARAM_POSITION_ROTOR, &value);
-    //! [Read cached parameter 1]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_POSITION_ROTOR), value);
+	//! [Read cached parameter 1]
+	rr_read_cached_parameter(servo, APP_PARAM_POSITION_ROTOR, &value);
+	//! [Read cached parameter 1]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_POSITION_ROTOR), value);
 
-    //! [Read cached parameter 2]
-    rr_read_cached_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &value);
-    //! [Read cached parameter 2]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VELOCITY_ROTOR), value);
+	//! [Read cached parameter 2]
+	rr_read_cached_parameter(servo, APP_PARAM_VELOCITY_ROTOR, &value);
+	//! [Read cached parameter 2]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VELOCITY_ROTOR), value);
 
-    //! [Read cached parameter 3]
-    rr_read_cached_parameter(servo, APP_PARAM_VOLTAGE_INPUT, &value);
-    //! [Read cached parameter 3]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VOLTAGE_INPUT), value);
+	//! [Read cached parameter 3]
+	rr_read_cached_parameter(servo, APP_PARAM_VOLTAGE_INPUT, &value);
+	//! [Read cached parameter 3]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_VOLTAGE_INPUT), value);
 
-    //! [Read cached parameter 4]
-    rr_read_cached_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
-    //! [Read cached parameter 4]
-    API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
-    //! [cccode 5]
+	//! [Read cached parameter 4]
+	rr_read_cached_parameter(servo, APP_PARAM_CURRENT_INPUT, &value);
+	//! [Read cached parameter 4]
+	API_DEBUG("\t%s value: %.3f\n", STRFY(APP_PARAM_CURRENT_INPUT), value);
+	//! [cccode 5]
 }

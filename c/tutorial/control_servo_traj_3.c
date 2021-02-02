@@ -82,104 +82,124 @@
  */
 int main(int argc, char *argv[])
 {
-    uint8_t id1, id2, id3;
+	uint8_t id1, id2, id3;
 
-    if(argc == 5)
-    {
-        id1 = strtol(argv[2], NULL, 0);
-        id2 = strtol(argv[3], NULL, 0);
-        id3 = strtol(argv[4], NULL, 0);
-    }
-    else
-    {
-        API_DEBUG("Wrong format!\nUsage: %s interface id1 id2 id3\n", argv[0]);
-        return 1;
-    }
-    //! [cccode 3] 
-    //! [Adding the interface3]
-    rr_can_interface_t *iface = rr_init_interface(argv[1]);
-    //! [Adding the interface3]
-    //! [Adding servo one]
-    rr_servo_t *servo1 = rr_init_servo(iface, id1);
-    //! [Adding servo one]
-    //! [Adding servo two]
-    rr_servo_t *servo2 = rr_init_servo(iface, id2);
-    //! [Adding servo two]
-    //! [Adding servo three]
-    rr_servo_t *servo3 = rr_init_servo(iface, id3);
-    //! [Adding servo three]
+	if(argc == 5)
+	{
+		id1 = strtol(argv[2], NULL, 0);
+		id2 = strtol(argv[3], NULL, 0);
+		id3 = strtol(argv[4], NULL, 0);
+	}
+	else
+	{
+		API_DEBUG("Wrong format!\nUsage: %s interface id1 id2 id3\n", argv[0]);
+		return 1;
+	}
+	//! [cccode 3] 
+	//! [Adding the interface3]
+	rr_can_interface_t *iface = rr_init_interface(argv[1]);
+	if(!iface)
+	{
+		API_DEBUG("Interface init error\n");
+		return 1;
+	}
+	//! [Adding the interface3]
+	//! [Adding servo one]
+	rr_servo_t *servo1 = rr_init_servo(iface, id1);
+	if(!servo1)
+	{
+		API_DEBUG("Servo #1 init error\n");
+		return 1;
+	}
+	//! [Adding servo one]
+	//! [Adding servo two]
+	rr_servo_t *servo2 = rr_init_servo(iface, id2);
+	if(!servo2)
+	{
+		API_DEBUG("Servo #2 init error\n");
+		return 1;
+	}
+	//! [Adding servo two]
+	//! [Adding servo three]
+	rr_servo_t *servo3 = rr_init_servo(iface, id3);
+	if(!servo3)
+	{
+		API_DEBUG("Servo #2 init error\n");
+		return 1;
+	}
+	//! [Adding servo three]
 
-    //! [Switching to operational state]
-    rr_servo_set_state_operational(servo1);
-    rr_servo_set_state_operational(servo2);
-    rr_servo_set_state_operational(servo3);
-    //! [Switching to operational state]
+	//! [Switching to operational state]
+	rr_servo_set_state_operational(servo1);
+	rr_servo_set_state_operational(servo2);
+	rr_servo_set_state_operational(servo3);
+	//! [Switching to operational state]
 
-    API_DEBUG("========== Tutorial of the %s ==========\n", "controlling three servos");
+	API_DEBUG("========== Tutorial of the %s ==========\n", "controlling three servos");
 
-    //! [Clear points servo one]
-    rr_clear_points_all(servo1);
-    //! [Clear points servo one]
-    //! [Clear points servo two]
-    rr_clear_points_all(servo2);
-    //! [Clear points servo two]
-    //! [Clear points servo three]
-    rr_clear_points_all(servo3);
-    //! [Clear points servo three]
-    //! [Add point one servo one]
-    int status = rr_add_motion_point(servo1, 100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add point one servo one]
-    //! [Add point one servo two]
-    status = rr_add_motion_point(servo2, 100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add point one servo two]
-    //! [Add point one servo three]
-    status = rr_add_motion_point(servo3, 100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add point one servo three]
-    //! [Add point two servo one]
-    status = rr_add_motion_point(servo1, -100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add point two servo one]
-    //! [Add point two servo two]
-    status = rr_add_motion_point(servo2, -100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add point two servo two]
-    //! [Add point two servo three]
-    status = rr_add_motion_point(servo3, -100.0, 0.0, 6000);
-    if(status != RET_OK)
-    {
-        API_DEBUG("Error in the trjectory point calculation: %d\n", status);
-        return 1;
-    }
-    //! [Add point two servo three]
-    //! [Start motion3]
-    rr_start_motion(iface, 0);
-    //! [Start motion3]
+	//! [Clear points servo one]
+	rr_clear_points_all(servo1);
+	//! [Clear points servo one]
+	//! [Clear points servo two]
+	rr_clear_points_all(servo2);
+	//! [Clear points servo two]
+	//! [Clear points servo three]
+	rr_clear_points_all(servo3);
+	//! [Clear points servo three]
+	//! [Add point one servo one]
+	int status = rr_add_motion_point(servo1, 100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add point one servo one]
+	//! [Add point one servo two]
+	status = rr_add_motion_point(servo2, 100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add point one servo two]
+	//! [Add point one servo three]
+	status = rr_add_motion_point(servo3, 100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add point one servo three]
+	//! [Add point two servo one]
+	status = rr_add_motion_point(servo1, -100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add point two servo one]
+	//! [Add point two servo two]
+	status = rr_add_motion_point(servo2, -100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add point two servo two]
+	//! [Add point two servo three]
+	status = rr_add_motion_point(servo3, -100.0, 0.0, 6000);
+	if(status != RET_OK)
+	{
+		API_DEBUG("Error in the trjectory point calculation: %d\n", status);
+		return 1;
+	}
+	//! [Add point two servo three]
+	//! [Start motion3]
+	rr_start_motion(iface, 0);
+	//! [Start motion3]
 
-    //! [Sleep3]
-    rr_sleep_ms(14000); // wait till the movement ends
-    //! [Sleep3]
-    //! [cccode 3]
+	//! [Sleep3]
+	rr_sleep_ms(14000); // wait till the movement ends
+	//! [Sleep3]
+	//! [cccode 3]
 }
