@@ -71,6 +71,21 @@ typedef enum
 } rr_ret_status_t;
 
 /**
+ * @brief defines pdo numbers
+ */
+typedef enum
+{
+    RPDO0 = 0,
+    RPDO1 = 1,
+    RPDO2 = 2,
+    RPDO3 = 3,
+    TPDO0 = 4,
+    TPDO1 = 5,
+    TPDO2 = 6,
+    TPDO3 = 7,
+} rr_pdo_n_t;
+
+/**
  * @brief Device parameter and source indices
  * 
  */
@@ -202,6 +217,8 @@ typedef struct
     void *iface;   ///< Interface internals
     void *nmt_cb;  ///< NMT callback pointer
     void *emcy_cb; ///< EMCY callback pointer
+    void *com_frame_cb; ///< CAN frame callback pointer
+    void *pdo_cb; ///< PDO (from device)callback pointer
     struct
     {
 	    emcy_log_entry_t *d;
@@ -219,6 +236,26 @@ typedef struct
  * 
  */
 typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
+
+/**
+ * @brief Type of the CAN frame callback<br>
+ * @param interface Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
+ * @param cob_id ID of CAN frame
+ * @param dlc Data Length Code (length of data field)
+ * @param data pointer to data
+ * 
+ */
+typedef void (*rr_com_frame_cb_t)(rr_can_interface_t *interface, int cob_id, int dlc, uint8_t *data);
+
+/**
+ * @brief Type of the PDO callback<br>
+ * @param interface Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
+ * @param cob_id ID of CAN frame
+ * @param dlc Data Length Code (length of data field)
+ * @param data pointer to data
+ * 
+ */
+typedef void (*rr_pdo_cb_t)(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data);
 
 /**
  * @brief Type of the intiated emergency (EMCY) callback<br>
@@ -246,6 +283,11 @@ rr_ret_status_t rr_read_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t s
 void rr_set_debug_log_stream(FILE *f);
 void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f);
 void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb);
+void rr_setup_com_frame_callback(rr_can_interface_t *interface, rr_com_frame_cb_t cb);
+void rr_setup_pdo_callback(rr_can_interface_t *interface, rr_pdo_cb_t cb);
+rr_ret_status_t rr_send_com_frame(const rr_can_interface_t *iface, uint32_t cob_id, int dlc, uint8_t *data);
+rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data);
+rr_ret_status_t rr_send_pdo_sync(const rr_can_interface_t *iface);
 void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb);
 const char *rr_describe_nmt(rr_nmt_state_t state);
 const char *rr_describe_emcy_code(uint16_t code);

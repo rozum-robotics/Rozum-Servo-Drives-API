@@ -133,6 +133,26 @@ void rr_nmt_state_master_cb(usbcan_instance_t *inst, int id, usbcan_nmt_state_t 
 	}
 }
 
+void rr_com_frame_cb(usbcan_instance_t *inst, can_msg_t *m)
+{
+	rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
+
+	if(i->com_frame_cb)
+	{
+		((rr_com_frame_cb_t)(i->com_frame_cb))(i, m->id, m->dlc, m->data);
+	}
+}
+
+void rr_pdo_cb(usbcan_instance_t *inst, int id, int pdo_n, int len, uint8_t *data)
+{
+	rr_can_interface_t *i = (rr_can_interface_t *)inst->udata;
+
+	if(i->pdo_cb)
+	{
+		((rr_pdo_cb_t)(i->pdo_cb))(i, id, pdo_n, len, data);
+	}
+}
+
 void rr_emcy_log_push(rr_can_interface_t *iface, uint8_t id, uint16_t err_code, uint8_t err_reg,
 		uint8_t err_bits, int32_t err_info);
 
@@ -216,6 +236,71 @@ rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t 
 	return ret_sdo(sts);
 }
 
+//! @cond Doxygen_Suppress
+/**
+ * @brief This function sends arbitrary CAN frame.
+ * @param iface interface descriptor 
+ * @param cob_id CAN frame ID
+ * @param dlc Data Length Code (length of data field in bytes)
+ * @param data pointer to data
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Aux
+ */
+rr_ret_status_t rr_send_com_frame(const rr_can_interface_t *iface, uint32_t cob_id, int dlc, uint8_t *data)
+{
+	IS_VALID_INTERFACE(iface);
+	can_msg_t m;
+
+	m.id = cob_id;
+	m.dlc = dlc;
+	memcpy(m.data, data, MIN(dlc, sizeof(m.data)));
+
+	usbcan_send_com_frame((usbcan_instance_t *)iface->iface, &m);
+
+	return RET_OK;
+}
+
+//! @cond Doxygen_Suppress
+/**
+ * @brief This function sends arbitrary CAN frame.
+ * @param iface interface descriptor 
+ * @param id device ID
+ * @param pdo_n PDO number (valid are RPDO0 to RPDO3)
+ * @param len Data Length Code (length of data field in bytes)
+ * @param data pointer to data
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Aux
+ */
+rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
+{
+	IS_VALID_INTERFACE(iface);
+
+	if((pdo_n < RPDO0) || (pdo_n > RPDO3))
+	{
+		return RET_WRONG_ARG;
+	}
+
+	rr_send_com_frame(iface, 0x200 + id + 0x100 * pdo_n, len, data);
+
+	return RET_OK;
+}
+
+//! @cond Doxygen_Suppress
+/**
+ * @brief This function sends arbitrary CAN frame.
+ * @param iface interface descriptor 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Aux
+ */
+rr_ret_status_t rr_send_pdo_sync(const rr_can_interface_t *iface)
+{
+	IS_VALID_INTERFACE(iface);
+
+	rr_send_com_frame(iface, 0x80, 0, 0);
+
+	return RET_OK;
+}
+
 /**
  * @brief The function sends an arbitrary SDO read request to the specified servo.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
@@ -295,6 +380,36 @@ void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb)
 	if(iface)
 	{
 		iface->emcy_cb = (void *)cb;
+	}
+}
+
+/**
+ * @brief The function sets a user callback for incoming CAN frames
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param cb (::rr_com_frame_cb_t) callback function
+ * @return void
+ * @ingroup Aux
+ */
+void rr_setup_com_frame_callback(rr_can_interface_t *iface, rr_com_frame_cb_t cb)
+{
+	if(iface)
+	{
+		iface->com_frame_cb = (void *)cb;
+	}
+}
+
+/**
+ * @brief The function sets a user callback for incoming PDOs
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
+ * @param cb (::rr_com_frame_cb_t) callback function
+ * @return void
+ * @ingroup Aux
+ */
+void rr_setup_pdo_callback(rr_can_interface_t *iface, rr_pdo_cb_t cb)
+{
+	if(iface)
+	{
+		iface->pdo_cb = (void *)cb;
 	}
 }
 
@@ -729,6 +844,8 @@ rr_can_interface_t *rr_init_interface(const char *interface_name)
 	i->iface = usbcan;
 
 	usbcan_setup_nmt_state_cb(usbcan, rr_nmt_state_master_cb);
+	usbcan_setup_com_frame_cb(usbcan, rr_com_frame_cb);
+	usbcan_setup_pdo_cb(usbcan, rr_pdo_cb);
 	usbcan_setup_emcy_cb(usbcan, rr_emcy_master_cb);
 
 	i->emcy_log.d = (emcy_log_entry_t *)malloc(sizeof(emcy_log_entry_t) * EMCY_LOG_DEPTH);
