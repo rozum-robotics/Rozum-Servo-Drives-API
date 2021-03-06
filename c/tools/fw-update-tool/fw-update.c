@@ -31,7 +31,6 @@ typedef enum
 	DL_ERROR
 } download_result_t;
 
-FILE *debug_log;
 
 download_result_t download_result = DL_IDLE;
 
