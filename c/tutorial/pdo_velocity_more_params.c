@@ -18,6 +18,12 @@ typedef struct
 	int16_t act_curr;
 } tpdo0_t; //from servo
 
+typedef struct
+{
+	uint16_t input_voltage;
+	uint16_t input_current;
+} tpdo3_t; //from servo
+
 void pdo_cb(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
 {
 
@@ -35,10 +41,43 @@ void pdo_cb(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, ui
 		case TPDO2:
 			break;
 		case TPDO3:
+		{
+			tpdo3_t pdo3;
+			memcpy(&pdo3, data, len);
+			printf("input voltage: %f V, input curr: %f A\n", pdo3.input_voltage * 0.001, pdo3.input_current * 0.001);
+		}
 			break;
 	}
 
 	return;
+}
+
+void pdo_configure(rr_servo_t *servo)
+{
+	uint32_t tpdo3_cobid;
+	int l = 4;
+	if(rr_read_raw_sdo(servo, 0x1803, 1, (uint8_t *)&tpdo3_cobid, &l, 1, 100) != RET_OK) exit(1);
+	//destroy PDOs
+	tpdo3_cobid |= 0x80000000ul;
+	if(rr_write_raw_sdo(servo, 0x1803, 1, (uint8_t *)&tpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
+	
+	//setup mappings
+	uint8_t obj_cnt = 0;
+	uint32_t tpdo3_map1 = 0x50010d10;
+	uint32_t tpdo3_map2 = 0x50010e10;
+	if(rr_write_raw_sdo(servo, 0x1A03, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
+	if(rr_write_raw_sdo(servo, 0x1A03, 1, (uint8_t *)&tpdo3_map1, 4, 1, 100) != RET_OK) exit(1);
+	if(rr_write_raw_sdo(servo, 0x1A03, 2, (uint8_t *)&tpdo3_map2, 4, 1, 100) != RET_OK) exit(1);
+	
+	obj_cnt = 2;
+	if(rr_write_raw_sdo(servo, 0x1A03, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
+	
+	//create PDOs
+	tpdo3_cobid &= ~0x80000000ul;
+	if(rr_write_raw_sdo(servo, 0x1803, 1, (uint8_t *)&tpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
+	
+	uint8_t pdo_mode = 1;
+	if(rr_write_raw_sdo(servo, 0x1803, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
 }
 
 int main(int argc, char *argv[])
@@ -67,8 +106,10 @@ int main(int argc, char *argv[])
 		API_DEBUG("Servo init error\n");
 		return 1;
 	}
-	rr_servo_set_state_operational(servo);
 
+	pdo_configure(servo);
+
+	rr_servo_set_state_operational(servo);
 	rr_setup_pdo_callback(iface, pdo_cb);
 
 	double ph = 0, f = 1.0;

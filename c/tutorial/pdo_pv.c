@@ -125,10 +125,10 @@ void pdo_configure(rr_servo_t *servo)
 	rpdo2_cobid |= 0x80000000ul;
 	rpdo3_cobid |= 0x80000000ul;
 	tpdo2_cobid |= 0x80000000ul;
-    if(rr_write_raw_sdo(servo, 0x1402, 1, (uint8_t *)&rpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
+	if(rr_write_raw_sdo(servo, 0x1402, 1, (uint8_t *)&rpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1403, 1, (uint8_t *)&rpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1802, 1, (uint8_t *)&tpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
-	
+
 	//setup mappings
 	uint8_t obj_cnt = 0;
 	uint32_t rpdo2_map = 0x50000740, rpdo3_map = 0x60400010;
@@ -139,22 +139,22 @@ void pdo_configure(rr_servo_t *servo)
 	if(rr_write_raw_sdo(servo, 0x1602, 1, (uint8_t *)&rpdo2_map, 4, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1603, 1, (uint8_t *)&rpdo3_map, 4, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1A02, 1, (uint8_t *)&tpdo2_map1, 4, 1, 100) != RET_OK) exit(1);
-	
+
 	obj_cnt = 1;
 	if(rr_write_raw_sdo(servo, 0x1602, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1603, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1A02, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-	
+
 	//create PDOs
 	rpdo2_cobid &= ~0x80000000ul;
 	rpdo3_cobid &= ~0x80000000ul;
 	tpdo2_cobid &= ~0x80000000ul;
-    if(rr_write_raw_sdo(servo, 0x1402, 1, (uint8_t *)&rpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
+	if(rr_write_raw_sdo(servo, 0x1402, 1, (uint8_t *)&rpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1403, 1, (uint8_t *)&rpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1802, 1, (uint8_t *)&tpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
-	
+
 	uint8_t pdo_mode = 1;
-    if(rr_write_raw_sdo(servo, 0x1402, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
+	if(rr_write_raw_sdo(servo, 0x1402, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1403, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
 	if(rr_write_raw_sdo(servo, 0x1802, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
 }
