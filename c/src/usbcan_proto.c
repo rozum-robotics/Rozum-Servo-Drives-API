@@ -216,12 +216,13 @@ static void usbcan_poll(usbcan_instance_t *inst, uint64_t delta_us)
 	/*Wait for SDO response*/
 	if(inst->op.code == OP_SDO)
 	{
-		inst->op.ttl = CLIPL(inst->op.ttl - delta_ms, 0);
-		if(!inst->op.ttl)
+		if(inst->op.ttl <= 0)
 		{
 			inst->op.code = OP_NONE;
 			sdo_resp_cb(inst, -1u, NULL, 0);
 		}
+
+		inst->op.ttl -= delta_ms;
 	}
 
 	/*Wait for device specific state*/
