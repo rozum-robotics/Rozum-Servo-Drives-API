@@ -1,5 +1,5 @@
 #ifndef WIN32
-//#define LINUX_RT_FEATURES
+#define LINUX_RT_FEATURES
 #endif
 
 #ifdef LINUX_RT_FEATURES
@@ -235,7 +235,6 @@ int main(int argc, char *argv[])
    reducing latency and cycle time stability.
 */
 #define NIC_NAME "enp59s0"
-
     //disable CPU sleep states
 	set_latency_target(0);
 	//bind process to specified CPU
