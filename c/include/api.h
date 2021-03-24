@@ -288,6 +288,17 @@ void rr_setup_pdo_callback(rr_can_interface_t *interface, rr_pdo_cb_t cb);
 rr_ret_status_t rr_send_com_frame(const rr_can_interface_t *iface, uint32_t cob_id, int dlc, uint8_t *data);
 rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data);
 rr_ret_status_t rr_send_pdo_sync(const rr_can_interface_t *iface);
+
+rr_ret_status_t rr_pdo_disable(rr_servo_t *s, rr_pdo_n_t n);
+rr_ret_status_t rr_pdo_enable(rr_servo_t *s, rr_pdo_n_t n);
+rr_ret_status_t rr_pdo_set_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t cnt);
+rr_ret_status_t rr_pdo_get_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t *cnt);
+rr_ret_status_t rr_pdo_clear_map(rr_servo_t *s, rr_pdo_n_t n);
+rr_ret_status_t rr_pdo_write_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t map_value);
+rr_ret_status_t rr_pdo_read_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t *map_value);
+rr_ret_status_t rr_pdo_get_byte_len(rr_servo_t *s, rr_pdo_n_t n, int *len);
+rr_ret_status_t rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_t sidx, uint8_t bit_len);
+
 void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb);
 const char *rr_describe_nmt(rr_nmt_state_t state);
 const char *rr_describe_emcy_code(uint16_t code);
