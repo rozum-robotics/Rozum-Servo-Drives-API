@@ -493,11 +493,11 @@ rr_ret_status_t rr_pdo_get_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t *cnt)
 
 rr_ret_status_t rr_pdo_clear_map(rr_servo_t *s, rr_pdo_n_t n)
 {
-	if(!rr_pdo_disable(s, n)) 
+	if(rr_pdo_disable(s, n) != RET_OK) 
 	{
 		return RET_ERROR;
 	}
-	if(!rr_pdo_set_map_count(s, n, 0))
+	if(rr_pdo_set_map_count(s, n, 0) != RET_OK)
 	{
 		return RET_ERROR;
 	}
@@ -532,7 +532,7 @@ rr_ret_status_t rr_pdo_get_byte_len(rr_servo_t *s, rr_pdo_n_t n, int *len)
 	uint8_t map_cnt = 0;
 	uint32_t map_value;
 
-	if(!rr_pdo_get_map_count(s, n, &map_cnt))
+	if(rr_pdo_get_map_count(s, n, &map_cnt) != RET_OK)
 	{
 		return RET_ERROR;
 	}
@@ -541,7 +541,7 @@ rr_ret_status_t rr_pdo_get_byte_len(rr_servo_t *s, rr_pdo_n_t n, int *len)
 
 	for(int i = 0; i < map_cnt; i++)
 	{
-		if(!rr_pdo_read_map(s, n, i + 1, &map_value))
+		if(rr_pdo_read_map(s, n, i + 1, &map_value) != RET_OK)
 		{
 			return RET_ERROR;
 		}
@@ -560,7 +560,7 @@ rr_ret_status_t rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_
 
 	int byte_len;
 
-	if(!rr_pdo_get_byte_len(s, n, &byte_len))
+	if(rr_pdo_get_byte_len(s, n, &byte_len) != RET_OK)
 	{
 		return RET_ERROR;
 	}
@@ -573,28 +573,28 @@ rr_ret_status_t rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_
 	uint8_t map_cnt = 0;
 	uint32_t map = (uint32_t)idx << 16 | (uint32_t)sidx << 8 | (uint32_t)bit_len;
 
-	if(!rr_pdo_get_map_count(s, n, &map_cnt))
+	if(rr_pdo_get_map_count(s, n, &map_cnt) != RET_OK)
 	{
 		return RET_ERROR;
 	}
 	map_cnt++;
-	if(!rr_pdo_disable(s, n))
+	if(rr_pdo_disable(s, n) != RET_OK)
 	{
 		return RET_ERROR;
 	}
-	if(!rr_pdo_set_map_count(s, n, 0))
+	if(rr_pdo_set_map_count(s, n, 0) != RET_OK)
 	{
 		return RET_ERROR;
 	}
-	if(!rr_pdo_write_map(s, n, map_cnt, map))
+	if(rr_pdo_write_map(s, n, map_cnt, map) != RET_OK)
 	{
 		return RET_ERROR;
 	}
-	if(!rr_pdo_set_map_count(s, n, map_cnt))
+	if(rr_pdo_set_map_count(s, n, map_cnt) != RET_OK)
 	{
 		return RET_ERROR;
 	}
-	if(!rr_pdo_enable(s, n))
+	if(rr_pdo_enable(s, n) != RET_OK)
 	{
 		return RET_ERROR;
 	}

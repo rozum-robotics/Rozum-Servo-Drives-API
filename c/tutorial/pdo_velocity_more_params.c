@@ -57,6 +57,9 @@ void pdo_cb(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, ui
 
 void pdo_configure(rr_servo_t *s)
 {
+	rr_pdo_clear_map(s, RPDO2);
+	rr_pdo_clear_map(s, RPDO3);
+	rr_pdo_clear_map(s, TPDO2);
 	rr_pdo_clear_map(s, TPDO3);
 	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0d, 16);
 	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);

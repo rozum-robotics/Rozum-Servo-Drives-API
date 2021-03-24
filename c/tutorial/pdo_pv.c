@@ -114,49 +114,15 @@ typedef struct __attribute__((packed))
 
 
 //PDO configuration
-void pdo_configure(rr_servo_t *servo)
+void pdo_configure(rr_servo_t *s)
 {
-	uint32_t rpdo2_cobid, rpdo3_cobid, tpdo2_cobid;
-	int l = 4;
-	if(rr_read_raw_sdo(servo, 0x1402, 1, (uint8_t *)&rpdo2_cobid, &l, 1, 100) != RET_OK) exit(1);
-	if(rr_read_raw_sdo(servo, 0x1403, 1, (uint8_t *)&rpdo3_cobid, &l, 1, 100) != RET_OK) exit(1);
-	if(rr_read_raw_sdo(servo, 0x1802, 1, (uint8_t *)&tpdo2_cobid, &l, 1, 100) != RET_OK) exit(1);
-	//destroy PDOs
-	rpdo2_cobid |= 0x80000000ul;
-	rpdo3_cobid |= 0x80000000ul;
-	tpdo2_cobid |= 0x80000000ul;
-	if(rr_write_raw_sdo(servo, 0x1402, 1, (uint8_t *)&rpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1403, 1, (uint8_t *)&rpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1802, 1, (uint8_t *)&tpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
-
-	//setup mappings
-	uint8_t obj_cnt = 0;
-	uint32_t rpdo2_map = 0x50000740, rpdo3_map = 0x60400010;
-	uint32_t tpdo2_map1 = 0x50010c08;
-	if(rr_write_raw_sdo(servo, 0x1602, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1603, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1A02, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1602, 1, (uint8_t *)&rpdo2_map, 4, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1603, 1, (uint8_t *)&rpdo3_map, 4, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1A02, 1, (uint8_t *)&tpdo2_map1, 4, 1, 100) != RET_OK) exit(1);
-
-	obj_cnt = 1;
-	if(rr_write_raw_sdo(servo, 0x1602, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1603, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1A02, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-
-	//create PDOs
-	rpdo2_cobid &= ~0x80000000ul;
-	rpdo3_cobid &= ~0x80000000ul;
-	tpdo2_cobid &= ~0x80000000ul;
-	if(rr_write_raw_sdo(servo, 0x1402, 1, (uint8_t *)&rpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1403, 1, (uint8_t *)&rpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1802, 1, (uint8_t *)&tpdo2_cobid, 4, 1, 100) != RET_OK) exit(1);
-
-	uint8_t pdo_mode = 1;
-	if(rr_write_raw_sdo(servo, 0x1402, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1403, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1802, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
+	rr_pdo_clear_map(s, RPDO2);
+	rr_pdo_clear_map(s, RPDO3);
+	rr_pdo_clear_map(s, TPDO2);
+	rr_pdo_clear_map(s, TPDO3);
+	rr_pdo_add_map(s, RPDO2, 0x5000, 0x07, 64);
+	rr_pdo_add_map(s, RPDO3, 0x6040, 0x00, 16);
+	rr_pdo_add_map(s, TPDO2, 0x5001, 0x0c, 8);
 }
 
 
