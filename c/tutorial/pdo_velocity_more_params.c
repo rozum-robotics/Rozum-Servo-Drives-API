@@ -42,7 +42,7 @@ void pdo_cb(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, ui
 			break;
 		case TPDO3:
 		{
-			tpdo3_t pdo3;
+			tpdo3_t pdo3 = {0};
 			memcpy(&pdo3, data, len);
 			printf("input voltage: %f V, input curr: %f A\n", pdo3.input_voltage * 0.001, pdo3.input_current * 0.001);
 		}
@@ -52,32 +52,157 @@ void pdo_cb(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, ui
 	return;
 }
 
-void pdo_configure(rr_servo_t *servo)
+static uint16_t map_obj(rr_pdo_n_t n)
 {
-	uint32_t tpdo3_cobid;
+	static const uint16_t o[] = 
+	{
+		0x1600, 0x1601, 0x1602, 0x1603,
+		0x1A00, 0x1A01, 0x1A02, 0x1A03
+	};
+	return o[n];
+}
+
+static uint16_t tr_type_obj(rr_pdo_n_t n)
+{
+	static const uint16_t o[] = 
+	{
+		0x1400, 0x1401, 0x1402, 0x1403, 
+		0x1800, 0x1801, 0x1802, 0x1803
+	};
+	return o[n];
+}
+
+bool rr_pdo_disable(rr_servo_t *s, rr_pdo_n_t n)
+{
+	uint32_t cob_id;
 	int l = 4;
-	if(rr_read_raw_sdo(servo, 0x1803, 1, (uint8_t *)&tpdo3_cobid, &l, 1, 100) != RET_OK) exit(1);
-	//destroy PDOs
-	tpdo3_cobid |= 0x80000000ul;
-	if(rr_write_raw_sdo(servo, 0x1803, 1, (uint8_t *)&tpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
+
+	if(rr_read_raw_sdo(s, tr_type_obj(n), 1, (uint8_t *)&cob_id, &l, 1, 100) != RET_OK) return false;
+	cob_id |= 0x80000000ul;
+	if(rr_write_raw_sdo(s, tr_type_obj(n), 1, (uint8_t *)&cob_id, l, 1, 100) != RET_OK) return false;
 	
-	//setup mappings
-	uint8_t obj_cnt = 0;
-	uint32_t tpdo3_map1 = 0x50010d10;
-	uint32_t tpdo3_map2 = 0x50010e10;
-	if(rr_write_raw_sdo(servo, 0x1A03, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1A03, 1, (uint8_t *)&tpdo3_map1, 4, 1, 100) != RET_OK) exit(1);
-	if(rr_write_raw_sdo(servo, 0x1A03, 2, (uint8_t *)&tpdo3_map2, 4, 1, 100) != RET_OK) exit(1);
+	return true;
+}
+
+bool rr_pdo_enable(rr_servo_t *s, rr_pdo_n_t n)
+{
+	uint32_t cob_id;
+	int l = 4;
+
+	if(rr_read_raw_sdo(s, tr_type_obj(n), 1, (uint8_t *)&cob_id, &l, 1, 100) != RET_OK) return false;
+	cob_id &= ~0x80000000ul;
+	if(rr_write_raw_sdo(s, tr_type_obj(n), 1, (uint8_t *)&cob_id, l, 1, 100) != RET_OK) return false;
 	
-	obj_cnt = 2;
-	if(rr_write_raw_sdo(servo, 0x1A03, 0, (uint8_t *)&obj_cnt, 1, 1, 100) != RET_OK) exit(1);
+	return true;
+}
+
+bool rr_pdo_set_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t cnt)
+{
+	if(rr_write_raw_sdo(s, map_obj(n), 0, &cnt, 1, 1, 100) != RET_OK) return false;
+
+	return true;
+}
+
+int rr_pdo_get_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t *cnt)
+{
+	int l = 1;
+	if(rr_read_raw_sdo(s, map_obj(n), 0, cnt, &l, 1, 100) != RET_OK) return false;
 	
-	//create PDOs
-	tpdo3_cobid &= ~0x80000000ul;
-	if(rr_write_raw_sdo(servo, 0x1803, 1, (uint8_t *)&tpdo3_cobid, 4, 1, 100) != RET_OK) exit(1);
+	return true;
+}
+
+
+bool rr_pdo_clear_map(rr_servo_t *s, rr_pdo_n_t n)
+{
+	if(!rr_pdo_disable(s, n)) return false;
+	if(!rr_pdo_set_map_count(s, n, 0)) return false;
+
+	return true;	
+}
+
+bool rr_pdo_write_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t map_value)
+{
+	if(rr_write_raw_sdo(s, map_obj(n), map_entry, (uint8_t *)&map_value, 4, 1, 100) != RET_OK) 
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool rr_pdo_read_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t *map_value)
+{
+	int l = 4;
+
+	if(rr_read_raw_sdo(s, map_obj(n), map_entry, (uint8_t *)map_value, &l, 1, 100) != RET_OK) 
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool rr_pdo_get_byte_len(rr_servo_t *s, rr_pdo_n_t n, int *len)
+{
+	uint8_t map_cnt = 0;
+	uint32_t map_value;
+
+	if(!rr_pdo_get_map_count(s, n, &map_cnt)) return false;
+
+	*len = 0;
+
+	for(int i = 0; i < map_cnt; i++)
+	{
+		if(!rr_pdo_read_map(s, n, i + 1, &map_value)) return false;
+		*len += (map_value & 0xff) >> 3;		
+	}
 	
-	uint8_t pdo_mode = 1;
-	if(rr_write_raw_sdo(servo, 0x1803, 2, (uint8_t *)&pdo_mode, 1, 1, 100) != RET_OK) exit(1);
+	return true;
+}
+
+bool rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_t sidx, uint8_t bit_len)
+{
+	if(bit_len & 7)
+	{
+		API_DEBUG("Bit length not multiple of 8\n");
+		return false;
+	}
+
+	int byte_len;
+
+	if(!rr_pdo_get_byte_len(s, n, &byte_len)) return false;
+
+	if((byte_len + (bit_len >> 3)) > 8)
+	{
+		API_DEBUG("Adding this map will exceed the allowed PDO length (8 bytes)\n");
+		return false;
+	}
+	
+	uint8_t map_cnt = 0;
+	uint32_t map = (uint32_t)idx << 16 | (uint32_t)sidx << 8 | (uint32_t)bit_len;
+
+	if(!rr_pdo_get_map_count(s, n, &map_cnt)) return false;
+	map_cnt++;
+	if(!rr_pdo_disable(s, n)) return false;
+	if(!rr_pdo_set_map_count(s, n, 0)) return false;
+	if(!rr_pdo_write_map(s, n, map_cnt, map)) return false;
+	if(!rr_pdo_set_map_count(s, n, map_cnt)) return false;
+	if(!rr_pdo_enable(s, n)) return false;
+
+	return true;
+}
+
+
+
+void pdo_configure(rr_servo_t *s)
+{
+	rr_pdo_clear_map(s, TPDO3);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0d, 16);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);
+
 }
 
 int main(int argc, char *argv[])
