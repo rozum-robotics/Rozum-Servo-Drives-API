@@ -14,6 +14,7 @@ Servo will move to desired position (actual position + TDIST) and back.
 #include "rt.h"
 #include "api.h"
 #include "pprof.h"
+#include "vdelay.h"
 #include "math_macro.h"
 
 #include <stdlib.h>
@@ -21,28 +22,15 @@ Servo will move to desired position (actual position + TDIST) and back.
 #include <math.h>
 #include <sys/time.h>
 
-/*
-Here is definition of PDO objects to communicate with servo
-*/
-typedef struct
-{
-	uint8_t mode;
-	uint8_t iwin;
-	int16_t des_curr;
-	float des_vel;
-} rpdo0_t; //to servo
-
-typedef struct
-{
-	float pos;
-	int16_t act_vel;
-	int16_t act_curr;
-} tpdo0_t; //from servo
 
 //profiler instance
 pprof_t p;
+//delay instance
+//used to compensate delay in actual position 
+//due to communication
+vdelay_t vd;
 //set profiler config
-const double VMAX = 50.0, AMAX = 70;
+const double VMAX = 150.0, AMAX = 250;
 //set proportional position regulator gain
 //position regulator will be simply P-regulator
 const double PKP = 10.0;
@@ -66,31 +54,27 @@ typedef enum
 state_t state = 0;
 double dly_cntr = 0;
 
+//Here is definition of PDO objects to communicate with servo
+typedef struct
+{
+	uint8_t mode;
+	uint8_t iwin;
+	int16_t des_curr;
+	float des_vel;
+} rpdo0_t; //to servo
+
+typedef struct
+{
+	float pos;
+	int16_t act_vel;
+	int16_t act_curr;
+} tpdo0_t; //from servo
+
 /*
 Callback function for receiving incoming PDO
 */
 void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
 {
-	//desired position delayed for 1 and 2 cycles
-	//this crucial to use delayed position when calculating error
-	//because PDOs always delayed one cycle at send and one at receive
-	static double p_d1, p_d2;
-
-	//callback counter (used for variables initialization)
-	static int cntr = 0;
-	
-	//calculate time between callback calls
-	static struct timeval t0;
-	struct timeval t1;
-
-	gettimeofday(&t1, 0);
-	if(cntr == 0)
-	{
-		t0 = t1;
-	}
-	double dt = t1.tv_sec - t0.tv_sec + 1.0e-6 * (t1.tv_usec - t0.tv_usec); 
-	t0 = t1;
-
 	switch(pdo_n)
 	{
 		case TPDO0:
@@ -98,33 +82,49 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 			tpdo0_t tpdo0;
 			memcpy(&tpdo0, data, len);
 
+			//store previous position
+			double v = p.v;
+
 			//profiler needs some oversampling for better performance
 			for(int i = 0; i < 100; i++)
 			{
 				pprof_process(&p, pd, VMAX, AMAX, dt / 100.0);
 			}
+			vdelay_process(&vd, p.p);
+
+			//calculate acceleration
+			double a = (p.v - v) / dt;
 
 			//calculate velocity setpoint: profiler velocity command plus Kp * pos_error
-			double des_vel = p.v + PKP * (p_d2 - tpdo0.pos) * (cntr > 1 ? 1.0 : 0.0);
+			double des_vel = p.v + PKP * (vd.y - tpdo0.pos);
+
+			//RD60 rotor inertia
+			const double jm = 1.7e-5;
+			//gear ratio
+			const double kg = 100;
+			//RD60 torque constant
+			const double kt = 0.059;
+			//static friction
+			const double fs = 0.02;
+
+			//feed-forward current
+			double ff = ((a * kg * M_PI / 180.0) * jm + SIGN(p.v) * fs) / kt;
 
 			//prepare PDO for transmitting
 			rpdo0_t rpdo0 = 
 			{
-				.mode = 1, //velocity
-				.iwin = 0,
+				.mode = 2, // velocity with feed-forward
+				.iwin = 255, // 100% of max. current
 				.des_vel = des_vel / 0.06, //converting deg/s to RPMs on fast shaft (gear ratio 100)
-				.des_curr = 0
+				.des_curr = ff / 0.0016,
 			};
 
 			rr_send_pdo(iface, id, RPDO0, sizeof(rpdo0), (uint8_t *)&rpdo0);
 
-			printf("%f, %f, %f, %f, %f\n", 
-					p_d2, p.v,
+
+			printf("%f, %f, %f, %f, %f, %f, %f\n", 
+					vd.y, p.v, a, ff, 
 					tpdo0.pos, tpdo0.act_vel * 0.02, tpdo0.act_curr * 0.0016);
-
-
-			p_d2 = p_d1;
-			p_d1 = p.p;
 
 			//process state machine
 			switch(state)
@@ -179,7 +179,6 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 					break;
 
 			}
-			cntr++;
 		}
 		break;
 		case TPDO1:
@@ -231,7 +230,7 @@ int main(int argc, char *argv[])
 /*
    When working through an ethernet adapter set this 
    field to your network interface name.
-   The binding process and NIC interrupt to the same CPU 
+   Binding process and NIC interrupt to the same CPU 
    removes unnecessary inter-CPU data exchange thus 
    reducing latency and cycle time stability.
 */
@@ -273,6 +272,11 @@ int main(int argc, char *argv[])
 	//prepare profiler
 	pprof_init(&p);
 	pprof_set(&p, pd, 0);
+	//prepare delay
+	//2.0 - whole cycles delay during communication
+	//f_fly - delay due to position filtering
+	double f_dly = 0.0e-3;
+	vdelay_init(&vd, pd, 2.0 + (f_dly / dt));
 
 	//set cycle time, the servo will turn off if cycle time exceeded 1.5 times the nominal value
 	if(high_prio)
@@ -289,7 +293,6 @@ int main(int argc, char *argv[])
 	while(state != ST_FINISHED)
 	{
 		rr_send_pdo_sync(iface);
-
 		interval_sleep(1.0e9 * dt);	
 	}
 

@@ -14,7 +14,6 @@ typedef struct
 	double pd;
 	double p;
 	double v;
-	double a;
 } pprof_t;
 
 static inline void pprof_init(pprof_t *p)
@@ -22,7 +21,6 @@ static inline void pprof_init(pprof_t *p)
 	p->pd = 0;
 	p->p = 0;
 	p->v = 0;
-	p->a = 0;
 }
 
 static inline void pprof_process(pprof_t *p, double pd, double vm, double am, double dt)
@@ -48,7 +46,6 @@ static inline void pprof_process(pprof_t *p, double pd, double vm, double am, do
 	double vn = p->v + an * dt;
 	double pn = p->p + vn * dt;
 
-	p->a = an;
 	p->v = vn;
 	p->p = pn;
 }
@@ -58,7 +55,6 @@ static inline void pprof_set(pprof_t *p, double pd, double v)
 	p->pd = pd;
 	p->p = pd;
 	p->v = v;
-	p->a = 0;
 }
 
 static inline bool pprof_is_running(pprof_t *p)

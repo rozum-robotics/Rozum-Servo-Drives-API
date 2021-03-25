@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 /*
    When working through an ethernet adapter set this 
    field to your network interface name.
-   The binding process and NIC interrupt to the same CPU 
+   Binding process and NIC interrupt to the same CPU 
    removes unnecessary inter-CPU data exchange thus 
    reducing latency and cycle time stability.
 */
@@ -139,7 +139,6 @@ int main(int argc, char *argv[])
 	pdo_configure(servo);
 
 	rr_servo_set_state_operational(servo);
-
 	rr_set_velocity_rate(servo, 1e4);
 
 	//set cycle time, the servo will turn off if cycle time exceeded 1.5 times the nominal value

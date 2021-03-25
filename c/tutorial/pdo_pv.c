@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 /*
    When working through an ethernet adapter set this 
    field to your network interface name.
-   The binding process and NIC interrupt to the same CPU 
+   Binding process and NIC interrupt to the same CPU 
    removes unnecessary inter-CPU data exchange thus 
    reducing latency and cycle time stability.
 */
