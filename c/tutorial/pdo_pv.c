@@ -11,6 +11,9 @@
 #include <string.h>
 #include <math.h>
 
+//define control loop cycle time to 250Hz
+const double dt = 1.0 / 250.0;
+
 //PDO objects definition
 typedef struct __attribute__((packed))
 {
@@ -160,8 +163,8 @@ int main(int argc, char *argv[])
 	rr_servo_set_state_operational(servo);
 	
 	//set cycle time
-	int dt_us = 10000;
-	rr_pdo_set_cycle_time(servo, dt_us);
+	rr_pdo_set_cycle_time(servo, 1.0e6 * dt);
+
 	if(!high_prio)
 	{
 		printf("!!! WARNING: Setting of high priority for process has failed. Servo may work unstable.\n");
@@ -170,7 +173,7 @@ int main(int argc, char *argv[])
 	//set point position to actual one
 	pv_t pv = {.pos = pd, .vel = 0};
 	uint16_t cw = 1 << 4;
-	double ph = 0, dt = dt_us * 1.0e-6;
+	double ph = 0;
 	
 	//preload one point
     rr_send_pdo(iface, id, RPDO2, sizeof(pv), (uint8_t *)&pv);
@@ -191,7 +194,7 @@ int main(int argc, char *argv[])
     	pv.pos = 15.0 * cos(ph) - 15.0 + pd;
     	pv.vel = -15.0 * sin(ph) * 2.0 * M_PI * f;    	
 		
-		interval_sleep(dt_us * 1000);	
+		interval_sleep(1.0e9 * dt);	
 	}
 }
 

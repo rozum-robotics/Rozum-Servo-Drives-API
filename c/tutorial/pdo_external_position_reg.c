@@ -46,8 +46,8 @@ const double VMAX = 50.0, AMAX = 70;
 //set proportional position regulator gain
 //position regulator will be simply P-regulator
 const double PKP = 10.0;
-//define contro; loop cycle time to 200Hz
-const double dt = 1.0 / 200.0;
+//define control loop cycle time to 250Hz
+const double dt = 1.0 / 250.0;
 //storage for desired position
 float pd;
 //setup travel distance

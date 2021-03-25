@@ -5,11 +5,13 @@
 //have to be incleded first
 #include "rt.h"
 #include "api.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-#define CYCLE_TIME_US 100000
+//define control loop cycle time to 250Hz
+const double dt = 1.0 / 250.0;
 
 typedef struct
 {
@@ -25,6 +27,12 @@ typedef struct
 	int16_t act_vel;
 	int16_t act_curr;
 } tpdo0_t; //from servo
+
+typedef struct
+{
+	uint16_t input_voltage;
+	uint16_t input_current;
+} tpdo3_t; //from servo
 
 void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
 {
@@ -43,6 +51,11 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 		case TPDO2:
 			break;
 		case TPDO3:
+		{
+			tpdo3_t pdo3 = {0};
+			memcpy(&pdo3, data, len);
+			printf("input voltage: %f V, input curr: %f A\n", pdo3.input_voltage * 0.001, pdo3.input_current * 0.001);
+		}
 			break;
 	}
 
@@ -55,6 +68,9 @@ void pdo_configure(rr_servo_t *s)
 	rr_pdo_clear_map(s, RPDO3);
 	rr_pdo_clear_map(s, TPDO2);
 	rr_pdo_clear_map(s, TPDO3);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0d, 16);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);
+	rr_pdo_set_trans_type_sync(s, TPDO3, 1);
 }
 
 int main(int argc, char *argv[])
@@ -124,13 +140,15 @@ int main(int argc, char *argv[])
 
 	rr_servo_set_state_operational(servo);
 
+	rr_set_velocity_rate(servo, 1e4);
+
 	//set cycle time, the servo will turn off if cycle time exceeded 1.5 times the nominal value
 	if(high_prio)
 	{
 		//make sure we are running high priority process
 		//process with generic priority may suffer from high jitter
 		//and servo may go to pre-op state if cycly time violated
-		rr_pdo_set_cycle_time(servo, CYCLE_TIME_US);
+		rr_pdo_set_cycle_time(servo, 1.0e6 * dt);
 	}
 
 	interval_sleep(0);	
@@ -147,13 +165,13 @@ int main(int argc, char *argv[])
 			.des_curr = 0
 		};
 
-		ph += 2.0 * M_PI * f * (1.0e-6 * CYCLE_TIME_US);
+		ph += 2.0 * M_PI * f * dt;
 		ph -= ph > 2.0 * M_PI ? 2.0 * M_PI : 0;
 
 		rr_send_pdo(iface, id, RPDO0, sizeof(rpdo0), (uint8_t *)&rpdo0);
 		rr_send_pdo_sync(iface);
 
-		interval_sleep(CYCLE_TIME_US * 1000);	
+		interval_sleep(1.0e9 * dt);	
 	}
 }
 

@@ -9,7 +9,8 @@
 #include <string.h>
 #include <math.h>
 
-#define CYCLE_TIME_US 100000
+//define control loop cycle time to 250Hz
+const double dt = 1.0 / 250.0;
 
 typedef struct
 {
@@ -144,7 +145,7 @@ int main(int argc, char *argv[])
 		//make sure we are running high priority process
 		//process with generic priority may suffer from high jitter
 		//and servo may go to pre-op state if cycly time violated
-		rr_pdo_set_cycle_time(servo, CYCLE_TIME_US);
+		rr_pdo_set_cycle_time(servo, 1.0e6 * dt);
 	}
 
 	interval_sleep(0);	
@@ -161,13 +162,13 @@ int main(int argc, char *argv[])
 			.des_curr = 1.5 * sin(ph) / 0.0016
 		};
 
-		ph += 2.0 * M_PI * f * (1.0e-6 * CYCLE_TIME_US);
+		ph += 2.0 * M_PI * f * dt;
 		ph -= ph > 2.0 * M_PI ? 2.0 * M_PI : 0;
 
 		rr_send_pdo(iface, id, RPDO0, sizeof(rpdo0), (uint8_t *)&rpdo0);
 		rr_send_pdo_sync(iface);
 
-		interval_sleep(CYCLE_TIME_US * 1000);	
+		interval_sleep(1.0e9 * dt);	
 	}
 }
 
