@@ -6,95 +6,24 @@ making some synchronized movements.
 Servo will move to desired position (actual position + TDIST) and back.
 */
 
+#ifndef WIN32
+#define LINUX_RT_FEATURES
+#endif
+
+//have to be incleded first
+#include "rt.h"
 #include "api.h"
+#include "pprof.h"
+#include "math_macro.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-
 #include <sys/time.h>
-
-
-/*
-This is simple position profiler. It can make build position trajectory with 
-limited velocity and acceleration
-*/
-
-#ifndef MAX
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-#endif
-#ifndef MIN
-#define MIN(a, b) (((a) < (b)) ? (a) : (b))
-#endif
-
-#define SQ(a)                           ((a) * (a))
-#define ABS(a)                          ( ((a) < 0) ? -(a) : (a) )
-#define CLIP(a, l, h)  			( MAX((MIN((a), (h))), (l)) )
-#define SIGN(a)                         ( ((a) > 0) ? 1 : (((a) == 0) ? 0 : -1) )
-
-
-typedef struct
-{
-	double pd;
-	double p;
-	double v;
-	double a;
-} pprof_t;
-
-
-static inline void pprof_init(pprof_t *p)
-{
-	p->pd = 0;
-	p->p = 0;
-	p->v = 0;
-	p->a = 0;
-}
-
-static inline void pprof_process(pprof_t *p, double pd, double vm, double am, double dt)
-{
-	vm = fabs(vm);
-	am = fabs(am);
-	p->pd = pd;
-	double pl = (SQ(p->v) / 2 / am) * SIGN(p->v);
-
-	// a @ dE/da = 0, where E = (dp + v*t + a*t^2/2)^2 + (v+a*t)^2 is
-	// summ of squared position and velocity errors and dp = p - pd
-	double amx = ABS(((2.0 * dt + 4.0 / dt) * ABS(p->v) +
-				2.0 * ABS(p->p - pd)) / (SQ(dt) + 4.0));
-
-	double ansig = SIGN(pd - p->p - pl);
-	double an = ansig * CLIP(amx, -am, am);
-
-	double dv = vm - fabs(p->v + an * dt);
-	if(dv < 0.0)
-	{
-		an = CLIP(SIGN(p->v) * dv / dt, -am, am);
-	}
-	double vn = p->v + an * dt;
-	double pn = p->p + vn * dt;
-
-	p->a = an;
-	p->v = vn;
-	p->p = pn;
-}
-
-static inline void pprof_set(pprof_t *p, double pd, double v)
-{
-	p->pd = pd;
-	p->p = pd;
-	p->v = v;
-	p->a = 0;
-}
-
-static inline bool pprof_is_running(pprof_t *p)
-{
-	return (fabs(p->p - p->pd) > 1.0e-6);
-}
-
 
 /*
 Here is definition of PDO objects to communicate with servo
 */
-
 typedef struct
 {
 	uint8_t mode;
@@ -161,7 +90,6 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 	}
 	double dt = t1.tv_sec - t0.tv_sec + 1.0e-6 * (t1.tv_usec - t0.tv_usec); 
 	t0 = t1;
-
 
 	switch(pdo_n)
 	{
@@ -262,12 +190,12 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 		break;
 	}
 
-
 	return;
 }
 
 int main(int argc, char *argv[])
 {
+	bool high_prio = false;
 	uint8_t id;
 
 	if(argc == 3)
@@ -292,9 +220,43 @@ int main(int argc, char *argv[])
 		API_DEBUG("Servo init error\n");
 		return 1;
 	}
-	rr_servo_set_state_operational(servo);
+
+#ifdef LINUX_RT_FEATURES
+/*
+   For real effect from RT features it's recommended to
+   use RT kernel patch together with 
+   'isolcpus = {your-preffered-cpu-number}' kernel option.
+*/
+#define CPU_N 0
+/*
+   When working through an ethernet adapter set this 
+   field to your network interface name.
+   The binding process and NIC interrupt to the same CPU 
+   removes unnecessary inter-CPU data exchange thus 
+   reducing latency and cycle time stability.
+*/
+#define NIC_NAME "enp59s0"
+    //disable CPU sleep states
+	set_latency_target(0);
+	//bind process to specified CPU
+	set_cpu_affinity(1 << CPU_N);
+	//bind network card interrupt to specified CPU
+	set_nic_irq_affinity(NIC_NAME, 1 << CPU_N);
+	//set lowest process niceness
+	set_process_niceness(-20);
+	//set process priority to some high value
+	high_prio = set_process_priority(pthread_self(), 98);
+#endif
 
 	rr_setup_pdo_callback(iface, pdo_cb);
+
+	//reset cycle time
+	rr_pdo_set_cycle_time(servo, 0);
+
+    //reset communication (and cycle time errors if they are)	
+	rr_servo_reset_communication(servo);
+
+	rr_servo_set_state_operational(servo);
 
 	//read current servo position
 	if(rr_read_parameter(servo, APP_PARAM_POSITION, &pd) != RET_OK)
@@ -312,13 +274,23 @@ int main(int argc, char *argv[])
 	pprof_init(&p);
 	pprof_set(&p, pd, 0);
 
+	//set cycle time, the servo will turn off if cycle time exceeded 1.5 times the nominal value
+	if(high_prio)
+	{
+		//make sure we are running high priority process
+		//process with generic priority may suffer from high jitter
+		//and servo may go to pre-op state if cycly time violated
+		rr_pdo_set_cycle_time(servo, 1.0e6 * dt);
+	}
+
+	interval_sleep(0);	
 
 	//start sending sync with rate of control loop
 	while(state != ST_FINISHED)
 	{
 		rr_send_pdo_sync(iface);
 
-		rr_sleep_ms(1000.0 * dt);
+		interval_sleep(1.0e9 * dt);	
 	}
 
 

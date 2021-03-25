@@ -1,7 +1,16 @@
+#ifndef WIN32
+#define LINUX_RT_FEATURES
+#endif
+
+//have to be incleded first
+#include "rt.h"
 #include "api.h"
+
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+
+#define CYCLE_TIME_US 100000
 
 typedef struct
 {
@@ -24,7 +33,7 @@ typedef struct
 	uint16_t input_current;
 } tpdo3_t; //from servo
 
-void pdo_cb(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
+void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
 {
 
 	switch(pdo_n)
@@ -52,9 +61,6 @@ void pdo_cb(rr_can_interface_t *interface, int id, rr_pdo_n_t pdo_n, int len, ui
 	return;
 }
 
-
-
-
 void pdo_configure(rr_servo_t *s)
 {
 	rr_pdo_clear_map(s, RPDO2);
@@ -63,10 +69,12 @@ void pdo_configure(rr_servo_t *s)
 	rr_pdo_clear_map(s, TPDO3);
 	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0d, 16);
 	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);
+	rr_pdo_set_trans_type_sync(s, TPDO3, 1);
 }
 
 int main(int argc, char *argv[])
 {
+	bool high_prio = false;
 	uint8_t id;
 
 	if(argc == 3)
@@ -92,10 +100,55 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+#ifdef LINUX_RT_FEATURES
+/*
+   For real effect from RT features it's recommended to
+   use RT kernel patch together with 
+   'isolcpus = {your-preffered-cpu-number}' kernel option.
+*/
+#define CPU_N 0
+/*
+   When working through an ethernet adapter set this 
+   field to your network interface name.
+   The binding process and NIC interrupt to the same CPU 
+   removes unnecessary inter-CPU data exchange thus 
+   reducing latency and cycle time stability.
+*/
+#define NIC_NAME "enp59s0"
+    //disable CPU sleep states
+	set_latency_target(0);
+	//bind process to specified CPU
+	set_cpu_affinity(1 << CPU_N);
+	//bind network card interrupt to specified CPU
+	set_nic_irq_affinity(NIC_NAME, 1 << CPU_N);
+	//set lowest process niceness
+	set_process_niceness(-20);
+	//set process priority to some high value
+	high_prio = set_process_priority(pthread_self(), 98);
+#endif
+
+	rr_setup_pdo_callback(iface, pdo_cb);
+
+	//reset cycle time
+	rr_pdo_set_cycle_time(servo, 0);
+
+    //reset communication (and cycle time errors if they are)	
+	rr_servo_reset_communication(servo);
+
 	pdo_configure(servo);
 
 	rr_servo_set_state_operational(servo);
-	rr_setup_pdo_callback(iface, pdo_cb);
+
+	//set cycle time, the servo will turn off if cycle time exceeded 1.5 times the nominal value
+	if(high_prio)
+	{
+		//make sure we are running high priority process
+		//process with generic priority may suffer from high jitter
+		//and servo may go to pre-op state if cycly time violated
+		rr_pdo_set_cycle_time(servo, CYCLE_TIME_US);
+	}
+
+	interval_sleep(0);	
 
 	double ph = 0, f = 1.0;
 
@@ -109,13 +162,13 @@ int main(int argc, char *argv[])
 			.des_curr = 0
 		};
 
-		ph += 2.0 * M_PI * f * 0.1;
+		ph += 2.0 * M_PI * f * (1.0e-6 * CYCLE_TIME_US);
 		ph -= ph > 2.0 * M_PI ? 2.0 * M_PI : 0;
 
 		rr_send_pdo(iface, id, RPDO0, sizeof(rpdo0), (uint8_t *)&rpdo0);
 		rr_send_pdo_sync(iface);
 
-		rr_sleep_ms(100);
+		interval_sleep(CYCLE_TIME_US * 1000);	
 	}
 }
 

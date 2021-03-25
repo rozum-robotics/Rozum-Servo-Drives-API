@@ -5,85 +5,72 @@
 //have to be incleded first
 #include "rt.h"
 #include "api.h"
-#include "math_macro.h"
-
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
-//PDO objects definition
-typedef struct __attribute__((packed))
+#define CYCLE_TIME_US 100000
+
+typedef struct
 {
 	uint8_t mode;
 	uint8_t iwin;
 	int16_t des_curr;
 	float des_vel;
-} rpdo0_t;
+} rpdo0_t; //to servo
 
-typedef struct __attribute__((packed))
+typedef struct
 {
 	float pos;
 	int16_t act_vel;
 	int16_t act_curr;
-} tpdo0_t;
+} tpdo0_t; //from servo
 
 typedef struct __attribute__((packed))
 {
-	uint8_t queue_fill;
-} tpdo2_t;
+	uint16_t input_voltage;
+	uint16_t input_current;
+} tpdo3_t; //from servo
 
-typedef struct __attribute__((packed))
-{
-	float pos;
-	float vel;
-} pv_t; //PV object
-
-
-//PDO configuration
-void pdo_configure(rr_servo_t *s)
-{
-	rr_pdo_clear_map(s, RPDO2);
-	rr_pdo_clear_map(s, RPDO3);
-	rr_pdo_clear_map(s, TPDO2);
-	rr_pdo_clear_map(s, TPDO3);
-	rr_pdo_add_map(s, RPDO2, 0x5000, 0x07, 64);
-	rr_pdo_add_map(s, RPDO3, 0x6040, 0x00, 16);
-	rr_pdo_add_map(s, TPDO2, 0x5001, 0x0c, 8);
-	rr_pdo_set_trans_type_sync(s, RPDO2, 1);
-	rr_pdo_set_trans_type_sync(s, RPDO3, 1);
-	rr_pdo_set_trans_type_sync(s, TPDO2, 1);
-}
-
-//PDO callback
 void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
 {
-    static int cnt = 0;
-    static tpdo2_t pdo2;
+
 	switch(pdo_n)
 	{
 		case TPDO0:
-		    {
-			    tpdo0_t pdo0;
-			    memcpy(&pdo0, data, len);
-			    printf("%d, %d, %f, %f, %f\n", 
-			        cnt++, (int)pdo2.queue_fill, 
-			        pdo0.pos, pdo0.act_vel * 0.02, pdo0.act_curr * 0.0016);
-		    }
+		{
+			tpdo0_t pdo0;
+			memcpy(&pdo0, data, len);
+			printf("pos: %f deg, vel: %f deg/s, curr: %f A\n", pdo0.pos, pdo0.act_vel * 0.02, pdo0.act_curr * 0.0016);
+		}
 			break;
 		case TPDO1:
 			break;
 		case TPDO2:
-			memcpy(&pdo2, data, len);
 			break;
 		case TPDO3:
+		{
+			tpdo3_t pdo3;
+			memcpy(&pdo3, data, len);
+			printf("input voltage: %f V, input curr: %f A\n", pdo3.input_voltage * 0.001, pdo3.input_current * 0.001);
+		}
 			break;
 	}
 
 	return;
 }
 
+void pdo_configure(rr_servo_t *s)
+{
+	rr_pdo_clear_map(s, RPDO2);
+	rr_pdo_clear_map(s, RPDO3);
+	rr_pdo_clear_map(s, TPDO2);
+	rr_pdo_clear_map(s, TPDO3);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0d, 16);
+	rr_pdo_add_map(s, TPDO3, 0x5001, 0x0e, 16);
+	rr_pdo_set_trans_type_sync(s, TPDO3, 1);
+}
 
-//application entry point
 int main(int argc, char *argv[])
 {
 	bool high_prio = false;
@@ -111,7 +98,7 @@ int main(int argc, char *argv[])
 		API_DEBUG("Servo init error\n");
 		return 1;
 	}
-	
+
 #ifdef LINUX_RT_FEATURES
 /*
    For real effect from RT features it's recommended to
@@ -138,61 +125,49 @@ int main(int argc, char *argv[])
 	//set process priority to some high value
 	high_prio = set_process_priority(pthread_self(), 98);
 #endif
-	
-	float pd;
-	
-	if(rr_read_parameter(servo, APP_PARAM_POSITION, &pd) != RET_OK)
-	{
-		printf("error: can't read servo position\n");
-	}
-	
+
 	rr_setup_pdo_callback(iface, pdo_cb);
-	
+
 	//reset cycle time
 	rr_pdo_set_cycle_time(servo, 0);
 
     //reset communication (and cycle time errors if they are)	
 	rr_servo_reset_communication(servo);
 
-    //configure PDOs    
 	pdo_configure(servo);
-	
+
 	rr_servo_set_state_operational(servo);
-	
-	//set cycle time
-	int dt_us = 10000;
-	rr_pdo_set_cycle_time(servo, dt_us);
-	if(!high_prio)
+
+	//set cycle time, the servo will turn off if cycle time exceeded 1.5 times the nominal value
+	if(high_prio)
 	{
-		printf("!!! WARNING: Setting of high priority for process has failed. Servo may work unstable.\n");
+		//make sure we are running high priority process
+		//process with generic priority may suffer from high jitter
+		//and servo may go to pre-op state if cycly time violated
+		rr_pdo_set_cycle_time(servo, CYCLE_TIME_US);
 	}
-	
-	//set point position to actual one
-	pv_t pv = {.pos = pd, .vel = 0};
-	uint16_t cw = 1 << 4;
-	double ph = 0, dt = dt_us * 1.0e-6;
-	
-	//preload one point
-    rr_send_pdo(iface, id, RPDO2, sizeof(pv), (uint8_t *)&pv);
-	rr_send_pdo_sync(iface);
-	//start movement
-  	rr_send_pdo(iface, id, RPDO3, sizeof(cw), (uint8_t *)&cw);
-  	
-    interval_sleep(0);
+
+	interval_sleep(0);	
+
+	double ph = 0, f = 1.0;
 
 	while(true)
 	{
-	    rr_send_pdo(iface, id, RPDO2, sizeof(pv), (uint8_t *)&pv);
+		rpdo0_t rpdo0 = 
+		{
+			.mode = 0, //current
+			.iwin = 0,
+			.des_vel = 0,
+			.des_curr = 1.5 * sin(ph) / 0.0016
+		};
+
+		ph += 2.0 * M_PI * f * (1.0e-6 * CYCLE_TIME_US);
+		ph -= ph > 2.0 * M_PI ? 2.0 * M_PI : 0;
+
+		rr_send_pdo(iface, id, RPDO0, sizeof(rpdo0), (uint8_t *)&rpdo0);
 		rr_send_pdo_sync(iface);
- 
-    	double f = 0.5;
-    	ph += 2.0 * M_PI * f * dt;
-    	ph -= ph >= 2.0 * M_PI ? 2.0 * M_PI : 0;
-    	pv.pos = 15.0 * cos(ph) - 15.0 + pd;
-    	pv.vel = -15.0 * sin(ph) * 2.0 * M_PI * f;    	
-		
-		interval_sleep(dt_us * 1000);	
+
+		interval_sleep(CYCLE_TIME_US * 1000);	
 	}
 }
-
 

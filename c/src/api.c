@@ -288,7 +288,7 @@ rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t 
 //! @cond Doxygen_Suppress
 /**
  * @brief This function sends arbitrary CAN frame.
- * @param iface interface descriptor 
+ * @param iface iface descriptor 
  * @return Status code (::rr_ret_status_t)
  * @ingroup Aux
  */
@@ -469,6 +469,32 @@ rr_ret_status_t rr_pdo_enable(rr_servo_t *s, rr_pdo_n_t n)
 	return RET_OK;
 }
 
+rr_ret_status_t rr_pdo_set_trans_type_sync(rr_servo_t *s, rr_pdo_n_t n, uint8_t type)
+{
+	if((type < 1) || (type > 253))
+	{
+		return  RET_WRONG_ARG;
+	}
+	if(rr_write_raw_sdo(s, tr_type_obj(n), 2, &type, 1, 1, 100) != RET_OK)
+	{
+		return RET_ERROR;
+	}
+	
+	return RET_OK;
+}
+
+rr_ret_status_t rr_pdo_set_trans_type_async(rr_servo_t *s, rr_pdo_n_t n)
+{
+	uint8_t type = 255;
+	if(rr_write_raw_sdo(s, tr_type_obj(n), 2, &type, 1, 1, 100) != RET_OK)
+	{
+		return RET_ERROR;
+	}
+	
+	return RET_OK;
+}
+
+
 rr_ret_status_t rr_pdo_set_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t cnt)
 {
 	if(rr_write_raw_sdo(s, map_obj(n), 0, &cnt, 1, 1, 100) != RET_OK)
@@ -599,6 +625,16 @@ rr_ret_status_t rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_
 		return RET_ERROR;
 	}
 
+	return RET_OK;
+}
+
+rr_ret_status_t rr_pdo_set_cycle_time(rr_servo_t *s, uint32_t cycle_time_us)
+{
+	if(rr_write_raw_sdo(s, 0x1006, 0, (uint8_t *)&cycle_time_us, 4, 1, 100) != RET_OK)
+	{
+		return RET_ERROR;
+	}
+	
 	return RET_OK;
 }
 

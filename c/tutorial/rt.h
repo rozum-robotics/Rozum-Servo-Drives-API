@@ -1,9 +1,10 @@
 #ifndef RT_H__
 #define RT_H__
 
+#ifdef LINUX_RT_FEATURES
 #define _GNU_SOURCE
 
-#include <stdlib.h>
+#include <sched.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/stat.h>
@@ -11,15 +12,12 @@
 #include <dirent.h>
 #include <pthread.h>
 #include <time.h>
+#include <stdlib.h>
 #include <stdio.h>
-#include <sched.h>
 #include <stdint.h>
+#include <stdbool.h>
 
-
-
-#define USEC_PER_SEC            1000000
 #define NSEC_PER_SEC            1000000000
-
 
 static inline void tsnorm(struct timespec *ts) 
 {
@@ -36,23 +34,16 @@ static inline int tsgreater(struct timespec *a, struct timespec *b)
 			(a->tv_sec == b->tv_sec && a->tv_nsec > b->tv_nsec));
 }
 
-static inline int64_t tscalcdiff_us(struct timespec t1, struct timespec t2) 
-{
-	int64_t diff;
-	diff = USEC_PER_SEC * (long long)((int) t1.tv_sec - (int) t2.tv_sec);
-	diff += ((int) t1.tv_nsec - (int) t2.tv_nsec) / 1000;
-	return diff;
-}
-
 static inline int64_t tscalcdiff_ns(struct timespec t1, struct timespec t2) 
 {
 	int64_t diff;
-	diff = NSEC_PER_SEC * (int64_t)((int) t1.tv_sec - (int) t2.tv_sec);
-	diff += ((int) t1.tv_nsec - (int) t2.tv_nsec);
+
+	diff = NSEC_PER_SEC * ((int64_t)t1.tv_sec - (int64_t)t2.tv_sec);
+	diff += (int64_t)t1.tv_nsec - (int64_t)t2.tv_nsec;
 	return diff;
 }
 
-static inline void set_process_priority(pthread_t thread, int p)
+static inline bool set_process_priority(pthread_t thread, int p)
 {
 	int policy;
 	struct sched_param schedparam;
@@ -62,7 +53,7 @@ static inline void set_process_priority(pthread_t thread, int p)
 	if(pthread_getschedparam(thread, &policy, &schedparam) != 0)
 	{
 		fprintf(stderr, "can't get scheduler parameteres\n");
-		return;
+		return false;
 	}
 	fprintf(stderr, "current policy %d, current priority %d\n", policy, schedparam.sched_priority);
 	policy = SCHED_RR;   
@@ -75,6 +66,13 @@ static inline void set_process_priority(pthread_t thread, int p)
 	fprintf(stderr, "sched policy: %d, priority (actual/requested): %d/%d\n", 
 			policy, schedparam.sched_priority, p);
 
+
+	if(schedparam.sched_priority != p)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 static inline void set_process_niceness(int nr)
@@ -210,5 +208,71 @@ static inline void set_nic_irq_affinity(const char *nic, uint32_t mask)
 	closedir(dir);
 }
 
+#endif
+
+
+//sleep function to produce exact mean long term cycle time
+#ifdef LINUX_RT_FEATURES
+/*
+    Make init. step if (ns == 0).
+    It uses absolute sleep feature of linux kernel to
+    produce stable matched cycle time.
+*/
+static inline void interval_sleep(uint64_t ns)
+{
+	static struct timespec tprev, tnow, tnext;
+		
+	if(!ns)
+	{
+    	clock_gettime(CLOCK_REALTIME, &tprev);
+	    tnext = tprev;
+	    return;
+	}
+
+    tnext.tv_nsec += ns;
+	tsnorm(&tnext);
+	clock_nanosleep(CLOCK_REALTIME, TIMER_ABSTIME, &tnext, NULL);
+	clock_gettime(CLOCK_REALTIME, &tnow);
+}
+#else
+
+#ifdef WIN32
+#include "windows.h"
+#endif
+
+#include <sys/time.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+static inline void interval_sleep(uint64_t ns)
+{
+	double d;
+    static double a = 0;
+    static struct timeval t0, t1;
+    static bool first = true;  
+    
+    if(!ns)
+    {
+        a = 0;
+        gettimeofday(&t0, 0);
+        first = true;
+        return;
+    }
+
+    gettimeofday(&t1, 0);
+    d = 1.0e6 * (t1.tv_sec - t0.tv_sec) + (t1.tv_usec - t0.tv_usec);
+    if(!first)
+    {
+        a = a + (1.0e-3 * ns - d) * 0.0000001;
+    }
+    t0 = t1;
+#ifdef WIN32
+	Sleep(ns / 1000000 + a / 1000);
+#else
+	usleep(ns / 1000 + a);
+#endif
+	first = false;
+}
+#endif
 
 #endif
