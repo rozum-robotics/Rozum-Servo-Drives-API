@@ -23,7 +23,7 @@ endif
 
 
 $(BUILDDIR)/%$(EXE_EXT): %.c $(API_LIB) $(EXT_OBJECTS)
-	$(TCHAIN)gcc $< -g2 -I../include -o $@ $(EXT_OBJECTS) $(LDFLAGS)
+	$(TCHAIN)gcc $< -O0 -ggdb -g2 -I../include -o $@ $(EXT_OBJECTS) $(LDFLAGS)
 
 all: prepare $(addprefix $(BUILDDIR)/,$(FILES:.c=$(EXE_EXT))) 
 

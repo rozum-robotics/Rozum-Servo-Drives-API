@@ -216,12 +216,13 @@ static void usbcan_poll(usbcan_instance_t *inst, uint64_t delta_us)
 	/*Wait for SDO response*/
 	if(inst->op.code == OP_SDO)
 	{
-		inst->op.ttl = CLIPL(inst->op.ttl - delta_ms, 0);
-		if(!inst->op.ttl)
+		if(inst->op.ttl <= 0)
 		{
 			inst->op.code = OP_NONE;
 			sdo_resp_cb(inst, -1u, NULL, 0);
 		}
+
+		inst->op.ttl -= delta_ms;
 	}
 
 	/*Wait for device specific state*/
@@ -594,6 +595,15 @@ static void usbcan_frame_receive_cb(usbcan_instance_t *inst, uint8_t *data, int 
 			break;
 
 		case COM_PDO:
+			if(inst->usbcan_pdo_cb)
+			{
+				int p = 1;
+				uint8_t id = get_ux_(data, &p, 1);
+				uint8_t pdo_n = get_ux_(data, &p, 1);
+				len -= p;
+
+				((usbcan_pdo_cb_t)inst->usbcan_pdo_cb)(inst, id, pdo_n, len, &data[p]);
+			}
 			break;
 
 		case COM_HB:
@@ -1275,6 +1285,11 @@ void usbcan_setup_nmt_state_cb(usbcan_instance_t *inst, usbcan_nmt_state_cb_t cb
 void usbcan_setup_com_frame_cb(usbcan_instance_t *inst, usbcan_com_frame_cb_t cb)
 {
 	inst->usbcan_com_frame_cb = (void*)cb;
+}
+
+void usbcan_setup_pdo_cb(usbcan_instance_t *inst, usbcan_pdo_cb_t cb)
+{
+	inst->usbcan_pdo_cb = (void*)cb;
 }
 
 int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id)
