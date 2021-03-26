@@ -34,7 +34,7 @@ const double VMAX = 50.0, AMAX = 100;
 //set proportional position regulator gain
 //position regulator will be simply P-regulator
 const double PKP = 20.0;
-//define control loop cycle time to 250Hz
+//define control loop cycle time
 const double dt = 1.0 / 250.0;
 //storage for desired position
 float pd;
@@ -82,7 +82,7 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 			tpdo0_t tpdo0;
 			memcpy(&tpdo0, data, len);
 
-			//store previous position
+			//store previous velocity
 			double v = p.v;
 
 			//profiler needs some oversampling for better performance
@@ -176,7 +176,6 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 					break;
 				default:
 					break;
-
 			}
 		}
 		break;
