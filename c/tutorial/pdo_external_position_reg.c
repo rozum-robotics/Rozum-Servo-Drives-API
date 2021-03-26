@@ -121,7 +121,6 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 
 			rr_send_pdo(iface, id, RPDO0, sizeof(rpdo0), (uint8_t *)&rpdo0);
 
-
 			printf("%f, %f, %f, %f, %f, %f, %f\n", 
 					vd.y, p.v, a, ff, 
 					tpdo0.pos, tpdo0.act_vel * 0.02, tpdo0.act_curr * 0.0016);
@@ -197,13 +196,13 @@ int main(int argc, char *argv[])
 	bool high_prio = false;
 	uint8_t id;
 
-	if(argc == 3)
+	if(argc >= 3)
 	{
 		id = strtol(argv[2], NULL, 0);
 	}
 	else
 	{
-		API_DEBUG("Wrong format!\nUsage: %s interface id\n", argv[0]);
+		API_DEBUG("Wrong format!\nUsage: %s interface id [output file]\n", argv[0]);
 		return 1;
 	}
 	rr_can_interface_t *iface = rr_init_interface(argv[1]);
@@ -218,6 +217,12 @@ int main(int argc, char *argv[])
 	{
 		API_DEBUG("Servo init error\n");
 		return 1;
+	}
+
+	if(argc == 4)
+	{
+		fclose(stdout);
+		stdout = fopen(argv[3], "wb");
 	}
 
 #ifdef LINUX_RT_FEATURES
@@ -292,7 +297,6 @@ int main(int argc, char *argv[])
 		rr_send_pdo_sync(iface);
 		interval_sleep(1.0e9 * dt);	
 	}
-
 
 	rr_set_velocity_rate(servo, vel_rate_orig);
 }
