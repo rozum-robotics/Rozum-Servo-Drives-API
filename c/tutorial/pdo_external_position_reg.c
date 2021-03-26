@@ -30,10 +30,10 @@ pprof_t p;
 //due to communication
 vdelay_t vd;
 //set profiler config
-const double VMAX = 150.0, AMAX = 250;
+const double VMAX = 50.0, AMAX = 100;
 //set proportional position regulator gain
 //position regulator will be simply P-regulator
-const double PKP = 10.0;
+const double PKP = 20.0;
 //define control loop cycle time to 250Hz
 const double dt = 1.0 / 250.0;
 //storage for desired position
@@ -273,10 +273,7 @@ int main(int argc, char *argv[])
 	pprof_init(&p);
 	pprof_set(&p, pd, 0);
 	//prepare delay
-	//2.0 - whole cycles delay during communication
-	//f_fly - delay due to position filtering
-	double f_dly = 0.0e-3;
-	vdelay_init(&vd, pd, 2.0 + (f_dly / dt));
+	vdelay_init(&vd, pd, 2.0);
 
 	//set cycle time, the servo will turn off if cycle time exceeded 1.5 times the nominal value
 	if(high_prio)
