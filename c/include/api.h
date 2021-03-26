@@ -46,7 +46,7 @@ extern "C"
 #define EMCY_LOG_DEPTH	1024
 
 /**
- * @brief Maximal number of CanOpen devoces on bus
+ * @brief Maximal number of CanOpen devices on bus
  *
  */
 #define MAX_CO_DEV	128

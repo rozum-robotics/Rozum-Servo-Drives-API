@@ -19,6 +19,7 @@
  * - \ref Trajectory
  * - \ref Config
  * - \ref Realtime
+ * - \ref Cyclic
  * - \ref Err
  * - \ref Dbg
  * 
@@ -41,13 +42,13 @@
  * -# \ref tutor_c_time_optimal_movement
  * 
  * 
- * \defgroup Preinit Preparing for servo intialization
  * \defgroup Init Initialization and deinitialization
  * \defgroup State  Switching servo working states
  * \defgroup Motion Simple motion control (duty, current, velocity, position)
  * \defgroup Trajectory Trajectory motion control (PVT)
  * \defgroup Config Reading and writing servo configuration
  * \defgroup Realtime Reading realtime parameters
+ * \defgroup Cyclic Cyclic control
  * \defgroup Err Error handling
  * \defgroup Dbg Debugging
  * \defgroup Aux Auxiliary functions
@@ -177,7 +178,7 @@ void rr_emcy_master_cb(usbcan_instance_t *inst, int id, uint16_t code, uint8_t r
 
 
 /**
- * \defgroup Preinit Reading device parameters
+ * \defgroup Preinit Preparing for servo intialization
  * 
  * Once you have completed the servo integration procedure in accordance with the User (or servobox) manual
  * and before you can start motion or send the majority of API commands,
@@ -213,7 +214,6 @@ void rr_sleep_ms(int ms)
 	msleep(ms);
 }
 
-//! @cond Doxygen_Suppress
 /**
  * @brief The function sends an arbitrary SDO write request to the specified servo.
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
@@ -236,7 +236,6 @@ rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t 
 	return ret_sdo(sts);
 }
 
-//! @cond Doxygen_Suppress
 /**
  * @brief This function sends arbitrary CAN frame.
  * @param iface interface descriptor 
@@ -256,47 +255,6 @@ rr_ret_status_t rr_send_com_frame(const rr_can_interface_t *iface, uint32_t cob_
 	memcpy(m.data, data, MIN(dlc, sizeof(m.data)));
 
 	usbcan_send_com_frame((usbcan_instance_t *)iface->iface, &m);
-
-	return RET_OK;
-}
-
-//! @cond Doxygen_Suppress
-/**
- * @brief This function sends arbitrary CAN frame.
- * @param iface interface descriptor 
- * @param id device ID
- * @param pdo_n PDO number (valid are RPDO0 to RPDO3)
- * @param len Data Length Code (length of data field in bytes)
- * @param data pointer to data
- * @return Status code (::rr_ret_status_t)
- * @ingroup Aux
- */
-rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
-{
-	IS_VALID_INTERFACE(iface);
-
-	if((pdo_n < RPDO0) || (pdo_n > RPDO3))
-	{
-		return RET_WRONG_ARG;
-	}
-
-	rr_send_com_frame(iface, 0x200 + id + 0x100 * pdo_n, len, data);
-
-	return RET_OK;
-}
-
-//! @cond Doxygen_Suppress
-/**
- * @brief This function sends arbitrary CAN frame.
- * @param iface iface descriptor 
- * @return Status code (::rr_ret_status_t)
- * @ingroup Aux
- */
-rr_ret_status_t rr_send_pdo_sync(const rr_can_interface_t *iface)
-{
-	IS_VALID_INTERFACE(iface);
-
-	rr_send_com_frame(iface, 0x80, 0, 0);
 
 	return RET_OK;
 }
@@ -322,7 +280,6 @@ rr_ret_status_t rr_read_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t s
 
 	return ret_sdo(sts);
 }
-/// @endcond
 
 /**
  * @brief The function sets a stream for saving CAN communication dump from the specified interface.
@@ -399,11 +356,50 @@ void rr_setup_com_frame_callback(rr_can_interface_t *iface, rr_com_frame_cb_t cb
 }
 
 /**
- * @brief The function sets a user callback for incoming PDOs
+ * @brief This function sends specified PDO with specified data and length.
+ * @param iface interface descriptor 
+ * @param id device ID
+ * @param pdo_n PDO number (valid are RPDO0 to RPDO3)
+ * @param len Data Length Code (length of data field in bytes)
+ * @param data pointer to data
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Cyclic
+ */
+rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data)
+{
+	IS_VALID_INTERFACE(iface);
+
+	if((pdo_n < RPDO0) || (pdo_n > RPDO3))
+	{
+		return RET_WRONG_ARG;
+	}
+
+	rr_send_com_frame(iface, 0x200 + id + 0x100 * pdo_n, len, data);
+
+	return RET_OK;
+}
+
+/**
+ * @brief This function sends SYNC frame.
+ * @param iface iface descriptor 
+ * @return Status code (::rr_ret_status_t)
+ * @ingroup Cyclic
+ */
+rr_ret_status_t rr_send_pdo_sync(const rr_can_interface_t *iface)
+{
+	IS_VALID_INTERFACE(iface);
+
+	rr_send_com_frame(iface, 0x80, 0, 0);
+
+	return RET_OK;
+}
+
+/**
+ * @brief This function sets a user callback for incoming PDOs
  * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param cb (::rr_com_frame_cb_t) callback function
  * @return void
- * @ingroup Aux
+ * @ingroup Cyclic
  */
 void rr_setup_pdo_callback(rr_can_interface_t *iface, rr_pdo_cb_t cb)
 {
@@ -433,6 +429,13 @@ static uint16_t tr_type_obj(rr_pdo_n_t n)
 	return o[n];
 }
 
+/**
+ * @brief This function disables specified PDO (it can't be transmitted or received while disabled).
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_disable(rr_servo_t *s, rr_pdo_n_t n)
 {
 	uint32_t cob_id;
@@ -451,6 +454,13 @@ rr_ret_status_t rr_pdo_disable(rr_servo_t *s, rr_pdo_n_t n)
 	return RET_OK;
 }
 
+/**
+ * @brief This function enables specified PDO.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_enable(rr_servo_t *s, rr_pdo_n_t n)
 {
 	uint32_t cob_id;
@@ -469,6 +479,14 @@ rr_ret_status_t rr_pdo_enable(rr_servo_t *s, rr_pdo_n_t n)
 	return RET_OK;
 }
 
+/**
+ * @brief This function sets PDO transmittion type to 'synchronous' along with SYNC decimation factor.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @param type specifies the number of SYNC frames to pass between PDO transmittion/reception
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_set_trans_type_sync(rr_servo_t *s, rr_pdo_n_t n, uint8_t type)
 {
 	if((type < 1) || (type > 253))
@@ -483,6 +501,13 @@ rr_ret_status_t rr_pdo_set_trans_type_sync(rr_servo_t *s, rr_pdo_n_t n, uint8_t 
 	return RET_OK;
 }
 
+/**
+ * @brief This function sets PDO transmittion type to 'asynchronous'.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_set_trans_type_async(rr_servo_t *s, rr_pdo_n_t n)
 {
 	uint8_t type = 255;
@@ -494,7 +519,14 @@ rr_ret_status_t rr_pdo_set_trans_type_async(rr_servo_t *s, rr_pdo_n_t n)
 	return RET_OK;
 }
 
-
+/**
+ * @brief This function sets the number of objects mapped to specified PDO.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @param cnt number of objects mapped to PDO
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_set_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t cnt)
 {
 	if(rr_write_raw_sdo(s, map_obj(n), 0, &cnt, 1, 1, 100) != RET_OK)
@@ -505,6 +537,14 @@ rr_ret_status_t rr_pdo_set_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t cnt)
 	return RET_OK;
 }
 
+/**
+ * @brief This function retrieves the number of objects mapped to specified PDO.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @param cnt pointer to variable to receive object count
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_get_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t *cnt)
 {
 	int l = 1;
@@ -516,7 +556,14 @@ rr_ret_status_t rr_pdo_get_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t *cnt)
 	return RET_OK;
 }
 
-
+/**
+ * @brief This function clears entire mapping of specified PDO. After that new mapping can be built. 
+ Technically this is the same as disabling PDO and setting map objects count to zero.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_clear_map(rr_servo_t *s, rr_pdo_n_t n)
 {
 	if(rr_pdo_disable(s, n) != RET_OK) 
@@ -531,6 +578,15 @@ rr_ret_status_t rr_pdo_clear_map(rr_servo_t *s, rr_pdo_n_t n)
 	return RET_OK;	
 }
 
+/**
+ * @brief This function writes map data to specified PDO into specified entry.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @param map_entry map entry number
+ * @param map_value value of the map entry
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_write_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t map_value)
 {
 	if(rr_write_raw_sdo(s, map_obj(n), map_entry, (uint8_t *)&map_value, 4, 1, 100) != RET_OK) 
@@ -541,6 +597,15 @@ rr_ret_status_t rr_pdo_write_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry,
 	return RET_OK;
 }
 
+/**
+ * @brief This function reads map data from specified PDO of specified entry.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @param map_entry map entry number
+ * @param map_value pointer to the variable to receive value of the map entry
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_read_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t *map_value)
 {
 	int l = 4;
@@ -553,6 +618,14 @@ rr_ret_status_t rr_pdo_read_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, 
 	return RET_OK;
 }
 
+/**
+ * @brief This function calculates the actual cumulative length of objects mapped to specified PDO in bytes.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @param len pointer to the variable to receive length
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_get_byte_len(rr_servo_t *s, rr_pdo_n_t n, int *len)
 {
 	uint8_t map_cnt = 0;
@@ -577,6 +650,16 @@ rr_ret_status_t rr_pdo_get_byte_len(rr_servo_t *s, rr_pdo_n_t n, int *len)
 	return RET_OK;
 }
 
+/**
+ * @brief This function appends a specified object to the list of mapped objects of specified PDO.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param n (::rr_pdo_n_t) PDO number
+ * @param idx index of the object
+ * @param sidx sub-index of the object
+ * @param bit_len length of the object in bits (should be multiple of 8)
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_t sidx, uint8_t bit_len)
 {
 	if(bit_len & 7)
@@ -628,6 +711,18 @@ rr_ret_status_t rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_
 	return RET_OK;
 }
 
+/**
+ * @brief This function sets nominal cycle time length in microseconds. 
+ This is the time the servo waits for the new SYNC frame to come in. 
+ If there are no SYNC frames in period of 1.5 times of nominal cycle time 
+ servo will go to PRE-OP state. An emergency frame will also be emitted 
+ during this transition. Setting cycle time to zero disables SYNC frame 
+ monitoring functionality.
+ * @param s Servo descriptor returned by the ::rr_init_servo function 
+ * @param cycle_time_us nominal cycle time in microseconds
+ * @return RET_OK on success, RET_ERROR otherwise
+ * @ingroup Cyclic
+ */
 rr_ret_status_t rr_pdo_set_cycle_time(rr_servo_t *s, uint32_t cycle_time_us)
 {
 	if(rr_write_raw_sdo(s, 0x1006, 0, (uint8_t *)&cycle_time_us, 4, 1, 100) != RET_OK)
@@ -1302,7 +1397,7 @@ rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *stat
  * specified in the param min_hb_ival and param max_hb_ival parameters, from where they are available for the user to perform further operations (e.g., comparison).<br>
  * The Heartbeat statistics is helpful in diagnozing and troubleshooting servo failures. For instance, when the Heartbeat interval of a servo is too long,
  * it may mean that the control device sees the servo as being offline.<br>
- * <b>Note:<b> Before using the function, it is advisable to clear Heartbeat statistics with ::rr_servo_clear_hb_stat. 
+ * <b>Note:</b> Before using the function, it is advisable to clear Heartbeat statistics with ::rr_servo_clear_hb_stat. 
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
  * @param min_hb_ival Pointer to the variable where the minimal arrival interval is to be saved; when set to NULL, the variable is disabled. 
  * @param max_hb_ival Pointer to the variable where the maximal arrival interval is to be saved; when set to NULL, the variable is disabled.
@@ -1591,7 +1686,7 @@ rr_ret_status_t rr_set_position(const rr_servo_t *servo, const float position_de
 /**
  * @brief The function changes velocity rate limiter acceleration value,
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param velocity_rpm_per_sec Velocity rate (in RPM/sec) at the motor flange. Take into account gear reduction ratio.
+ * @param velocity_rate_rpm_per_sec Velocity rate (in RPM/sec) at the motor flange. Take into account gear reduction ratio.
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
@@ -1617,7 +1712,7 @@ rr_ret_status_t rr_set_velocity_rate(const rr_servo_t *servo, const float veloci
 /**
  * @brief The function reads velocity rate limiter acceleration value,
  * @param servo Servo descriptor returned by the ::rr_init_servo function 
- * @param velocity_rpm_per_sec Pointer to put velocity rate in. See ::rr_set_velocity_rate for details.
+ * @param velocity_rate_rpm_per_sec Pointer to put velocity rate in. See ::rr_set_velocity_rate for details.
  * @return Status code (::rr_ret_status_t)
  * @ingroup Motion
  */
@@ -2498,7 +2593,6 @@ rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_vel
 	return ret_sdo(sts);
 }
 
-//! @cond Doxygen_Suppress
 /**
  * @brief The function changes device CAN ID, resets device CAN communication and check that heartbeat is present with the new CAN ID.
  * Note: servo device cache will be erased (in the API)
@@ -2548,7 +2642,6 @@ static rr_ret_status_t rr_change_id(rr_can_interface_t *iface, rr_servo_t **serv
 
 	return RET_OK;
 }
-/// @endcond
 
 /**
  * @brief The function enables changing the default CAN identifier (ID) of the specified servo to avoid collisions on a bus line. <b>Important!</b> Each servo connected to a CAN bus must have <b>a unique ID</b>.<br>
@@ -2602,7 +2695,7 @@ rr_ret_status_t rr_clear_errors(const rr_servo_t *servo)
  * @brief The function reads the hardware version of a servo (unique ID of the MCU + hardware type + hardware revision).
  * @param servo Servo descriptor returned by the ::rr_init_servo function.
  * @param version_string Pointer to the ASCII string to read
- * @param version_string_size Input: size of the ::version_string, Output: size of the read string
+ * @param version_string_size Input: size of the version_string, Output: size of the read string
  * @return Status code (::rr_ret_status_t)
  */
 rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
@@ -2621,7 +2714,7 @@ rr_ret_status_t rr_get_hardware_version(const rr_servo_t *servo, char *version_s
  * @brief The function reads the software version of a servo (minor + major + firmware build date).
  * @param servo Servo descriptor returned by the ::rr_init_servo function.
  * @param version_string Pointer to the ASCII string to read
- * @param version_string_size Input: size of the ::version_string, Output: size of the read string
+ * @param version_string_size Input: size of the version_string, Output: size of the read string
  * @return Status code (::rr_ret_status_t)
  */
 rr_ret_status_t rr_get_software_version(const rr_servo_t *servo, char *version_string, int *version_string_size)
