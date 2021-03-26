@@ -357,7 +357,7 @@ void rr_setup_com_frame_callback(rr_can_interface_t *iface, rr_com_frame_cb_t cb
 
 /**
  * @brief This function sends specified PDO with specified data and length.
- * @param iface interface descriptor 
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @param id device ID
  * @param pdo_n PDO number (valid are RPDO0 to RPDO3)
  * @param len Data Length Code (length of data field in bytes)
@@ -381,7 +381,7 @@ rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t 
 
 /**
  * @brief This function sends SYNC frame.
- * @param iface iface descriptor 
+ * @param iface Descriptor of the interface (as returned by the ::rr_init_interface function)
  * @return Status code (::rr_ret_status_t)
  * @ingroup Cyclic
  */
