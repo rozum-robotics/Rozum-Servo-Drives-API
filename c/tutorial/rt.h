@@ -48,7 +48,7 @@ static inline bool set_process_priority(pthread_t thread, int p)
 	int policy;
 	struct sched_param schedparam;
 
-	fprintf(stderr, "thread ID %u\n", (unsigned int)thread);
+	fprintf(stderr, "thread ID %lu\n", (unsigned long int)thread);
 	
 	if(pthread_getschedparam(thread, &policy, &schedparam) != 0)
 	{
