@@ -18,6 +18,7 @@ Servo will move to desired position (actual position + TDIST) and back.
 #include "math_macro.h"
 
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <math.h>
 #include <sys/time.h>
@@ -40,6 +41,9 @@ const double dt = 1.0 / 250.0;
 float pd;
 //setup travel distance
 const double TDIST = 300.0;
+
+//file discriptor to write data to
+FILE *fout = 0;
 
 //small state machine to control desired position
 typedef enum
@@ -121,7 +125,7 @@ void pdo_cb(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_
 
 			rr_send_pdo(iface, id, RPDO0, sizeof(rpdo0), (uint8_t *)&rpdo0);
 
-			printf("%f, %f, %f, %f, %f, %f, %f\n", 
+			fprintf(fout, "%f, %f, %f, %f, %f, %f, %f\n", 
 					vd.y, p.v, a, ff, 
 					tpdo0.pos, tpdo0.act_vel * 0.02, tpdo0.act_curr * 0.0016);
 
@@ -220,8 +224,11 @@ int main(int argc, char *argv[])
 
 	if(argc == 4)
 	{
-		fclose(stdout);
-		stdout = fopen(argv[3], "wb");
+		fout = fopen(argv[3], "wb");
+	}
+	else
+	{
+		fout = stdout;
 	}
 
 #ifdef LINUX_RT_FEATURES
