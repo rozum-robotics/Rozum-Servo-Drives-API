@@ -150,7 +150,7 @@ void rr_pdo_cb(usbcan_instance_t *inst, int id, int pdo_n, int len, uint8_t *dat
 
 	if(i->pdo_cb)
 	{
-		((rr_pdo_cb_t)(i->pdo_cb))(i, id, pdo_n, len, data);
+		((rr_pdo_cb_t)(i->pdo_cb))(i, id, (rr_pdo_n_t)pdo_n, len, data);
 	}
 }
 
