@@ -111,6 +111,7 @@ struct usbcan_instance_t
 	void *usbcan_emcy_cb;
 	void *usbcan_nmt_state_cb;
 	void *usbcan_com_frame_cb;
+	void *usbcan_pdo_cb;
 
 	int64_t master_hb_ival;
 	int64_t master_hb_timer;
@@ -151,6 +152,7 @@ typedef void (*usbcan_hb_tx_cb_t)(usbcan_instance_t *inst);
 typedef void (*usbcan_hb_rx_cb_t)(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state);
 typedef void (*usbcan_nmt_state_cb_t)(usbcan_instance_t *inst, int id, usbcan_nmt_state_t state);
 typedef void (*usbcan_com_frame_cb_t)(usbcan_instance_t *inst, can_msg_t *m);
+typedef void (*usbcan_pdo_cb_t)(usbcan_instance_t *inst, int id, int pdo_n, int len, uint8_t *data);
 typedef void (*usbcan_emcy_cb_t)(usbcan_instance_t *inst, int id, uint16_t err_code, uint8_t err_reg, uint8_t err_bits, uint32_t err_info);
 
 extern const char *CAN_OPEN_CMD[];
@@ -161,6 +163,7 @@ void usbcan_setup_hb_rx_cb(usbcan_instance_t *inst, usbcan_hb_rx_cb_t cb);
 void usbcan_setup_emcy_cb(usbcan_instance_t *inst, usbcan_emcy_cb_t cb);
 void usbcan_setup_nmt_state_cb(usbcan_instance_t *inst, usbcan_nmt_state_cb_t cb);
 void usbcan_setup_com_frame_cb(usbcan_instance_t *inst, usbcan_com_frame_cb_t cb);
+void usbcan_setup_pdo_cb(usbcan_instance_t *inst, usbcan_pdo_cb_t cb);
 
 usbcan_nmt_state_t usbcan_get_device_state(usbcan_instance_t *inst, int id);
 int64_t usbcan_get_hb_interval(usbcan_instance_t *inst, int id);

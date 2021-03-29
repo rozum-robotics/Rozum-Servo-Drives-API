@@ -46,7 +46,7 @@ extern "C"
 #define EMCY_LOG_DEPTH	1024
 
 /**
- * @brief Maximal number of CanOpen devoces on bus
+ * @brief Maximal number of CanOpen devices on bus
  *
  */
 #define MAX_CO_DEV	128
@@ -69,6 +69,21 @@ typedef enum
     RET_SIZE_MISMATCH, ///< Mismatch of received and target data size
     RET_WRONG_ARG      ///< Wrong function argument
 } rr_ret_status_t;
+
+/**
+ * @brief defines pdo numbers
+ */
+typedef enum
+{
+    RPDO0 = 0,
+    RPDO1 = 1,
+    RPDO2 = 2,
+    RPDO3 = 3,
+    TPDO0 = 4,
+    TPDO1 = 5,
+    TPDO2 = 6,
+    TPDO3 = 7,
+} rr_pdo_n_t;
 
 /**
  * @brief Device parameter and source indices
@@ -202,6 +217,8 @@ typedef struct
     void *iface;   ///< Interface internals
     void *nmt_cb;  ///< NMT callback pointer
     void *emcy_cb; ///< EMCY callback pointer
+    void *com_frame_cb; ///< CAN frame callback pointer
+    void *pdo_cb; ///< PDO (from device)callback pointer
     struct
     {
 	    emcy_log_entry_t *d;
@@ -213,23 +230,43 @@ typedef struct
 
 /**
  * @brief Type of the intiated network management (NMT) callback<br>
- * @param interface Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
+ * @param ifcae Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
  * @param servo_id Descriptor of the servo (see ::rr_init_servo) where the NMT event occured
  * @param nmt_state Network management state (::rr_nmt_state_t) that the servo entered
  * 
  */
-typedef void (*rr_nmt_cb_t)(rr_can_interface_t *interface, int servo_id, rr_nmt_state_t nmt_state);
+typedef void (*rr_nmt_cb_t)(rr_can_interface_t *iface, int servo_id, rr_nmt_state_t nmt_state);
+
+/**
+ * @brief Type of the CAN frame callback<br>
+ * @param iface Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
+ * @param cob_id ID of CAN frame
+ * @param dlc Data Length Code (length of data field)
+ * @param data pointer to data
+ * 
+ */
+typedef void (*rr_com_frame_cb_t)(rr_can_interface_t *iface, int cob_id, int dlc, uint8_t *data);
+
+/**
+ * @brief Type of the PDO callback<br>
+ * @param iface Descriptor of the interface (see ::rr_init_interface) where the NMT event occured
+ * @param cob_id ID of CAN frame
+ * @param dlc Data Length Code (length of data field)
+ * @param data pointer to data
+ * 
+ */
+typedef void (*rr_pdo_cb_t)(rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data);
 
 /**
  * @brief Type of the intiated emergency (EMCY) callback<br>
- * @param interface Descriptor of the interface (see ::rr_init_interface) where the EMCY event occured
+ * @param iface Descriptor of the interface (see ::rr_init_interface) where the EMCY event occured
  * @param servo_id Descriptor of the servo (see ::rr_init_servo) where the EMCY event occured
  * @param code Error code
  * @param reg Register field of the EMCY message (see CanOpen documentation)
  * @param bits Bits field of the EMCY message (see CanOpen documentation)
  * @param info Additional field (see CanOpen documentation)
  */
-typedef void (*rr_emcy_cb_t)(rr_can_interface_t *interface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info);
+typedef void (*rr_emcy_cb_t)(rr_can_interface_t *iface, int servo_id, uint16_t code, uint8_t reg, uint8_t bits, uint32_t info);
 
 /* Exported constants --------------------------------------------------------*/
 /* Exported macro ------------------------------------------------------------*/
@@ -244,9 +281,28 @@ rr_ret_status_t rr_write_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t 
 rr_ret_status_t rr_read_raw_sdo(const rr_servo_t *servo, uint16_t idx, uint8_t sidx, uint8_t *data, int *sz, int retry, int tout);
 
 void rr_set_debug_log_stream(FILE *f);
-void rr_set_comm_log_stream(const rr_can_interface_t *interface, FILE *f);
-void rr_setup_nmt_callback(rr_can_interface_t *interface, rr_nmt_cb_t cb);
-void rr_setup_emcy_callback(rr_can_interface_t *interface, rr_emcy_cb_t cb);
+void rr_set_comm_log_stream(const rr_can_interface_t *iface, FILE *f);
+void rr_setup_nmt_callback(rr_can_interface_t *iface, rr_nmt_cb_t cb);
+void rr_setup_com_frame_callback(rr_can_interface_t *iface, rr_com_frame_cb_t cb);
+void rr_setup_pdo_callback(rr_can_interface_t *iface, rr_pdo_cb_t cb);
+rr_ret_status_t rr_send_com_frame(const rr_can_interface_t *iface, uint32_t cob_id, int dlc, uint8_t *data);
+rr_ret_status_t rr_send_pdo(const rr_can_interface_t *iface, int id, rr_pdo_n_t pdo_n, int len, uint8_t *data);
+rr_ret_status_t rr_send_pdo_sync(const rr_can_interface_t *iface);
+
+rr_ret_status_t rr_pdo_disable(rr_servo_t *s, rr_pdo_n_t n);
+rr_ret_status_t rr_pdo_enable(rr_servo_t *s, rr_pdo_n_t n);
+rr_ret_status_t rr_pdo_set_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t cnt);
+rr_ret_status_t rr_pdo_get_map_count(rr_servo_t *s, rr_pdo_n_t n, uint8_t *cnt);
+rr_ret_status_t rr_pdo_clear_map(rr_servo_t *s, rr_pdo_n_t n);
+rr_ret_status_t rr_pdo_write_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t map_value);
+rr_ret_status_t rr_pdo_read_map(rr_servo_t *s, rr_pdo_n_t n, uint8_t map_entry, uint32_t *map_value);
+rr_ret_status_t rr_pdo_get_byte_len(rr_servo_t *s, rr_pdo_n_t n, int *len);
+rr_ret_status_t rr_pdo_add_map(rr_servo_t *s, rr_pdo_n_t n, uint16_t idx, uint8_t sidx, uint8_t bit_len);
+rr_ret_status_t rr_pdo_set_trans_type_sync(rr_servo_t *s, rr_pdo_n_t n, uint8_t type);
+rr_ret_status_t rr_pdo_set_trans_type_async(rr_servo_t *s, rr_pdo_n_t n);
+rr_ret_status_t rr_pdo_set_cycle_time(rr_servo_t *s, uint32_t cycle_time_us);
+
+void rr_setup_emcy_callback(rr_can_interface_t *iface, rr_emcy_cb_t cb);
 const char *rr_describe_nmt(rr_nmt_state_t state);
 const char *rr_describe_emcy_code(uint16_t code);
 const char *rr_describe_emcy_bit(uint8_t bit);
@@ -255,8 +311,8 @@ emcy_log_entry_t *rr_emcy_log_pop(rr_can_interface_t *iface);
 void rr_emcy_log_clear(rr_can_interface_t *iface);
 
 rr_can_interface_t *rr_init_interface(const char *interface_name);
-rr_ret_status_t rr_deinit_interface(rr_can_interface_t **interface);
-rr_servo_t *rr_init_servo(rr_can_interface_t *interface, const uint8_t id);
+rr_ret_status_t rr_deinit_interface(rr_can_interface_t **iface);
+rr_servo_t *rr_init_servo(rr_can_interface_t *iface, const uint8_t id);
 rr_ret_status_t rr_deinit_servo(rr_servo_t **servo);
 
 rr_ret_status_t rr_servo_reboot(const rr_servo_t *servo);
@@ -269,12 +325,12 @@ rr_ret_status_t rr_servo_get_state(const rr_servo_t *servo, rr_nmt_state_t *stat
 rr_ret_status_t rr_servo_get_hb_stat(const rr_servo_t *servo, int64_t *min_hb_ival, int64_t *max_hb_ival);
 rr_ret_status_t rr_servo_clear_hb_stat(const rr_servo_t *servo);
 
-rr_ret_status_t rr_net_reboot(const rr_can_interface_t *interface);
-rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *interface);
-rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *interface);
-rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *interface);
-rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *interface);
-rr_ret_status_t rr_net_get_state(const rr_can_interface_t *interface, int id, rr_nmt_state_t *state);
+rr_ret_status_t rr_net_reboot(const rr_can_interface_t *iface);
+rr_ret_status_t rr_net_reset_communication(const rr_can_interface_t *iface);
+rr_ret_status_t rr_net_set_state_operational(const rr_can_interface_t *iface);
+rr_ret_status_t rr_net_set_state_pre_operational(const rr_can_interface_t *iface);
+rr_ret_status_t rr_net_set_state_stopped(const rr_can_interface_t *iface);
+rr_ret_status_t rr_net_get_state(const rr_can_interface_t *iface, int id, rr_nmt_state_t *state);
 
 rr_ret_status_t rr_release(const rr_servo_t *servo);
 rr_ret_status_t rr_freeze(const rr_servo_t *servo);
@@ -299,7 +355,7 @@ rr_ret_status_t rr_add_motion_point_pvat(
     const float accel_deg_per_sec2, 
     const uint32_t time_ms);
     
-rr_ret_status_t rr_start_motion(rr_can_interface_t *interface, uint32_t timestamp_ms);
+rr_ret_status_t rr_start_motion(rr_can_interface_t *iface, uint32_t timestamp_ms);
 
 rr_ret_status_t rr_read_error_status(const rr_servo_t *servo, uint32_t *const error_count, uint8_t *const error_array);
 
@@ -329,7 +385,7 @@ rr_ret_status_t rr_set_zero_position_and_save(const rr_servo_t *servo, const flo
 rr_ret_status_t rr_get_max_velocity(const rr_servo_t *servo, float *velocity_deg_per_sec);
 rr_ret_status_t rr_set_max_velocity(const rr_servo_t *servo, const float max_velocity_deg_per_sec);
 
-rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *interface, rr_servo_t **servo, uint8_t new_can_id);
+rr_ret_status_t rr_change_id_and_save(rr_can_interface_t *iface, rr_servo_t **servo, uint8_t new_can_id);
 
 rr_ret_status_t rr_clear_errors(const rr_servo_t *servo);
 
